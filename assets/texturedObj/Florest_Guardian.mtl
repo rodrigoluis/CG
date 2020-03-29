@@ -1,0 +1,12 @@
+# File produced by Open Asset Import Library (http://www.assimp.sf.net)
+# (assimp v3.1.187496374)
+
+newmtl Material-material
+Kd 0.6 0.6 0.6
+Ka 0.1 0.1 0.1
+Ks 1.0 1.0 1.0
+Ke 0.1 0.1 0.1
+Ns 200
+illum 2
+map_Kd Florest_Guardian.png
+

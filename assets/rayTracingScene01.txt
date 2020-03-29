@@ -1,0 +1,84 @@
+######################
+# GL Raytracer       #
+# Sample Database    #
+######################
+
+#  I = Ia*Ka + Is*Kd*(N¥L) + Is*Ks*(R¥V)^n
+
+# Pre-computed scenes expected an aspect ratio of 2 : 1 for Window Dimensions
+# (i.e., 400 x 200, 500 x 250, 1200 x 600 etc)
+# CG Settings
+CG_SETTINGS
+  WindowDimensions: 400,200	# Window Dimension: Width Height 
+  PRP: 0.0, 0.0, -1.5       # Projection Reference Point (centro de projeção) 
+  VRP: 0.0, 0.0,  0.0        # View Reference Point       (posição do plano de projeção)
+  UV:  -1.0, 1.0, -0.5, 0.5 # uMin, uMax, vMin, vMax  
+END_CG
+
+# World Lighting
+WORLD_SETTINGS
+  Background: 0.6,0.6,0.6	# Background color (r,g,b) # 0.4,0.6,0.9
+  Ia: 0.8,0.8,0.8		# Ambient Light (r,g,b)
+END_WS
+
+# Light Source (White light)
+LIGHT_SOURCE
+  position: 0.7,0.7,0.0	# position (x,y,z)
+  Is: 1.0,1.0,1.0		# Light Source (r,g,b)
+END_LS
+
+# Object - Triangle (Matte Red)
+TRIANGLE_OBJECT
+  point1:  1.0, -0.5,-0.01	# point1 (x,y,z)
+  point2: -1.0, -0.5, 2.00	# point2 (x,y,z)
+  point3: -1.0, -0.5,-0.01	# point3 (x,y,z)
+  Ka: 0.15,0.15,0.01		# Ka (r,g,b)
+  Kd: 0.00,0.00,0.80		# Kd (r,g,b)
+  Ks: 0.10,0.10,0.10		# Ks (r,g,b)
+  n: 5.0			# specular exponent
+  reflection: 0.0		# reflection coefficient
+  transmission: 0.0		# transmission coefficient
+  refraction_index: 1.0		# index of refraction
+END_TO
+
+# Object - Triangle (Matte Yellow)
+TRIANGLE_OBJECT
+  point1:  1.0, -0.5,-0.01	# point1 (x,y,z)
+  point2:  1.0, -0.5, 2.00	# point2 (x,y,z)
+  point3: -1.0, -0.5, 2.00	# point3 (x,y,z)
+  Ka: 0.15,0.15,0.01		# Ka (r,g,b)
+  Kd: 0.00,0.00,0.80		# Kd (r,g,b)
+  Ks: 0.10,0.10,0.10		# Ks (r,g,b)
+  n: 5.0			# specular exponent
+  reflection: 0.0		# reflection coefficient
+  transmission: 0.0		# transmission coefficient
+  refraction_index: 1.0		# index of refraction
+END_TO
+
+# Object - Sphere1
+SPHERE_OBJECT
+  center: -0.6,0.0,1.5		# center (x,y,z)
+  radius: 0.5			# radius
+  Ka: 0.1,0.1,0.1		# Ka (r,g,b)
+  Kd: 1.0,0.0,0.0		# Kd (r,g,b)
+  Ks: 1.0,1.0,1.0		# Ks (r,g,b)
+  n: 70			# specular exponent
+  reflection: 0.2		# reflection coefficient
+  transmission: 0.0		# transmission coefficient
+  refraction_index: 0.0		# index of refraction
+END_SO
+
+# Object - Sphere2
+SPHERE_OBJECT
+  center: 0.6,0.0,1.5		# center (x,y,z)
+  radius: 0.5			# radius
+  Ka: 0.1,0.1,0.1		# Ka (r,g,b)
+  Kd: 0.0,1.0,0.0		# Kd (r,g,b)
+  Ks: 1.0,1.0,1.0		# Ks (r,g,b)
+  n: 70			# specular exponent
+  reflection: 0.4		# reflection coefficient
+  transmission: 0.0		# transmission coefficient
+  refraction_index: 0.5		# index of refraction
+END_SO
+
+

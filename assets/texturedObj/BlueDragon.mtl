@@ -1,0 +1,12 @@
+# File produced by Open Asset Import Library (http://www.assimp.sf.net)
+# (assimp v3.1.187496374)
+
+newmtl Material01
+Kd 0.9 0.9 0.9
+Ka 0.0 0.0 0.0
+Ks 0.9 0.9 0.9
+Ke 0.1 0.1 0.1
+Ns 2000
+illum 1
+map_Kd BlueDragon.png
+
