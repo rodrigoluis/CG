@@ -42,6 +42,9 @@ function main()
     controls.add("* Use o scroll para zoom.");
     controls.show();
 
+  // Listen window size changes
+  window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
+
   render();
   function render()
   {

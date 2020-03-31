@@ -13,13 +13,41 @@ function getCode(ch)
 }
 
 /**
-  * Class InfoBox - show information onscreen
+  * ...
+  *
+  */
+class SecondaryBox
+{
+  constructor(defaultText) {
+    this.box = document.createElement('div');
+    this.box.id = "box";
+    this.box.style.padding = "6px 14px";
+    this.box.style.bottom = "0";
+    this.box.style.left= "0";
+    this.box.style.position = "fixed";
+    this.box.style.backgroundColor = "rgba(100,100,255,0.3)";
+    this.box.style.color = "white";
+    this.box.style.fontFamily = "sans-serif";
+    this.box.style.fontSize = "26px";
+
+    this.textnode = document.createTextNode(defaultText);
+    this.box.appendChild(this.textnode);
+    document.body.appendChild(this.box);
+  }
+  changeMessage(newText) {
+    this.textnode.nodeValue = newText;
+  }
+}
+
+
+/**
+  * Class box - show information onscreen
   *
   */
 class InfoBox {
   constructor() {
     this.infoBox = document.createElement('div');
-    this.infoBox.id = "meuId";
+    this.infoBox.id = "InfoxBox";
     this.infoBox.style.padding = "6px 14px";
     this.infoBox.style.position = "fixed";
     this.infoBox.style.bottom = "0";
@@ -45,6 +73,31 @@ class InfoBox {
   show() {
     document.body.appendChild(this.infoBox);
   }
+}
+
+/**
+ * Makes a definite light follows the camera
+ */
+function lightFollowingCamera(light, camera)
+{
+  light.position.copy( camera.position );
+}
+
+
+/**
+ * Fix camera and renderer when window size changes
+ */
+function onWindowResize(camera, renderer){
+
+    if (camera instanceof THREE.PerspectiveCamera)
+    {
+      camera.aspect = window.innerWidth / window.innerHeight;
+      camera.updateProjectionMatrix();
+      renderer.setSize( window.innerWidth, window.innerHeight );
+    }
+    else {
+      // TODO for other cameras
+    }
 }
 
 /**
@@ -107,7 +160,6 @@ function initCanvasRenderer() {
  */
 function initCamera(initialPosition) {
     var position = (initialPosition !== undefined) ? initialPosition : new THREE.Vector3(-30, 40, 30);
-
     var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.copy(position);
     camera.lookAt(new THREE.Vector3(0, 0, 0));
@@ -134,6 +186,7 @@ function initDefaultLighting(scene, initialPosition) {
     ambientLight.name = "ambientLight";
     scene.add(ambientLight);
 
+    return spotLight; // RETURN ADDED IN MAI/2020
 }
 
 function initDefaultDirectionalLighting(scene, initialPosition) {

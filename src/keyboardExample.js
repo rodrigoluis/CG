@@ -39,6 +39,9 @@ function main()
   // add the cube to the scene
   scene.add(cube);
 
+  // Listen window size changes
+  window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
+
   render();
 
   function keyboardUpdate() {
