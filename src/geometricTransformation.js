@@ -42,6 +42,9 @@ function main()
   // add the cube to the scene
   scene.add(cube);
 
+  var cubeAxesHelper = new THREE.AxesHelper(9);
+  cube.add(cubeAxesHelper);
+
   // Listen window size changes
   window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 

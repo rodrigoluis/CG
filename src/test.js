@@ -3,7 +3,8 @@ function main()
   var stats = initStats();          // To show FPS information
   var scene = new THREE.Scene();    // Create main scene
   var renderer = initRenderer();    // View function in util/utils
-  var camera = initCamera(new THREE.Vector3(0, -30, 2)); // Init camera in this position
+  var camera = initCamera(new THREE.Vector3(5, 5, 7)); // Init camera in this position
+  var light  = initDefaultLighting(scene, new THREE.Vector3(0, 0, 15)); // Init camera in this position
   var clock = new THREE.Clock();
 
   // Use to scale the cube
@@ -22,37 +23,55 @@ function main()
   var axesHelper = new THREE.AxesHelper( 12 );
   scene.add( axesHelper );
 
-  var cube = createCube();
-  //scene.add(cube);
+  const sphereGeometry = new THREE.SphereGeometry(0.2, 32, 32);
+  const sphereMaterial = new THREE.MeshPhongMaterial( {color:'rgb(180,180,255)'} );
+  const sphere = new THREE.Mesh( sphereGeometry, sphereMaterial );
+  scene.add(sphere);
 
-  var rotAxis = new THREE.Vector3(0,1,0); // Set y axis
-  var angle = degreesToRadians(-45);
-
-
-  cube.rotateOnAxis(rotAxis,  angle );
-  cube.scale.set(2, 1, 1);
-  cube.translateX(1);
-  //cube.position.set( 3 , 0, 0);
-  cube.position.set( 3 , 0, 0);
-
-
-  var cube2 = createCube();
-//  cube.translateX( 1 );
-  //cube.rotateOnAxis(rotAxis,  angle );
-//  cube2.translateX( 1 );
-  cube2.scale.set(2, 1, 1);
-  cube2.translateX( 1 );
-
-  var group = new THREE.Group();
-  group.add(cube);
-  group.add(cube2);
-
-  scene.add(group);
-  //group.position.set(1,0,0);
+  // Set position of the sphere
+  sphere.translateX(1.0).translateY(1.0).translateZ(1.0);
 
 
 
+  // ************************** //
+  // Create cylinder
+  // ************************** //
+  const cylinderGeometry = new THREE.CylinderGeometry(0.1, 0.1, 2.0, 25);
+  const cylinderMaterial = new THREE.MeshPhongMaterial( {color:'rgb(150,255,150)'} );
+  const cylinder = new THREE.Mesh( cylinderGeometry, cylinderMaterial );
+  cylinder.name = "cylinder";
+  sphere.add(cylinder);
 
+  // Set position of the cylinder
+//  cylinder.rotateZ(0.11);
+
+
+  // Set shadow property
+  //cylinder.castShadow = true;
+/*
+  // create the ground plane
+  var planeGeometry = new THREE.PlaneGeometry(20, 20);
+  planeGeometry.translate(0.0, 0.0, -0.02); // To avoid conflict with the axeshelper
+  var planeMaterial = new THREE.MeshBasicMaterial({
+      color: "rgb(150, 150, 150)",
+      side: THREE.DoubleSide
+  });
+  var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+  // add the plane to the scene
+  scene.add(plane);
+
+  // create a cube
+  var cubeGeometry = new THREE.BoxGeometry(4, 4, 4);
+  var cubeMaterial = new THREE.MeshNormalMaterial();
+  var cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+  // position the cube
+  cube.position.set(0.0, 0.0, 2.0);
+  // add the cube to the scene
+  scene.add(cube);
+
+  var cubeAxesHelper = new THREE.AxesHelper(9);
+  cube.add(cubeAxesHelper);
+*/
   // Listen window size changes
   window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
@@ -61,55 +80,35 @@ function main()
   function keyboardUpdate() {
 
     keyboard.update();
-    group.rotateOnAxis(rotAxis,  0.1 );
-    cube.rotateOnAxis(rotAxis,  0.1 );
-    var scale = 2.0;
-    //cube.matrixAutoUpdate = false;
-    //cube.rotateOnAxis(rotAxis,  angle );
-    //cube.position.set( 1, 0, 0 );
-    //cube.position.set(3,0,0);
-    //cube.updateMatrix();
+
+/*
+    var speed = 30;
+    var angle = degreesToRadians(10);
+    var rotAxis = new THREE.Vector3(0,0,1); // Set Z axis
+  	var moveDistance = speed * clock.getDelta();
+
+  	if ( keyboard.pressed("left") )     cube.translateX( -1 );
+  	if ( keyboard.pressed("right") )    cube.translateX(  1 );
+    if ( keyboard.pressed("up") )       cube.translateY(  1 );
+  	if ( keyboard.pressed("down") )     cube.translateY( -1 );
+    if ( keyboard.pressed("pageup") )   cube.translateZ(  1 );
+  	if ( keyboard.pressed("pagedown") ) cube.translateZ( -1 );
+
+  	if ( keyboard.pressed("A") )  cube.rotateOnAxis(rotAxis,  angle );
+  	if ( keyboard.pressed("D") )  cube.rotateOnAxis(rotAxis, -angle );
+
+    if ( keyboard.pressed("W") )
+    {
+      scale+=.1;
+      cube.scale.set(scale, scale, scale);
+    }
+  	if ( keyboard.pressed("S") )
+    {
+      scale-=.1;
+      cube.scale.set(scale, scale, scale);
+    }
+    */
   }
-
-function createCube()
-{
-  // create a cube
-  var cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
-  var cubeMaterial = new THREE.MeshNormalMaterial();
-  var cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-  return cube;
-}
-
-  // function keyboardUpdate() {
-  //
-  //   keyboard.update();
-  //
-  //   var speed = 30;
-  //   var angle = degreesToRadians(10);
-  //   var rotAxis = new THREE.Vector3(0,0,1); // Set Z axis
-  // 	var moveDistance = speed * clock.getDelta();
-  //
-  // 	if ( keyboard.pressed("left") )     cube.translateX( -1 );
-  // 	if ( keyboard.pressed("right") )    cube.translateX(  1 );
-  //   if ( keyboard.pressed("up") )       cube.translateY(  1 );
-  // 	if ( keyboard.pressed("down") )     cube.translateY( -1 );
-  //   if ( keyboard.pressed("pageup") )   cube.translateZ(  1 );
-  // 	if ( keyboard.pressed("pagedown") ) cube.translateZ( -1 );
-  //
-  // 	if ( keyboard.pressed("A") )  cube.rotateOnAxis(rotAxis,  angle );
-  // 	if ( keyboard.pressed("D") )  cube.rotateOnAxis(rotAxis, -angle );
-  //
-  //   if ( keyboard.pressed("W") )
-  //   {
-  //     scale+=.1;
-  //     cube.scale.set(scale, scale, scale);
-  //   }
-  // 	if ( keyboard.pressed("S") )
-  //   {
-  //     scale-=.1;
-  //     cube.scale.set(scale, scale, scale);
-  //   }
-  // }
 
   function showInformation()
   {
@@ -124,11 +123,23 @@ function createCube()
       controls.show();
   }
 
+  function rotateCylinder()
+  {
+    var angle = degreesToRadians(5);
+    cylinder.translateX(0.0).translateY(1.0).translateZ(0.0);
+    cylinder.rotateZ(angle);
+
+
+    //cylinder.translateX(0.0).translateY(1.0).translateZ(0.0);
+  }
+
   function render()
   {
     stats.update(); // Update FPS
     trackballControls.update();
     keyboardUpdate();
+    rotateCylinder();
+    lightFollowingCamera(light, camera);
     requestAnimationFrame(render); // Show events
     renderer.render(scene, camera) // Render scene
   }
