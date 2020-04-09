@@ -1,146 +1,77 @@
-function main()
-{
-  var stats = initStats();          // To show FPS information
-  var scene = new THREE.Scene();    // Create main scene
+function main() {
+  //const canvas = document.querySelector('#c');
+  //const renderer = new THREE.WebGLRenderer({canvas});
   var renderer = initRenderer();    // View function in util/utils
-  var camera = initCamera(new THREE.Vector3(5, 5, 7)); // Init camera in this position
-  var light  = initDefaultLighting(scene, new THREE.Vector3(0, 0, 15)); // Init camera in this position
-  var clock = new THREE.Clock();
 
-  // Use to scale the cube
-  var scale   = 1.0;
+  const fov = 40;
+  const aspect = 2;  // the canvas default
+  const near = 0.1;
+  const far = 1000;
+  const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+  camera.position.set(0, 50, 0);
+  camera.up.set(0, 0, 1);
+  camera.lookAt(0, 0, 0);
 
-  // Show text information onscreen
-  showInformation();
+  const scene = new THREE.Scene();
 
-  // To use the keyboard
-  var keyboard = new KeyboardState();
-
-  // Enable mouse rotation, pan, zoom etc.
-  var trackballControls = new THREE.TrackballControls(camera);
-
-  // Show axes (parameter is size of each axis)
-  var axesHelper = new THREE.AxesHelper( 12 );
-  scene.add( axesHelper );
-
-  const sphereGeometry = new THREE.SphereGeometry(0.2, 32, 32);
-  const sphereMaterial = new THREE.MeshPhongMaterial( {color:'rgb(180,180,255)'} );
-  const sphere = new THREE.Mesh( sphereGeometry, sphereMaterial );
-  scene.add(sphere);
-
-  // Set position of the sphere
-  sphere.translateX(1.0).translateY(1.0).translateZ(1.0);
-
-
-
-  // ************************** //
-  // Create cylinder
-  // ************************** //
-  const cylinderGeometry = new THREE.CylinderGeometry(0.1, 0.1, 2.0, 25);
-  const cylinderMaterial = new THREE.MeshPhongMaterial( {color:'rgb(150,255,150)'} );
-  const cylinder = new THREE.Mesh( cylinderGeometry, cylinderMaterial );
-  cylinder.name = "cylinder";
-  sphere.add(cylinder);
-
-  // Set position of the cylinder
-//  cylinder.rotateZ(0.11);
-
-
-  // Set shadow property
-  //cylinder.castShadow = true;
-/*
-  // create the ground plane
-  var planeGeometry = new THREE.PlaneGeometry(20, 20);
-  planeGeometry.translate(0.0, 0.0, -0.02); // To avoid conflict with the axeshelper
-  var planeMaterial = new THREE.MeshBasicMaterial({
-      color: "rgb(150, 150, 150)",
-      side: THREE.DoubleSide
-  });
-  var plane = new THREE.Mesh(planeGeometry, planeMaterial);
-  // add the plane to the scene
-  scene.add(plane);
-
-  // create a cube
-  var cubeGeometry = new THREE.BoxGeometry(4, 4, 4);
-  var cubeMaterial = new THREE.MeshNormalMaterial();
-  var cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-  // position the cube
-  cube.position.set(0.0, 0.0, 2.0);
-  // add the cube to the scene
-  scene.add(cube);
-
-  var cubeAxesHelper = new THREE.AxesHelper(9);
-  cube.add(cubeAxesHelper);
-*/
-  // Listen window size changes
-  window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
-
-  render();
-
-  function keyboardUpdate() {
-
-    keyboard.update();
-
-/*
-    var speed = 30;
-    var angle = degreesToRadians(10);
-    var rotAxis = new THREE.Vector3(0,0,1); // Set Z axis
-  	var moveDistance = speed * clock.getDelta();
-
-  	if ( keyboard.pressed("left") )     cube.translateX( -1 );
-  	if ( keyboard.pressed("right") )    cube.translateX(  1 );
-    if ( keyboard.pressed("up") )       cube.translateY(  1 );
-  	if ( keyboard.pressed("down") )     cube.translateY( -1 );
-    if ( keyboard.pressed("pageup") )   cube.translateZ(  1 );
-  	if ( keyboard.pressed("pagedown") ) cube.translateZ( -1 );
-
-  	if ( keyboard.pressed("A") )  cube.rotateOnAxis(rotAxis,  angle );
-  	if ( keyboard.pressed("D") )  cube.rotateOnAxis(rotAxis, -angle );
-
-    if ( keyboard.pressed("W") )
-    {
-      scale+=.1;
-      cube.scale.set(scale, scale, scale);
-    }
-  	if ( keyboard.pressed("S") )
-    {
-      scale-=.1;
-      cube.scale.set(scale, scale, scale);
-    }
-    */
-  }
-
-  function showInformation()
   {
-    // Use this to show information onscreen
-    controls = new InfoBox();
-      controls.add("Geometric Transformation");
-      controls.addParagraph();
-      controls.add("Pressione as setas para mover o cubo nos planos X e Y.");
-      controls.add("Pressione Page Up e Page down para mover o cubo no eixo Z");
-      controls.add("Pressione 'A' e 'D' para rotacionar no eixo Z.");
-      controls.add("Pressione 'W' e 'S' para mudar a escala em todos os eixos");
-      controls.show();
+    const color = 0xFFFFFF;
+    const intensity = 3;
+    const light = new THREE.PointLight(color, intensity);
+    scene.add(light);
   }
 
-  function rotateCylinder()
-  {
-    var angle = degreesToRadians(5);
-    cylinder.translateX(0.0).translateY(1.0).translateZ(0.0);
-    cylinder.rotateZ(angle);
+  const objects = [];
 
+  const radius = 1;
+  const widthSegments = 6;
+  const heightSegments = 6;
+  const sphereGeometry = new THREE.SphereBufferGeometry(radius, widthSegments, heightSegments);
 
-    //cylinder.translateX(0.0).translateY(1.0).translateZ(0.0);
+  const solarSystem = new THREE.Object3D();
+  scene.add(solarSystem);
+  objects.push(solarSystem);
+
+  const sunMaterial = new THREE.MeshPhongMaterial({emissive: 0xFFFF00});
+  const sunMesh = new THREE.Mesh(sphereGeometry, sunMaterial);
+  sunMesh.scale.set(5, 5, 5);
+  solarSystem.add(sunMesh);
+  objects.push(sunMesh);
+
+  const earthMaterial = new THREE.MeshPhongMaterial({color: 0x2233FF, emissive: 0x112244});
+  const earthMesh = new THREE.Mesh(sphereGeometry, earthMaterial);
+  earthMesh.position.x = 10;
+  solarSystem.add(earthMesh);
+  objects.push(earthMesh);
+
+  // function resizeRendererToDisplaySize(renderer) {
+  //   const canvas = renderer.domElement;
+  //   const width = canvas.clientWidth;
+  //   const height = canvas.clientHeight;
+  //   const needResize = canvas.width !== width || canvas.height !== height;
+  //   if (needResize) {
+  //     renderer.setSize(width, height, false);
+  //   }
+  //   return needResize;
+  // }
+
+  function render(time) {
+    time *= 0.001;
+
+    // if (resizeRendererToDisplaySize(renderer)) {
+    //   const canvas = renderer.domElement;
+    //   camera.aspect = canvas.clientWidth / canvas.clientHeight;
+    //   camera.updateProjectionMatrix();
+    // }
+
+    objects.forEach((obj) => {
+      obj.rotation.y = time;
+    });
+
+    renderer.render(scene, camera);
+
+    requestAnimationFrame(render);
   }
 
-  function render()
-  {
-    stats.update(); // Update FPS
-    trackballControls.update();
-    keyboardUpdate();
-    rotateCylinder();
-    lightFollowingCamera(light, camera);
-    requestAnimationFrame(render); // Show events
-    renderer.render(scene, camera) // Render scene
-  }
+  requestAnimationFrame(render);
 }
