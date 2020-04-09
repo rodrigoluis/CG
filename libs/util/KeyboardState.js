@@ -1,7 +1,7 @@
 /**
  * @author Lee Stemkoski
  *
- * Usage: 
+ * Usage:
  * (1) create a global variable:
  *      var keyboard = new KeyboardState();
  * (2) during main loop:
@@ -10,23 +10,23 @@
  *       keyboard.down("A")    -- true for one update cycle after key is pressed
  *       keyboard.pressed("A") -- true as long as key is being pressed
  *       keyboard.up("A")      -- true for one update cycle after key is released
- * 
+ *
  *  See KeyboardState.k object data below for names of keys whose state can be polled
  */
- 
+
 // initialization
 KeyboardState = function()
-{	
+{
 	// bind keyEvents
 	document.addEventListener("keydown", KeyboardState.onKeyDown, false);
-	document.addEventListener("keyup",   KeyboardState.onKeyUp,   false);	
+	document.addEventListener("keyup",   KeyboardState.onKeyUp,   false);
 }
 
 ///////////////////////////////////////////////////////////////////////////////
 
-KeyboardState.k = 
-{  
-    8: "backspace",  9: "tab",       13: "enter",    16: "shift", 
+KeyboardState.k =
+{
+    8: "backspace",  9: "tab",       13: "enter",    16: "shift",
     17: "ctrl",     18: "alt",       27: "esc",      32: "space",
     33: "pageup",   34: "pagedown",  35: "end",      36: "home",
     37: "left",     38: "up",        39: "right",    40: "down",
@@ -39,8 +39,8 @@ KeyboardState.status = {};
 
 KeyboardState.keyName = function ( keyCode )
 {
-	return ( KeyboardState.k[keyCode] != null ) ? 
-		KeyboardState.k[keyCode] : 
+	return ( KeyboardState.k[keyCode] != null ) ?
+		KeyboardState.k[keyCode] :
 		String.fromCharCode(keyCode);
 }
 
@@ -75,12 +75,12 @@ KeyboardState.prototype.update = function()
 		}
 
 		// key has been flagged as "up" since last update
-		if ( KeyboardState.status[key].up ) 
+		if ( KeyboardState.status[key].up )
 		{
 			delete KeyboardState.status[key];
 			continue; // move on to next key
 		}
-		
+
 		if ( !KeyboardState.status[key].pressed ) // key released
 			KeyboardState.status[key].up = true;
 	}

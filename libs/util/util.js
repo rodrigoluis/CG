@@ -22,6 +22,14 @@ function degreesToRadians(degrees)
 }
 
 /**
+ * Format output to show 'num' number with 'decimalPlaces' decimal places
+ */
+function formatOutput(num, decimalPlaces)
+{
+  return (Math.round(num * 100) / 100).toFixed(decimalPlaces);
+}
+
+/**
   * ...
   *
   */

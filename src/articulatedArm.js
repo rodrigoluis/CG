@@ -9,9 +9,10 @@ function main()
   var trackballControls = new THREE.TrackballControls(camera); // Enable mouse rotation, pan, zoom etc.
 
   // Set angles of rotation
-  var angle = [-1.57, 0];
+  var angle = [-1.57, 0]; // In degreesToRadians
+  
   //var angle2 = 0;
-  var selectedJoint = 1;
+  var selectedJoint = 0;
   var animationOn = true; // control if animation is on or of
 
   // Show text information onscreen
