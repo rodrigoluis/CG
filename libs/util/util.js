@@ -148,7 +148,7 @@ function initRenderer(additionalProperties) {
     renderer.shadowMapSoft = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-    renderer.setClearColor(new THREE.Color(0x000000));
+    renderer.setClearColor(new THREE.Color("rgb(0, 0, 0)"));
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMap.enabled = true;
     document.getElementById("webgl-output").appendChild(renderer.domElement);
@@ -180,7 +180,6 @@ function initCamera(initialPosition) {
     var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.copy(position);
     camera.lookAt(new THREE.Vector3(0, 0, 0));
-
     return camera;
 }
 
@@ -323,6 +322,20 @@ function addDefaultCubeAndSphere(scene) {
         sphere: sphere
     };
 }
+
+/**
+ * Add a small and simple ground plane
+ */
+function createGroundPlane(width, height) {
+    // create the ground plane
+    var planeGeometry = new THREE.PlaneGeometry(width, height, 10, 10);
+    var planeMaterial = new THREE.MeshPhongMaterial({color:"rgb(200,200,200)"});
+    var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+    plane.receiveShadow = true;
+
+    return plane;
+}
+
 
 /**
  * Add a simple ground plance to the provided scene
