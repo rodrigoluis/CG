@@ -329,7 +329,7 @@ function addDefaultCubeAndSphere(scene) {
 function createGroundPlane(width, height) {
     // create the ground plane
     var planeGeometry = new THREE.PlaneGeometry(width, height, 10, 10);
-    var planeMaterial = new THREE.MeshPhongMaterial({color:"rgb(200,200,200)"});
+    var planeMaterial = new THREE.MeshPhongMaterial({color:"rgb(200,200,200)", side:THREE.DoubleSide}); 
     var plane = new THREE.Mesh(planeGeometry, planeMaterial);
     plane.receiveShadow = true;
 

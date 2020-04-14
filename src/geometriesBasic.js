@@ -147,13 +147,6 @@ function main()
   	if ( keyboard.down("A") )
     {
       axesHelper.visible = !axesHelper.visible
-      // camera.position.x = 0;
-      // camera.position.y = 0;
-      // camera.position.z = 30;
-      //
-      // camera.up.x = 0;
-      // camera.up.y = 1;
-      // camera.up.z = 0;
     }
   }
 
@@ -164,7 +157,7 @@ function main()
       controls.add("Geometries I");
       controls.addParagraph();
       controls.add("Pressione as setas para direita e esquerda para alterar o objeto.");
-      controls.add("Pressione 'A' para habilitar/desabilitar os eixos.");
+      controls.add("Pressione 'A' para visualizar/ocultar os eixos.");
       controls.show();
   }
 
