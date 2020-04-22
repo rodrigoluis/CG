@@ -29,6 +29,35 @@ function formatOutput(num, decimalPlaces)
   return (Math.round(num * 100) / 100).toFixed(decimalPlaces);
 }
 
+
+/**
+ Compute the max size acording to XYZ axes
+ Return the maxSzie
+*/
+function getMaxSize(obj)
+{
+  var maxSize;
+  var box = new THREE.Box3().setFromObject( obj );
+  var min = box.min;
+  var max = box.max;
+
+  var size = new THREE.Box3();
+  size.x = max.x - min.x;
+  size.y = max.y - min.y;
+  size.z = max.z - min.z;
+
+  if(size.x >= size.y && size.x >= size.z)
+    maxSize = size.x;
+  else {
+    if(size.y >= size.z )
+      maxSize = size.y;
+    else {
+      maxSize = size.z;
+    }
+  }
+  return maxSize;
+}
+
 /**
   * ...
   *
@@ -329,7 +358,7 @@ function addDefaultCubeAndSphere(scene) {
 function createGroundPlane(width, height) {
     // create the ground plane
     var planeGeometry = new THREE.PlaneGeometry(width, height, 10, 10);
-    var planeMaterial = new THREE.MeshPhongMaterial({color:"rgb(200,200,200)", side:THREE.DoubleSide}); 
+    var planeMaterial = new THREE.MeshPhongMaterial({color:"rgb(200,200,200)", side:THREE.DoubleSide});
     var plane = new THREE.Mesh(planeGeometry, planeMaterial);
     plane.receiveShadow = true;
 

@@ -1,0 +1,153 @@
+{
+   "accessors" : [
+      {
+         "bufferView" : 0,
+         "byteOffset" : 0,
+         "componentType" : 5123,
+         "count" : 5508,
+         "max" : [ 3761 ],
+         "min" : [ 0 ],
+         "name" : "buffer-0-group-0-mesh-0-indices",
+         "type" : "SCALAR"
+      },
+      {
+         "bufferView" : 2,
+         "byteOffset" : 0,
+         "componentType" : 5126,
+         "count" : 3762,
+         "max" : [ 0.09074000269174576, 0.3716099858283997, 0.3436500132083893 ],
+         "min" : [ -0.09074000269174576, -0.008559999987483025, -0.2897199988365173 ],
+         "name" : "buffer-0-group-0-mesh-0-position",
+         "type" : "VEC3"
+      },
+      {
+         "bufferView" : 2,
+         "byteOffset" : 45144,
+         "componentType" : 5126,
+         "count" : 3762,
+         "max" : [ 0.9988930225372314, 0.9998850226402283, 0.9505869746208191 ],
+         "min" : [ -0.9988930225372314, -1, -0.9580820202827454 ],
+         "name" : "buffer-0-group-0-mesh-0-normal",
+         "type" : "VEC3"
+      },
+      {
+         "bufferView" : 1,
+         "byteOffset" : 0,
+         "componentType" : 5126,
+         "count" : 3762,
+         "max" : [ 0.9897969961166382, 0 ],
+         "min" : [ 0, -0.9901639819145203 ],
+         "name" : "buffer-0-group-0-mesh-0-texcoord",
+         "type" : "VEC2"
+      }
+   ],
+   "asset" : {
+      "generator" : "Obj2GltfConverter",
+      "version" : "2.0"
+   },
+   "bufferViews" : [
+      {
+         "buffer" : 0,
+         "byteLength" : 11016,
+         "byteOffset" : 0,
+         "byteStride" : 0,
+         "name" : "buffer-0-bufferview-ushort",
+         "target" : 34963
+      },
+      {
+         "buffer" : 0,
+         "byteLength" : 30096,
+         "byteOffset" : 11016,
+         "byteStride" : 8,
+         "name" : "buffer-0-bufferview-vec2",
+         "target" : 34962
+      },
+      {
+         "buffer" : 0,
+         "byteLength" : 90288,
+         "byteOffset" : 41112,
+         "byteStride" : 12,
+         "name" : "buffer-0-bufferview-vec3",
+         "target" : 34962
+      },
+      {
+         "buffer" : 0,
+         "byteLength" : 1,
+         "byteOffset" : 0,
+         "name" : "buffer-0-bufferview-vec4"
+      }
+   ],
+   "buffers" : [
+      {
+         "byteLength" : 131400,
+         "name" : "buffer-0",
+         "uri" : "TocoToucan.bin"
+      }
+   ],
+   "images" : [
+      {
+         "mimeType" : "image/png",
+         "name" : "initialShadingGroup-image",
+         "uri" : "TocoToucan_Albedo.png"
+      }
+   ],
+   "materials" : [
+      {
+         "alphaMode" : "OPAQUE",
+         "doubleSided" : true,
+         "name" : "initialShadingGroup",
+         "pbrMetallicRoughness" : {
+            "baseColorFactor" : [ 1, 1, 1, 1 ],
+            "baseColorTexture" : {
+               "index" : 0,
+               "texCoord" : 0
+            },
+            "metallicFactor" : 0,
+            "roughnessFactor" : 0.9699476628648295
+         }
+      }
+   ],
+   "meshes" : [
+      {
+         "name" : "buffer-0-mesh-0",
+         "primitives" : [
+            {
+               "attributes" : {
+                  "NORMAL" : 2,
+                  "POSITION" : 1,
+                  "TEXCOORD_0" : 3
+               },
+               "indices" : 0,
+               "material" : 0,
+               "mode" : 4
+            }
+         ]
+      }
+   ],
+   "nodes" : [
+      {
+         "mesh" : 0,
+         "name" : "node-0"
+      }
+   ],
+   "samplers" : [
+      {
+         "name" : "initialShadingGroup-sampler",
+         "wrapS" : 10497,
+         "wrapT" : 10497
+      }
+   ],
+   "scenes" : [
+      {
+         "name" : "scene-0",
+         "nodes" : [ 0 ]
+      }
+   ],
+   "textures" : [
+      {
+         "name" : "initialShadingGroup-texture",
+         "sampler" : 0,
+         "source" : 0
+      }
+   ]
+}
