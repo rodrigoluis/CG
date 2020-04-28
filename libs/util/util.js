@@ -234,6 +234,21 @@ function initDefaultLighting(scene, initialPosition) {
     return spotLight; // RETURN ADDED IN MAI/2020
 }
 
+/*
+ * Sphere to represent light position
+ */
+function createLightSphere(scene, radius, widthSegments, heightSegments, position)
+{
+  var geometry = new THREE.SphereGeometry(radius, widthSegments, heightSegments, 0, Math.PI * 2, 0, Math.PI);
+  var material = new THREE.MeshBasicMaterial({color:"rgb(255,255,50)"});
+  var object = new THREE.Mesh(geometry, material);
+    object.visible = true;
+    object.position.copy(position);    
+  scene.add(object);
+
+  return object;
+}
+
 function initDefaultDirectionalLighting(scene, initialPosition) {
     var position = (initialPosition !== undefined) ? initialPosition : new THREE.Vector3(100, 200, 200);
 

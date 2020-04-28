@@ -213,7 +213,7 @@ function main()
     keyboard.update();
   	if ( keyboard.down("A") )
     {
-      axesHelper.visible = !axesHelper.visible
+      axesHelper.visible = !axesHelper.visible;
     }
     if ( keyboard.down("enter"))
     {

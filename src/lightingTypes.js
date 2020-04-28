@@ -50,7 +50,7 @@ function main()
   //----------------------------------------------------------------------------
   // Control available light and set the active light
   var lightArray = new Array();
-  var activeLight = 0; // View first object
+  var activeLight = 0; // View first Light
 
   //---------------------------------------------------------
   // Default light position, color, ambient color and intensity
@@ -60,9 +60,7 @@ function main()
   var lightIntensity = 1.0;
 
   // Sphere to represent the light
-  var lightSphere = createSphere(0.05, 10, 10);
-    lightSphere.position.copy(lightPosition);
-  scene.add(lightSphere);
+  var lightSphere = createLightSphere(scene, 0.05, 10, 10, lightPosition);
 
   //---------------------------------------------------------
   // Create and set all lights. Only Spot and ambient will be visible at first
@@ -200,7 +198,8 @@ function main()
       lightPosition.z += 0.05;
       updateLightPosition();
     }
-    if ( keyboard.down("enter"))
+
+    if ( keyboard.down(".") )
     {
       activeLight++;
       if(activeLight < lightArray.length)
@@ -215,8 +214,26 @@ function main()
       }
       updateLightPosition();
       updateLightIntensity();
-      infoBox.changeMessage("Object " + activeLight + ": " + lightArray[activeLight].name);
+      infoBox.changeMessage("Light " + activeLight + ": " + lightArray[activeLight].name);
     }
+    if ( keyboard.down(",") )
+    {
+      activeLight--;
+      if(activeLight < 0)
+      {
+        activeLight = lightArray.length-1;
+        lightArray[0].visible = false;
+        lightArray[activeLight].visible = true;
+      }
+      else {
+        lightArray[activeLight+1].visible = false;
+        lightArray[activeLight].visible = true;
+      }
+      updateLightPosition();
+      updateLightIntensity();
+      infoBox.changeMessage("Light " + activeLight + ": " + lightArray[activeLight].name);
+    }
+
     if ( keyboard.down("Q") )
     {
       axesHelper.visible = !axesHelper.visible;
@@ -230,7 +247,7 @@ function main()
       controls.add("Lighting - Types of Lights");
       controls.show();
       controls.addParagraph();
-      controls.add("Pressione 'Enter' para alternar o tipo de fonte de luz.");
+      controls.add("Pressione ',' e '.' para alternar o tipo de fonte de luz.");
       controls.add("Pressione 'Q' para habilitar/desabilitar os eixos.");
       controls.add("Pressione 'A' para habilitar/desabilitar luz ambiente.");
       controls.add("Pressione '=' para aumentar a intensidade da luz.");
@@ -238,15 +255,6 @@ function main()
       controls.add("Pressione setas para mover a fonte de luz em X e Y");
       controls.add("Pressione 'pageup' e 'pagedown' para mover a luz em Z");
       controls.show();
-  }
-
-  function createSphere(radius, widthSegments, heightSegments)
-  {
-    var geometry = new THREE.SphereGeometry(radius, widthSegments, heightSegments, 0, Math.PI * 2, 0, Math.PI);
-    var material = new THREE.MeshBasicMaterial({color:"rgb(255,255,50)"});
-    var object = new THREE.Mesh(geometry, material);
-      object.castShadow = true;
-    return object;
   }
 
   function render()
