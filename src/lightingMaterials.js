@@ -46,8 +46,8 @@ function main()
   // Default light position, color, ambient color and intensity
 
 
-  // Teapot --- fullsize: 1, tess: 6, bottom: true, lid: true, body: true, fitLid: true, nonblinn: false;
-  var geometry = new THREE.TeapotGeometry(0.5,6,true,true,true,true,false);
+  // Teapot
+  var geometry = new THREE.TeapotGeometry(0.5);
 
   usePhongMaterial(geometry, true);
   useLambertMaterial(geometry, false);

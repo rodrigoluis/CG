@@ -34,16 +34,12 @@ function main()
   var infoBox = new SecondaryBox("");
 
   // Teapot
-  // fullsize: 1, tess: 6, bottom: true, lid: true,
-  // body: true, fitLid: true, nonblinn: false;
-  var geometry = new THREE.TeapotGeometry(0.5,6,true,true,true,true,false);
+  var geometry = new THREE.TeapotGeometry(0.5);
   var material = new THREE.MeshPhongMaterial({color:"rgb(255,20,20)", shininess:"200"});
     material.side = THREE.DoubleSide;
   var obj = new THREE.Mesh(geometry, material);
     obj.castShadow = true;
-  // position the cube
-  obj.position.set(0.0, 0.5, 0.0);
-  // add the cube to the scene
+    obj.position.set(0.0, 0.5, 0.0);
   scene.add(obj);
 
   //----------------------------------------------------------------------------
