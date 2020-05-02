@@ -39,11 +39,12 @@ function main()
   var textureLoader = new THREE.TextureLoader();
   var floor  = textureLoader.load('../assets/textures/marble.png');
 
-  // Apply texture to the 'map' property of the respective materials' objects
+  // Apply texture to the 'map' property of the plane
   plane.material.map = floor;
 
+  // Set defaults
   var repeatFactor = 2;
-  var wrapMode = THREE.RepeatWrapping;
+  var wrapMode  = THREE.RepeatWrapping;
   var minFilter = THREE.LinearFilter;
   var magFilter = THREE.LinearFilter;
   updateTexture();
@@ -125,7 +126,6 @@ function main()
       plane.material.map.needsUpdate = true;
       updateTexture();
     }
-
   }
 
   function showInformation()

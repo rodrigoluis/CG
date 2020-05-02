@@ -1,9 +1,9 @@
-newmtl blinn1SG
+newmtl material
 Kd 1.00 1.00 1.00
 Ka 0.00 0.00 0.00
 Tf 1.00 1.00 1.00
-Ks 0.30 0.30 0.30
+Ks 0.0 0.0 0.0
 Ns 600
 Ni 1.00
 illum 2
-map_Kd L200.png
+map_Kd fish.png

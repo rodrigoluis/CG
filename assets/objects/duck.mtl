@@ -1,0 +1,8 @@
+newmtl material
+Kd 1.0 1.0 1.0
+Ka 0.1 0.1 0.1
+Ks 1.0 1.0 1.0
+Ke 0.0 0.0 0.0
+Ns 10
+illum 1
+map_Kd duck.png

@@ -20,3 +20,5 @@ Ns 200.0
 Ni 1.500000
 d 1.000000
 illum 4
+
+map_Kd plane.png

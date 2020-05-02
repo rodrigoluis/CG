@@ -1,5 +1,7 @@
 # OBJ written from /Users/keenan/Pictures/duckraft/bob/bob_tri.obj
 
+mtllib duck.mtl
+
 o Mesh
 v -0.0689691 -0.271823 -0.0665855
 v -0.0430436 -0.271803 -0.128743
@@ -16336,8 +16338,8 @@ vt 0.822461 0.707905
 vt 0.501675 0.0845647
 vt 0.839507 0.945505
 vt 0.493525 0.768415
-#mtllib bob_tri.mtl
-#usemtl feathers
+
+usemtl material
 g Default
 f 1341/1/1 1340/2/2 1337/3/3
 f 1/4/4 1337/3/3 1340/2/2
