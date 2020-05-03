@@ -1,0 +1,56 @@
+# 
+# Wavefront material file
+# Converted by the DEEP Exploration  Deep Exploration 4.1.20.1005 Release
+# Right Hemisphere, LTD
+# http://www.righthemisphere.com/
+# 
+
+newmtl DarkerBlack
+Ka 0 0 0
+Kd 0.094212 0.094212 0.094212
+Ks 0.55372 0.55372 0.55372
+illum 2
+Ns 2
+
+newmtl Material__2
+Ka 0 0 0
+Kd 0.317647 0.308824 0.255882
+Ks 0.5372 0.5372 0.5372
+illum 2
+Ns 2
+
+newmtl Material__7
+Ka 0 0 0
+Kd 0.158824 0.182353 0.15
+Ks 0.5372 0.5372 0.5372
+illum 2
+Ns 2
+
+newmtl Material__1
+Ka 0 0 0
+Kd 0.602942 0.288235 0.052941
+Ks 0 0 0
+illum 2
+Ns 2
+
+newmtl Material__4
+Ka 0 0 0
+Kd 1 1 1
+Ks 0 0 0
+illum 2
+Ns 2
+map_Kd tank.jpg
+
+newmtl DarkGreen
+Ka 0 0 0
+Kd 0.255882 0.205882 0.176471
+Ks 0.49586 0.49586 0.49586
+illum 2
+Ns 2
+
+newmtl Material__3
+Ka 0 0 0
+Kd 0.744118 0.741176 0.738236
+Ks 0.59504 0.59504 0.59504
+illum 2
+Ns 2

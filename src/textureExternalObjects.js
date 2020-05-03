@@ -46,20 +46,17 @@ function main()
   var objectArray = new Array();
   var activeObject = 0; // View first object
 
-  loadOBJFile('../assets/objects/', 'fish', false, 1.0, 90);
-  loadOBJFile('../assets/objects/', 'L200', false, 2.5, 90);
-  loadOBJFile('../assets/objects/', 'littleCow', false, 1.0, -90);
-  loadOBJFile('../assets/objects/', 'Florest_Guardian', false, 1.0, 45);
-  loadOBJFile('../assets/objects/', 'plane', false, 3.0, 0);
+  loadOBJFile('../assets/objects/', 'L200', 2.5, 90);
+  loadOBJFile('../assets/objects/', 'plane', 3.0, 0);
+  loadOBJFile('../assets/objects/', 'tank', 2.0, 90);
 
-  loadGLTFFile('../assets/objects/', 'chair', false, 1.0, 180);
-  loadGLTFFile('../assets/objects/', 'orca', false, 2.0, 180);
-
-  var textureLoader = new THREE.TextureLoader();
+  loadGLTFFile('../assets/objects/orca/','scene.gltf', 4.0, 180);
+  loadGLTFFile('../assets/objects/wooden_goose/','scene.gltf', 2.0, 90);
+  loadGLTFFile('../assets/objects/chair/','scene.gltf', 1.0, 180);
 
   render();
 
-  function loadOBJFile(modelPath, modelName, visibility, desiredScale, angle)
+  function loadOBJFile(modelPath, modelName, desiredScale, angle)
   {
     currentModel = modelName;
     var manager = new THREE.LoadingManager( );
@@ -73,8 +70,7 @@ function main()
          objLoader.setMaterials(materials);
          objLoader.setPath(modelPath);
          objLoader.load( modelName + ".obj", function ( obj ) {
-           obj.name = modelName;
-           obj.visible = visibility;
+           obj.visible = false;
            // Set 'castShadow' property for each children of the group
            obj.traverse( function (child)
            {
@@ -96,13 +92,12 @@ function main()
     });
   }
 
-  function loadGLTFFile(modelPath, modelName, visibility, desiredScale, angle)
+  function loadGLTFFile(modelPath, modelName, desiredScale, angle)
   {
     var loader = new THREE.GLTFLoader( );
-    loader.load( modelPath + modelName + '.gltf', function ( gltf ) {
+    loader.load( modelPath + modelName, function ( gltf ) {
       var obj = gltf.scene;
-      obj.name = modelName;
-      obj.visible = visibility;
+      obj.visible = false;
       obj.traverse( function ( child ) {
       	if ( child ) {
            child.castShadow = true;
@@ -174,7 +169,7 @@ function main()
     {
       if(activeObject != 0) objectArray[activeObject].visible = false;
       renderFirstObjectLoaded();
-      infoBox.changeMessage("Object " + activeObject + ": " + objectArray[activeObject].name);
+      infoBox.changeMessage("Object " + activeObject);
     }
     if ( keyboard.down("right") )
     {
@@ -194,7 +189,7 @@ function main()
         objectArray[objectArray.length-1].visible = false;
         objectArray[0].visible = true;
       }
-      infoBox.changeMessage("Object " + activeObject + ": " + objectArray[activeObject].name);
+      infoBox.changeMessage("Object " + activeObject);
     }
     if ( keyboard.down("left") )
     {
@@ -214,7 +209,7 @@ function main()
         objectArray[activeObject+1].visible = false;
         objectArray[activeObject].visible = true;
       }
-      infoBox.changeMessage("Object " + activeObject + ": " + objectArray[activeObject].name);
+      infoBox.changeMessage("Object " + activeObject);
     }
   }
 
