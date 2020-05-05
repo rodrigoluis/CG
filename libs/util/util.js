@@ -243,7 +243,7 @@ function createLightSphere(scene, radius, widthSegments, heightSegments, positio
   var material = new THREE.MeshBasicMaterial({color:"rgb(255,255,50)"});
   var object = new THREE.Mesh(geometry, material);
     object.visible = true;
-    object.position.copy(position);    
+    object.position.copy(position);
   scene.add(object);
 
   return object;
@@ -370,14 +370,17 @@ function addDefaultCubeAndSphere(scene) {
 /**
  * Add a small and simple ground plane
  */
-function createGroundPlane(width, height) {
-    // create the ground plane
-    var planeGeometry = new THREE.PlaneGeometry(width, height, 10, 10);
-    var planeMaterial = new THREE.MeshPhongMaterial({color:"rgb(200,200,200)", side:THREE.DoubleSide});
-    var plane = new THREE.Mesh(planeGeometry, planeMaterial);
-    plane.receiveShadow = true;
+function createGroundPlane(width, height, gcolor = null)
+{
+  if(!gcolor) gcolor = "rgb(200,200,200)";
+  // create the ground plane
+  var planeGeometry = new THREE.PlaneGeometry(width, height, 10, 10);
+  var planeMaterial = new THREE.MeshLambertMaterial({color:gcolor, side:THREE.DoubleSide});
+//  var planeMaterial = new THREE.MeshLambertMaterial({color:"rgb(255,0,0)", side:THREE.DoubleSide});
+  var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+  plane.receiveShadow = true;
 
-    return plane;
+  return plane;
 }
 
 

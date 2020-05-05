@@ -1,0 +1,348 @@
+{
+  "accessors": [
+    {
+      "bufferView": 1,
+      "componentType": 5126,
+      "count": 1756,
+      "max": [
+        737.7838134765625,
+        -1.0511190891265869,
+        850.12322998046875
+      ],
+      "min": [
+        -742.5048828125,
+        -108.11734008789062,
+        -438.11245727539062
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 21072,
+      "componentType": 5126,
+      "count": 1756,
+      "max": [
+        1,
+        0.99993622303009033,
+        0.99997121095657349
+      ],
+      "min": [
+        -1,
+        -0.99993282556533813,
+        -0.98679876327514648
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 0,
+      "componentType": 5125,
+      "count": 8586,
+      "max": [
+        1755
+      ],
+      "min": [
+        0
+      ],
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 42144,
+      "componentType": 5126,
+      "count": 253,
+      "max": [
+        100,
+        182.275390625,
+        1872.2354736328125
+      ],
+      "min": [
+        -100,
+        -100,
+        -0
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 1,
+      "byteOffset": 45180,
+      "componentType": 5126,
+      "count": 253,
+      "max": [
+        0.99603790044784546,
+        0.99876701831817627,
+        1
+      ],
+      "min": [
+        -0.99603790044784546,
+        -0.99877190589904785,
+        -1
+      ],
+      "type": "VEC3"
+    },
+    {
+      "bufferView": 0,
+      "byteOffset": 34344,
+      "componentType": 5125,
+      "count": 828,
+      "max": [
+        252
+      ],
+      "min": [
+        0
+      ],
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 2,
+      "componentType": 5126,
+      "count": 91,
+      "max": [
+        3
+      ],
+      "min": [
+        0
+      ],
+      "type": "SCALAR"
+    },
+    {
+      "bufferView": 3,
+      "componentType": 5126,
+      "count": 91,
+      "max": [
+        0.49119764566421509,
+        0.70710676908493042,
+        0.70710676908493042,
+        0.70710676908493042
+      ],
+      "min": [
+        -0.70710676908493042,
+        -0.49119764566421509,
+        -0.49119764566421509,
+        -0.49119764566421509
+      ],
+      "type": "VEC4"
+    }
+  ],
+  "animations": [
+    {
+      "channels": [
+        {
+          "sampler": 0,
+          "target": {
+            "node": 5,
+            "path": "rotation"
+          }
+        }
+      ],
+      "name": "CINEMA_4D_Main",
+      "samplers": [
+        {
+          "input": 6,
+          "interpolation": "LINEAR",
+          "output": 7
+        }
+      ]
+    }
+  ],
+  "asset": {
+    "extras": {
+      "author": "cthvlab (https://sketchfab.com/cthvlab)",
+      "license": "CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)",
+      "source": "https://sketchfab.com/3d-models/um-windmill-10-kw-264437b32d9e46b4817d63e128cb61a0",
+      "title": "UM Windmill 10 kW"
+    },
+    "generator": "Sketchfab-7.47.0",
+    "version": "2.0"
+  },
+  "bufferViews": [
+    {
+      "buffer": 0,
+      "byteLength": 37656,
+      "byteOffset": 0,
+      "name": "floatBufferViews",
+      "target": 34963
+    },
+    {
+      "buffer": 0,
+      "byteLength": 48216,
+      "byteOffset": 37656,
+      "byteStride": 12,
+      "name": "floatBufferViews",
+      "target": 34962
+    },
+    {
+      "buffer": 0,
+      "byteLength": 364,
+      "byteOffset": 85872,
+      "name": "floatBufferViews"
+    },
+    {
+      "buffer": 0,
+      "byteLength": 1456,
+      "byteOffset": 86236,
+      "byteStride": 16,
+      "name": "floatBufferViews"
+    }
+  ],
+  "buffers": [
+    {
+      "byteLength": 87692,
+      "uri": "scene.bin"
+    }
+  ],
+  "materials": [
+    {
+      "doubleSided": true,
+      "emissiveFactor": [
+        0,
+        0,
+        0
+      ],
+      "name": "material",
+      "pbrMetallicRoughness": {
+        "baseColorFactor": [
+          0.84313700000000003,
+          0.82745100000000005,
+          0.85097999999999996,
+          1
+        ],
+        "metallicFactor": 0,
+        "roughnessFactor": 0.90274509999999997
+      }
+    }
+  ],
+  "meshes": [
+    {
+      "name": "������������������������_������������������������_22___����_0026_������������ - ���������� ����������������������_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 1,
+            "POSITION": 0
+          },
+          "indices": 2,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    },
+    {
+      "name": "������������������������_������������������������_22___����_0026_1_������������ - ���������� ����������������������_0",
+      "primitives": [
+        {
+          "attributes": {
+            "NORMAL": 4,
+            "POSITION": 3
+          },
+          "indices": 5,
+          "material": 0,
+          "mode": 4
+        }
+      ]
+    }
+  ],
+  "nodes": [
+    {
+      "children": [
+        1
+      ],
+      "name": "RootNode (gltf orientation matrix)",
+      "rotation": [
+        -0.70710678118654746,
+        -0,
+        -0,
+        0.70710678118654757
+      ]
+    },
+    {
+      "children": [
+        2
+      ],
+      "name": "RootNode (model correction matrix)"
+    },
+    {
+      "children": [
+        3
+      ],
+      "matrix": [
+        1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1,
+        0,
+        0,
+        -1,
+        0,
+        0,
+        0,
+        0,
+        0,
+        1
+      ],
+      "name": "7a3ffdbf22164a9a960c260ce2f8e364.fbx"
+    },
+    {
+      "children": [
+        4
+      ],
+      "name": ""
+    },
+    {
+      "children": [
+        5,
+        7
+      ],
+      "name": "RootNode"
+    },
+    {
+      "children": [
+        6
+      ],
+      "name": "������������������������_������������������������_22___����_0026",
+      "rotation": [
+        0,
+        0,
+        0.7071068286895752,
+        0.7071068286895752
+      ],
+      "translation": [
+        29.471771240234375,
+        1802.1600341796875,
+        1.314703147780108e-13
+      ]
+    },
+    {
+      "mesh": 0,
+      "name": "������������������������_������������������������_22___����_0026_������������ - ���������� ����������������������_0"
+    },
+    {
+      "children": [
+        8
+      ],
+      "name": "������������������������_������������������������_22___����_0026_1",
+      "rotation": [
+        -0.5,
+        0.5,
+        0.5,
+        0.5
+      ]
+    },
+    {
+      "mesh": 1,
+      "name": "������������������������_������������������������_22___����_0026_1_������������ - ���������� ����������������������_0"
+    }
+  ],
+  "scene": 0,
+  "scenes": [
+    {
+      "name": "OSG_Scene",
+      "nodes": [
+        0
+      ]
+    }
+  ]
+}
+
