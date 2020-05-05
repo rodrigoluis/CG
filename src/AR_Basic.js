@@ -17,20 +17,23 @@ function main()
 	// array of functions for the rendering loop
 	var onRenderFcts= [];
 
+  // Show text information onscreen
+  showInformation();
+
 	//----------------------------------------------------------------------------
 	// Handle arToolkitSource
   // More info: https://ar-js-org.github.io/AR.js-Docs/marker-based/
 	var arToolkitSource = new THREEx.ArToolkitSource({
 		// to read from the webcam
-//		sourceType : 'webcam',
+		sourceType : 'webcam',
 
 		// to read from an image
-		// sourceType : 'image',
-		// sourceUrl : '../assets/AR/kanjiScene.jpg',
+		//sourceType : 'image',
+		//sourceUrl : '../assets/AR/kanjiScene.jpg',
 
 		// to read from a video
-		sourceType : 'video',
-		sourceUrl : '../assets/AR/kanjiScene.mp4'
+		// sourceType : 'video',
+		// sourceUrl : '../assets/AR/kanjiScene.mp4'
 	})
 
 	arToolkitSource.init(function onReady(){
@@ -51,9 +54,6 @@ function main()
 			arToolkitSource.copyElementSizeTo(arToolkitContext.arController.canvas)
 		}
 	}
-
-  // Show text information onscreen
-  showInformation();
 
 	//----------------------------------------------------------------------------
 	// initialize arToolkitContext
