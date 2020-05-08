@@ -1,0 +1,8 @@
+Versão atual: r116
+
+Update scheme:
+
+"three/three.*" from "three.js.r***/build/three.*"
+
+Modules (controls, geometries etc) from "three.js.r***/examples/js"
+(copiar tudo e dar merge na pasta atual).

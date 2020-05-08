@@ -6,11 +6,11 @@ function main()
   var camera = initCamera(new THREE.Vector3(7, 7, 7)); // Init camera in this position
   var light  = initDefaultLighting(scene, new THREE.Vector3(7, 7, 7));
   var keyboard = new KeyboardState();   // To use the keyboard
-  var trackballControls = new THREE.TrackballControls(camera); // Enable mouse rotation, pan, zoom etc.
+  var trackballControls = new THREE.TrackballControls( camera, renderer.domElement );
 
   // Set angles of rotation
   var angle = [-1.57, 0]; // In degreesToRadians
-  
+
   //var angle2 = 0;
   var selectedJoint = 0;
   var animationOn = true; // control if animation is on or of

@@ -34,7 +34,7 @@ function main()
   var keyboard = new KeyboardState();
 
   // Enable mouse rotation, pan, zoom etc.
-  var trackballControls = new THREE.TrackballControls(camera);
+  var trackballControls = new THREE.TrackballControls( camera, renderer.domElement );
 
   // Object Material for all objects
   var objectMaterial = new THREE.MeshPhongMaterial({color:"rgb(255,0,0)"});

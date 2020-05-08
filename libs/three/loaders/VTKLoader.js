@@ -11,17 +11,20 @@
 
 THREE.VTKLoader = function ( manager ) {
 
-	this.manager = ( manager !== undefined ) ? manager : THREE.DefaultLoadingManager;
+	THREE.Loader.call( this, manager );
 
 };
 
-Object.assign( THREE.VTKLoader.prototype, THREE.EventDispatcher.prototype, {
+THREE.VTKLoader.prototype = Object.assign( Object.create( THREE.Loader.prototype ), {
+
+	constructor: THREE.VTKLoader,
 
 	load: function ( url, onLoad, onProgress, onError ) {
 
 		var scope = this;
 
 		var loader = new THREE.FileLoader( scope.manager );
+		loader.setPath( scope.path );
 		loader.setResponseType( 'arraybuffer' );
 		loader.load( url, function ( text ) {
 
@@ -48,6 +51,9 @@ Object.assign( THREE.VTKLoader.prototype, THREE.EventDispatcher.prototype, {
 			var normals = [];
 
 			var result;
+
+			// pattern for detecting the end of a number sequence
+			var patWord = /^[^\d.\s-]+/;
 
 			// pattern for reading vertices, 3 floats or integers
 			var pat3Floats = /(\-?\d+\.?[\d\-\+e]*)\s+(\-?\d+\.?[\d\-\+e]*)\s+(\-?\d+\.?[\d\-\+e]*)/g;
@@ -89,12 +95,20 @@ Object.assign( THREE.VTKLoader.prototype, THREE.EventDispatcher.prototype, {
 
 			for ( var i in lines ) {
 
-				var line = lines[ i ];
+				var line = lines[ i ].trim();
 
-				if ( inPointsSection ) {
+				if ( line.indexOf( 'DATASET' ) === 0 ) {
+
+					var dataset = line.split( ' ' )[ 1 ];
+
+					if ( dataset !== 'POLYDATA' ) throw new Error( 'Unsupported DATASET type: ' + dataset );
+
+				} else if ( inPointsSection ) {
 
 					// get the vertices
 					while ( ( result = pat3Floats.exec( line ) ) !== null ) {
+
+						if ( patWord.exec( line ) !== null ) break;
 
 						var x = parseFloat( result[ 1 ] );
 						var y = parseFloat( result[ 2 ] );
@@ -174,6 +188,8 @@ Object.assign( THREE.VTKLoader.prototype, THREE.EventDispatcher.prototype, {
 
 						while ( ( result = pat3Floats.exec( line ) ) !== null ) {
 
+							if ( patWord.exec( line ) !== null ) break;
+
 							var r = parseFloat( result[ 1 ] );
 							var g = parseFloat( result[ 2 ] );
 							var b = parseFloat( result[ 3 ] );
@@ -186,6 +202,8 @@ Object.assign( THREE.VTKLoader.prototype, THREE.EventDispatcher.prototype, {
 						// Get the normal vectors
 
 						while ( ( result = pat3Floats.exec( line ) ) !== null ) {
+
+							if ( patWord.exec( line ) !== null ) break;
 
 							var nx = parseFloat( result[ 1 ] );
 							var ny = parseFloat( result[ 2 ] );
@@ -250,76 +268,50 @@ Object.assign( THREE.VTKLoader.prototype, THREE.EventDispatcher.prototype, {
 
 			}
 
-			var geometry;
-			var stagger = 'point';
+			var geometry = new THREE.BufferGeometry();
+			geometry.setIndex( indices );
+			geometry.setAttribute( 'position', new THREE.Float32BufferAttribute( positions, 3 ) );
 
-			if ( colors.length === indices.length ) {
+			if ( normals.length === positions.length ) {
 
-				stagger = 'cell';
+				geometry.setAttribute( 'normal', new THREE.Float32BufferAttribute( normals, 3 ) );
 
 			}
 
-			if ( stagger === 'point' ) {
+			if ( colors.length !== indices.length ) {
 
-				// Nodal. Use BufferGeometry
-				geometry = new THREE.BufferGeometry();
-				geometry.setIndex( new THREE.BufferAttribute( new Uint32Array( indices ), 1 ) );
-				geometry.addAttribute( 'position', new THREE.BufferAttribute( new Float32Array( positions ), 3 ) );
+				// stagger
 
 				if ( colors.length === positions.length ) {
 
-					geometry.addAttribute( 'color', new THREE.BufferAttribute( new Float32Array( colors ), 3 ) );
-
-				}
-
-				if ( normals.length === positions.length ) {
-
-					geometry.addAttribute( 'normal', new THREE.BufferAttribute( new Float32Array( normals ), 3 ) );
+					geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( colors, 3 ) );
 
 				}
 
 			} else {
 
-				// Cell centered colors. The only way to attach a solid color to each triangle
-				// is to use Geometry, which is less efficient than BufferGeometry
-				geometry = new THREE.Geometry();
+				// cell
 
-				var numTriangles = indices.length / 3;
-				var numPoints = positions.length / 3;
-				var face;
-				var ia, ib, ic;
-				var x, y, z;
-				var r, g, b;
+				geometry = geometry.toNonIndexed();
+				var numTriangles = geometry.attributes.position.count / 3;
 
-				for ( var j = 0; j < numPoints; ++ j ) {
+				if ( colors.length === ( numTriangles * 3 ) ) {
 
-					x = positions[ 3 * j + 0 ];
-					y = positions[ 3 * j + 1 ];
-					z = positions[ 3 * j + 2 ];
-					geometry.vertices.push( new THREE.Vector3( x, y, z ) );
+					var newColors = [];
 
-				}
+					for ( var i = 0; i < numTriangles; i ++ ) {
 
-				for ( var i = 0; i < numTriangles; ++ i ) {
+						var r = colors[ 3 * i + 0 ];
+						var g = colors[ 3 * i + 1 ];
+						var b = colors[ 3 * i + 2 ];
 
-					ia = indices[ 3 * i + 0 ];
-					ib = indices[ 3 * i + 1 ];
-					ic = indices[ 3 * i + 2 ];
-					geometry.faces.push( new THREE.Face3( ia, ib, ic ) );
-
-				}
-
-				if ( colors.length === numTriangles * 3 ) {
-
-					for ( var i = 0; i < numTriangles; ++ i ) {
-
-						face = geometry.faces[ i ];
-						r = colors[ 3 * i + 0 ];
-						g = colors[ 3 * i + 1 ];
-						b = colors[ 3 * i + 2 ];
-						face.color = new THREE.Color().setRGB( r, g, b );
+						newColors.push( r, g, b );
+						newColors.push( r, g, b );
+						newColors.push( r, g, b );
 
 					}
+
+					geometry.setAttribute( 'color', new THREE.Float32BufferAttribute( newColors, 3 ) );
 
 				}
 
@@ -372,7 +364,13 @@ Object.assign( THREE.VTKLoader.prototype, THREE.EventDispatcher.prototype, {
 				state = findString( buffer, index );
 				line = state.parsedString;
 
-				if ( line.indexOf( 'POINTS' ) === 0 ) {
+				if ( line.indexOf( 'DATASET' ) === 0 ) {
+
+					var dataset = line.split( ' ' )[ 1 ];
+
+					if ( dataset !== 'POLYDATA' ) throw new Error( 'Unsupported DATASET type: ' + dataset );
+
+				} else if ( line.indexOf( 'POINTS' ) === 0 ) {
 
 					vtk.push( line );
 					// Add the points
@@ -392,6 +390,7 @@ Object.assign( THREE.VTKLoader.prototype, THREE.EventDispatcher.prototype, {
 						pointIndex = pointIndex + 12;
 
 					}
+
 					// increment our next pointer
 					state.next = state.next + count + 1;
 
@@ -440,6 +439,7 @@ Object.assign( THREE.VTKLoader.prototype, THREE.EventDispatcher.prototype, {
 						}
 
 					}
+
 					// increment our next pointer
 					state.next = state.next + count + 1;
 
@@ -477,6 +477,7 @@ Object.assign( THREE.VTKLoader.prototype, THREE.EventDispatcher.prototype, {
 						}
 
 					}
+
 					// increment our next pointer
 					state.next = state.next + count + 1;
 
@@ -519,11 +520,11 @@ Object.assign( THREE.VTKLoader.prototype, THREE.EventDispatcher.prototype, {
 
 			var geometry = new THREE.BufferGeometry();
 			geometry.setIndex( new THREE.BufferAttribute( indices, 1 ) );
-			geometry.addAttribute( 'position', new THREE.BufferAttribute( points, 3 ) );
+			geometry.setAttribute( 'position', new THREE.BufferAttribute( points, 3 ) );
 
 			if ( normals.length === points.length ) {
 
-				geometry.addAttribute( 'normal', new THREE.BufferAttribute( normals, 3 ) );
+				geometry.setAttribute( 'normal', new THREE.BufferAttribute( normals, 3 ) );
 
 			}
 
@@ -795,36 +796,9 @@ Object.assign( THREE.VTKLoader.prototype, THREE.EventDispatcher.prototype, {
 
 					delete ele[ '#text' ];
 
-					// Get the content and optimize it
-					if ( ele.attributes.type === 'Float32' ) {
+					if ( ele.attributes.type === 'Int64' ) {
 
 						if ( ele.attributes.format === 'binary' ) {
-
-							if ( ! compressed ) {
-
-								txt = txt.filter( function ( el, idx ) {
-
-									if ( idx !== 0 ) return true;
-
-								} );
-
-							}
-
-						}
-
-					} else if ( ele.attributes.type === 'Int64' ) {
-
-						if ( ele.attributes.format === 'binary' ) {
-
-							if ( ! compressed ) {
-
-								txt = txt.filter( function ( el, idx ) {
-
-									if ( idx !== 0 ) return true;
-
-								} );
-
-							}
 
 							txt = txt.filter( function ( el, idx ) {
 
@@ -1150,11 +1124,11 @@ Object.assign( THREE.VTKLoader.prototype, THREE.EventDispatcher.prototype, {
 
 				var geometry = new THREE.BufferGeometry();
 				geometry.setIndex( new THREE.BufferAttribute( indices, 1 ) );
-				geometry.addAttribute( 'position', new THREE.BufferAttribute( points, 3 ) );
+				geometry.setAttribute( 'position', new THREE.BufferAttribute( points, 3 ) );
 
 				if ( normals.length === points.length ) {
 
-					geometry.addAttribute( 'normal', new THREE.BufferAttribute( normals, 3 ) );
+					geometry.setAttribute( 'normal', new THREE.BufferAttribute( normals, 3 ) );
 
 				}
 
@@ -1162,7 +1136,7 @@ Object.assign( THREE.VTKLoader.prototype, THREE.EventDispatcher.prototype, {
 
 			} else {
 
-				// TODO for vtu,vti,and other xml formats
+				throw new Error( 'Unsupported DATASET type' );
 
 			}
 

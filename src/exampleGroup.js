@@ -29,7 +29,7 @@ function main()
   var keyboard = new KeyboardState();
 
   // Enable mouse rotation, pan, zoom etc.
-  var trackballControls = new THREE.TrackballControls(camera);
+  var trackballControls = new THREE.TrackballControls( camera, renderer.domElement );
 
   //-------------------------------------------------------------------
   // Start setting the group

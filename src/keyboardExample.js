@@ -13,7 +13,7 @@ function main()
   var keyboard = new KeyboardState();
 
   // Enable mouse rotation, pan, zoom etc.
-  var trackballControls = new THREE.TrackballControls(camera);
+  var trackballControls = new THREE.TrackballControls(camera, renderer.domElement );
 
   // Show axes (parameter is size of each axis)
   var axesHelper = new THREE.AxesHelper( 12 );
@@ -79,9 +79,9 @@ function main()
   function render()
   {
     stats.update(); // Update FPS
+    requestAnimationFrame(render); // Show events
     trackballControls.update();
     keyboardUpdate();
-    requestAnimationFrame(render); // Show events
     renderer.render(scene, camera) // Render scene
   }
 }

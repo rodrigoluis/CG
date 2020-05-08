@@ -6,7 +6,7 @@ function main()
   var camera = initCamera(new THREE.Vector3(0, -30, 15)); // Init camera in this position
 
   // Enable mouse rotation, pan, zoom etc.
-  var trackballControls = new THREE.TrackballControls(camera);
+  var trackballControls = new THREE.TrackballControls( camera, renderer.domElement );
 
   // Show axes (parameter is size of each axis)
   var axesHelper = new THREE.AxesHelper( 12 );
@@ -16,7 +16,7 @@ function main()
   var planeGeometry = new THREE.PlaneGeometry(20, 20);
   planeGeometry.translate(0.0, 0.0, -0.02); // To avoid conflict with the axeshelper
   var planeMaterial = new THREE.MeshBasicMaterial({
-      color: "rgba(150, 150, 150, 0.5)",
+      color: "rgba(150, 150, 150)",
       side: THREE.DoubleSide,
   });
   var plane = new THREE.Mesh(planeGeometry, planeMaterial);

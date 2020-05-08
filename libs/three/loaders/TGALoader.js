@@ -1,4 +1,4 @@
-/*
+/**
  * @author Daosheng Mu / https://github.com/DaoshengMu/
  * @author mrdoob / http://mrdoob.com/
  * @author takahirox / https://github.com/takahirox/
@@ -6,11 +6,11 @@
 
 THREE.TGALoader = function ( manager ) {
 
-	this.manager = ( manager !== undefined ) ? manager : THREE.DefaultLoadingManager;
+	THREE.Loader.call( this, manager );
 
 };
 
-THREE.TGALoader.prototype = {
+THREE.TGALoader.prototype = Object.assign( Object.create( THREE.Loader.prototype ), {
 
 	constructor: THREE.TGALoader,
 
@@ -22,6 +22,7 @@ THREE.TGALoader.prototype = {
 
 		var loader = new THREE.FileLoader( this.manager );
 		loader.setResponseType( 'arraybuffer' );
+		loader.setPath( this.path );
 
 		loader.load( url, function ( buffer ) {
 
@@ -57,9 +58,10 @@ THREE.TGALoader.prototype = {
 						console.error( 'THREE.TGALoader: Invalid type colormap data for indexed type.' );
 
 					}
+
 					break;
 
-				// check colormap type
+					// check colormap type
 
 				case TGA_TYPE_RGB:
 				case TGA_TYPE_GREY:
@@ -70,14 +72,15 @@ THREE.TGALoader.prototype = {
 						console.error( 'THREE.TGALoader: Invalid type colormap data for colormap type.' );
 
 					}
+
 					break;
 
-				// What the need of a file without data ?
+					// What the need of a file without data ?
 
 				case TGA_TYPE_NO_DATA:
 					console.error( 'THREE.TGALoader: No data.' );
 
-				// Invalid type ?
+					// Invalid type ?
 
 				default:
 					console.error( 'THREE.TGALoader: Invalid type "%s".', header.image_type );
@@ -165,11 +168,13 @@ THREE.TGALoader.prototype = {
 						// raw pixels
 
 						count *= pixel_size;
+
 						for ( i = 0; i < count; ++ i ) {
 
 							pixel_data[ shift + i ] = data[ offset ++ ];
 
 						}
+
 						shift += count;
 
 					}
@@ -470,7 +475,7 @@ THREE.TGALoader.prototype = {
 				flags: content[ offset ++ ]
 			};
 
-			// check tga if it is valid format
+		// check tga if it is valid format
 
 		tgaCheckHeader( header );
 
@@ -521,7 +526,9 @@ THREE.TGALoader.prototype = {
 
 		//
 
-		var canvas = document.createElement( 'canvas' );
+		var useOffscreen = typeof OffscreenCanvas !== 'undefined';
+
+		var canvas = useOffscreen ? new OffscreenCanvas( header.width, header.height ) : document.createElement( 'canvas' );
 		canvas.width = header.width;
 		canvas.height = header.height;
 
@@ -529,12 +536,12 @@ THREE.TGALoader.prototype = {
 		var imageData = context.createImageData( header.width, header.height );
 
 		var result = tgaParse( use_rle, use_pal, header, offset, content );
-		var rgbaData = getTgaRGBA( imageData.data, header.width, header.height, result.pixel_data, result.palettes );
+		getTgaRGBA( imageData.data, header.width, header.height, result.pixel_data, result.palettes );
 
 		context.putImageData( imageData, 0, 0 );
 
-		return canvas;
+		return useOffscreen ? canvas.transferToImageBitmap() : canvas;
 
 	}
 
-};
+} );

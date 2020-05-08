@@ -17,34 +17,25 @@ THREE.VRMLoader = ( function () {
 
 		}
 
-		this.manager = ( manager !== undefined ) ? manager : THREE.DefaultLoadingManager;
+		THREE.Loader.call( this, manager );
+
 		this.gltfLoader = new THREE.GLTFLoader( this.manager );
 
 	}
 
-	VRMLoader.prototype = {
+	VRMLoader.prototype = Object.assign( Object.create( THREE.Loader.prototype ), {
 
 		constructor: VRMLoader,
 
-		crossOrigin: 'Anonymous',
-
 		load: function ( url, onLoad, onProgress, onError ) {
 
-			this.gltfLoader.load( url, onLoad, onProgress, onError );
+			var scope = this;
 
-		},
+			this.gltfLoader.load( url, function ( gltf ) {
 
-		setCrossOrigin: function ( value ) {
+				scope.parse( gltf, onLoad );
 
-			this.glTFLoader.setCrossOrigin( value );
-			return this;
-
-		},
-
-		setPath: function ( value ) {
-
-			this.glTFLoader.setPath( value );
-			return this;
+			}, onProgress, onError );
 
 		},
 
@@ -53,9 +44,21 @@ THREE.VRMLoader = ( function () {
 			this.glTFLoader.setDRACOLoader( dracoLoader );
 			return this;
 
+		},
+
+		parse: function ( gltf, onLoad ) {
+
+			// var gltfParser = gltf.parser;
+			// var gltfExtensions = gltf.userData.gltfExtensions || {};
+			// var vrmExtension = gltfExtensions.VRM || {};
+
+			// handle VRM Extension here
+
+			onLoad( gltf );
+
 		}
 
-	};
+	} );
 
 	return VRMLoader;
 

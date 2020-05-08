@@ -14,7 +14,7 @@ function main()
   var keyboard = new KeyboardState();
 
   // Enable mouse rotation, pan, zoom etc.
-  var trackballControls = new THREE.TrackballControls(camera);
+  var trackballControls = new THREE.TrackballControls( camera, renderer.domElement );
 
   // Listen window size changes
   window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
@@ -34,7 +34,7 @@ function main()
   var infoBox = new SecondaryBox("");
 
   // Teapot
-  var geometry = new THREE.TeapotGeometry(0.5);
+  var geometry = new THREE.TeapotBufferGeometry(0.5);
   var material = new THREE.MeshPhongMaterial({color:"rgb(255,20,20)", shininess:"200"});
     material.side = THREE.DoubleSide;
   var obj = new THREE.Mesh(geometry, material);
