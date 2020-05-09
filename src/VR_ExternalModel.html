@@ -1,0 +1,19 @@
+<html>
+  <head>
+    <script src="../libs/aframe/aframe.min.js"></script>
+    <script src="../libs/aframe/aframe-extras.min.js"></script>
+  </head>
+  <body>
+    <a-scene>
+      <a-assets>
+        <a-asset-item id="man" src='../assets/objects/walkingMan/scene.gltf'></a-asset-item>
+      </a-assets>
+      <a-entity animation="property: rotation; to: 0 360 0; dur: 4000; loop: true">
+        <a-entity gltf-model="#man" position="0 0 -5" rotation="0 -90 0" animation-mixer >
+        </a-entity>
+      </a-entity>
+      <a-plane position="0 0 0" rotation="-90 0 0" width="20" height="20" color="#7BC8A4"></a-plane>
+      <a-sky color="#2e2d2b"></a-sky>
+    </a-scene>
+  </body>
+</html>
