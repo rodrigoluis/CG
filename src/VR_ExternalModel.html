@@ -16,15 +16,15 @@
              position="0 1 1"></a-entity>
 
       <a-entity light="type: point; color: #ffffff; intensity: 1.0; castShadow: true"
-             position="0 6 0"></a-entity>
+             position="0 2 5"></a-entity>
       <a-sphere position="0 4 0" radius=".2" color="#FFFFFF"></a-sphere>
 
-      <a-plane src="../assets/textures/sand.jpg" rotation="-90 0 0" width="25" height="25" color="#ffffff" shadow="receive: true"></a-plane>
+      <a-plane src="../assets/textures/sand.jpg" material="repeat: 5 5" rotation="-90 0 0" width="25" height="25" color="#ffffff" shadow="receive: true"></a-plane>
 
       <a-cylinder height="4" radius=".1" position="0 2 0" rotation="0 -20 0" color="#4CC3D9" shadow="cast: true"></a-cylinder>
 
-      <a-entity animation="property: rotation; to: 0 360 0; dur: 15000; loop: true; easing: linear" shadow="cast: true receive: true">
-        <a-entity gltf-model="#man" position="0 0 -4.5" rotation="0 -90 0" animation-mixer >
+      <a-entity animation="property: rotation; to: 0 360 0; dur: 15000; loop: true; easing: linear">
+        <a-entity gltf-model="#man"  position="-4.5 0  0" rotation="0 0 0" animation-mixer >
         </a-entity>
       </a-entity>
       <a-sky color="#2e2d2b"></a-sky>
