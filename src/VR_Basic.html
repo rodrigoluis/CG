@@ -4,11 +4,20 @@
   </head>
   <body>
     <a-scene>
-      <a-box position="-1 0.5 -3" rotation="0 45 0" color="#4CC3D9"></a-box>
-      <a-sphere position="0 1.25 -5" radius="1.25" color="#EF2D5E"></a-sphere>
-      <a-cylinder position="1 0.75 -3" radius="0.5" height="1.5" color="#FFC65D"></a-cylinder>
-      <a-plane position="0 0 -4" rotation="-90 0 0" width="4" height="4" color="#7BC8A4"></a-plane>
+      <!-- ground & sky ---------->
+      <a-plane rotation="-90 0 0" width="10" height="10" color="#7BC8A4" shadow="receive: true"></a-plane>
       <a-sky color="#ECECEC"></a-sky>
+      <a-entity light="type: point; color: #ffffff; intensity: 1.0; castShadow:true" position="0 2.5 0"></a-entity>
+
+      <!-- objects around the camera (default position is 0 0 0 ---------->
+      <a-sphere       position="1.5 0.5 -1.5" radius="0.5" color="#EF2D5E" shadow="cast: true"></a-sphere>
+      <a-box          position="0 0.5 -2" rotation="0 45 0" color="#4CC3D9" shadow="cast: true"></a-box>
+      <a-cylinder     position="-1.5 0 -1.5" radius="0.5" height="1.5" color="#FFC65D" shadow="cast: true"></a-cylinder>
+      <a-cone         position="-2 0.5 0" color="tomato" radius-bottom="0.5" radius-top="0.1" shadow="cast: true"></a-cone>
+      <a-dodecahedron position="-1.5 0.4 1.5" color="#329da8" radius=".8" shadow="cast: true"></a-dodecahedron>
+      <a-icosahedron  position="0 0.4 2" color="#a780cf" radius=".8" shadow="cast: true"></a-icosahedron>
+      <a-tetrahedron  position="1.5 0.55 1.5" color="#43A367" radius="1.1" shadow="cast: true"></a-tetrahedron>
+      <a-torus        position="2 0.6 0" color="#e34b34" arc="360" radius="0.5" rotation="0 90 0" radius-tubular="0.1" shadow="cast: true"> ></a-torus>
     </a-scene>
   </body>
 </html>
