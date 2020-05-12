@@ -37,3 +37,4 @@ AFRAME.registerComponent('touch-listener', {
     
   }
 });
+

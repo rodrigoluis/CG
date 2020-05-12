@@ -1,0 +1,43 @@
+<html>
+	<head>
+		<script src="../libs/aframe/aframe.min.js"></script>
+	  <script src="../libs/aframe/aframe-teleport-controls.min.js"></script>
+	  <script src="../libs/aframe/tap-to-teleport.js" type="text/javascript"></script>
+	</head>
+	<body>
+	  <a-scene>
+
+			<!-- Teleport code -->
+	    <a-entity id="cameraRig" position="0 1.6 0" >
+	      <a-entity id="head" camera="userHeight:1.6" look-controls="pointerLockEnabled:true">
+	        <a-entity position="0.1 -0.1 0"
+	          touch-listener
+	          teleport-controls=
+	            "cameraRig: #cameraRig;
+	             teleportOrigin: #head;
+	             startEvents:starttouch;
+	             endEvents:endtouch;
+	             curveShootingSpeed:15;
+	             hitCylinderRadius:0.5;
+	             collisionEntities: [ground]">
+	        </a-entity>
+	      </a-entity>
+	    </a-entity>
+
+			<!-- Flat box to receive the teleport -->
+	    <a-entity ground
+	      geometry="primitive:box; width:30; depth:30; height:0.01;"
+	      material="color:rgb(150,150,150)"
+	      position="-5 0 -5">
+	    </a-entity>
+
+			<!-- Objects, light e sky -->
+			<a-entity light="type: directional; color: #ffffff; intensity: 1.0" position="0 1 1"></a-entity>
+	    <a-box position="-1 0.5 -2" rotation="0 45 0" color="#4CC3D9" ></a-box>
+	    <a-cylinder position="1 0.75 -2" radius="0.5" height="1.5" color="#FFC65D"></a-cylinder>
+	    <a-cylinder position="0 1.5 -5" radius="0.5" height="3" color="#EF2D5E" ></a-cylinder>
+			<a-sky color="rgb(120,180,210)"></a-sky>
+
+	  </a-scene>
+	</body>
+</html>
