@@ -1,9 +1,10 @@
 /**
  * @author mrdoob / http://mrdoob.com/
  * @author alteredq / http://alteredqualia.com/
+ * @author rodrigoluis --> Add camera to work with threejs version r.116
  */
 
-THREE.RaytracingRenderer = function ( width = window.innerWidth, height = window.innerHeight, blockSize = 32 )
+THREE.RaytracingRenderer = function ( width = window.innerWidth, height = window.innerHeight, blockSize = 32, camera )
 {
 	var parameters = {};
 
@@ -16,7 +17,7 @@ THREE.RaytracingRenderer = function ( width = window.innerWidth, height = window
 
 	setSize(width, height);
 
-	var maxRecursionDepth = 3;
+	var maxRecursionDepth = 5;
 	var canvasWidth, canvasHeight;
 	var canvasWidthHalf, canvasHeightHalf;
 
@@ -41,7 +42,6 @@ THREE.RaytracingRenderer = function ( width = window.innerWidth, height = window
 	var animationFrameId = null;
 
 	this.domElement = canvas;
-	//this.autoClear = true;
 
 	function setSize( width, height ) {
 
@@ -56,11 +56,6 @@ THREE.RaytracingRenderer = function ( width = window.innerWidth, height = window
 
 		context.fillStyle = 'white';
 	};
-
-	// this.clear = function () {
-	// };
-
-	//
 
 	var spawnRay = ( function () {
 
@@ -97,39 +92,35 @@ THREE.RaytracingRenderer = function ( width = window.innerWidth, height = window
 			ray.direction = rayDirection;
 
 			//
-
 			var rayLight = raycasterLight.ray;
-
 			//
 
 			outputColor.setRGB( 0, 0, 0 );
-
-			//
 
 			var intersections = raycaster.intersectObjects( objects, true );
 
 			// ray didn't find anything
 			// (here should come setting of background color?)
-
 			if ( intersections.length === 0 ) {
-
 				return;
-
 			}
 
 			// ray hit
-
 			var intersection = intersections[ 0 ];
-
 			var point = intersection.point;
 			var object = intersection.object;
 			var material = object.material;
 			var face = intersection.face;
-
 			var vertices = object.geometry.vertices;
 
 			//
+			if ( cache[ object.id ] === undefined ) {
 
+				cache[ object.id ] = {
+					normalMatrix: new THREE.Matrix3(),
+					inverseMatrix: new THREE.Matrix4()
+				};
+			}
 			var _object = cache[ object.id ];
 
 			localPoint.copy( point ).applyMatrix4( _object.inverseMatrix );
@@ -218,20 +209,16 @@ THREE.RaytracingRenderer = function ( width = window.innerWidth, height = window
 					}
 
 					// compute attenuation
-
 					var attenuation = 1.0;
 
 					if ( light.physicalAttenuation === true ) {
-
 						attenuation = lightVector.length();
 						attenuation = 1.0 / ( attenuation * attenuation );
-
 					}
 
 					lightVector.normalize();
 
 					// compute diffuse
-
 					var dot = Math.max( normalVector.dot( lightVector ), 0 );
 					var diffuseIntensity = dot * light.intensity;
 
@@ -290,7 +277,6 @@ THREE.RaytracingRenderer = function ( width = window.innerWidth, height = window
 						reflectionVector.set( 0, 0, 0 );
 
 					} else {
-
 						reflectionVector.copy( rayDirection );
 						reflectionVector.multiplyScalar( eta );
 
@@ -298,9 +284,7 @@ THREE.RaytracingRenderer = function ( width = window.innerWidth, height = window
 						tmpVec.copy( normalVector );
 						tmpVec.multiplyScalar( alpha );
 						reflectionVector.sub( tmpVec );
-
 					}
-
 				}
 
 				var theta = Math.max( eyeVector.dot( normalVector ), 0.0 );
@@ -314,9 +298,7 @@ THREE.RaytracingRenderer = function ( width = window.innerWidth, height = window
 				spawnRay( point, reflectionVector, zColor, recursionDepth + 1 );
 
 				if ( material.specular !== undefined ) {
-
 					zColor.multiply( material.specular );
-
 				}
 
 				zColor.multiplyScalar( weight );
@@ -333,6 +315,7 @@ THREE.RaytracingRenderer = function ( width = window.innerWidth, height = window
 		var tmpVec3 = new THREE.Vector3();
 
 		return function ( outputVector, point, face, vertices ) {
+
 			var faceNormal = face.normal;
 			var vertexNormals = face.vertexNormals;
 
@@ -350,6 +333,7 @@ THREE.RaytracingRenderer = function ( width = window.innerWidth, height = window
 
 			tmpVec3.crossVectors( tmpVec1.subVectors( vC, point ), tmpVec2.subVectors( vA, point ) );
 			var areaPCA = faceNormal.dot( tmpVec3 );
+
 			var b = areaPCA / areaABC;
 
 			var c = 1.0 - a - b;
@@ -369,19 +353,15 @@ THREE.RaytracingRenderer = function ( width = window.innerWidth, height = window
 		};
 	}() );
 
-	var renderBlock = ( function () {
-
-		//var blockSize = 32;
-
+	var renderBlock = ( function ()
+	{
 		var canvasBlock = document.createElement( 'canvas' );
 		canvasBlock.width = blockSize;
 		canvasBlock.height = blockSize;
 
-	//	var contextBlock = canvasBlock.getContext( '2d', alpha: true);
+		//	var contextBlock = canvasBlock.getContext( '2d', alpha: true);
 		var contextBlock = canvasBlock.getContext( '2d', {
-
 			alpha: parameters.alpha === true
-
 		} );
 
 		var imagedata = contextBlock.getImageData( 0, 0, blockSize, blockSize );
@@ -399,7 +379,8 @@ THREE.RaytracingRenderer = function ( width = window.innerWidth, height = window
 
 					// spawn primary ray at pixel position
 
-					origin.copy( cameraPosition );
+					//origin.copy( cameraPosition );
+					origin.copy(camera.position)
 
 					direction.set( x + blockX - canvasWidthHalf, - ( y + blockY - canvasHeightHalf ), - perspective );
 					direction.applyMatrix3( cameraNormalMatrix ).normalize();
@@ -411,9 +392,7 @@ THREE.RaytracingRenderer = function ( width = window.innerWidth, height = window
 					data[ index ]     = Math.sqrt( pixelColor.r ) * 255;
 					data[ index + 1 ] = Math.sqrt( pixelColor.g ) * 255;
 					data[ index + 2 ] = Math.sqrt( pixelColor.b ) * 255;
-
 				}
-
 			}
 
 			context.putImageData( imagedata, blockX, blockY );
@@ -426,7 +405,6 @@ THREE.RaytracingRenderer = function ( width = window.innerWidth, height = window
 				blockY += blockSize;
 
 				if ( blockY >= canvasHeight ) return;
-
 			}
 
 			context.fillRect( blockX, blockY, blockSize, blockSize );
@@ -442,22 +420,15 @@ THREE.RaytracingRenderer = function ( width = window.innerWidth, height = window
 	this.render = function ( scene, camera ) {
 
 		//if ( this.autoClear === true ) this.clear();
-
 		cancelAnimationFrame( animationFrameId );
 
 		// update scene graph
-
 		if ( scene.autoUpdate === true ) scene.updateMatrixWorld();
 
 		// update camera matrices
-
 		if ( camera.parent === undefined ) camera.updateMatrixWorld();
 
 		camera.matrixWorldInverse.getInverse( camera.matrixWorld );
-		cameraPosition.setFromMatrixPosition( camera.matrixWorld );
-
-		//
-
 		cameraNormalMatrix.getNormalMatrix( camera.matrixWorld );
 		origin.copy( cameraPosition );
 
@@ -466,7 +437,6 @@ THREE.RaytracingRenderer = function ( width = window.innerWidth, height = window
 		objects = scene.children;
 
 		// collect lights and set up object matrices
-
 		lights.length = 0;
 
 		scene.traverse( function ( object ) {
@@ -494,9 +464,6 @@ THREE.RaytracingRenderer = function ( width = window.innerWidth, height = window
 			_object.inverseMatrix.getInverse( object.matrixWorld );
 
 		} );
-
 		renderBlock( 0, 0 );
-
 	};
-
 };
