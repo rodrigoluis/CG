@@ -49,6 +49,21 @@ function main()
 
   var projectionMessage = new SecondaryBox("Perspective Projection");
 
+  var controls = new function ()
+  {
+    this.onChangeProjection = function(){
+      changeProjection();
+    }
+    this.onRestartCamera = function(){
+      restartCamera();
+    }
+  };
+
+  // GUI interface
+  var gui = new dat.GUI();
+  gui.add(controls, 'onChangeProjection').name("Change Projection");
+  gui.add(controls, 'onRestartCamera').name("Restart Camera");
+
   render();
 
   function keyboardUpdate()
@@ -61,14 +76,19 @@ function main()
     }
   	if ( keyboard.pressed("R") )
     {
-      camera.position.x = 0;
-      camera.position.y = 0;
-      camera.position.z = 30;
-
-      camera.up.x = 0;
-      camera.up.y = 1;
-      camera.up.z = 0;
+      restartCamera();
     }
+  }
+
+  function restartCamera()
+  {
+    camera.position.x = 0;
+    camera.position.y = 0;
+    camera.position.z = 30;
+
+    camera.up.x = 0;
+    camera.up.y = 1;
+    camera.up.z = 0;
   }
 
   function changeProjection()
