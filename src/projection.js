@@ -53,10 +53,10 @@ function main()
   {
     this.onChangeProjection = function(){
       changeProjection();
-    }
+    };
     this.onRestartCamera = function(){
       restartCamera();
-    }
+    };
   };
 
   // GUI interface
