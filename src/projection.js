@@ -10,9 +10,6 @@ function main()
   // Show text information onscreen
   showInformation();
 
-  // To use the keyboard
-  var keyboard = new KeyboardState();
-
   // Enable mouse rotation, pan, zoom etc.
   var trackballControls = new THREE.TrackballControls( camera, renderer.domElement );
 
@@ -66,20 +63,6 @@ function main()
 
   render();
 
-  function keyboardUpdate()
-  {
-    keyboard.update();
-
-  	if ( keyboard.up("space") )
-    {
-      changeProjection();
-    }
-  	if ( keyboard.pressed("R") )
-    {
-      restartCamera();
-    }
-  }
-
   function restartCamera()
   {
     camera.position.x = 0;
@@ -123,8 +106,8 @@ function main()
     controls = new InfoBox();
       controls.add("Projection");
       controls.addParagraph();
-      controls.add("Pressione espaço para alternar entre a projeção perspectiva e ortogonal.");
-      controls.add("Pressione 'R' para reiniciar posição da camera.");
+      controls.add("Utilize a interface superior para alternar entre a projeção perspectiva e ");
+      controls.add("a projeção ortogonal. Há também a opção de reiniciar posição da camera.");
       controls.show();
   }
 
@@ -133,7 +116,6 @@ function main()
     stats.update(); // Update FPS
     trackballControls.update();
     lightFollowingCamera(light, camera) // Makes light follow the camera
-    keyboardUpdate();
     requestAnimationFrame(render); // Show events
     renderer.render(scene, camera) // Render scene
   }
