@@ -5,7 +5,6 @@ function main()
   var renderer = initRenderer();    // View function in util/utils
   var camera = initCamera(new THREE.Vector3(5, 5, 7)); // Init camera in this position
   var light  = initDefaultLighting(scene, new THREE.Vector3(0, 0, 15));
-  var keyboard = new KeyboardState();   // To use the keyboard
   var trackballControls = new THREE.TrackballControls( camera, renderer.domElement );
 
   // Set angles of rotation
@@ -46,34 +45,36 @@ function main()
   // Listen window size changes
   window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
+  var controls = new function ()
+  {
+    this.onChangeAnimation = function(){
+      animationOn = !animationOn;
+    };
+    this.speed = 0.05;
+    // this.joint2 = 0;
+    //
+    this.changeSpeed = function(){
+      speed = this.speed;
+    };
+  };
+
+  // GUI interface
+  var gui = new dat.GUI();
+  gui.add(controls, 'onChangeAnimation',true).name("Animation On/Off");
+  gui.add(controls, 'speed', 0.05, 0.5)
+    .onChange(function(e) { controls.changeSpeed() })
+    .name("Change Speed");
+
   render();
-
-  function keyboardUpdate() {
-
-    keyboard.update();
-
-  	if ( keyboard.up("space") ) animationOn=!animationOn;
-    if ( keyboard.pressed("up"))
-    {
-      if(speed<0.3) speed+=0.01;
-      leftBox.changeMessage("Speed " + formatOutput(speed, 2));
-    }
-    if ( keyboard.pressed("down"))
-    {
-      if(speed>=0.01) speed-=0.01;
-      leftBox.changeMessage("Speed " + formatOutput(speed, 2));
-    }
-  }
 
   function showInformation()
   {
     // Use this to show information onscreen
     controls = new InfoBox();
-      controls.add("Geometric Transformation 2");
+      controls.add("Animation");
       controls.addParagraph();
       controls.add("Use o mouse para rotacionar a cena.");
-      controls.add("Use 'espaço' para parar a animação.");
-      controls.add("Use seta para cima e para baixo para mudar a velocidade .");
+      controls.add("Use os controles para ligar/desligar a animação e alterar a velocidade");
       controls.show();
   }
 
@@ -111,7 +112,6 @@ function main()
   {
     stats.update(); // Update FPS
     trackballControls.update();
-    keyboardUpdate();
     rotateCylinder();
     lightFollowingCamera(light, camera);
     requestAnimationFrame(render); // Show events
