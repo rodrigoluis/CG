@@ -5,7 +5,6 @@ function main()
   var renderer = initRenderer();    // View function in util/utils
   var camera = initCamera(new THREE.Vector3(7, 7, 7)); // Init camera in this position
   var light  = initDefaultLighting(scene, new THREE.Vector3(7, 7, 7));
-  var keyboard = new KeyboardState();   // To use the keyboard
   var trackballControls = new THREE.TrackballControls( camera, renderer.domElement );
 
   // Set angles of rotation
@@ -37,21 +36,28 @@ function main()
   // Listen window size changes
   window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
+  var controls = new function ()
+  {
+    this.joint1 = 270;
+    this.joint2 = 0;
+
+    this.rotate = function(){
+      angle[0] = degreesToRadians(this.joint1);
+      angle[1] = degreesToRadians(this.joint2);
+      rotateCylinder();
+    };
+  };
+
+  // GUI interface
+  var gui = new dat.GUI();
+  gui.add(controls, 'joint1', 0, 360)
+    .onChange(function(e) { controls.rotate() })
+    .name("First Joint");
+  gui.add(controls, 'joint2', 0, 360)
+    .onChange(function(e) { controls.rotate() })
+    .name("Second Joint");
+
   render();
-
-  function keyboardUpdate() {
-
-    keyboard.update();
-
-    if(keyboard.down("1")) selectedJoint = 0;
-    if(keyboard.down("2")) selectedJoint = 1;
-
-    if(selectedJoint >=0 && selectedJoint <=1)
-    {
-      if ( keyboard.pressed("left") )   angle[selectedJoint]+=0.1;
-    	if ( keyboard.pressed("right") )  angle[selectedJoint]-=0.1;
-    }
-  }
 
   function showInformation()
   {
@@ -59,8 +65,7 @@ function main()
     controls = new InfoBox();
       controls.add("Articulated Arm");
       controls.addParagraph();
-      controls.add("Pressione 1 ou 2 para selecionar a articulação.");
-      controls.add("Pressione esquerda e direita para mudar o ângulo.");
+      controls.add("Use os sliders superiores para alterar os ângulos.");
       controls.show();
   }
 
@@ -113,7 +118,6 @@ function main()
   {
     stats.update(); // Update FPS
     trackballControls.update();
-    keyboardUpdate();
     rotateCylinder();
     lightFollowingCamera(light, camera);
     requestAnimationFrame(render); // Show events
