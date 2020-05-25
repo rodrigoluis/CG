@@ -11,9 +11,6 @@ function main()
 	var camera = new THREE.Camera();
 	scene.add(camera);
 
-  // To use the keyboard
-  var keyboard = new KeyboardState();
-
 	// array of functions for the rendering loop
 	var onRenderFcts= [];
 
@@ -105,6 +102,27 @@ function main()
   // controls which object should be rendered
   var firstObject = true;
 
+  var controls = new function ()
+  {
+    this.onChangeObject = function(){
+      firstObject = !firstObject;
+      if(firstObject)
+      {
+        cubeKnot.visible = true;
+        torus.visible = false;
+      }
+      else
+      {
+        cubeKnot.visible = false;
+        torus.visible = true;
+      }
+    };
+  };
+
+  // GUI interface
+  var gui = new dat.GUI();
+  gui.add(controls, 'onChangeObject').name("Change Object");
+
   //----------------------------------------------------------------------------
 	// Render the whole thing on the page
 
@@ -153,34 +171,13 @@ function main()
   	})
   }
 
-  function keyboardUpdate()
-  {
-    keyboard.update();
-    if ( keyboard.down("enter"))
-    {
-      firstObject = !firstObject;
-      if(firstObject)
-      {
-        cubeKnot.visible = true;
-        torus.visible = false;
-      }
-      else
-      {
-        cubeKnot.visible = false;
-        torus.visible = true;
-      }
-    }
-  }
-
   function showInformation()
   {
     // Use this to show information onscreen
     controls = new InfoBox();
       controls.add("Augmented Reality - Basic Example");
-      controls.show();
       controls.addParagraph();
       controls.add("Posicione o marcador 'KANJI' em frente à câmera.");
-      controls.add("Pressione 'Enter' para mudar o objeto a ser visualizado");
       controls.show();
   }
 
@@ -188,7 +185,6 @@ function main()
 	var lastTimeMsec= null
 	requestAnimationFrame(function animate(nowMsec)
   {
-    keyboardUpdate();
     // keep looping
 		requestAnimationFrame( animate );
 		// measure time

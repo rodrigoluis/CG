@@ -13,11 +13,6 @@ function main()
   var speed = 0.05;
   var animationOn = true; // control if animation is on or of
 
-  // Show text information onscreen
-  showInformation();
-
-  var leftBox = new SecondaryBox("Speed " + speed);
-
   // Show world axes
   var axesHelper = new THREE.AxesHelper( 12 );
   scene.add( axesHelper );
@@ -67,17 +62,6 @@ function main()
 
   render();
 
-  function showInformation()
-  {
-    // Use this to show information onscreen
-    controls = new InfoBox();
-      controls.add("Animation");
-      controls.addParagraph();
-      controls.add("Use o mouse para rotacionar a cena.");
-      controls.add("Use os controles para ligar/desligar a animação e alterar a velocidade");
-      controls.show();
-  }
-
   function rotateCylinder()
   {
     // More info:
@@ -97,7 +81,6 @@ function main()
       cylinder.matrix.identity();  // reset matrix
       cylinder.matrix.multiply(mat4.makeRotationZ(angle)); // R1
       cylinder.matrix.multiply(mat4.makeTranslation(0.0, 1.0, 0.0)); // T1
-
 
       var c2angle = degreesToRadians(90);
       cylinder2.matrix.identity();  // reset
