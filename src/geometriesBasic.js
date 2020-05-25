@@ -25,8 +25,6 @@ function main()
   axesHelper.visible = false;
   scene.add( axesHelper );
 
-  var infoBox = new SecondaryBox("");
-
   // To use the keyboard
   var keyboard = new KeyboardState();
 
