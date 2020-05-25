@@ -25,9 +25,6 @@ function main()
   axesHelper.visible = false;
   scene.add( axesHelper );
 
-  // Show text information onscreen
-  showInformation();
-
   var infoBox = new SecondaryBox("");
 
   // To use the keyboard
@@ -47,6 +44,48 @@ function main()
   scene.add(createSphere(3.0, 20, 20));
   scene.add(createTorus(3.0, 1.0, 20, 20, Math.PI * 2));
   scene.add(createIcosahedron(4.0, 0));
+
+  // Interface
+  var controls = new function ()
+  {
+    this.viewAxes = false;
+    this.type = 'Cube';
+    this.onChooseObject = function()
+    {
+      objectArray[activeObject].visible = false;
+      switch (this.type)
+      {
+        case 'Cube':
+            activeObject = 0;
+            break;
+        case 'Cylinder':
+            activeObject = 1;
+            break;
+        case 'Sphere':
+            activeObject = 2;
+            break;
+        case 'Torus':
+            activeObject = 3;
+            break;
+        case 'Icosahedron':
+            activeObject = 4;
+            break;
+      }
+      objectArray[activeObject].visible = true;
+    };
+    this.onViewAxes = function(){
+      axesHelper.visible = this.viewAxes;
+    };
+  };
+
+  // GUI interface
+  var gui = new dat.GUI();
+  gui.add(controls, 'type', ['Cube', 'Cylinder', 'Sphere', 'Torus', 'Icosahedron'])
+    .name("Change Object")
+    .onChange(function(e) { controls.onChooseObject(); });
+  gui.add(controls, 'viewAxes', false)
+    .name("View Axes")
+    .onChange(function(e) { controls.onViewAxes() });
 
   render();
 
@@ -110,62 +149,10 @@ function main()
     return object;
   }
 
-  function keyboardUpdate()
-  {
-    keyboard.update();
-
-  	if ( keyboard.down("right") )
-    {
-      activeObject++;
-      if(activeObject < objectArray.length)
-      {
-        objectArray[activeObject-1].visible = false;
-        objectArray[activeObject].visible = true;
-      }
-      else {
-        activeObject = 0;
-        objectArray[objectArray.length-1].visible = false;
-        objectArray[0].visible = true;
-      }
-      infoBox.changeMessage("Object " + activeObject);
-    }
-    if ( keyboard.down("left") )
-    {
-      activeObject--;
-      if(activeObject < 0)
-      {
-        activeObject = objectArray.length-1;
-        objectArray[0].visible = false;
-        objectArray[activeObject].visible = true;
-      }
-      else {
-        objectArray[activeObject+1].visible = false;
-        objectArray[activeObject].visible = true;
-      }
-      infoBox.changeMessage("Object " + activeObject);
-    }
-  	if ( keyboard.down("A") )
-    {
-      axesHelper.visible = !axesHelper.visible
-    }
-  }
-
-  function showInformation()
-  {
-    // Use this to show information onscreen
-    controls = new InfoBox();
-      controls.add("Geometries I");
-      controls.addParagraph();
-      controls.add("Pressione as setas para direita e esquerda para alterar o objeto.");
-      controls.add("Pressione 'A' para visualizar/ocultar os eixos.");
-      controls.show();
-  }
-
   function render()
   {
     stats.update(); // Update FPS
     trackballControls.update();
-    keyboardUpdate();
     requestAnimationFrame(render); // Show events
     renderer.render(scene, camera) // Render scene
   }

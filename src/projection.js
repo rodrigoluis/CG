@@ -84,10 +84,10 @@ function main()
       var s = 72; // Estimated size for orthographic projection
       camera = new THREE.OrthographicCamera(-window.innerWidth / s, window.innerWidth / s,
                                              window.innerHeight / s, window.innerHeight / -s, -s, s);
-      projectionMessage.changeMessage("Orthographic Projection");
+      projectionMessage.changeMessage("Orthographic");
     } else {
       camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-      projectionMessage.changeMessage("Perspective Projection");
+      projectionMessage.changeMessage("Perspective");
     }
     camera.position.copy(pos);
     camera.lookAt(scene.position);

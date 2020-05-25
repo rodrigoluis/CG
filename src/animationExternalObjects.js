@@ -15,15 +15,11 @@ function main()
   // Control the appearence of first object loaded
   var firstRender = false;
 
-  // To use the keyboard
-  var keyboard = new KeyboardState();
-
   // Enable mouse rotation, pan, zoom etc.
   var trackballControls = new THREE.TrackballControls( camera, renderer.domElement );
 
   // Listen window size changes
   window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
-
 
   var groundPlane = createGroundPlane(5.0, 5.0, "rgb(100,140,90)");
     groundPlane.rotateX(degreesToRadians(-90));
@@ -34,10 +30,6 @@ function main()
     axesHelper.visible = false;
   scene.add( axesHelper );
 
-  // Show text information onscreen
-  showInformation();
-  var infoBox = new SecondaryBox("");
-
   //----------------------------------------------------------------------------
   var man = null;
   var playAction = true;
@@ -47,6 +39,25 @@ function main()
   // Load animated files
   loadGLTFFile('../assets/objects/windmill/','scene.gltf', true);
   loadGLTFFile('../assets/objects/walkingMan/','scene.gltf', false);
+
+  // Interface
+  var controls = new function ()
+  {
+    this.viewAxes = false;
+    this.onPlayAnimation = function(){
+      playAction = !playAction;
+    };
+    this.onViewAxes = function(){
+      axesHelper.visible = this.viewAxes;
+    };
+  };
+
+  // GUI interface
+  var gui = new dat.GUI();
+  gui.add(controls, 'onPlayAnimation').name("Play / Stop Anim.");
+  gui.add(controls, 'viewAxes', false)
+  .name("View Axes")
+  .onChange(function(e) { controls.onViewAxes() });
 
   render();
 
@@ -89,7 +100,6 @@ function main()
   function onProgress ( xhr, model ) {
      if ( xhr.lengthComputable ) {
        var percentComplete = xhr.loaded / xhr.total * 100;
-       infoBox.changeMessage("Loading... " + Math.round( percentComplete, 2 ) + '% processed' );
      }
   }
 
@@ -100,7 +110,6 @@ function main()
     obj.scale.set(newScale * (1.0/scale),
                   newScale * (1.0/scale),
                   newScale * (1.0/scale));
-    infoBox.changeMessage("Scale: " + scale + " New: " + newScale * (1.0/scale));
     return obj;
   }
 
@@ -113,31 +122,6 @@ function main()
     else
       obj.translateY(-1*box.min.y);
     return obj;
-  }
-
-  function keyboardUpdate()
-  {
-    keyboard.update();
-  	if ( keyboard.down("A") )
-    {
-      axesHelper.visible = !axesHelper.visible;
-    }
-    if ( keyboard.down("enter"))
-    {
-      playAction = !playAction;
-    }
-  }
-
-  function showInformation()
-  {
-    // Use this to show information onscreen
-    controls = new InfoBox();
-      controls.add("Animation - External Objects");
-      controls.show();
-      controls.addParagraph();
-      controls.add("Pressione 'ENTER' para habilitar/desabilitar animação.");
-      controls.add("Pressione 'A' para visualizar/ocultar os eixos.");
-      controls.show();
   }
 
   // Function to rotate the man around the center object
@@ -162,7 +146,6 @@ function main()
     stats.update();
     var delta = clock.getDelta();
     trackballControls.update();
-    keyboardUpdate();
     requestAnimationFrame(render);
     renderer.render(scene, camera);
 

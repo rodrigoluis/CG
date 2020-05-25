@@ -14,9 +14,6 @@ function main()
   var selectedJoint = 0;
   var animationOn = true; // control if animation is on or of
 
-  // Show text information onscreen
-  showInformation();
-
   // Show world axes
   var axesHelper = new THREE.AxesHelper( 12 );
   scene.add( axesHelper );
@@ -58,16 +55,6 @@ function main()
     .name("Second Joint");
 
   render();
-
-  function showInformation()
-  {
-    // Use this to show information onscreen
-    controls = new InfoBox();
-      controls.add("Articulated Arm");
-      controls.addParagraph();
-      controls.add("Use os sliders superiores para alterar os ângulos.");
-      controls.show();
-  }
 
   function createSphere()
   {
