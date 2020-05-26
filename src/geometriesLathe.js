@@ -30,11 +30,42 @@ function main()
   scene.add( axesHelper );
 
   // Show text information onscreen
-  showInformation();
+  //showInformation();
 
   // Object Material
   var objectMaterial = new THREE.MeshPhongMaterial({color:"rgb(255,0,0)"});
     objectMaterial.side =  THREE.DoubleSide; // Show front and back polygons
+
+  //------------------------------------------------------------
+  // Interface
+  var controls = new function ()
+  {
+    this.viewObject = true;
+    this.viewPoints = true;
+    this.viewAxes = false;
+
+    this.onViewObject = function(){
+      object.visible = this.viewObject;
+    };
+    this.onViewPoints = function(){
+      spGroup.visible = this.viewPoints;
+    };
+    this.onViewAxes = function(){
+      axesHelper.visible = this.viewAxes;
+    };
+  };
+
+  // GUI interface
+  var gui = new dat.GUI();
+  gui.add(controls, 'viewObject', true)
+    .name("View Object")
+    .onChange(function(e) { controls.onViewObject() });
+  gui.add(controls, 'viewPoints', false)
+    .name("View Points")
+    .onChange(function(e) { controls.onViewPoints() });
+  gui.add(controls, 'viewAxes', false)
+    .name("View Axes")
+    .onChange(function(e) { controls.onViewAxes() });
 
   //----------------------------------
   // Create Lathe Geometry
@@ -74,42 +105,42 @@ function main()
     return points;
   }
 
-  function keyboardUpdate()
-  {
-    keyboard.update();
-  	if ( keyboard.down("A") )
-    {
-      axesHelper.visible = !axesHelper.visible
-    }
-    if ( keyboard.down("O") )
-    {
-      object.visible = !object.visible
-    }
-    if ( keyboard.down("P") )
-    {
-      spGroup.visible = !spGroup.visible
-    }
-  }
+  // function keyboardUpdate()
+  // {
+  //   keyboard.update();
+  // 	if ( keyboard.down("A") )
+  //   {
+  //     axesHelper.visible = !axesHelper.visible
+  //   }
+  //   if ( keyboard.down("O") )
+  //   {
+  //     object.visible = !object.visible
+  //   }
+  //   if ( keyboard.down("P") )
+  //   {
+  //     spGroup.visible = !spGroup.visible
+  //   }
+  // }
 
-  function showInformation()
-  {
-    // Use this to show information onscreen
-    controls = new InfoBox();
-      controls.add("Lathe Geometry Example");
-      controls.show();
-      controls.addParagraph();
-      controls.add("Pressione 'A' para visualizar/ocultar os eixos.");
-      controls.add("Pressione 'O' para visualizar/ocultar o objeto principal.");
-      controls.add("Pressione 'P' para visualizar/ocultar os pontos base.");
-      controls.show();
-
-  }
+  // function showInformation()
+  // {
+  //   // Use this to show information onscreen
+  //   controls = new InfoBox();
+  //     controls.add("Lathe Geometry Example");
+  //     controls.show();
+  //     controls.addParagraph();
+  //     controls.add("Pressione 'A' para visualizar/ocultar os eixos.");
+  //     controls.add("Pressione 'O' para visualizar/ocultar o objeto principal.");
+  //     controls.add("Pressione 'P' para visualizar/ocultar os pontos base.");
+  //     controls.show();
+  //
+  // }
 
   function render()
   {
     stats.update();
     trackballControls.update();
-    keyboardUpdate();
+    //keyboardUpdate();
     requestAnimationFrame(render);
     renderer.render(scene, camera)
   }
