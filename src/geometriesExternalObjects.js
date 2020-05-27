@@ -41,12 +41,42 @@ function main()
 
   var infoBox = new SecondaryBox("");
 
+  // Interface
+  var controls = new function ()
+  {
+    this.viewAxes = false;
+    this.type = 'Object1';
+    this.onChooseObject = function()
+    {
+      objectArray[activeObject].visible = false;
+      // Get number of the object by parsing the string (Object'number')
+      // minus 1 (array starts from zero)
+      activeObject = this.type[6]-1;
+      objectArray[activeObject].visible = true;
+      infoBox.changeMessage(objectArray[activeObject].name);
+    };
+    this.onViewAxes = function(){
+      axesHelper.visible = this.viewAxes;
+    };
+  };
+
+  // GUI interface
+  var gui = new dat.GUI();
+  gui.add(controls, 'type',
+  ['Object1', 'Object2', 'Object3', 'Object4',
+   'Object5', 'Object6', 'Object7', 'Object8'])
+    .name("Change Object")
+    .onChange(function(e) { controls.onChooseObject(); });
+  gui.add(controls, 'viewAxes', false)
+    .name("View Axes")
+    .onChange(function(e) { controls.onViewAxes() });
+
   //---------------------------------------------------------
   // Load external objects
   var objectArray = new Array();
   var activeObject = 0; // View first object
 
-  loadOBJFile('../assets/objects/', 'dolphins', false, 1.5);
+  loadOBJFile('../assets/objects/', 'dolphins', true, 1.5);
   loadOBJFile('../assets/objects/', 'rose+vase', false, 1.5);
   loadGLTFFile('../assets/objects/', 'TocoToucan', false, 2.0);
   loadFBXFile('../assets/objects/', 'raptor', false, 2.5);

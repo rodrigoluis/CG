@@ -10,11 +10,9 @@ function main()
     camera.lookAt(0, 0, 0);
     camera.position.set(5,15,40);
     camera.up.set( 0, 1, 0 );
+  var objColor = "rgb(0, 200, 0)";
 
   var followCamera = false; // Controls if light will follow camera
-
-  // To use the keyboard
-  var keyboard = new KeyboardState();
 
   // Enable mouse rotation, pan, zoom etc.
   var trackballControls = new THREE.TrackballControls( camera, renderer.domElement );
@@ -32,11 +30,52 @@ function main()
     axesHelper.translateY(0.1);
   scene.add( axesHelper );
 
-  // Show text information onscreen
-  showInformation();
-
   // Object Material
-  var objectMaterial = new THREE.MeshPhongMaterial({color:"rgb(50,130,150)"});
+  var objectMaterial = new THREE.MeshPhongMaterial({color:objColor});
+
+  //------------------------------------------------------------
+  // Interface
+  var controls = new function ()
+  {
+    this.viewObject = true;
+    this.viewAxes = false;
+    this.viewPoints = true;
+    this.lightFollowCamera = false;
+    this.color = objColor;
+
+    this.onViewObject = function(){
+      object.visible = this.viewObject;
+    };
+    this.onViewPoints = function(){
+      spGroup.visible = this.viewPoints;
+    };
+    this.onViewAxes = function(){
+      axesHelper.visible = this.viewAxes;
+    };
+    this.updateColor = function(){
+      objectMaterial.color.set(this.color);
+    };
+    this.updateLight = function(){
+      followCamera = this.lightFollowCamera;
+    };
+  };
+
+  var gui = new dat.GUI();
+  gui.add(controls, 'viewObject', true)
+    .name("View Object")
+    .onChange(function(e) { controls.onViewObject() });
+  gui.add(controls, 'viewPoints', false)
+    .name("View Points")
+    .onChange(function(e) { controls.onViewPoints() });
+  gui.add(controls, 'viewAxes', false)
+    .name("View Axes")
+    .onChange(function(e) { controls.onViewAxes() });
+  gui.add(controls, 'lightFollowCamera', false)
+    .name("LightFollowCam")
+    .onChange(function(e) { controls.updateLight() });
+  gui.addColor(controls, 'color')
+    .name("Change Color")
+    .onChange(function(e) { controls.updateColor();});
 
   //----------------------------------
   // Create Convex Geometry
@@ -85,41 +124,6 @@ function main()
     return points;
   }
 
-  function keyboardUpdate()
-  {
-    keyboard.update();
-  	if ( keyboard.down("A") )
-    {
-      axesHelper.visible = !axesHelper.visible
-    }
-    if ( keyboard.down("O") )
-    {
-      object.visible = !object.visible
-    }
-    if ( keyboard.down("P") )
-    {
-      spGroup.visible = !spGroup.visible
-    }
-    if ( keyboard.down("C") )
-    {
-      followCamera = !followCamera;
-    }
-  }
-
-  function showInformation()
-  {
-    // Use this to show information onscreen
-    controls = new InfoBox();
-      controls.add("Convex Geometry Example");
-      controls.show();
-      controls.addParagraph();
-      controls.add("Pressione 'A' para visualizar/ocultar os eixos.");
-      controls.add("Pressione 'P' para visualizar/ocultar os pontos base.");
-      controls.add("Pressione 'O' para visualizar/ocultar o objeto principal.");
-      controls.add("Pressione 'C' para luz acompanhar (ou não) a camera.");
-      controls.show();
-  }
-
   function render()
   {
     stats.update();
@@ -128,7 +132,6 @@ function main()
         lightFollowingCamera(light, camera) // Makes light follow the camera
     else
         light.position.set(5,15,40);
-    keyboardUpdate();
     requestAnimationFrame(render);
     renderer.render(scene, camera)
   }

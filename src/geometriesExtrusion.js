@@ -10,9 +10,7 @@ function main()
     camera.lookAt(0, 0, 0);
     camera.position.set(5,15,30);
     camera.up.set( 0, 1, 0 );
-
-  // To use the keyboard
-  var keyboard = new KeyboardState();
+  var objColor = "rgb(0, 200, 0)";
 
   // Enable mouse rotation, pan, zoom etc.
   var trackballControls = new THREE.TrackballControls( camera, renderer.domElement );
@@ -29,12 +27,39 @@ function main()
     axesHelper.visible = false;
   scene.add( axesHelper );
 
-  // Show text information onscreen
-  showInformation();
-
   // Object Material
-  var objectMaterial = new THREE.MeshPhongMaterial({color:"rgb(50,200,50)"});
+  var objectMaterial = new THREE.MeshPhongMaterial({color:objColor});
     objectMaterial.side =  THREE.DoubleSide; // Show front and back polygons
+
+  //------------------------------------------------------------
+  // Interface
+  var controls = new function ()
+  {
+    this.viewObject = true;
+    this.viewAxes = false;
+    this.color = objColor;
+
+    this.onViewObject = function(){
+      object.visible = this.viewObject;
+    };
+    this.onViewAxes = function(){
+      axesHelper.visible = this.viewAxes;
+    };
+    this.updateColor = function(){
+      objectMaterial.color.set(this.color);
+    };
+  };
+
+  var gui = new dat.GUI();
+  gui.add(controls, 'viewObject', true)
+    .name("View Object")
+    .onChange(function(e) { controls.onViewObject() });
+  gui.add(controls, 'viewAxes', false)
+    .name("View Axes")
+    .onChange(function(e) { controls.onViewAxes() });
+  gui.addColor(controls, 'color')
+    .name("Change Color")
+    .onChange(function(e) { controls.updateColor();});
 
   //----------------------------------
   // Create Extrude Geometry
@@ -80,36 +105,10 @@ function main()
     return smileyShape;
   }
 
-  function keyboardUpdate()
-  {
-    keyboard.update();
-  	if ( keyboard.down("A") )
-    {
-      axesHelper.visible = !axesHelper.visible
-    }
-    if ( keyboard.down("O") )
-    {
-      object.visible = !object.visible
-    }
-  }
-
-  function showInformation()
-  {
-    // Use this to show information onscreen
-    controls = new InfoBox();
-      controls.add("Extrude Geometry Example");
-      controls.show();
-      controls.addParagraph();
-      controls.add("Pressione 'A' para visualizar/ocultar os eixos.");
-      controls.add("Pressione 'O' para visualizar/ocultar o objeto principal.");
-      controls.show();
-  }
-
   function render()
   {
     stats.update();
     trackballControls.update();
-    keyboardUpdate();
     requestAnimationFrame(render);
     renderer.render(scene, camera)
   }
