@@ -18,9 +18,6 @@ function main()
   // Control the appearence of first object loaded
   var firstRender = false;
 
-  // To use the keyboard
-  var keyboard = new KeyboardState();
-
   // Enable mouse rotation, pan, zoom etc.
   var trackballControls = new THREE.TrackballControls( camera, renderer.domElement );
 
@@ -36,27 +33,53 @@ function main()
     axesHelper.visible = false;
   scene.add( axesHelper );
 
-  // Show text information onscreen
-  showInformation();
-
   var infoBox = new SecondaryBox("");
+
+  //----------------------------------------------------------------------------
+  // Interface
+  var controls = new function ()
+  {
+    this.viewAxes = false;
+    this.type = "";
+    this.onChooseObject = function()
+    {
+      objectArray[activeObject].visible = false;
+      // Get number of the object by parsing the string (Object'number')
+      activeObject = this.type[6];
+      objectArray[activeObject].visible = true;
+      infoBox.changeMessage(objectArray[activeObject].name);
+    };
+    this.onViewAxes = function(){
+      axesHelper.visible = this.viewAxes;
+    };
+  };
+
+  // GUI interface
+  var gui = new dat.GUI();
+  gui.add(controls, 'type',
+  ['Object0', 'Object1', 'Object2', 'Object3', 'Object4', 'Object5'])
+    .name("Change Object")
+    .onChange(function(e) { controls.onChooseObject(); });
+  gui.add(controls, 'viewAxes', false)
+    .name("View Axes")
+    .onChange(function(e) { controls.onViewAxes() });
 
   //---------------------------------------------------------
   // Load external objects
   var objectArray = new Array();
   var activeObject = 0; // View first object
 
-  loadOBJFile('../assets/objects/', 'L200', 2.5, 90);
-  loadOBJFile('../assets/objects/', 'plane', 3.0, 0);
-  loadOBJFile('../assets/objects/', 'tank', 2.0, 90);
+  loadOBJFile('../assets/objects/', 'plane', 3.0, 0, true);
+  loadOBJFile('../assets/objects/', 'L200', 2.5, 90, false);
+  loadOBJFile('../assets/objects/', 'tank', 2.0, 90, false);
 
-  loadGLTFFile('../assets/objects/orca/','scene.gltf', 4.0, 180);
-  loadGLTFFile('../assets/objects/wooden_goose/','scene.gltf', 2.0, 90);
-  loadGLTFFile('../assets/objects/chair/','scene.gltf', 1.0, 180);
+  loadGLTFFile('../assets/objects/', 'orca', 4.0, 180, false);
+  loadGLTFFile('../assets/objects/', 'wooden_goose', 2.0, 90, false);
+  loadGLTFFile('../assets/objects/', 'chair', 1.0, 180, false);
 
   render();
 
-  function loadOBJFile(modelPath, modelName, desiredScale, angle)
+  function loadOBJFile(modelPath, modelName, desiredScale, angle, visibility)
   {
     currentModel = modelName;
     var manager = new THREE.LoadingManager( );
@@ -64,40 +87,48 @@ function main()
     var mtlLoader = new THREE.MTLLoader( manager );
     mtlLoader.setPath( modelPath );
     mtlLoader.load( modelName + '.mtl', function ( materials ) {
-         materials.preload();
+       materials.preload();
 
-         var objLoader = new THREE.OBJLoader( manager );
-         objLoader.setMaterials(materials);
-         objLoader.setPath(modelPath);
-         objLoader.load( modelName + ".obj", function ( obj ) {
-           obj.visible = false;
-           // Set 'castShadow' property for each children of the group
-           obj.traverse( function (child)
-           {
-             child.castShadow = true;
-           });
+       var objLoader = new THREE.OBJLoader( manager );
+       objLoader.setMaterials(materials);
+       objLoader.setPath(modelPath);
+       objLoader.load( modelName + ".obj", function ( obj ) {
+         obj.visible = visibility;
+         obj.name = modelName;
+         // Set 'castShadow' property for each children of the group
+         obj.traverse( function (child)
+         {
+           child.castShadow = true;
+         });
 
-           obj.traverse( function( node )
-           {
-             if( node.material ) node.material.side = THREE.DoubleSide;
-           });
+         obj.traverse( function( node )
+         {
+           if( node.material ) node.material.side = THREE.DoubleSide;
+         });
 
-           var obj = normalizeAndRescale(obj, desiredScale);
-           var obj = fixPosition(obj);
-           obj.rotateY(degreesToRadians(angle));
+         var obj = normalizeAndRescale(obj, desiredScale);
+         var obj = fixPosition(obj);
+         obj.rotateY(degreesToRadians(angle));
 
-           scene.add ( obj );
-           objectArray.push( obj );
-         }, onProgress, onError );
+         scene.add ( obj );
+         objectArray.push( obj );
+
+         // Pick the index of the first visible object
+         if(modelName == 'plane')
+         {
+           activeObject = objectArray.length-1;
+         }
+       }, onProgress, onError );
     });
   }
 
-  function loadGLTFFile(modelPath, modelName, desiredScale, angle)
+  function loadGLTFFile(modelPath, modelFolder, desiredScale, angle, visibility)
   {
     var loader = new THREE.GLTFLoader( );
-    loader.load( modelPath + modelName, function ( gltf ) {
+    loader.load( modelPath + modelFolder + '/scene.gltf', function ( gltf ) {
       var obj = gltf.scene;
-      obj.visible = false;
+      obj.visible = visibility;
+      obj.name = modelFolder;
       obj.traverse( function ( child ) {
       	if ( child ) {
            child.castShadow = true;
@@ -117,9 +148,6 @@ function main()
 
 			}, onProgress, onError);
   }
-
-
-
 
   function onError() { };
 
@@ -158,74 +186,6 @@ function main()
     if(!firstRender) firstRender = true;
   }
 
-  function keyboardUpdate()
-  {
-    keyboard.update();
-  	if ( keyboard.down("A") )
-    {
-      axesHelper.visible = !axesHelper.visible;
-    }
-    if ( keyboard.down("enter"))
-    {
-      if(activeObject != 0) objectArray[activeObject].visible = false;
-      renderFirstObjectLoaded();
-      infoBox.changeMessage("Object " + activeObject);
-    }
-    if ( keyboard.down("right") )
-    {
-      if(!firstRender)
-      {
-        renderFirstObjectLoaded();
-        return;
-      }
-      activeObject++;
-      if(activeObject < objectArray.length)
-      {
-        objectArray[activeObject-1].visible = false;
-        objectArray[activeObject].visible = true;
-      }
-      else {
-        activeObject = 0;
-        objectArray[objectArray.length-1].visible = false;
-        objectArray[0].visible = true;
-      }
-      infoBox.changeMessage("Object " + activeObject);
-    }
-    if ( keyboard.down("left") )
-    {
-      if(!firstRender)
-      {
-        renderFirstObjectLoaded();
-        return;
-      }
-      activeObject--;
-      if(activeObject < 0)
-      {
-        activeObject = objectArray.length-1;
-        objectArray[0].visible = false;
-        objectArray[activeObject].visible = true;
-      }
-      else {
-        objectArray[activeObject+1].visible = false;
-        objectArray[activeObject].visible = true;
-      }
-      infoBox.changeMessage("Object " + activeObject);
-    }
-  }
-
-  function showInformation()
-  {
-    // Use this to show information onscreen
-    controls = new InfoBox();
-      controls.add("Texture - External Objects");
-      controls.show();
-      controls.addParagraph();
-      controls.add("Pressione 'ENTER' para mostrar o primeiro objeto carregado.");
-      controls.add("Pressione 'A' para visualizar/ocultar os eixos.");
-      controls.add("Pressione as setas para direita e esquerda para alterar o objeto.");
-      controls.show();
-  }
-
   function createSphere(radius, widthSegments, heightSegments)
   {
     var geometry = new THREE.SphereGeometry(radius, widthSegments, heightSegments, 0, Math.PI * 2, 0, Math.PI);
@@ -239,7 +199,6 @@ function main()
   {
     stats.update();
     trackballControls.update();
-    keyboardUpdate();
     requestAnimationFrame(render);
     renderer.render(scene, camera)
   }

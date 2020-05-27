@@ -18,9 +18,6 @@ function main()
   // Control the appearence of first object loaded
   var firstRender = false;
 
-  // To use the keyboard
-  var keyboard = new KeyboardState();
-
   // Enable mouse rotation, pan, zoom etc.
   var trackballControls = new THREE.TrackballControls( camera, renderer.domElement );
 
@@ -36,22 +33,18 @@ function main()
     axesHelper.visible = false;
   scene.add( axesHelper );
 
-  // Show text information onscreen
-  showInformation();
-
   var infoBox = new SecondaryBox("");
 
   // Interface
   var controls = new function ()
   {
     this.viewAxes = false;
-    this.type = 'Object1';
+    this.type = "";
     this.onChooseObject = function()
     {
       objectArray[activeObject].visible = false;
       // Get number of the object by parsing the string (Object'number')
-      // minus 1 (array starts from zero)
-      activeObject = this.type[6]-1;
+      activeObject = this.type[6];
       objectArray[activeObject].visible = true;
       infoBox.changeMessage(objectArray[activeObject].name);
     };
@@ -63,8 +56,8 @@ function main()
   // GUI interface
   var gui = new dat.GUI();
   gui.add(controls, 'type',
-  ['Object1', 'Object2', 'Object3', 'Object4',
-   'Object5', 'Object6', 'Object7', 'Object8'])
+    ['Object0', 'Object1', 'Object2', 'Object3',
+     'Object4', 'Object5', 'Object6', 'Object7'])
     .name("Change Object")
     .onChange(function(e) { controls.onChooseObject(); });
   gui.add(controls, 'viewAxes', false)
@@ -74,15 +67,15 @@ function main()
   //---------------------------------------------------------
   // Load external objects
   var objectArray = new Array();
-  var activeObject = 0; // View first object
+  var activeObject = 0; 
 
   loadOBJFile('../assets/objects/', 'dolphins', true, 1.5);
   loadOBJFile('../assets/objects/', 'rose+vase', false, 1.5);
+  loadOBJFile('../assets/objects/', 'flowers', false, 1.5);
   loadGLTFFile('../assets/objects/', 'TocoToucan', false, 2.0);
   loadFBXFile('../assets/objects/', 'raptor', false, 2.5);
   loadPLYFile('../assets/objects/', 'cow', false, 2.0);
   loadOBJFile('../assets/objects/', 'f-16', false, 2.2);
-  loadOBJFile('../assets/objects/', 'flowers', false, 1.5);
   loadOBJFile('../assets/objects/', 'soccerball', false, 1.2);
 
   render();
@@ -197,6 +190,13 @@ function main()
 
            scene.add ( obj );
            objectArray.push( obj );
+
+           // Pick the index of the first visible object
+           if(modelName == 'dolphins')
+           {
+             activeObject = objectArray.length-1;
+           }
+
          }, onProgress, onError );
     });
   }
@@ -238,74 +238,6 @@ function main()
     if(!firstRender) firstRender = true;
   }
 
-  function keyboardUpdate()
-  {
-    keyboard.update();
-  	if ( keyboard.down("A") )
-    {
-      axesHelper.visible = !axesHelper.visible;
-    }
-    if ( keyboard.down("enter"))
-    {
-      if(activeObject != 0) objectArray[activeObject].visible = false;
-      renderFirstObjectLoaded();
-      infoBox.changeMessage("Object " + activeObject + ": " + objectArray[activeObject].name);
-    }
-    if ( keyboard.down("right") )
-    {
-      if(!firstRender)
-      {
-        renderFirstObjectLoaded();
-        return;
-      }
-      activeObject++;
-      if(activeObject < objectArray.length)
-      {
-        objectArray[activeObject-1].visible = false;
-        objectArray[activeObject].visible = true;
-      }
-      else {
-        activeObject = 0;
-        objectArray[objectArray.length-1].visible = false;
-        objectArray[0].visible = true;
-      }
-      infoBox.changeMessage("Object " + activeObject + ": " + objectArray[activeObject].name);
-    }
-    if ( keyboard.down("left") )
-    {
-      if(!firstRender)
-      {
-        renderFirstObjectLoaded();
-        return;
-      }
-      activeObject--;
-      if(activeObject < 0)
-      {
-        activeObject = objectArray.length-1;
-        objectArray[0].visible = false;
-        objectArray[activeObject].visible = true;
-      }
-      else {
-        objectArray[activeObject+1].visible = false;
-        objectArray[activeObject].visible = true;
-      }
-      infoBox.changeMessage("Object " + activeObject + ": " + objectArray[activeObject].name);
-    }
-  }
-
-  function showInformation()
-  {
-    // Use this to show information onscreen
-    controls = new InfoBox();
-      controls.add("External Loader Example");
-      controls.show();
-      controls.addParagraph();
-      controls.add("Pressione 'ENTER' para mostrar o primeiro objeto carregado.");
-      controls.add("Pressione 'A' para visualizar/ocultar os eixos.");
-      controls.add("Pressione as setas para direita e esquerda para alterar o objeto.");
-      controls.show();
-  }
-
   function createSphere(radius, widthSegments, heightSegments)
   {
     var geometry = new THREE.SphereGeometry(radius, widthSegments, heightSegments, 0, Math.PI * 2, 0, Math.PI);
@@ -319,7 +251,6 @@ function main()
   {
     stats.update();
     trackballControls.update();
-    keyboardUpdate();
     requestAnimationFrame(render);
     renderer.render(scene, camera)
   }
