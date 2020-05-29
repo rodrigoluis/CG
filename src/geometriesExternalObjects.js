@@ -35,39 +35,10 @@ function main()
 
   var infoBox = new SecondaryBox("");
 
-  // Interface
-  var controls = new function ()
-  {
-    this.viewAxes = false;
-    this.type = "";
-    this.onChooseObject = function()
-    {
-      objectArray[activeObject].visible = false;
-      // Get number of the object by parsing the string (Object'number')
-      activeObject = this.type[6];
-      objectArray[activeObject].visible = true;
-      infoBox.changeMessage(objectArray[activeObject].name);
-    };
-    this.onViewAxes = function(){
-      axesHelper.visible = this.viewAxes;
-    };
-  };
-
-  // GUI interface
-  var gui = new dat.GUI();
-  gui.add(controls, 'type',
-    ['Object0', 'Object1', 'Object2', 'Object3',
-     'Object4', 'Object5', 'Object6', 'Object7'])
-    .name("Change Object")
-    .onChange(function(e) { controls.onChooseObject(); });
-  gui.add(controls, 'viewAxes', false)
-    .name("View Axes")
-    .onChange(function(e) { controls.onViewAxes() });
-
   //---------------------------------------------------------
   // Load external objects
   var objectArray = new Array();
-  var activeObject = 0; 
+  var activeObject = 0;
 
   loadOBJFile('../assets/objects/', 'dolphins', true, 1.5);
   loadOBJFile('../assets/objects/', 'rose+vase', false, 1.5);
@@ -78,6 +49,7 @@ function main()
   loadOBJFile('../assets/objects/', 'f-16', false, 2.2);
   loadOBJFile('../assets/objects/', 'soccerball', false, 1.2);
 
+  buildInterface();
   render();
 
   function loadPLYFile(modelPath, modelName, visibility, desiredScale)
@@ -245,6 +217,38 @@ function main()
     var object = new THREE.Mesh(geometry, material);
       object.castShadow = true;
     return object;
+  }
+
+  function buildInterface()
+  {
+    // Interface
+    var controls = new function ()
+    {
+      this.viewAxes = false;
+      this.type = "";
+      this.onChooseObject = function()
+      {
+        objectArray[activeObject].visible = false;
+        // Get number of the object by parsing the string (Object'number')
+        activeObject = this.type[6];
+        objectArray[activeObject].visible = true;
+        infoBox.changeMessage(objectArray[activeObject].name);
+      };
+      this.onViewAxes = function(){
+        axesHelper.visible = this.viewAxes;
+      };
+    };
+
+    // GUI interface
+    var gui = new dat.GUI();
+    gui.add(controls, 'type',
+      ['Object0', 'Object1', 'Object2', 'Object3',
+       'Object4', 'Object5', 'Object6', 'Object7'])
+      .name("Change Object")
+      .onChange(function(e) { controls.onChooseObject(); });
+    gui.add(controls, 'viewAxes', false)
+      .name("View Axes")
+      .onChange(function(e) { controls.onViewAxes() });    
   }
 
   function render()

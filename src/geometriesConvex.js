@@ -33,50 +33,6 @@ function main()
   // Object Material
   var objectMaterial = new THREE.MeshPhongMaterial({color:objColor});
 
-  //------------------------------------------------------------
-  // Interface
-  var controls = new function ()
-  {
-    this.viewObject = true;
-    this.viewAxes = false;
-    this.viewPoints = true;
-    this.lightFollowCamera = false;
-    this.color = objColor;
-
-    this.onViewObject = function(){
-      object.visible = this.viewObject;
-    };
-    this.onViewPoints = function(){
-      spGroup.visible = this.viewPoints;
-    };
-    this.onViewAxes = function(){
-      axesHelper.visible = this.viewAxes;
-    };
-    this.updateColor = function(){
-      objectMaterial.color.set(this.color);
-    };
-    this.updateLight = function(){
-      followCamera = this.lightFollowCamera;
-    };
-  };
-
-  var gui = new dat.GUI();
-  gui.add(controls, 'viewObject', true)
-    .name("View Object")
-    .onChange(function(e) { controls.onViewObject() });
-  gui.add(controls, 'viewPoints', false)
-    .name("View Points")
-    .onChange(function(e) { controls.onViewPoints() });
-  gui.add(controls, 'viewAxes', false)
-    .name("View Axes")
-    .onChange(function(e) { controls.onViewAxes() });
-  gui.add(controls, 'lightFollowCamera', false)
-    .name("LightFollowCam")
-    .onChange(function(e) { controls.updateLight() });
-  gui.addColor(controls, 'color')
-    .name("Change Color")
-    .onChange(function(e) { controls.updateColor();});
-
   //----------------------------------
   // Create Convex Geometry
   //----------------------------------
@@ -94,6 +50,7 @@ function main()
 
   scene.add(object);
 
+  buildInterface();
   render();
 
   function generatePoints()
@@ -123,6 +80,52 @@ function main()
     scene.add(spGroup);
     return points;
   }
+
+  function buildInterface()
+  {
+    var controls = new function ()
+    {
+      this.viewObject = true;
+      this.viewAxes = false;
+      this.viewPoints = true;
+      this.lightFollowCamera = false;
+      this.color = objColor;
+
+      this.onViewObject = function(){
+        object.visible = this.viewObject;
+      };
+      this.onViewPoints = function(){
+        spGroup.visible = this.viewPoints;
+      };
+      this.onViewAxes = function(){
+        axesHelper.visible = this.viewAxes;
+      };
+      this.updateColor = function(){
+        objectMaterial.color.set(this.color);
+      };
+      this.updateLight = function(){
+        followCamera = this.lightFollowCamera;
+      };
+    };
+
+    var gui = new dat.GUI();
+    gui.add(controls, 'viewObject', true)
+      .name("View Object")
+      .onChange(function(e) { controls.onViewObject() });
+    gui.add(controls, 'viewPoints', false)
+      .name("View Points")
+      .onChange(function(e) { controls.onViewPoints() });
+    gui.add(controls, 'viewAxes', false)
+      .name("View Axes")
+      .onChange(function(e) { controls.onViewAxes() });
+    gui.add(controls, 'lightFollowCamera', false)
+      .name("LightFollowCam")
+      .onChange(function(e) { controls.updateLight() });
+    gui.addColor(controls, 'color')
+      .name("Change Color")
+      .onChange(function(e) { controls.updateColor();});
+  }
+
 
   function render()
   {

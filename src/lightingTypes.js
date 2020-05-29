@@ -9,6 +9,8 @@ function main()
     camera.lookAt(0, 0, 0);
     camera.position.set(2.18, 1.62, 3.31);
     camera.up.set( 0, 1, 0 );
+  var objColor = "rgb(255,20,20)";
+  var objShininess = 200;
 
   // To use the keyboard
   var keyboard = new KeyboardState();
@@ -35,7 +37,7 @@ function main()
 
   // Teapot
   var geometry = new THREE.TeapotBufferGeometry(0.5);
-  var material = new THREE.MeshPhongMaterial({color:"rgb(255,20,20)", shininess:"200"});
+  var material = new THREE.MeshPhongMaterial({color:objColor, shininess:"200"});
     material.side = THREE.DoubleSide;
   var obj = new THREE.Mesh(geometry, material);
     obj.castShadow = true;
@@ -47,13 +49,13 @@ function main()
   // Control available light and set the active light
   var lightArray = new Array();
   var activeLight = 0; // View first Light
+  var lightIntensity = 1.0;
 
   //---------------------------------------------------------
   // Default light position, color, ambient color and intensity
   var lightPosition = new THREE.Vector3(1.7, 0.8, 1.1);
   var lightColor = "rgb(255,255,255)";
   var ambientColor = "rgb(50,50,50)";
-  var lightIntensity = 1.0;
 
   // Sphere to represent the light
   var lightSphere = createLightSphere(scene, 0.05, 10, 10, lightPosition);
@@ -63,16 +65,17 @@ function main()
   var spotLight = new THREE.SpotLight(lightColor);
   setSpotLight(lightPosition);
 
-  var dirLight = new THREE.DirectionalLight(lightColor);
-  setDirectionalLighting(lightPosition);
-
   var pointLight = new THREE.DirectionalLight(lightColor);
   setPointLight(lightPosition);
+
+  var dirLight = new THREE.DirectionalLight(lightColor);
+  setDirectionalLighting(lightPosition);
 
   // More info here: https://threejs.org/docs/#api/en/lights/AmbientLight
   var ambientLight = new THREE.AmbientLight(ambientColor);
   scene.add( ambientLight );
 
+  buildInterface();
   render();
 
   // Set Point Light
@@ -140,99 +143,109 @@ function main()
     lightArray[activeLight].intensity = lightIntensity;
   }
 
+  function buildInterface()
+  {
+    //------------------------------------------------------------
+    // Interface
+    var controls = new function ()
+    {
+      this.viewAxes = false;
+      this.color = objColor;
+      this.shininess = objShininess;
+      this.lightIntensity = lightIntensity;
+      this.lightType = 'Spot'
+      this.ambientLight = true;
+
+      this.onViewAxes = function(){
+        axesHelper.visible = this.viewAxes;
+      };
+      this.onEnableAmbientLight = function(){
+        ambientLight.visible = this.ambientLight;
+      };
+      this.updateColor = function(){
+        material.color.set(this.color);
+      };
+      this.onUpdateShininess = function(){
+        material.shininess = this.shininess;
+      };
+      this.onUpdateLightIntensity = function(){
+        lightIntensity = this.lightIntensity;
+        updateLightIntensity();
+      };
+      this.onChangeLight = function()
+      {
+        lightArray[activeLight].visible = false;
+        switch (this.lightType)
+        {
+          case 'Spot':
+              activeLight = 0;
+              break;
+          case 'Point':
+              activeLight = 1;
+              break;
+          case 'Direction':
+              activeLight = 2;
+              break;
+        }
+        lightArray[activeLight].visible = true;
+        updateLightPosition();
+        updateLightIntensity();
+      };
+    };
+
+    var gui = new dat.GUI();
+    gui.addColor(controls, 'color')
+      .name("Obj Color")
+      .onChange(function(e) { controls.updateColor() });
+    gui.add(controls, 'shininess', 0, 1000)
+      .name("Obj Shininess")
+      .onChange(function(e) { controls.onUpdateShininess() });
+    gui.add(controls, 'viewAxes', false)
+      .name("View Axes")
+      .onChange(function(e) { controls.onViewAxes() });
+    gui.add(controls, 'lightType', ['Spot', 'Point', 'Direction'])
+      .name("Light Type")
+      .onChange(function(e) { controls.onChangeLight(); });
+    gui.add(controls, 'lightIntensity', 0, 5)
+      .name("Light Intensity")
+      .onChange(function(e) { controls.onUpdateLightIntensity() });
+    gui.add(controls, 'ambientLight', true)
+      .name("Ambient Light")
+      .onChange(function(e) { controls.onEnableAmbientLight() });
+  }
+
   function keyboardUpdate()
   {
     keyboard.update();
-  	if ( keyboard.down("A") )
-    {
-      ambientLight.visible = !ambientLight.visible;
-      if(ambientLight)
-        infoBox.changeMessage("Ambient Light Enabled");
-      else
-        infoBox.changeMessage("Ambient Light Disabled");
-    }
-    if ( keyboard.pressed("="))
-    {
-      lightIntensity+=0.05;
-      infoBox.changeMessage("Intensity: " + lightIntensity.toFixed(2));
-      updateLightIntensity();
-    }
-    if ( keyboard.pressed("-") )
-    {
-      lightIntensity-=0.05;
-      if(lightIntensity <= 0.0) lightIntensity = 0.0
-      infoBox.changeMessage("Intensity: " + lightIntensity.toFixed(2));
-      updateLightIntensity();
-    }
-    if ( keyboard.pressed("right") )
+    if ( keyboard.pressed("D") )
     {
       lightPosition.x += 0.05;
       updateLightPosition();
     }
-    if ( keyboard.pressed("left") )
+    if ( keyboard.pressed("A") )
     {
       lightPosition.x -= 0.05;
       updateLightPosition();
     }
-    if ( keyboard.pressed("up") )
+    if ( keyboard.pressed("W") )
     {
       lightPosition.y += 0.05;
       updateLightPosition();
     }
-    if ( keyboard.pressed("down") )
+    if ( keyboard.pressed("S") )
     {
       lightPosition.y -= 0.05;
       updateLightPosition();
     }
-    if ( keyboard.pressed("pageup") )
+    if ( keyboard.pressed("E") )
     {
       lightPosition.z -= 0.05;
       updateLightPosition();
     }
-    if ( keyboard.pressed("pagedown") )
+    if ( keyboard.pressed("Q") )
     {
       lightPosition.z += 0.05;
       updateLightPosition();
-    }
-
-    if ( keyboard.down(".") )
-    {
-      activeLight++;
-      if(activeLight < lightArray.length)
-      {
-        lightArray[activeLight-1].visible = false;
-        lightArray[activeLight].visible = true;
-      }
-      else {
-        activeLight = 0;
-        lightArray[lightArray.length-1].visible = false;
-        lightArray[0].visible = true;
-      }
-      updateLightPosition();
-      updateLightIntensity();
-      infoBox.changeMessage("Light " + activeLight + ": " + lightArray[activeLight].name);
-    }
-    if ( keyboard.down(",") )
-    {
-      activeLight--;
-      if(activeLight < 0)
-      {
-        activeLight = lightArray.length-1;
-        lightArray[0].visible = false;
-        lightArray[activeLight].visible = true;
-      }
-      else {
-        lightArray[activeLight+1].visible = false;
-        lightArray[activeLight].visible = true;
-      }
-      updateLightPosition();
-      updateLightIntensity();
-      infoBox.changeMessage("Light " + activeLight + ": " + lightArray[activeLight].name);
-    }
-
-    if ( keyboard.down("Q") )
-    {
-      axesHelper.visible = !axesHelper.visible;
     }
   }
 
@@ -241,15 +254,8 @@ function main()
     // Use this to show information onscreen
     controls = new InfoBox();
       controls.add("Lighting - Types of Lights");
-      controls.show();
       controls.addParagraph();
-      controls.add("Pressione ',' e '.' para alternar o tipo de fonte de luz.");
-      controls.add("Pressione 'Q' para habilitar/desabilitar os eixos.");
-      controls.add("Pressione 'A' para habilitar/desabilitar luz ambiente.");
-      controls.add("Pressione '=' para aumentar a intensidade da luz.");
-      controls.add("Pressione '-' para diminuir a intensidade da luz.");
-      controls.add("Pressione setas para mover a fonte de luz em X e Y");
-      controls.add("Pressione 'pageup' e 'pagedown' para mover a luz em Z");
+      controls.add("Use the WASD-QE keys to move the light");
       controls.show();
   }
 

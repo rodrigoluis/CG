@@ -31,36 +31,6 @@ function main()
   var objectMaterial = new THREE.MeshPhongMaterial({color:objColor});
     objectMaterial.side =  THREE.DoubleSide; // Show front and back polygons
 
-  //------------------------------------------------------------
-  // Interface
-  var controls = new function ()
-  {
-    this.viewObject = true;
-    this.viewAxes = false;
-    this.color = objColor;
-
-    this.onViewObject = function(){
-      object.visible = this.viewObject;
-    };
-    this.onViewAxes = function(){
-      axesHelper.visible = this.viewAxes;
-    };
-    this.updateColor = function(){
-      objectMaterial.color.set(this.color);
-    };
-  };
-
-  var gui = new dat.GUI();
-  gui.add(controls, 'viewObject', true)
-    .name("View Object")
-    .onChange(function(e) { controls.onViewObject() });
-  gui.add(controls, 'viewAxes', false)
-    .name("View Axes")
-    .onChange(function(e) { controls.onViewAxes() });
-  gui.addColor(controls, 'color')
-    .name("Change Color")
-    .onChange(function(e) { controls.updateColor();});
-
   //----------------------------------
   // Create Extrude Geometry
   //----------------------------------
@@ -78,6 +48,7 @@ function main()
   object.translateY(4.0);
   object.rotateZ(degreesToRadians(180));
 
+  buildInterface();
   render();
 
   function smileShape()
@@ -103,6 +74,39 @@ function main()
 		smileyShape.holes.push( smileyMouthPath );
 
     return smileyShape;
+  }
+
+  function buildInterface()
+  {
+    //------------------------------------------------------------
+    // Interface
+    var controls = new function ()
+    {
+      this.viewObject = true;
+      this.viewAxes = false;
+      this.color = objColor;
+
+      this.onViewObject = function(){
+        object.visible = this.viewObject;
+      };
+      this.onViewAxes = function(){
+        axesHelper.visible = this.viewAxes;
+      };
+      this.updateColor = function(){
+        objectMaterial.color.set(this.color);
+      };
+    };
+
+    var gui = new dat.GUI();
+    gui.add(controls, 'viewObject', true)
+      .name("View Object")
+      .onChange(function(e) { controls.onViewObject() });
+    gui.add(controls, 'viewAxes', false)
+      .name("View Axes")
+      .onChange(function(e) { controls.onViewAxes() });
+    gui.addColor(controls, 'color')
+      .name("Change Color")
+      .onChange(function(e) { controls.updateColor();});    
   }
 
   function render()

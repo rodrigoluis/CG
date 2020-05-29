@@ -35,35 +35,6 @@ function main()
 
   var infoBox = new SecondaryBox("");
 
-  //----------------------------------------------------------------------------
-  // Interface
-  var controls = new function ()
-  {
-    this.viewAxes = false;
-    this.type = "";
-    this.onChooseObject = function()
-    {
-      objectArray[activeObject].visible = false;
-      // Get number of the object by parsing the string (Object'number')
-      activeObject = this.type[6];
-      objectArray[activeObject].visible = true;
-      infoBox.changeMessage(objectArray[activeObject].name);
-    };
-    this.onViewAxes = function(){
-      axesHelper.visible = this.viewAxes;
-    };
-  };
-
-  // GUI interface
-  var gui = new dat.GUI();
-  gui.add(controls, 'type',
-  ['Object0', 'Object1', 'Object2', 'Object3', 'Object4', 'Object5'])
-    .name("Change Object")
-    .onChange(function(e) { controls.onChooseObject(); });
-  gui.add(controls, 'viewAxes', false)
-    .name("View Axes")
-    .onChange(function(e) { controls.onViewAxes() });
-
   //---------------------------------------------------------
   // Load external objects
   var objectArray = new Array();
@@ -77,6 +48,7 @@ function main()
   loadGLTFFile('../assets/objects/', 'wooden_goose', 2.0, 90, false);
   loadGLTFFile('../assets/objects/', 'chair', 1.0, 180, false);
 
+  buildInterface();
   render();
 
   function loadOBJFile(modelPath, modelName, desiredScale, angle, visibility)
@@ -193,6 +165,37 @@ function main()
     var object = new THREE.Mesh(geometry, material);
       object.castShadow = true;
     return object;
+  }
+
+  function buildInterface()
+  {
+    // Interface
+    var controls = new function ()
+    {
+      this.viewAxes = false;
+      this.type = "";
+      this.onChooseObject = function()
+      {
+        objectArray[activeObject].visible = false;
+        // Get number of the object by parsing the string (Object'number')
+        activeObject = this.type[6];
+        objectArray[activeObject].visible = true;
+        infoBox.changeMessage(objectArray[activeObject].name);
+      };
+      this.onViewAxes = function(){
+        axesHelper.visible = this.viewAxes;
+      };
+    };
+
+    // GUI interface
+    var gui = new dat.GUI();
+    gui.add(controls, 'type',
+    ['Object0', 'Object1', 'Object2', 'Object3', 'Object4', 'Object5'])
+      .name("Change Object")
+      .onChange(function(e) { controls.onChooseObject(); });
+    gui.add(controls, 'viewAxes', false)
+      .name("View Axes")
+      .onChange(function(e) { controls.onViewAxes() });
   }
 
   function render()

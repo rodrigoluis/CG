@@ -36,18 +36,13 @@ function main()
 
   var infoBox = new SecondaryBox("");
 
-  //----------------------------------------------------------------------------
-  //----------------------------------------------------------------------------
-  // Load ....
-  var objectArray = new Array();
-  var activeObject = 0; // View first object
-
-  //---------------------------------------------------------
-  // Default light position, color, ambient color and intensity
-
-
   // Teapot
   var geometry = new THREE.TeapotBufferGeometry(0.5);
+
+  //---------------------------------------------------------
+  // Build Materials
+  var objectArray = new Array();
+  var activeObject = 0; // View first object
 
   usePhongMaterial(geometry, true);
   useLambertMaterial(geometry, false);
@@ -57,7 +52,7 @@ function main()
   useBasicMaterial(geometry, false);
   useBasicMaterialWireframe(geometry, false);
 
-
+  buildInterface();
   render();
 
   //More information here: https://threejs.org/docs/#api/en/materials/MeshNormalMaterial
@@ -106,7 +101,6 @@ function main()
     buildObject(geometry, material, visibility, "Basic Material - Wireframe");
   }
 
-
   //More information here: https://threejs.org/docs/#api/en/materials/MeshLambertMaterial
   function useLambertMaterial(geometry, visibility)
   {
@@ -145,69 +139,35 @@ function main()
   function keyboardUpdate()
   {
     keyboard.update();
-  	if ( keyboard.down("A") )
-    {
-      axesHelper.visible = !axesHelper.visible;
-    }
-    if ( keyboard.pressed("right") )
+    if ( keyboard.pressed("D") )
     {
       lightPosition.x += 0.05;
       updateLightPosition();
     }
-    if ( keyboard.pressed("left") )
+    if ( keyboard.pressed("A") )
     {
       lightPosition.x -= 0.05;
       updateLightPosition();
     }
-    if ( keyboard.pressed("up") )
+    if ( keyboard.pressed("W") )
     {
       lightPosition.y += 0.05;
       updateLightPosition();
     }
-    if ( keyboard.pressed("down") )
+    if ( keyboard.pressed("S") )
     {
       lightPosition.y -= 0.05;
       updateLightPosition();
     }
-    if ( keyboard.pressed("pageup") )
+    if ( keyboard.pressed("E") )
     {
       lightPosition.z -= 0.05;
       updateLightPosition();
     }
-    if ( keyboard.pressed("pagedown") )
+    if ( keyboard.pressed("Q") )
     {
       lightPosition.z += 0.05;
       updateLightPosition();
-    }
-    if ( keyboard.down(".") )
-    {
-      activeObject++;
-      if(activeObject < objectArray.length)
-      {
-        objectArray[activeObject-1].visible = false;
-        objectArray[activeObject].visible = true;
-      }
-      else {
-        activeObject = 0;
-        objectArray[objectArray.length-1].visible = false;
-        objectArray[0].visible = true;
-      }
-      infoBox.changeMessage("Object " + activeObject + ": " + objectArray[activeObject].name);
-    }
-    if ( keyboard.down(",") )
-    {
-      activeObject--;
-      if(activeObject < 0)
-      {
-        activeObject = objectArray.length-1;
-        objectArray[0].visible = false;
-        objectArray[activeObject].visible = true;
-      }
-      else {
-        objectArray[activeObject+1].visible = false;
-        objectArray[activeObject].visible = true;
-      }
-      infoBox.changeMessage("Object " + activeObject + ": " + objectArray[activeObject].name);
     }
   }
 
@@ -223,13 +183,65 @@ function main()
     // Use this to show information onscreen
     controls = new InfoBox();
       controls.add("Lighting - Types of Materials");
-      controls.show();
       controls.addParagraph();
-      controls.add("Pressione ',' e '.' para os materiais.");
-      controls.add("Pressione 'A' para habilitar/desabilitar os eixos.");
-      controls.add("Pressione setas para mover a fonte de luz em X e Y");
-      controls.add("Pressione 'pageup' e 'pagedown' para mover a luz em Z");
+      controls.add("Use the WASD-QE keys to move the light");
       controls.show();
+  }
+
+  function buildInterface()
+  {
+    //------------------------------------------------------------
+    // Interface
+    var controls = new function ()
+    {
+      this.viewAxes = false;
+      this.materialType = 'Phong'
+
+      this.onViewAxes = function(){
+        axesHelper.visible = this.viewAxes;
+      };
+
+      this.onChangeMaterial = function()
+      {
+        objectArray[activeObject].visible = false;
+        switch (this.materialType)
+        {
+          case 'Phong':
+              activeObject = 0;
+              break;
+          case 'Gouraud':
+              activeObject = 1;
+              break;
+          case 'Normal':
+              activeObject = 2;
+              break;
+          case 'NormalFlat':
+              activeObject = 3;
+              break;
+          case 'Toon':
+              activeObject = 4;
+              break;
+          case 'Basic':
+              activeObject = 5;
+              break;
+          case 'BasicWireframe':
+              activeObject = 6;
+              break;
+        }
+        objectArray[activeObject].visible = true;
+      };
+    };
+
+    var gui = new dat.GUI();
+
+    gui.add(controls, 'materialType',
+      ['Phong','Gouraud','Normal','NormalFlat','Toon','Basic','BasicWireframe'])
+      .name("Material Type")
+      .onChange(function(e) { controls.onChangeMaterial(); });
+
+    gui.add(controls, 'viewAxes', false)
+      .name("View Axes")
+      .onChange(function(e) { controls.onViewAxes() });
   }
 
   function render()
