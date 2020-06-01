@@ -13,19 +13,11 @@ function main()
   var lightPosition = new THREE.Vector3(0.0, 0.0, 5.0);
   var light = initDefaultLighting(scene, lightPosition); // Use default light
 
-  // To use the keyboard
-  var keyboard = new KeyboardState();
-
   // Enable mouse rotation, pan, zoom etc.
   var trackballControls = new THREE.TrackballControls( camera, renderer.domElement );
 
   // Listen window size changes
   window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
-
-  // Show text information onscreen
-  showInformation();
-
-  var infoBox = new SecondaryBox("");
 
   //----------------------------------------------------------------------------
   //-- Scene Objects -----------------------------------------------------------
@@ -44,108 +36,123 @@ function main()
 
   // Set defaults
   var repeatFactor = 2;
-  var wrapMode  = THREE.RepeatWrapping;
+  var wrapModeS  = THREE.RepeatWrapping;
+  var wrapModeT  = THREE.RepeatWrapping;
   var minFilter = THREE.LinearFilter;
   var magFilter = THREE.LinearFilter;
   updateTexture();
 
+  buildInterface();
   render();
 
   function updateTexture()
   {
     plane.material.map.repeat.set(repeatFactor,repeatFactor);
-    plane.material.map.wrapS = wrapMode;
-    plane.material.map.wrapT = wrapMode;
+    plane.material.map.wrapS = wrapModeS;
+    plane.material.map.wrapT = wrapModeT;
     plane.material.map.minFilter = minFilter;
     plane.material.map.magFilter = magFilter;
   }
 
-  function keyboardUpdate()
+  function buildInterface()
   {
-    keyboard.update();
-    if ( keyboard.down("right") )
+    //------------------------------------------------------------
+    // Interface
+    var controls = new function ()
     {
-      if(repeatFactor <= 5)
-      {
-        repeatFactor += 1;
-        infoBox.changeMessage("Repeat Factor: " + repeatFactor);
-        updateTexture();
-      }
-    }
-    if ( keyboard.down("left") )
-    {
-      if(repeatFactor > 1)
-      {
-        repeatFactor -= 1;
-        infoBox.changeMessage("Repeat Factor: " + repeatFactor);
-        updateTexture();
-      }
-    }
-    if ( keyboard.down("C") )
-    {
-      if(wrapMode == THREE.RepeatWrapping)
-      {
-        wrapMode = THREE.ClampToEdgeWrapping;
-        infoBox.changeMessage("Changing wrapping mode to 'ClampToEdge' ");
-      }
-      else
-      {
-        wrapMode = THREE.RepeatWrapping;
-        infoBox.changeMessage("Changing wrapping mode to 'Repeat' ");
-      }
-      plane.material.map.needsUpdate = true;
-      updateTexture();
-    }
-    if ( keyboard.down("N") )
-    {
-      if(minFilter == THREE.LinearFilter)
-      {
-        minFilter = THREE.NearestFilter;
-        infoBox.changeMessage("Changing minification to 'NearestFilter' ");
-      }
-      else
-      {
-        minFilter = THREE.LinearFilter;
-        infoBox.changeMessage("Changing minification to 'LinearFilter' ");
-      }
-      plane.material.map.needsUpdate = true;
-      updateTexture();
-    }
-    if ( keyboard.down("M") )
-    {
-      if(magFilter == THREE.LinearFilter)
-      {
-        magFilter = THREE.NearestFilter;
-        infoBox.changeMessage("Changing magnification to 'NearestFilter' ");
-      }
-      else
-      {
-        magFilter = THREE.LinearFilter;
-        infoBox.changeMessage("Changing magnification to 'LinearFilter' ");
-      }
-      plane.material.map.needsUpdate = true;
-      updateTexture();
-    }
-  }
+      this.wrapS = 'Repeat';
+      this.wrapT = 'Repeat';
+      this.repeat = repeatFactor;
+      this.mag = 'Linear';
+      this.min = 'Linear';
 
-  function showInformation()
-  {
-    // Use this to show information onscreen
-    controls = new InfoBox();
-      controls.add("Texture - Options");
-      controls.addParagraph();
-      controls.add("Setas para direita e esquerda para aumentar/diminuir fator de repetição");
-      controls.add("'C' para alternar entre modos 'Repeat' e 'Clamp' ");
-      controls.add("'N' para alternar modos de minificação ");
-      controls.add("'M' para alternar modos de magnificação ");
-      controls.show();
+      this.onChangeRepeatFactor = function(){
+        repeatFactor = this.repeat;
+        updateTexture();
+      };
+      this.onChangingWrappingMode_S = function()
+      {
+        switch (this.wrapS)
+        {
+          case 'Clamp':
+              wrapModeS = THREE.ClampToEdgeWrapping;
+              break;
+          case 'Repeat':
+              wrapModeS = THREE.RepeatWrapping;
+              break;
+        }
+        plane.material.map.needsUpdate = true;
+        updateTexture();
+      };
+      this.onChangingWrappingMode_T = function()
+      {
+        switch (this.wrapT)
+        {
+          case 'Clamp':
+              wrapModeT = THREE.ClampToEdgeWrapping;
+              break;
+          case 'Repeat':
+              wrapModeT = THREE.RepeatWrapping;
+              break;
+        }
+        plane.material.map.needsUpdate = true;
+        updateTexture();
+      };
+      // Best to see if the object is far
+      this.onChangingMinification = function()
+      {
+        switch (this.min)
+        {
+          case 'Linear':
+              minFilter = THREE.LinearFilter;
+              break;
+          case 'Nearest':
+              minFilter = THREE.NearestFilter;
+              break;
+        }
+        plane.material.map.needsUpdate = true;
+        updateTexture();
+      };
+      // Best to see if the object is near
+      this.onChangingMagnification = function()
+      {
+        switch (this.mag)
+        {
+          case 'Linear':
+              magFilter = THREE.LinearFilter;
+              break;
+          case 'Nearest':
+              magFilter = THREE.NearestFilter;
+              break;
+        }
+        plane.material.map.needsUpdate = true;
+        updateTexture();
+      };
+    };
+
+    var gui = new dat.GUI();
+
+    gui.add(controls, 'repeat', 1, 10)
+      .name("Repeat Factor")
+      .onChange(function(e) { controls.onChangeRepeatFactor()});
+    gui.add(controls, 'wrapS',['Clamp', 'Repeat'])
+      .name("Wrapping Mode S")
+      .onChange(function(e) { controls.onChangingWrappingMode_S(); });
+    gui.add(controls, 'wrapT',['Clamp', 'Repeat'])
+      .name("Wrapping Mode T")
+      .onChange(function(e) { controls.onChangingWrappingMode_T(); });
+    gui.add(controls, 'mag',['Linear', 'Nearest'])
+      .name("Magnification")
+      .onChange(function(e) { controls.onChangingMagnification(); });
+    gui.add(controls, 'min',['Linear', 'Nearest'])
+      .name("Minification")
+      .onChange(function(e) { controls.onChangingMinification(); });
   }
 
   function render()
   {
     stats.update();
     trackballControls.update();
-    keyboardUpdate();
     requestAnimationFrame(render);
     renderer.render(scene, camera)
   }

@@ -14,8 +14,10 @@ function main()
   var light = initDefaultLighting(scene, lightPosition); // Use default light
   var lightSphere = createLightSphere(scene, 0.1, 10, 10, lightPosition);
 
-  // To use the keyboard
-  var keyboard = new KeyboardState();
+  // Set angles of rotation
+  var angle = 0;
+  var speed = 0.05;
+  var animationOn = true; // control if animation is on or of
 
   // Enable mouse rotation, pan, zoom etc.
   var trackballControls = new THREE.TrackballControls( camera, renderer.domElement );
@@ -27,9 +29,6 @@ function main()
   var axesHelper = new THREE.AxesHelper( 1.5 );
     axesHelper.visible = false;
   scene.add( axesHelper );
-
-  // Show text information onscreen
-  showInformation();
 
   //-- Scene Objects -----------------------------------------------------------
   // Ground
@@ -69,70 +68,69 @@ function main()
   cube.material.map = stone;
   lightSphere.material.map = sun;
 
+  buildInterface();
   render();
 
-  function updateLightPosition()
+  function rotateLight()
   {
-    light.position.copy(lightPosition);
-    lightSphere.position.copy(lightPosition);
-  }
+    // More info:
+    light.matrixAutoUpdate = false;
+    lightSphere.matrixAutoUpdate = false;
 
-  function keyboardUpdate()
-  {
-    keyboard.update();
-    if ( keyboard.pressed("right") )
+    // Set angle's animation speed
+    if(animationOn)
     {
-      lightPosition.x += 0.05;
-      updateLightPosition();
-    }
-    if ( keyboard.pressed("left") )
-    {
-      lightPosition.x -= 0.05;
-      updateLightPosition();
-    }
-    if ( keyboard.pressed("up") )
-    {
-      lightPosition.y += 0.05;
-      updateLightPosition();
-    }
-    if ( keyboard.pressed("down") )
-    {
-      lightPosition.y -= 0.05;
-      updateLightPosition();
-    }
-    if ( keyboard.pressed("pageup") )
-    {
-      lightPosition.z -= 0.05;
-      updateLightPosition();
-    }
-    if ( keyboard.pressed("pagedown") )
-    {
-      lightPosition.z += 0.05;
-      updateLightPosition();
-    }
+      angle+=speed;
 
-    if ( keyboard.down("A") )
-    {
-      axesHelper.visible = !axesHelper.visible;
+      var mat4 = new THREE.Matrix4();
+
+      // Will execute T1 and then R1
+      light.matrix.identity();  // reset matrix
+      light.matrix.multiply(mat4.makeRotationY(angle)); // R1
+      light.matrix.multiply(mat4.makeTranslation(2.0, 1.2, 0.0)); // T1
+
+      lightSphere.matrix.copy(light.matrix);
     }
   }
 
-  function showInformation()
+  function buildInterface()
   {
-    // Use this to show information onscreen
-    controls = new InfoBox();
-      controls.add("Texture - Basic");
-      controls.addParagraph();
-      controls.add("Pressione 'A' para habilitar/desabilitar os eixos.");
-      controls.add("Pressione setas, 'pageup' e 'pagedown' para mover a fonte de luz nos eixos");
-      controls.show();
+    //------------------------------------------------------------
+    // Interface
+    var controls = new function ()
+    {
+      this.viewAxes = false;
+      this.speed = speed;
+      this.animation = animationOn;
+
+      this.onViewAxes = function(){
+        axesHelper.visible = this.viewAxes;
+      };
+      this.onEnableAnimation = function(){
+        animationOn = this.animation;
+      };
+      this.onUpdateSpeed = function(){
+        speed = this.speed;
+      };
+    };
+
+    var gui = new dat.GUI();
+    gui.add(controls, 'animation', true)
+      .name("Animation")
+      .onChange(function(e) { controls.onEnableAnimation() });
+    gui.add(controls, 'speed', 0.01, 0.5)
+      .name("Light Speed")
+      .onChange(function(e) { controls.onUpdateSpeed() });
+    gui.add(controls, 'viewAxes', false)
+      .name("View Axes")
+      .onChange(function(e) { controls.onViewAxes() });
   }
 
   function render()
   {
     stats.update();
     trackballControls.update();
-    keyboardUpdate();
+    rotateLight();
     requestAnimationFrame(render);
     renderer.render(scene, camera)
   }
