@@ -1,69 +1,355 @@
 <!DOCTYPE html>
-<html>
-  <head>
-    <meta charset="utf-8" />
-    <title>Computação Gráfica</title>
-    <link rel="shortcut icon" href="favicon.ico">
-    <style>
-      body {
-        color: #707070;
-        font-family: Monospace;
-        font-size: 14px;
-        text-align: left;
-        background-color: #EBEBEB ;
-        margin: 15px;
-        overflow: hidden;
-      }
-      canvas {
-        width: 100%;
-        height: 100%;
-      }
-    </style>
-  </head>
+<html lang="en">
+	<head>
+		<meta charset="utf-8">
+		<title>CG</title>
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link rel="shortcut icon" href="favicon.ico" />
+		<link rel="stylesheet" type="text/css" href="html/resources/main.css">
+	</head>
+	<body>
+		<div id="panel">
+			<div id="header">
+				<script>
+					function openWelcomePage()
+					{
+						iframe.src = "html/_welcome.html";
+						document.body.appendChild(iframe);
+					}
+				</script>
 
-<body>
+				<h1><a onclick='openWelcomePage()'> Computer Graphics Course</a></h1>
+				<!--div id="sections">
+				</div-->
+				<div id="expandButton"></div>
+			</div>
 
-<h3>Computer Graphics with Three.js (temporary page)</h3>
-<p>
+			<div id="panelScrim"></div>
 
-<b>Course Codes</b>
-<br>
-  <a href="src/basicScene.html" target="_blank">Basic Scene</a><br>
-  <a href="src/keyboardExample.html" target="_blank">Keyboard Example</a><br>
-  <a href="src/projection.html" target="_blank">Projection</a><br>
-  <a href="src/geometricTransformation.html" target="_blank">Geometric Transformation</a><br>
+			<div id="contentWrapper">
+				<div id="inputWrapper">
+					<input placeholder="" type="text" id="filterInput" autocorrect="off" autocapitalize="off" spellcheck="false" />
+					<div id="exitSearchButton"></div>
+					<!--select id="language">
+						<option value="en">en</option>
+						<option value="pt">pt</option>
+					</select-->
+				</div>
+				<div id="content"></div>
+			</div>
+		</div>
 
-  <a href="src/articulatedArm.html" target="_blank">Articulated Arm</a><br>
-  <a href="src/animation.html" target="_blank">Animation</a><br>
-  <a href="src/animationExternalObjects.html" target="_blank">Animation - External Objects</a><br>
+		<iframe name="viewer"></iframe>
 
-  <a href="src/geometriesBasic.html" target="_blank">Geometries - Basic</a><br>
-  <a href="src/geometriesLathe.html" target="_blank">Geometries - Lathe</a><br>
-  <a href="src/geometriesExtrusion.html" target="_blank">Geometries - Extrusion</a><br>
-  <a href="src/geometriesConvex.html" target="_blank">Geometries - Convex</a><br>
-  <a href="src/geometriesExternalObjects.html" target="_blank">Geometries - External Objects</a><br>
+		<script src="html/resources/list.js"></script>
 
-  <a href="src/lightingTypes.html" target="_blank">Lighting - Types of lights</a><br>
-  <a href="src/lightingMaterials.html" target="_blank">Lighting - Types of materials</a><br>
+		<script>
+			// var hash = window.location.hash.substring( 1 );
+			//
+			// // Localisation
+			// var language = 'en';
 
-  <a href="src/textureBasic.html" target="_blank">Texture - Basic</a><br>
-  <a href="src/textureOptions.html" target="_blank">Texture - Options</a><br>
-  <a href="src/textureExternalObjects.html" target="_blank">Texture - External Objects</a><br>
+			// if ( /^(api|manual|examples)/.test( hash ) ) {
+			//
+			// 	var hashLanguage = /^(api|manual|examples)\/(en|pt)\//.exec( hash );
+			//
+			// 	if ( hashLanguage === null ) {
+			//
+			// 		// Route old non-localised api links
+			//
+			// 		window.location.hash = hash.replace( /^(api|manual|examples)/, '$1/en' );
+			//
+			// 	} else {
+			//
+			// 		language = hashLanguage[ 2 ];
+			// 	}
+			// }
+			//
+			// var languageSelect = document.getElementById( 'language' );
+			// languageSelect.value = language;
+			// languageSelect.addEventListener( 'change', function ( event ) {
+			// 	language = value;
+			// 	createNavigation();
+			// 	updateFilter();
+			// } );
 
-  <a href="src/raytracingExample1.html" target="_blank">Raytracing - Example 1</a><br>
-  <a href="src/raytracingExample2.html" target="_blank">Raytracing - Example 2</a><br>
+			var panel = document.getElementById( 'panel' );
+			var content = document.getElementById( 'content' );
+			var expandButton = document.getElementById( 'expandButton' );
+			var exitSearchButton = document.getElementById( 'exitSearchButton' );
+			var panelScrim = document.getElementById( 'panelScrim' );
+			var filterInput = document.getElementById( 'filterInput' );
+			var iframe = document.querySelector( 'iframe' );
 
-  <a href="src/VR_Basic.html" target="_blank">Virtual Reality - Primitives</a><br>
-  <a href="src/VR_Panorama.html" target="_blank">Virtual Reality - Panorama</a><br>
-  <a href="src/VR_ExternalModel.html" target="_blank">Virtual Reality - View External Model</a><br>
+			var pageProperties = {};
+			var titles = {};
+			var categoryElements = [];
 
-  <a href="src/AR_Basic.html" target="_blank">Augmented Reality - Basic Marker example</a><br>
-  <br>
-<b>Additional Examples</b>
-<br>
-  <a href="src/exampleGroup.html" target="_blank">Group Geometries</a><br>
-  <a href="src/exampleMerge.html" target="_blank">Merge Geometries</a><br>
-<br>
+			var navigation;
 
-</body>
+			// Functionality for hamburger button (on small devices)
+			expandButton.onclick = function ( event ) {
+				event.preventDefault();
+				panel.classList.toggle( 'open' );
+			};
+
+			panelScrim.onclick = function ( event ) {
+				event.preventDefault();
+				panel.classList.toggle( 'open' );
+			};
+
+			// Functionality for search/filter input field
+			filterInput.onfocus = function ( event ) {
+				panel.classList.add( 'searchFocused' );
+			};
+
+			filterInput.onblur = function ( event ) {
+				if ( filterInput.value === '' ) {
+					panel.classList.remove( 'searchFocused' );
+				}
+			};
+
+			exitSearchButton.onclick = function ( event ) {
+				filterInput.value = '';
+				updateFilter();
+				panel.classList.remove( 'searchFocused' );
+			};
+
+			filterInput.oninput = function ( event ) {
+				updateFilter();
+			};
+
+			// Activate content and title change on browser navigation
+			window.onpopstate = createNewIframe;
+
+			// Create the navigation panel and configure the iframe
+			createNavigation();
+			createNewIframe();
+
+			// Navigation Panel
+			function createLink( pageName, pageURL ) {
+
+				var link = document.createElement( 'a' );
+				link.href = pageURL + '.html';
+				link.textContent = pageName;
+				link.setAttribute( 'target', 'viewer' );
+				link.addEventListener( 'click', function ( event ) {
+
+					if ( event.button !== 0 || event.ctrlKey || event.altKey || event.metaKey ) return;
+
+					window.location.hash = pageURL;
+					panel.classList.remove( 'open' );
+
+					content.querySelectorAll( 'a' ).forEach( function ( item ) {
+						item.classList.remove( 'selected' );
+					} );
+
+					link.classList.add( 'selected' );
+
+				} );
+				return link;
+			}
+
+			function createNavigation() {
+
+				if ( navigation !== undefined ) {
+					content.removeChild( navigation );
+				}
+
+				// Create the navigation panel using data from list.js
+				navigation = document.createElement( 'div' );
+				content.appendChild( navigation );
+
+				var localList = list[ 'en' ];
+				for ( var section in localList ) {
+					// Create sections
+					var categories = localList[ section ];
+
+					var sectionHead = document.createElement( 'h2' );
+					sectionHead.textContent = section;
+					navigation.appendChild( sectionHead );
+
+					for ( var category in categories ) {
+
+						// Create categories
+						var pages = categories[ category ];
+
+						var categoryContainer = document.createElement( 'div' );
+						navigation.appendChild( categoryContainer );
+
+						var categoryHead = document.createElement( 'h3' );
+						categoryHead.textContent = category;
+						categoryContainer.appendChild( categoryHead );
+
+						var categoryContent = document.createElement( 'ul' );
+						categoryContainer.appendChild( categoryContent );
+
+						for ( var pageName in pages )
+						{
+							// Create page links
+							var pageURL = pages[ pageName ];
+
+							var listElement = document.createElement( 'li' );
+							categoryContent.appendChild( listElement );
+
+							var linkElement = createLink( pageName, pageURL );
+							listElement.appendChild( linkElement );
+
+							// Gather the main properties for the current subpage
+							pageProperties[ pageName ] = {
+								section: section,
+								category: category,
+								pageURL: pageURL,
+								linkElement: linkElement
+							};
+
+							// Gather the document titles (used for easy access on browser navigation)
+							titles[ pageURL ] = pageName;
+						}
+
+						// Gather the category elements for easy access on filtering
+						categoryElements.push( categoryContent );
+					}
+				}
+			}
+
+			// // Auto change language url. If a reader open a document in English, when he click "zh", the document he read will auto change into Chinese version
+			// function autoChangeUrlLanguage( language ) {
+			// 	var hash = location.hash;
+			// 	if ( hash === '' ) return;
+			// 	var docType = hash.substr( 0, hash.indexOf( '/' ) + 1 );
+			// 	var docLink = hash.substr( hash.indexOf( '/' ) + 1 );
+			// 	docLink = docLink.substr( docLink.indexOf( '/' ) );
+			// 	location.href = docType + language + docLink;
+			// }
+
+			// Filtering
+			function updateFilter() {
+
+				// (uncomment the following line and the "Query strings" section, if you want query strings):
+				// updateQueryString();
+				var regExp = new RegExp( filterInput.value, 'gi' );
+
+				for ( var pageName in pageProperties ) {
+
+					var linkElement = pageProperties[ pageName ].linkElement;
+					var categoryClassList = linkElement.parentElement.classList;
+					var filterResults = pageName.match( regExp );
+
+					if ( filterResults && filterResults.length > 0 ) {
+
+						// Accentuate matching characters
+					for ( var i = 0; i < filterResults.length; i ++ ) {
+
+							var result = filterResults[ i ];
+
+							if ( result !== '' ) {
+
+								pageName = pageName.replace( result, '<b>' + result + '</b>' );
+							}
+						}
+						categoryClassList.remove( 'hidden' );
+						linkElement.innerHTML = pageName;
+					} else {
+						// Hide all non-matching page names
+						categoryClassList.add( 'hidden' );
+					}
+				}
+				displayFilteredPanel();
+			}
+
+			function displayFilteredPanel() {
+				// Show/hide categories depending on their content
+				// First check if at least one page in this category is not hidden
+
+				categoryElements.forEach( function ( category ) {
+
+					var pages = category.children;
+					var pagesLength = pages.length;
+					var sectionClassList = category.parentElement.classList;
+					var hideCategory = true;
+
+					for ( var i = 0; i < pagesLength; i ++ ) {
+						var pageClassList = pages[ i ].classList;
+						if ( ! pageClassList.contains( 'hidden' ) ) {
+							hideCategory = false;
+						}
+					}
+
+					// If and only if all page names are hidden, hide the whole category
+					if ( hideCategory ) {
+						sectionClassList.add( 'hidden' );
+					} else {
+						sectionClassList.remove( 'hidden' );
+					}
+				} );
+			}
+
+			// Routing
+			function setUrlFragment( pageName ) {
+				// Handle navigation from the subpages (iframes):
+				// First separate the memeber (if existing) from the page name,
+				// then identify the subpage's URL and set it as URL fragment (re-adding the member)
+
+				var splitPageName = decomposePageName( pageName, '.', '.' );
+
+				var currentProperties = pageProperties[ splitPageName[ 0 ] ];
+
+				if ( currentProperties ) {
+
+					window.location.hash = currentProperties.pageURL + splitPageName[ 1 ];
+
+					createNewIframe();
+				}
+			}
+
+			function createNewIframe() {
+				// Change the content displayed in the iframe
+				// First separate the member part of the fragment (if existing)
+
+				var hash = window.location.hash.substring( 1 );
+				var splitHash = decomposePageName( hash, '.', '#' );
+				// Creating a new Iframe instead of assigning a new src is
+				// a cross-browser solution to allow normal browser navigation;
+				// - only assigning a new src would result in two history states each time.
+
+				// Note: iframe.contentWindow.location.replace(hash) should work, too,
+				// but it doesn't work in Edge with links from the subpages!
+
+				var oldIframe;
+				var subtitle;
+
+				oldIframe = iframe;
+				iframe = oldIframe.cloneNode();
+
+				if ( hash ) {
+					iframe.src = splitHash[ 0 ] + '.html' + splitHash[ 1 ];
+					subtitle = titles[ splitHash[ 0 ] ] + splitHash[ 1 ] + ' – ';
+				} else {
+					iframe.src = '';
+					subtitle = '';
+				}
+				document.body.replaceChild( iframe, oldIframe );
+			}
+
+			function decomposePageName( pageName, oldDelimiter, newDelimiter ) {
+				var parts = [];
+				var dotIndex = pageName.indexOf( oldDelimiter );
+				if ( dotIndex !== - 1 ) {
+					parts = pageName.split( oldDelimiter );
+					parts[ 1 ] = newDelimiter + parts[ 1 ];
+				} else {
+					parts[ 0 ] = pageName;
+					parts[ 1 ] = '';
+				}
+				return parts;
+			}
+		</script>
+
+		<!-- Open welcome page when page starts -->
+		<script>
+			openWelcomePage();
+		</script>
+
+	</body>
 </html>
