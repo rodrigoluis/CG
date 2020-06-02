@@ -10,7 +10,7 @@
 	--border-style: 1px solid #E8E8E8;
 	--panel-width: 300px;
 	--page-padding: 24px;
-	--max-width: 760px;
+	--max-width: 1024px;
 	--icon-size: 20px;
 }
 
@@ -240,7 +240,7 @@ a.param:hover {
 		--panel-width: 360px;
 		--font-size: 18px;
 		--line-height: 28px;
-		--max-width: 1020px;
+		--max-width: 1020;
 		--page-padding: 28px;
 		--icon-size: 24px;
 	}

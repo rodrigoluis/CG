@@ -70,6 +70,7 @@ body {
 
 a {
 	text-decoration: none;
+	cursor: pointer;
 }
 
 h1 {
