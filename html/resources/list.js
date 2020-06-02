@@ -2,7 +2,7 @@ var list = {
 	"en": {
 		"Projects": {
 			"Basics":  {
-				"Basic Scene": "html/cubeviewInfo",
+				"Basic Scene": "html/basicScene",
 				"Using the keyboard": "html/keyboardExampleInfo",
 			},
 		},

@@ -54,7 +54,6 @@ function onDocumentLoad( event ) {
 	//
 	// }
 
-
 	var path, localizedPath;
 	var pathname = window.location.pathname;
 	var name = /[\-A-z0-9]+\.html/.exec( pathname ).toString().split( '.html' )[ 0 ];
@@ -62,8 +61,6 @@ function onDocumentLoad( event ) {
 	name = name.replace( /\-/g, ' ' );
 	path = pathname.replace( /\ /g, '-' );
 	///path = localizedPath = /\/manual\/[-A-z0-9\/]+/.exec( path ).toString().substr( 8 );
-
-
 
 	var text = document.body.innerHTML;
 
@@ -94,14 +91,12 @@ function onDocumentLoad( event ) {
 	var elements = document.getElementsByTagName( 'code' );
 
 	for ( var i = 0; i < elements.length; i ++ ) {
-
 		var element = elements[ i ];
 
 		text = element.textContent.trim();
 		text = text.replace( /^\t\t/gm, '' );
 
 		element.textContent = text;
-
 	}
 
 	// Edit button
@@ -148,7 +143,6 @@ function onDocumentLoad( event ) {
 	// 	prettyPrint();
 	//
 	// };
-
 	//document.head.appendChild( prettify );
 
 };

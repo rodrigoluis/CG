@@ -5,18 +5,9 @@
 		<meta charset="utf-8">
 		<script src="resources/list.js"></script>
 		<script src="resources/page.js"></script>
-		<script>
-		window.addEventListener('load', function () {
-		    window.focus();
-		    document.body.addEventListener('click',function(e) {
-		        window.focus();
-		    },true);
-		});
-		</script>
 		<link type="text/css" rel="stylesheet" href="resources/page.css" />
 	</head>
 	<body>
-
 
 
 		<h1>Keyboard Example</h1>
@@ -27,8 +18,8 @@
 
 		<p>...</p>
 
-		<iframe src="../src/keyboardExample.html" title="W3Schools Free Online Web Tutorials"></iframe>
-
+		<iframe src="../src/keyboardExample.html" onload="this.contentWindow.focus()" onmouseover="this.contentWindow.focus()"></iframe>
 		<a href="../src/keyboardExample.html" target="_blank">Open in a new tab</a>
+
 	</body>
 </html>

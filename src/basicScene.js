@@ -34,7 +34,7 @@ function main()
 
   // Use this to show information onscreen
   controls = new InfoBox();
-    controls.add("CubeView");
+    controls.add("Basic Scene");
     controls.addParagraph();
     controls.add("Use o mouse para interagir:");
     controls.add("* Clique com botão esquerdo e mova para rotacionar");
