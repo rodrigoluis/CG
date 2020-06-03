@@ -36,10 +36,10 @@ function main()
   controls = new InfoBox();
     controls.add("Basic Scene");
     controls.addParagraph();
-    controls.add("Use o mouse para interagir:");
-    controls.add("* Clique com botão esquerdo e mova para rotacionar");
-    controls.add("* Clique com botão direito e mova para transladar");
-    controls.add("* Use o scroll para zoom.");
+    controls.add("Use mouse to interact:");
+    controls.add("* Left button to rotate");
+    controls.add("* Right button to translate (pan)");
+    controls.add("* Scroll to zoom in/out.");
     controls.show();
 
   // Listen window size changes
@@ -49,8 +49,8 @@ function main()
   function render()
   {
     stats.update(); // Update FPS
-    trackballControls.update();
-    requestAnimationFrame(render); // Enable mouse movements
+    trackballControls.update(); // Enable mouse movements
+    requestAnimationFrame(render);
     renderer.render(scene, camera) // Render scene
   }
 }
