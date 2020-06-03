@@ -114,36 +114,38 @@ function onDocumentLoad( event ) {
 
 	// Syntax highlighting
 
-	// var styleBase = document.createElement( 'link' );
+	var styleBase = document.createElement( 'link' );
 	// styleBase.href = pathname.substring( 0, pathname.indexOf( 'docs' ) + 4 ) + 'prettify.css';
-	// styleBase.rel = 'stylesheet';
-	//
-	// var styleCustom = document.createElement( 'link' );
+	styleBase.href = 'resources/prettify.css';
+	styleBase.rel = 'stylesheet';
+
+	var styleCustom = document.createElement( 'link' );
 	// styleCustom.href = pathname.substring( 0, pathname.indexOf( 'docs' ) + 4 ) + 'threejs.css';
-	// styleCustom.rel = 'stylesheet';
-	//
-	// document.head.appendChild( styleBase );
-	// document.head.appendChild( styleCustom );
-	//
-	// var prettify = document.createElement( 'script' );
+	styleCustom.href = 'resources/threejs.css';
+	styleCustom.rel = 'stylesheet';
+
+	document.head.appendChild( styleBase );
+	document.head.appendChild( styleCustom );
+
+	var prettify = document.createElement( 'script' );
 	// prettify.src = pathname.substring( 0, pathname.indexOf( 'docs' ) + 4 ) + 'prettify.js';
-	//
-	// prettify.onload = function () {
-	//
-	// 	var elements = document.getElementsByTagName( 'code' );
-	//
-	// 	for ( var i = 0; i < elements.length; i ++ ) {
-	//
-	// 		var e = elements[ i ];
-	// 		e.className += ' prettyprint';
-	// 		e.setAttribute( 'translate', 'no' );
-	//
-	// 	}
-	//
-	// 	prettyPrint();
-	//
-	// };
-	//document.head.appendChild( prettify );
+	prettify.src = 'resources/prettify.js';
+	prettify.onload = function () {
+
+		var elements = document.getElementsByTagName( 'code' );
+
+		for ( var i = 0; i < elements.length; i ++ ) {
+
+			var e = elements[ i ];
+			e.className += ' prettyprint';
+			e.setAttribute( 'translate', 'no' );
+
+		}
+
+		prettyPrint();
+
+	};
+	document.head.appendChild( prettify );
 
 };
 
