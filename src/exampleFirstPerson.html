@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+    <title></title>
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../html/resources/default.css">
+    <link rel="stylesheet" href="../html/resources/w3.css">
+    <link rel="stylesheet" href="../html/resources/menu.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script type="text/javascript" charset="UTF-8" src="../libs/three/three.js"></script>
+    <script type="text/javascript" charset="UTF-8" src="../libs/three/controls/PointerLockControls.js"></script>
+    <script type="text/javascript" charset="UTF-8" src="../libs/util/Stats.js"></script>
+    <script type="text/javascript" charset="UTF-8" src="../libs/util/dat.gui.min.js"></script>
+    <script type="text/javascript" charset="UTF-8" src="../libs/util/util.js"></script>
+    <script type="text/javascript" charset="UTF-8" src="../libs/util/KeyboardState.js"></script>
+
+    <script type="text/javascript" charset="UTF-8" src="exampleFirstPerson.js"></script>
+
+</head>
+
+<body>
+    <div id="blocker" class="w3-display-container">
+        <div id="instructions" class="w3-display-middle w3-center w3-white w3-opacity">
+            <h1>Instructions</h1>
+            <p>Move: WASD</p>
+            <p>Look: Mouse</p>
+            <p>Fly up: SPACE</p>
+            <p>Go down: SHIFT</p>
+            <p>(Click to continue)</p>
+        </div>
+    </div>
+
+    <div id="webgl-output">
+      <script type="text/javascript">
+        main();
+      </script>
+    </div>
+
+</body>
+</html>

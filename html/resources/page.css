@@ -10,7 +10,7 @@
 	--border-style: 1px solid #E8E8E8;
 	--panel-width: 300px;
 	--page-padding: 24px;
-	--max-width: 1024px;
+	--max-width: 1120px;
 	--icon-size: 20px;
 }
 
@@ -235,12 +235,12 @@ a.param:hover {
 }
 
 
-@media all and ( min-width: 1700px ) {
+@media all and ( min-width: 1920px ) {
 	:root {
 		--panel-width: 360px;
 		--font-size: 18px;
 		--line-height: 28px;
-		--max-width: 1020;
+		--max-width: 1120px;
 		--page-padding: 28px;
 		--icon-size: 24px;
 	}

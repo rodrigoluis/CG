@@ -42,9 +42,10 @@ var list = {
 			},
 		},
 		"Additional Examples":{
-			"Geometry":  {
-				"Group": "html/exampleGroupInfo",
-				"Merge": "html/exampleMergeInfo",
+			"Misc":  {
+				"Group Geometry": "html/exampleGroupInfo",
+				"Merge Geometry": "html/exampleMergeInfo",
+				"First Person": "html/exampleFirstPersonInfo",
 			},
 		},
 	},
