@@ -70,9 +70,9 @@ function main()
     controls = new InfoBox();
       controls.add("Keyboard Example");
       controls.addParagraph();
-      controls.add("Pressione WASD para mover continuamente.");
-      controls.add("Pressione as setas para mover em saltos discretos.");
-      controls.add("Pressione espaço para centralizar cubo.");
+      controls.add("Press WASD keys to move continuously");
+      controls.add("Press arrow keys to move in discrete steps");
+      controls.add("Press SPACE to put the cube in its original position");
       controls.show();
   }
 

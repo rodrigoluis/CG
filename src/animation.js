@@ -40,26 +40,7 @@ function main()
   // Listen window size changes
   window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
-  var controls = new function ()
-  {
-    this.onChangeAnimation = function(){
-      animationOn = !animationOn;
-    };
-    this.speed = 0.05;
-    // this.joint2 = 0;
-    //
-    this.changeSpeed = function(){
-      speed = this.speed;
-    };
-  };
-
-  // GUI interface
-  var gui = new dat.GUI();
-  gui.add(controls, 'onChangeAnimation',true).name("Animation On/Off");
-  gui.add(controls, 'speed', 0.05, 0.5)
-    .onChange(function(e) { controls.changeSpeed() })
-    .name("Change Speed");
-
+  buildInterface();
   render();
 
   function rotateCylinder()
@@ -89,6 +70,29 @@ function main()
       cylinder2.matrix.multiply(mat4.makeTranslation(0.0, 1.0, 0.0)); // T1
       cylinder2.matrix.multiply(mat4.makeRotationX(c2angle)); // R2
     }
+  }
+
+  function buildInterface()
+  {
+    var controls = new function ()
+    {
+      this.onChangeAnimation = function(){
+        animationOn = !animationOn;
+      };
+      this.speed = 0.05;
+      // this.joint2 = 0;
+      //
+      this.changeSpeed = function(){
+        speed = this.speed;
+      };
+    };
+
+    // GUI interface
+    var gui = new dat.GUI();
+    gui.add(controls, 'onChangeAnimation',true).name("Animation On/Off");
+    gui.add(controls, 'speed', 0.05, 0.5)
+      .onChange(function(e) { controls.changeSpeed() })
+      .name("Change Speed");    
   }
 
   function render()

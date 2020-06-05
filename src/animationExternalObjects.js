@@ -40,25 +40,7 @@ function main()
   loadGLTFFile('../assets/objects/windmill/','scene.gltf', true);
   loadGLTFFile('../assets/objects/walkingMan/','scene.gltf', false);
 
-  // Interface
-  var controls = new function ()
-  {
-    this.viewAxes = false;
-    this.onPlayAnimation = function(){
-      playAction = !playAction;
-    };
-    this.onViewAxes = function(){
-      axesHelper.visible = this.viewAxes;
-    };
-  };
-
-  // GUI interface
-  var gui = new dat.GUI();
-  gui.add(controls, 'onPlayAnimation').name("Play / Stop Anim.");
-  gui.add(controls, 'viewAxes', false)
-  .name("View Axes")
-  .onChange(function(e) { controls.onViewAxes() });
-
+  buildInterface();
   render();
 
   function loadGLTFFile(modelPath, modelName, centerObject)
@@ -139,6 +121,28 @@ function main()
       man.matrix.multiply(mat4.makeTranslation(2.0, 0.0, 0.0));
       man.matrix.multiply(mat4.makeScale(scale, scale, scale));
     }
+  }
+
+  function buildInterface()
+  {
+    // Interface
+    var controls = new function ()
+    {
+      this.viewAxes = false;
+      this.onPlayAnimation = function(){
+        playAction = !playAction;
+      };
+      this.onViewAxes = function(){
+        axesHelper.visible = this.viewAxes;
+      };
+    };
+
+    // GUI interface
+    var gui = new dat.GUI();
+    gui.add(controls, 'onPlayAnimation').name("Play / Stop Anim.");
+    gui.add(controls, 'viewAxes', false)
+    .name("View Axes")
+    .onChange(function(e) { controls.onViewAxes() });
   }
 
   function render()

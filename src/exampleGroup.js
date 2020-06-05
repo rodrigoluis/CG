@@ -137,10 +137,10 @@ function main()
     controls = new InfoBox();
       controls.add("Group Example");
       controls.addParagraph();
-      controls.add("Use mouse para rodar cena.");
-      controls.add("Setas para cima e para baixo para andar");
-      controls.add("Setas esquerda e direita para rotacionar");
-      controls.add("Pressione 'A' para mostrar/ocultar os eixos de grupo");
+      controls.add("Use mouse to rotate/pan/zoom the camera");
+      controls.add("Up / Arrow to walk");
+      controls.add("Left / Right arrow to turn");
+      controls.add("Press 'A' to show/hide axes");
       controls.show();
   }
 

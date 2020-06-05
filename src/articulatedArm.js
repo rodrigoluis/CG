@@ -33,27 +33,7 @@ function main()
   // Listen window size changes
   window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
-  var controls = new function ()
-  {
-    this.joint1 = 270;
-    this.joint2 = 0;
-
-    this.rotate = function(){
-      angle[0] = degreesToRadians(this.joint1);
-      angle[1] = degreesToRadians(this.joint2);
-      rotateCylinder();
-    };
-  };
-
-  // GUI interface
-  var gui = new dat.GUI();
-  gui.add(controls, 'joint1', 0, 360)
-    .onChange(function(e) { controls.rotate() })
-    .name("First Joint");
-  gui.add(controls, 'joint2', 0, 360)
-    .onChange(function(e) { controls.rotate() })
-    .name("Second Joint");
-
+  buildInterface();
   render();
 
   function createSphere()
@@ -99,6 +79,30 @@ function main()
       c2.matrix.multiply(mat4.makeRotationZ(angle[1])); // R1
       c2.matrix.multiply(mat4.makeTranslation(0.0, 1.0, 0.0)); // T1
     }
+  }
+
+  function buildInterface()
+  {
+    var controls = new function ()
+    {
+      this.joint1 = 270;
+      this.joint2 = 0;
+
+      this.rotate = function(){
+        angle[0] = degreesToRadians(this.joint1);
+        angle[1] = degreesToRadians(this.joint2);
+        rotateCylinder();
+      };
+    };
+
+    // GUI interface
+    var gui = new dat.GUI();
+    gui.add(controls, 'joint1', 0, 360)
+      .onChange(function(e) { controls.rotate() })
+      .name("First Joint");
+    gui.add(controls, 'joint2', 0, 360)
+      .onChange(function(e) { controls.rotate() })
+      .name("Second Joint");
   }
 
   function render()

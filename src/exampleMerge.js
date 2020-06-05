@@ -91,7 +91,7 @@ function main()
     controls = new InfoBox();
       controls.add("Merge Geometry Example");
       controls.addParagraph();
-      controls.add("Use mouse para rodar cena.");
+      controls.add("Use mouse to rotate/pan/zoom the camera.");
       controls.show();
   }
 

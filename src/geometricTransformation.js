@@ -87,10 +87,10 @@ function main()
     controls = new InfoBox();
       controls.add("Geometric Transformation");
       controls.addParagraph();
-      controls.add("Pressione as setas para mover o cubo nos planos X e Y.");
-      controls.add("Pressione Page Up e Page down para mover o cubo no eixo Z");
-      controls.add("Pressione 'A' e 'D' para rotacionar no eixo Z.");
-      controls.add("Pressione 'W' e 'S' para mudar a escala em todos os eixos");
+      controls.add("Use keyboard arrows to move the cube.");
+      controls.add("Press Page Up or Page down to move the cube over the Z axis");
+      controls.add("Press 'A' and 'D' to rotate.");
+      controls.add("Press 'W' and 'S' to change scale");
       controls.show();
   }
 

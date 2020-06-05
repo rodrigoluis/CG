@@ -7,9 +7,6 @@ function main()
   var light = initDefaultLighting(scene, new THREE.Vector3(0, 0, 30)); // Use default light
   var clock = new THREE.Clock();
 
-  // Show text information onscreen
-  showInformation();
-
   // Enable mouse rotation, pan, zoom etc.
   var trackballControls = new THREE.TrackballControls( camera, renderer.domElement );
 
@@ -46,21 +43,7 @@ function main()
 
   var projectionMessage = new SecondaryBox("Perspective Projection");
 
-  var controls = new function ()
-  {
-    this.onChangeProjection = function(){
-      changeProjection();
-    };
-    this.onRestartCamera = function(){
-      restartCamera();
-    };
-  };
-
-  // GUI interface
-  var gui = new dat.GUI();
-  gui.add(controls, 'onChangeProjection').name("Change Projection");
-  gui.add(controls, 'onRestartCamera').name("Restart Camera");
-
+  buildInterface();
   render();
 
   function restartCamera()
@@ -95,20 +78,22 @@ function main()
     lightFollowingCamera(light, camera) // Makes light follow the camera
   }
 
-  function showCenterMessage()
+  function buildInterface()
   {
+    var controls = new function ()
+    {
+      this.onChangeProjection = function(){
+        changeProjection();
+      };
+      this.onRestartCamera = function(){
+        restartCamera();
+      };
+    };
 
-  }
-
-  function showInformation()
-  {
-    // Use this to show information onscreen
-    controls = new InfoBox();
-      controls.add("Projection");
-      controls.addParagraph();
-      controls.add("Utilize a interface superior para alternar entre a projeção perspectiva e ");
-      controls.add("a projeção ortogonal. Há também a opção de reiniciar posição da camera.");
-      controls.show();
+    // GUI interface
+    var gui = new dat.GUI();
+    gui.add(controls, 'onChangeProjection').name("Change Projection");
+    gui.add(controls, 'onRestartCamera').name("Restart Camera");
   }
 
   function render()

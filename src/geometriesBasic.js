@@ -43,48 +43,7 @@ function main()
   scene.add(createTorus(3.0, 1.0, 20, 20, Math.PI * 2));
   scene.add(createIcosahedron(4.0, 0));
 
-  // Interface
-  var controls = new function ()
-  {
-    this.viewAxes = false;
-    this.type = 'Cube';
-    this.onChooseObject = function()
-    {
-      objectArray[activeObject].visible = false;
-      switch (this.type)
-      {
-        case 'Cube':
-            activeObject = 0;
-            break;
-        case 'Cylinder':
-            activeObject = 1;
-            break;
-        case 'Sphere':
-            activeObject = 2;
-            break;
-        case 'Torus':
-            activeObject = 3;
-            break;
-        case 'Icosahedron':
-            activeObject = 4;
-            break;
-      }
-      objectArray[activeObject].visible = true;
-    };
-    this.onViewAxes = function(){
-      axesHelper.visible = this.viewAxes;
-    };
-  };
-
-  // GUI interface
-  var gui = new dat.GUI();
-  gui.add(controls, 'type', ['Cube', 'Cylinder', 'Sphere', 'Torus', 'Icosahedron'])
-    .name("Change Object")
-    .onChange(function(e) { controls.onChooseObject(); });
-  gui.add(controls, 'viewAxes', false)
-    .name("View Axes")
-    .onChange(function(e) { controls.onViewAxes() });
-
+  buildInterface();
   render();
 
   function createIcosahedron(radius, detail)
@@ -145,6 +104,51 @@ function main()
 
     objectArray.push(object);
     return object;
+  }
+
+  function buildInterface()
+  {
+    // Interface
+    var controls = new function ()
+    {
+      this.viewAxes = false;
+      this.type = 'Cube';
+      this.onChooseObject = function()
+      {
+        objectArray[activeObject].visible = false;
+        switch (this.type)
+        {
+          case 'Cube':
+              activeObject = 0;
+              break;
+          case 'Cylinder':
+              activeObject = 1;
+              break;
+          case 'Sphere':
+              activeObject = 2;
+              break;
+          case 'Torus':
+              activeObject = 3;
+              break;
+          case 'Icosahedron':
+              activeObject = 4;
+              break;
+        }
+        objectArray[activeObject].visible = true;
+      };
+      this.onViewAxes = function(){
+        axesHelper.visible = this.viewAxes;
+      };
+    };
+
+    // GUI interface
+    var gui = new dat.GUI();
+    gui.add(controls, 'type', ['Cube', 'Cylinder', 'Sphere', 'Torus', 'Icosahedron'])
+      .name("Change Object")
+      .onChange(function(e) { controls.onChooseObject(); });
+    gui.add(controls, 'viewAxes', false)
+      .name("View Axes")
+      .onChange(function(e) { controls.onViewAxes() });
   }
 
   function render()

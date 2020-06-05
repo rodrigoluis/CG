@@ -177,7 +177,7 @@ function main()
     controls = new InfoBox();
       controls.add("Augmented Reality - Basic Example");
       controls.addParagraph();
-      controls.add("Posicione o marcador 'KANJI' em frente à câmera.");
+      controls.add("Put the 'KANJI' marker in front of the camera.");
       controls.show();
   }
 
