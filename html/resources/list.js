@@ -5,8 +5,8 @@ var list = {
 				"Basic Scene": "html/basicScene",
 				"Using the keyboard": "html/keyboardExampleInfo",
 				"Projection": "html/projectionInfo",
-				"Geometric Transformations": "html/geometricTransformationInfo",
-				"Articulated Arm": "html/articulatedArmInfo",
+				"Geometric Transformations 1": "html/geometricTransformationInfo",
+				"Geometric Transformations 2": "html/articulatedArmInfo",
 			},
 			"Animations":  {
 				"Basic": "html/animationInfo",

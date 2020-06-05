@@ -8,18 +8,36 @@
 		<link type="text/css" rel="stylesheet" href="resources/page.css" />
 	</head>
 	<body>
-		<h1>Title</h1>
+		<h1>Projection</h1>
 		<br>
 		<hr>
 
-		<p>In this example...</p>
-
-		<h2>Using the keyboard</h2>
-
-		<p>...</p>
+		<p>In this project we can understand the differences between the two major types of cameras used in Computer Graphics projects - <strong>Perspective</strong> and <strong>Orthographic</strong>. Try the example bellow rotating the camera and changing between the two types of projection to view the differences in the result output.</p>
 
 		<iframe src="../src/projection.html" onload="this.contentWindow.focus()" onmouseover="this.contentWindow.focus()"></iframe>
 		<a href="../src/projection.html" target="_blank">Open in a new tab</a>
+
+		<h2>Understanding the differences</h2>
+
+		<p>In short, Perspective cameras are mainly used in CG projects when you want to create scenes with realism. So, in almost every project of this site we use this kind of camera. Orthographic cameras are used when we want to preserve the distance between lines and angles, not considering the depth of the scene. This camera can be used in modelling softwares (like the 3DS max interface of Figure 1, for example) together with at least one perspective view.  </p>
+
+		<figure>
+			<img src="img/projectionOrtho.png" width="800">
+		  <figcaption>Figure 1 - Three orthographic cameras and one perspective (<a href="https://veda3d.com/3ds-max-ui-theme/" target="_blank">source</a>)</figcaption>
+		</figure>
+
+
+		<p>The parameters of Orthographic cameras are positions of the left, right, top, bottom, near and far planes. You can see it as cube in which all the objects to be viewed are put inside.  </p>
+
+		<code>
+			camera = new THREE.OrthographicCamera( left, right, top, bottom, near, far);
+		</code>
+
+		<p>The Perspective camera has fewer arguments. Basically you must inform the camera frustum vertical field of view (an angle in degrees), the aspect ratio (you can put width/height of the window), near plane (can't be zero) and far plane.</p>
+
+		<code>
+      camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+		</code>
 
 	</body>
 </html>

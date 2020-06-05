@@ -45,6 +45,22 @@
 	src: local('Inter-SemiBold'), url("Inter-SemiBold.woff2?v=3.6") format("woff2");
 }
 
+figure {
+  margin: auto;
+  text-align: center;
+}
+
+figcaption {
+  color: #444;
+	font-family: 'Inter';
+  font-style: italic;
+  text-align: center;
+}
+
+img {
+	max-width: 100%;
+}
+
 html {
 	font-family: 'Inter', sans-serif;
 	font-size: var(--font-size);
