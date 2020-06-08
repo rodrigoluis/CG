@@ -6,7 +6,7 @@ var list = {
 				"Using the keyboard": "html/keyboardExampleInfo",
 				"Projection": "html/projectionInfo",
 				"Geometric Transformations 1": "html/geometricTransformationInfo",
-				"Geometric Transformations 2": "html/articulatedArmInfo",
+				"Geometric Transformations 2": "html/geometricTransformation2Info",
 			},
 			"Animations":  {
 				"Basic": "html/animationInfo",

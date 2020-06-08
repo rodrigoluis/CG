@@ -70,14 +70,13 @@ function main()
       c1.matrix.multiply(mat4.makeRotationZ(angle[0])); // R1
       c1.matrix.multiply(mat4.makeTranslation(0.0, 1.0, 0.0)); // T1
 
-      // Will execute T1 and then R1
       s2.matrix.identity();  // reset matrix
-      s2.matrix.multiply(mat4.makeTranslation(0.0, 1.0, 0.0)); // T1
+      s2.matrix.multiply(mat4.makeTranslation(0.0, 1.0, 0.0));
 
-      // Will execute T1 and then R1
+      // Will execute T2 and then R2
       c2.matrix.identity();  // reset matrix
-      c2.matrix.multiply(mat4.makeRotationZ(angle[1])); // R1
-      c2.matrix.multiply(mat4.makeTranslation(0.0, 1.0, 0.0)); // T1
+      c2.matrix.multiply(mat4.makeRotationZ(angle[1])); // R2
+      c2.matrix.multiply(mat4.makeTranslation(0.0, 1.0, 0.0)); // T2
     }
   }
 

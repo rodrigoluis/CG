@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+    <title></title>
+		<meta charset="utf-8">
+		<script src="resources/list.js"></script>
+		<script src="resources/page.js"></script>
+		<link type="text/css" rel="stylesheet" href="resources/page.css" />
+	</head>
+	<body>
+		<h1>Geometric Transformation II</h1>
+		<br>
+		<hr>
+
+		<p>Let's see how we can have more control over how to use geometric transformations. In this project we build a small articulated arm and we can control each segment separately. Use the sliders of the user interface to understand how each segment move.</p>
+
+		<iframe src="../src/geometricTransformation2.html" onload="this.contentWindow.focus()" onmouseover="this.contentWindow.focus()"></iframe>
+		<a href="../src/geometricTransformation2.html" target="_blank">Open in a new tab</a>
+
+		<h2>Working with matrices</h2>
+
+		<p>First of all, let's understand how the articulated arm was created. In <strong>threejs</strong> most of the time we add the objects directly on the <strong>scene</strong>. But you can add objects as <i>child</i> of others objects. By doing that, all geometric transformations applied to the parents are applied also to its children. So, let's see how the articulated arm was projected.</p>
+
+		<code>
+		var s1 = createSphere();
+		scene.add(s1);
+
+		var c1 = createCylinder();
+		s1.add(c1);
+
+		var s2 = createSphere();
+		c1.add(s2);
+
+		var c2 = createCylinder();
+		s2.add(c2);
+		</code>
+
+		<p>The sphere positioned in the origin is the <strong>s1</strong> object and it's the only one added directly to the scene. The first cylinder (that is connected to <strong>s1</strong>) is added to the <strong>s1</strong>. The second sphere <strong>s2</strong> is connected to the first cylinder and so on.</p>
+
+		<p></p>
+
+		<code>
+		c1.matrixAutoUpdate = false;
+		s2.matrixAutoUpdate = false;
+		c2.matrixAutoUpdate = false;
+
+		(...)
+		var mat4 = new THREE.Matrix4();
+
+		// Will execute T1 and then R1
+		c1.matrix.identity();  // reset matrix
+		c1.matrix.multiply(mat4.makeRotationZ(angle[0])); // R1
+		c1.matrix.multiply(mat4.makeTranslation(0.0, 1.0, 0.0)); // T1
+
+		s2.matrix.identity();
+		s2.matrix.multiply(mat4.makeTranslation(0.0, 1.0, 0.0));
+
+		// Will execute T2 and then R2
+		c2.matrix.identity();  // reset matrix
+		c2.matrix.multiply(mat4.makeRotationZ(angle[1])); // R2
+		c2.matrix.multiply(mat4.makeTranslation(0.0, 1.0, 0.0)); // T2
+		</code>
+
+		<p>Considering the nature of how matrix multiplication works, we must set the multiplication of the wanted transformations  in one order considering that they will be multiplied in reverse order. See the comments of the code above in which the order of the transfomations is highlighted.</p>
+
+	</body>
+</html>

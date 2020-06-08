@@ -27,17 +27,27 @@
 		</figure>
 
 
-		<p>The parameters of Orthographic cameras are positions of the left, right, top, bottom, near and far planes. You can see it as cube in which all the objects to be viewed are put inside.  </p>
+		<p>The parameters of Orthographic cameras are positions of the left, right, top, bottom, near and far planes (Figure 2). You can see it as cube in which all the objects to be viewed are put inside.  </p>
 
 		<code>
 			camera = new THREE.OrthographicCamera( left, right, top, bottom, near, far);
 		</code>
+
+		<figure>
+			<img src="img/orthographicProjection.png" width="550">
+		  <figcaption>Figure 2 - Orthographic Projection (<a href="https://i.stack.imgur.com/o4siK.png" target="_blank">source</a>)</figcaption>
+		</figure>
 
 		<p>The Perspective camera has fewer arguments. Basically you must inform the camera frustum vertical field of view (an angle in degrees), the aspect ratio (you can put width/height of the window), near plane (can't be zero) and far plane.</p>
 
 		<code>
       camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
 		</code>
+
+		<figure>
+			<img src="img/perspectiveProjection.png" width="550">
+		  <figcaption>Figure 3 - Perspective Projection (<a href="https://i.stack.imgur.com/2EYpb.png" target="_blank">source</a>)</figcaption>
+		</figure>
 
 	</body>
 </html>

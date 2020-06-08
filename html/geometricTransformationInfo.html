@@ -8,18 +8,50 @@
 		<link type="text/css" rel="stylesheet" href="resources/page.css" />
 	</head>
 	<body>
-		<h1>Geometric Transformations</h1>
+		<h1>Geometric Transformations 1</h1>
 		<br>
 		<hr>
 
-		<p>In this example...</p>
-
-		<h2>About...</h2>
-
-		<p>...</p>
+		<p>This project covers the most common geometric transformations - translation, rotation and scale. All these transformations in this project are applied to a cube and controlled by the keyboard. Try the above project following the instructions presented on canvas.</p>
 
 		<iframe src="../src/geometricTransformation.html" onload="this.contentWindow.focus()" onmouseover="this.contentWindow.focus()"></iframe>
 		<a href="../src/geometricTransformation.html" target="_blank">Open in a new tab</a>
+
+		<h2>Applying transformations</h2>
+
+		<p>As we control the geometric transformations using the keyboard, all functions are applied in the <strong>KeyboardUpdate</strong> function.</p>
+
+		<code>
+		function keyboardUpdate()
+		{
+		  (...)
+
+			if ( keyboard.pressed("left") )     cube.translateX( -1 );
+			if ( keyboard.pressed("right") )    cube.translateX(  1 );
+			if ( keyboard.pressed("up") )       cube.translateY(  1 );
+			if ( keyboard.pressed("down") )     cube.translateY( -1 );
+			if ( keyboard.pressed("pageup") )   cube.translateZ(  1 );
+			if ( keyboard.pressed("pagedown") ) cube.translateZ( -1 );
+
+			if ( keyboard.pressed("A") )  cube.rotateOnAxis(rotAxis,  angle );
+			if ( keyboard.pressed("D") )  cube.rotateOnAxis(rotAxis, -angle );
+
+			if ( keyboard.pressed("W") )
+			{
+			  scale+=.1;
+			  cube.scale.set(scale, scale, scale);
+			}
+			if ( keyboard.pressed("S") )
+			{
+			  scale-=.1;
+			  cube.scale.set(scale, scale, scale);
+			}
+		}
+		</code>
+
+		<p>As can be observed through the fragment code presented, in threejs one way to work with geometric transformations is through the methods available to any <strong>Object3D</strong> object. In this example we use the <strong>translateX-Y-Z</strong> methods to translate, the <strong>rotateOnAxis</strong> to rotate the cube along an axis in its space (i.e., object space) and the <strong>scale.set</strong> to change it's scale attribute.</p>
+
+		<p>Those methods are very useful but they do not allow a full control over how those transformations are applied. What if you want to control the order in which the transformations area applied? What if you want to manually set your transformation matrix? We will see how it works in the next project.</p>
 
 	</body>
 </html>
