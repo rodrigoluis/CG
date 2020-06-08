@@ -92,7 +92,7 @@ function main()
     gui.add(controls, 'onChangeAnimation',true).name("Animation On/Off");
     gui.add(controls, 'speed', 0.05, 0.5)
       .onChange(function(e) { controls.changeSpeed() })
-      .name("Change Speed");    
+      .name("Change Speed");
   }
 
   function render()
@@ -101,7 +101,7 @@ function main()
     trackballControls.update();
     rotateCylinder();
     lightFollowingCamera(light, camera);
-    requestAnimationFrame(render); // Show events
+    requestAnimationFrame(render);
     renderer.render(scene, camera) // Render scene
   }
 }

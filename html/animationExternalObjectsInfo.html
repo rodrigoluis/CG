@@ -11,15 +11,68 @@
 		<h1>Animations with External Objects</h1>
 		<br>
 		<hr>
-		
-		<p>In this example...</p>
 
-		<h2>About...</h2>
-
-		<p>...</p>
+		<p>Another way to make animations in <strong>threejs</strong> is by importing a file that support this feature. In the project below you can see two GLTF objects that have animation scripts.</p>
 
 		<iframe src="../src/animationExternalObjects.html" onload="this.contentWindow.focus()" onmouseover="this.contentWindow.focus()"></iframe>
 		<a href="../src/animationExternalObjects.html" target="_blank">Open in a new tab</a>
 
+		<h2>How does it work?</h2>
+
+		<p>
+			In the case of <strong>GLTF</strong> files, inside the <i>load</i> function, we must create an <strong>AnimationMixer</strong> object that will receive all animations of the loaded files (in our case, just one animation for each object). Then we add this local <strong>AnimationMixer</strong> to a global array of mixers (if you have more than two animations).
+		</p>
+
+		<code>
+		function loadGLTFFile(modelPath, modelName, centerObject)
+		{
+			var loader = new THREE.GLTFLoader( );
+			(...)
+			// Create animationMixer and push it in the array of mixers
+			var mixerLocal = new THREE.AnimationMixer(obj);
+			mixerLocal.clipAction( gltf.animations[0] ).play();
+			mixer.push(mixerLocal);
+			(...)
+		}
+		</code>
+
+		<p>
+			We can mix internal animation of the files with <i>conventional</i> animations. For example, the man used in our project has an animation of <i>walking</i>, but this animation do not imply the movement of the character. In the code below we added this functionality by making the walking manually.
+		</p>
+
+		<code>
+		// Function to rotate the man around the center object
+		function rotateMan(delta)
+		{
+			if(man)
+			{
+				time+=delta*25;
+				var mat4 = new THREE.Matrix4();
+				(...)
+				man.matrixAutoUpdate = false;
+				man.matrix.identity();  // reset matrix
+				man.matrix.multiply(mat4.makeRotationY(degreesToRadians(-time)));
+				man.matrix.multiply(mat4.makeTranslation(2.0, 0.0, 0.0));
+				(...)
+			}
+		}
+		</code>
+
+		<p>Finally we must add our global mixer array to our main loop and update each mixer. </p>
+
+		<code>
+		function render()
+		{
+			(...)
+			// Animation control
+			if (playAction)
+			{
+				for(var i = 0; i < mixer.length; i++)
+				  mixer[i].update( delta );
+				rotateMan(delta);
+			}
+			(...)
+		}
+		</code>
 	</body>
 </html>

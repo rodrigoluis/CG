@@ -12,14 +12,40 @@
 		<br>
 		<hr>
 
-		<p>In this example...</p>
-
-		<h2>About...</h2>
-
-		<p>...</p>
+		<p>Animations in <strong>threejs</strong> are pretty simple to implement. See the project below in which you can start/stop and change de speed of the animation.</p>
 
 		<iframe src="../src/animation.html" onload="this.contentWindow.focus()" onmouseover="this.contentWindow.focus()"></iframe>
 		<a href="../src/animation.html" target="_blank">Open in a new tab</a>
+
+		<h2>Just update de animation variables!</h2>
+
+		<p>Basically to build simple animations you must update the variables that will govern the movement. In our project we add the <strong>rotateCylinder</strong> function inside the render loop as you can see in the code bellow.</p>
+
+		<code>
+		function render()
+		{
+			(...)
+			rotateCylinder();
+			(...)
+			requestAnimationFrame(render);
+			renderer.render(scene, camera)
+		}
+		</code>
+
+		<p>Inside the function you must update the variables that you will use to perform the animation. In the code below you can see two of these variable - <i>angle</i> and <i>angle2</i>. They are updated by adding some value in each iteraction of the animation loop (the <i>speed</i> variable is changed in the user interface).</p>
+
+		<code>
+		function rotateCylinder()
+		{
+			(...)
+			angle+=speed;
+			angle2+=speed*2;
+			(...)
+			cylinder.matrix.multiply(mat4.makeRotationZ(angle)); // R1
+			(...)
+			cylinder2.matrix.multiply(mat4.makeRotationY(angle2)); // R1
+		}
+		</code>
 
 	</body>
 </html>
