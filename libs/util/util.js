@@ -22,6 +22,15 @@ function degreesToRadians(degrees)
 }
 
 /**
+ * Convert radians to degrees
+ */
+function radiansToDegrees(radians)
+{
+  var pi = Math.PI;
+  return radians * (180/pi);
+}
+
+/**
  * Format output to show 'num' number with 'decimalPlaces' decimal places
  */
 function formatOutput(num, decimalPlaces)

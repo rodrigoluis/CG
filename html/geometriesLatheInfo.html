@@ -8,18 +8,58 @@
 		<link type="text/css" rel="stylesheet" href="resources/page.css" />
 	</head>
 	<body>
-		<h1>Title</h1>
+		<h1>Lathe Geometry</h1>
 		<br>
 		<hr>
 
-		<p>In this example...</p>
-
-		<h2>About...</h2>
-
-		<p>...</p>
+		<p>
+			You can use this type of geometry to create 'vase like' objects. Basically this object allows the creation of meshes with some sort of axial symmetry. In project below you can see the generated object and the base points used as the primary curve.
+		</p>
 
 		<iframe src="../src/geometriesLathe.html" onload="this.contentWindow.focus()" onmouseover="this.contentWindow.focus()"></iframe>
 		<a href="../src/geometriesLathe.html" target="_blank">Open in a new tab</a>
+
+		<h2>Initial curve</h2>
+
+		<p>
+			In the previous example we generated a set of points that will be used as the base points of our final geometry. These points can be easily generated through some trigonometric functions like sins and cosines. In this project we used the <strong>Math.sin</strong> function.
+		</p>
+
+		<code>
+		var points = [];
+		var numberOfPoints = 12;
+		for (var i = 0; i < numberOfPoints; i++) {
+			points.push(new THREE.Vector2(Math.sin(i*2 / 4.17)+3, i));
+		}
+		</code>
+
+		<p>
+			After the creation of the base points you can create the lathe geometry using, for example, the code below.
+		</p>
+
+		<code>
+		// First, create the point vector to be used by the Lathe algorithm
+		var points = generatePoints();
+
+		// Set the main properties of the surface
+		var segments = 20;
+		var phiStart = 0;
+		var phiLength = 2 * Math.PI;
+		var latheGeometry = new THREE.LatheGeometry(points, segments, phiStart, phiLength);
+		var object = new THREE.Mesh(latheGeometry, objectMaterial);
+		
+		scene.add(object);
+		</code>
+
+		<p>
+			Just as we already learned when manipulating spheres, there are additional parameters that can be explored like the starting angle and range of the lathed section (Figure 1).
+		</p>
+
+		<figure>
+			<img src="img/lathe.png" width="800">
+		  <figcaption>Figure 1 - Lathe object with <i>phiStart =1.4</i> and <i>phiLenght = 1.5 * PI</i></figcaption>
+		</figure>
+
 
 	</body>
 </html>
