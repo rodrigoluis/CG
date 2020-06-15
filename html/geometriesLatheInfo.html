@@ -13,7 +13,7 @@
 		<hr>
 
 		<p>
-			You can use this type of geometry to create 'vase like' objects. Basically this object allows the creation of meshes with some sort of axial symmetry. In project below you can see the generated object and the base points used as the primary curve.
+			You can use this type of geometry to create 'vase like' objects. Basically this object allows the creation of meshes with some sort of axial symmetry. In the project below you can see the generated object and the base points used as the primary curve.
 		</p>
 
 		<iframe src="../src/geometriesLathe.html" onload="this.contentWindow.focus()" onmouseover="this.contentWindow.focus()"></iframe>
@@ -47,7 +47,7 @@
 		var phiLength = 2 * Math.PI;
 		var latheGeometry = new THREE.LatheGeometry(points, segments, phiStart, phiLength);
 		var object = new THREE.Mesh(latheGeometry, objectMaterial);
-		
+
 		scene.add(object);
 		</code>
 

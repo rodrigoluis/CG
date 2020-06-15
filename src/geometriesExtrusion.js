@@ -10,7 +10,7 @@ function main()
     camera.lookAt(0, 0, 0);
     camera.position.set(5,15,30);
     camera.up.set( 0, 1, 0 );
-  var objColor = "rgb(0, 200, 0)";
+  var objColor = "rgb(200, 129, 0)";
 
   // Enable mouse rotation, pan, zoom etc.
   var trackballControls = new THREE.TrackballControls( camera, renderer.domElement );
@@ -37,7 +37,7 @@ function main()
   var extrudeSettings =
   {
     depth: 5,
-    bevelEnabled: false
+    bevelEnabled: false,
   };
 
   var extrudeGeometry = new THREE.ExtrudeGeometry(smileShape(), extrudeSettings);
@@ -106,7 +106,7 @@ function main()
       .onChange(function(e) { controls.onViewAxes() });
     gui.addColor(controls, 'color')
       .name("Change Color")
-      .onChange(function(e) { controls.updateColor();});    
+      .onChange(function(e) { controls.updateColor();});
   }
 
   function render()

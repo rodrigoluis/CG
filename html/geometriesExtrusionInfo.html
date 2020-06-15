@@ -8,18 +8,75 @@
 		<link type="text/css" rel="stylesheet" href="resources/page.css" />
 	</head>
 	<body>
-		<h1>Title</h1>
+		<h1>Extrude Geometry</h1>
 		<br>
 		<hr>
 
-		<p>In this example...</p>
 
-		<h2>About...</h2>
-
-		<p>...</p>
+		<p>
+			This geometry class is used to create extruded objects. To do so you must provide a path shape. In the project below, we built a smile shape as an initial path to be extruded.
+		</p>
 
 		<iframe src="../src/geometriesExtrusion.html" onload="this.contentWindow.focus()" onmouseover="this.contentWindow.focus()"></iframe>
 		<a href="../src/geometriesExtrusion.html" target="_blank">Open in a new tab</a>
+
+		<h2>Initial Path</h2>
+
+		<p>
+			In <strong>threejs</strong> you can create shapes and path using, for example, the classes <strong>THREE.Shape</strong> and <strong>THREE.Path</strong>. You can use paths to <i>cut</i> shapes as depicted in the code fragment below.
+		</p>
+
+		<code>
+		function smileShape()
+		{
+			var smileyShape = new THREE.Shape();
+				smileyShape.absarc( 0.0, 0.0, 4.0, 0, Math.PI * 2, false );
+
+			var smileyEye1Path = new THREE.Path();
+				smileyEye1Path.absellipse( -1.5, -2.0, 1.0, 1.0, 0, Math.PI * 2, true );
+
+			var smileyEye2Path = new THREE.Path();
+				smileyEye2Path.absarc( 1.5, -2.0, 1.0, 0, Math.PI * 2, true );
+
+			var smileyMouthPath = new THREE.Path();
+				smileyMouthPath.moveTo( -2.0, 0.0 );
+				smileyMouthPath.quadraticCurveTo( 0.0, 2.0, 2.0, 0.0 )
+				smileyMouthPath.bezierCurveTo( 3.0, 0.5, 3.0, 1.0, 2.0, 2.0 )
+				smileyMouthPath.quadraticCurveTo( 0.0, 4.0, -2.0, 2.0 )
+				smileyMouthPath.quadraticCurveTo( -3.5, 1.0, -2.0, 0.0 );
+
+			smileyShape.holes.push( smileyEye1Path );
+			smileyShape.holes.push( smileyEye2Path );
+			smileyShape.holes.push( smileyMouthPath );
+
+			return smileyShape;
+		}
+		</code>
+
+		<p>
+			The <strong>THREE.ExtrudeGeometry</strong> class has numerous parameters (you can see all of them <a href="https://threejs.org/docs/#api/en/geometries/ExtrudeGeometry" target="_blank">here</a>) and the most important is <i>depth</i> used to define the depth to extrude the shape. You must provide a set of parameters to use the <strong>THREE.ExtrudeGeometry</strong> class. See the example below that illustrate how you can pass these attributes.
+		</p>
+
+		<code>
+		var extrudeSettings =
+		{
+			depth: 5,
+			bevelEnabled: false
+		};
+
+		var extrudeGeometry = new THREE.ExtrudeGeometry(smileShape(), extrudeSettings);
+		var object = new THREE.Mesh(extrudeGeometry, objectMaterial);
+		scene.add(object);
+		</code>
+
+		<p>
+			The <i>bevelEnabled</i> parameter is <i>false</i> in our example (Figure 1 - left). Also in our example, if this parameter is set to <i>true</i> and we add the <i>bevelThickness</i> parameter and set it to 2.5, the result can be seen in Figure 1 (right).
+		</p>
+
+		<figure>
+			<img src="img/extrusion.png" width="800">
+		  <figcaption>Figure 1 - Extruded object without bevel (left) and with bevel (right)</i></figcaption>
+		</figure>
 
 	</body>
 </html>
