@@ -36,28 +36,31 @@ function main()
   //----------------------------------
   // Create Convex Geometry
   //----------------------------------
-  // First, create the point vector to be used by the convex hull algorithm
-  var points = generatePoints();
+  var numPoints = 30;
 
-  var convexGeometry = new THREE.ConvexBufferGeometry(points);
-    convexGeometry.computeVertexNormals();
-    convexGeometry.computeFaceNormals();
-    convexGeometry.computeBoundingBox();
-    //convexGeometry.computeFlatVertexNormals(); // Enable this to see flat faces
-    convexGeometry.normalsNeedUpdate = true;
-  var object = new THREE.Mesh(convexGeometry, objectMaterial);
-    object.castShadow = true;
+  var sphereGeom = new THREE.SphereGeometry(0.2); // Sphere to represent points
+  var sphereMaterial = new THREE.MeshPhongMaterial({color:"rgb(255,255,0)"});
 
-  scene.add(object);
+  // Global variables to be removed from memory each interaction
+  var pointCloud = null;
+  var spGroup = null;
+  var points = null;
+  var objectSize = 10;
+  var convexGeometry = null;
+  var object = null;
+  var pointCloudVisibility = true;
+  var objectVisibility = true;
+
+  // Create convex object the first time
+  updateConvexObject();
 
   buildInterface();
   render();
 
-  function generatePoints()
+  function generatePoints(numberOfPoints)
   {
     var points = [];
-    var numberOfPoints = 15;
-    var maxSize = 10;
+    var maxSize = objectSize;
     for (var i = 0; i < numberOfPoints; i++) {
       var randomX = Math.round(-maxSize + Math.random() * maxSize*2);
       var randomY = Math.round(0.1 + Math.random() * maxSize); //
@@ -65,20 +68,50 @@ function main()
 
       points.push(new THREE.Vector3(randomX, randomY, randomZ));
     }
-    // material for all points
-    var material = new THREE.MeshPhongMaterial({color:"rgb(255,255,0)"});
 
-    spGroup = new THREE.Object3D();
+    if(spGroup) spGroup.dispose();
+
+    spGroup = new THREE.Geometry();
+    spMesh = new THREE.Mesh(sphereGeom);
     points.forEach(function (point) {
-      var spGeom = new THREE.SphereGeometry(0.2);
-      var spMesh = new THREE.Mesh(spGeom, material);
       spMesh.position.set(point.x, point.y, point.z);
-      spMesh.castShadow = true;
-      spGroup.add(spMesh);
+      spMesh.updateMatrix();
+      spGroup.merge(spMesh.geometry, spMesh.matrix);
     });
-    // add the points as a group to the scene
-    scene.add(spGroup);
+
+    pointCloud = new THREE.Mesh(spGroup, sphereMaterial);
+      pointCloud.castShadow = true;
+      pointCloud.visible = pointCloudVisibility;
+    scene.add(pointCloud);
+
     return points;
+  }
+
+  function updateConvexObject( )
+  {
+    // As the object is updated when changing number of Points
+    // it's useful to remove the previous object from memory (if it exists)
+    if(object) scene.remove(object);
+    if(pointCloud) scene.remove(pointCloud);
+    if(convexGeometry) convexGeometry.dispose();
+
+    // First, create the point vector to be used by the convex hull algorithm
+    var localPoints = generatePoints(numPoints);
+
+    // Then, build the convex geometry with the generated points
+    convexGeometry = new THREE.ConvexBufferGeometry(localPoints);
+      convexGeometry.computeVertexNormals();
+      convexGeometry.computeFaceNormals();
+      convexGeometry.computeBoundingBox();
+      convexGeometry.normalsNeedUpdate = true;
+
+    object = new THREE.Mesh(convexGeometry, objectMaterial);
+       object.castShadow = true;
+       object.visible = objectVisibility;
+    scene.add(object);
+
+    // Uncomment to view debug information of the renderer
+    //console.log(renderer.info);
   }
 
   function buildInterface()
@@ -90,12 +123,16 @@ function main()
       this.viewPoints = true;
       this.lightFollowCamera = false;
       this.color = objColor;
+      this.numPoints = numPoints;
+      this.objectSize = objectSize;
 
       this.onViewObject = function(){
         object.visible = this.viewObject;
+        objectVisibility = this.viewObject;
       };
       this.onViewPoints = function(){
-        spGroup.visible = this.viewPoints;
+        pointCloud.visible = this.viewPoints;
+        pointCloudVisibility = this.viewPoints;
       };
       this.onViewAxes = function(){
         axesHelper.visible = this.viewAxes;
@@ -105,6 +142,11 @@ function main()
       };
       this.updateLight = function(){
         followCamera = this.lightFollowCamera;
+      };
+      this.rebuildGeometry = function(){
+        numPoints = this.numPoints;
+        objectSize = this.objectSize;
+        updateConvexObject();
       };
     };
 
@@ -122,10 +164,15 @@ function main()
       .name("LightFollowCam")
       .onChange(function(e) { controls.updateLight() });
     gui.addColor(controls, 'color')
-      .name("Change Color")
+      .name("Object Color")
       .onChange(function(e) { controls.updateColor();});
+    gui.add(controls, 'objectSize', 2, 20)
+      .name("Object Max Size")
+      .onChange(function(e) { controls.rebuildGeometry();});
+    gui.add(controls, 'numPoints', 10, 50)
+      .name("Number Of Points")
+      .onChange(function(e) { controls.rebuildGeometry();});
   }
-
 
   function render()
   {
