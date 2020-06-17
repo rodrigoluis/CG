@@ -10,7 +10,6 @@ function main()
     camera.lookAt(0, 0, 0);
     camera.position.set(5,15,40);
     camera.up.set( 0, 1, 0 );
-  var objColor = "rgb(0, 200, 0)";
 
   var followCamera = false; // Controls if light will follow camera
 
@@ -30,8 +29,14 @@ function main()
     axesHelper.translateY(0.1);
   scene.add( axesHelper );
 
+  var objColor = "rgb(255, 0, 0)";
+  var objOpacity = 0.5;
+
   // Object Material
-  var objectMaterial = new THREE.MeshPhongMaterial({color:objColor});
+  var objectMaterial = new THREE.MeshPhongMaterial({
+    color: objColor,
+  	opacity: objOpacity,
+  	transparent: true});
 
   //----------------------------------
   // Create Convex Geometry
@@ -50,6 +55,7 @@ function main()
   var object = null;
   var pointCloudVisibility = true;
   var objectVisibility = true;
+  var castShadow = true;
 
   // Create convex object the first time
   updateConvexObject();
@@ -80,7 +86,7 @@ function main()
     });
 
     pointCloud = new THREE.Mesh(spGroup, sphereMaterial);
-      pointCloud.castShadow = true;
+      pointCloud.castShadow = castShadow;
       pointCloud.visible = pointCloudVisibility;
     scene.add(pointCloud);
 
@@ -100,13 +106,9 @@ function main()
 
     // Then, build the convex geometry with the generated points
     convexGeometry = new THREE.ConvexBufferGeometry(localPoints);
-      convexGeometry.computeVertexNormals();
-      convexGeometry.computeFaceNormals();
-      convexGeometry.computeBoundingBox();
-      convexGeometry.normalsNeedUpdate = true;
 
     object = new THREE.Mesh(convexGeometry, objectMaterial);
-       object.castShadow = true;
+       object.castShadow = castShadow;
        object.visible = objectVisibility;
     scene.add(object);
 
@@ -123,8 +125,10 @@ function main()
       this.viewPoints = true;
       this.lightFollowCamera = false;
       this.color = objColor;
+      this.opacity = objOpacity;
       this.numPoints = numPoints;
       this.objectSize = objectSize;
+      this.castShadow = castShadow
 
       this.onViewObject = function(){
         object.visible = this.viewObject;
@@ -140,8 +144,16 @@ function main()
       this.updateColor = function(){
         objectMaterial.color.set(this.color);
       };
+      this.updateOpacity = function(){
+        objectMaterial.opacity = this.opacity;
+      };
       this.updateLight = function(){
         followCamera = this.lightFollowCamera;
+      };
+      this.onCastShadow = function(){
+        object.castShadow = this.castShadow;
+        pointCloud.castShadow = this.castShadow;
+        castShadow = this.castShadow;
       };
       this.rebuildGeometry = function(){
         numPoints = this.numPoints;
@@ -163,9 +175,15 @@ function main()
     gui.add(controls, 'lightFollowCamera', false)
       .name("LightFollowCam")
       .onChange(function(e) { controls.updateLight() });
+    gui.add(controls, 'castShadow', castShadow)
+      .name("Shadows")
+      .onChange(function(e) { controls.onCastShadow() });
     gui.addColor(controls, 'color')
       .name("Object Color")
       .onChange(function(e) { controls.updateColor();});
+    gui.add(controls, 'opacity', 0, 1)
+      .name("Opacity")
+      .onChange(function(e) { controls.updateOpacity();});
     gui.add(controls, 'objectSize', 2, 20)
       .name("Object Max Size")
       .onChange(function(e) { controls.rebuildGeometry();});

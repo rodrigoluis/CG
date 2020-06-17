@@ -8,18 +8,75 @@
 		<link type="text/css" rel="stylesheet" href="resources/page.css" />
 	</head>
 	<body>
-		<h1>Title</h1>
+		<h1>Convex Geometry</h1>
 		<br>
 		<hr>
-
-		<p>In this example...</p>
-
-		<h2>About...</h2>
-
-		<p>...</p>
+		<p>
+			This geometry class is used to create convex 3D Objects. It uses a algorithm that generates a convex hull for a given array of 3D points. In the project below you can select the size of the object (as the side of a cube that involves the object), number of points of the array and other auxiliar features.
+		</p>
 
 		<iframe src="../src/geometriesConvex.html" onload="this.contentWindow.focus()" onmouseover="this.contentWindow.focus()"></iframe>
 		<a href="../src/geometriesConvex.html" target="_blank">Open in a new tab</a>
 
+		<h2>Array of Points</h2>
+
+		<p>
+			First of all we must provide an array of points that will be used as input for the convex hull algorithm. In our example, this array is generated randomly as shown in the code below.
+		</p>
+
+		<code>
+		function generatePoints(numberOfPoints)
+		{
+			var points = [];
+			var maxSize = objectSize;
+			for (var i = 0; i < numberOfPoints; i++)
+			{
+				var randomX = Math.round(-maxSize + Math.random() * maxSize*2);
+				var randomY = Math.round(0.1 + Math.random() * maxSize);
+				var randomZ = Math.round(-maxSize + Math.random() * maxSize*2);
+
+				points.push(new THREE.Vector3(randomX, randomY, randomZ));
+			}
+			return points;
+		}
+		</code>
+
+		<p>
+			Then, we pass the generated points to a <strong>THREE.ConvexBufferGeometry</strong> object.
+		</p>
+
+		<code>
+		// First, create the point vector to be used by the convex hull algorithm
+		var localPoints = generatePoints(numPoints);
+
+		// Then, build the convex geometry with the generated points
+		convexGeometry = new THREE.ConvexBufferGeometry(localPoints);
+		</code>
+
+		<h2>Cleaning memory</h2>
+
+		<p>
+			In this project, each time we change the size of the object or the number of points that will be used in its construction, a new object is created. So, we have to remove the previous object from memory and also remove the auxiliary point cloud used to see the base points (yellow spheres). To do so, we must create the variables as <i>globals</i> inside the main function and remove them from the scene before creating the new object or <i>dispose</i> the geometry as can be seen in the code below. Details about disposing objects can be learned <a href="https://threejs.org/docs/#manual/en/introduction/How-to-dispose-of-objects" target="_blank">here</a>.
+		</p>
+
+
+		<code>
+		// main - Global variables as 'null'
+		var pointCloud = null;
+		var object = null;
+		var convexGeometry = null;
+
+		(...)
+
+		function updateConvexObject( )
+		{
+			// As the object is updated when changing number of Points
+			// it's useful to remove the previous object from memory (if it exists)
+			if(object) scene.remove(object);
+			if(pointCloud) scene.remove(pointCloud);
+			if(convexGeometry) convexGeometry.dispose();
+			(...)
+		}
+		</code>
 	</body>
 </html>
