@@ -8,18 +8,53 @@
 		<link type="text/css" rel="stylesheet" href="resources/page.css" />
 	</head>
 	<body>
-		<h1>Title</h1>
+		<h1>Loading External Objects</h1>
 		<br>
 		<hr>
 
-		<p>In this example...</p>
+		<p>
+			You can use <strong>threejs</strong> to build you own objects as we already learned in previous examples, but sometimes it is useful to use professional softwares (like 3Ds, Blender etc) to build more complex objects and animations. When this is the case, you can rely on pre-defined <i>loaders</i> to load these external objects.
+		</p>
 
-		<h2>About...</h2>
-
-		<p>...</p>
+		<p>
+			In this project you can change between several objects loaded from a set file formats like PLY, OBJ, GLTF etc.
+		</p>
 
 		<iframe src="../src/geometriesExternalObjects.html" onload="this.contentWindow.focus()" onmouseover="this.contentWindow.focus()"></iframe>
 		<a href="../src/geometriesExternalObjects.html" target="_blank">Open in a new tab</a>
 
+		<h2>How to load?</h2>
+
+		<p>
+			The way <strong>threejs</strong> deals with loading files is similar no matter the format you choose. In our project we build one function for each format because each one uses a different <strong>threejs</strong> class.  We will illustrate the use of the GLTF loader.
+		</p>
+
+		<p>
+			First we must load the file considering it's name and path.
+		</p>
+
+		<code>
+		loadGLTFFile('../assets/objects/', 'TocoToucan', false, 2.0);
+		</code>
+
+		<p>
+			In the <i>loadGLTFFile</i> function that we built we pass the model name and path, if it is visible or not and the desired Scale. Inside de function we load the object and finally add the loaded object to the scene. See the code fragment below to see the main parts of the function.
+		</p>
+
+		<code>
+		function loadGLTFFile(modelPath, modelName, visibility, desiredScale)
+		{
+			var loader = new THREE.GLTFLoader( );
+			loader.load( modelPath + modelName + '.gltf', function ( gltf ) {
+				var obj = gltf.scene;
+				obj.name = modelName;
+				obj.visible = visibility;
+
+				(...)
+				scene.add ( obj );
+				(...)
+			}
+		}
+		</code>
 	</body>
 </html>
