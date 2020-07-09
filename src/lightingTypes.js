@@ -65,7 +65,7 @@ function main()
   var spotLight = new THREE.SpotLight(lightColor);
   setSpotLight(lightPosition);
 
-  var pointLight = new THREE.DirectionalLight(lightColor);
+  var pointLight = new THREE.PointLight(lightColor);
   setPointLight(lightPosition);
 
   var dirLight = new THREE.DirectionalLight(lightColor);

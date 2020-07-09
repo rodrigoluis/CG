@@ -8,18 +8,57 @@
 		<link type="text/css" rel="stylesheet" href="resources/page.css" />
 	</head>
 	<body>
-		<h1>Title</h1>
+		<h1>Lighting Types</h1>
 		<br>
 		<hr>
 
-		<p>In this example...</p>
+		<p>
+			In Computer Graphics there are several types of lights that can be used by the developers. <strong>Threejs</strong> has also several types of lights available and in this project we will explore three of them: Spotlight, Directional light and point light.
+		</p>
 
-		<h2>About...</h2>
-
-		<p>...</p>
+		<p>
+			In the project below, you can change between these lights and see how they behave in the scene.
+		</p>
 
 		<iframe src="../src/lightingTypes.html" onload="this.contentWindow.focus()" onmouseover="this.contentWindow.focus()"></iframe>
 		<a href="../src/lightingTypes.html" target="_blank">Open in a new tab</a>
+
+		<h2>Main Differences</h2>
+
+		<p>
+			As can be seen in Figure 1 we have important visual differences between these three light types.
+		</p>
+
+		<figure>
+			<img src="img/lightTypes.png" width="1280">
+			<figcaption>Figure 1 - Ligth Types. From left to right we have Spot Light, Point Light and Directional Light</figcaption>
+		</figure>
+
+		<p>
+			When using Spotlights, we have to set the <i>field of view</i> (FOV) of the camera, its position and, if necessary, the <i>target</i> (where the light points). By default the target is (0,0,0). Additionaly we can set maximum range of the light, the percentage of the spotlight cone that is attenuated due to penumbra and the decay of the light.
+		</p>
+
+		<code>
+		var lightPosition = new THREE.Vector3(1.7, 0.8, 1.1);
+		var lightColor = "rgb(255,255,255)";
+		(...)
+		var spotLight = new THREE.SpotLight(lightColor);
+			spotLight.position.copy(lightPosition);
+			spotLight.shadow.camera.fov = 15;
+			spotLight.castShadow = true;
+			spotLight.decay = 2;
+			spotLight.penumbra = 0.05;
+			spotLight.name = "Spot Light"
+		scene.add(spotLight);
+		</code>
+
+		<p>
+			The <i>Point Light</i> is much simpler, and you can set this light by providing just its position and color. Differently from the spotlight, this type of light will illuminate in all directions. The way the light is constructed is very similar to the way we create spotlights (i.e., create the object, set parameters and add it to the scene).
+		</p>
+
+		<p>
+			Finally you have <i>Directional Lights</i>. The main difference from the other two lights is that in this light we have only a direction, like a vector, in which the light lays, not a point in the space. We can use this type of light to emulate the sun, for example. We have to set a position and a target. These two points will form the aforementioned vector. You can see in Figure 1 that this type of light usually generate soft shadows and the process is computationally expensive (you can see details about this shadow generation <a href="https://threejs.org/docs/#api/en/lights/shadows/DirectionalLightShadow" target="_blank">here</a>).
+		</p>
 
 	</body>
 </html>
