@@ -98,7 +98,7 @@ function main()
     spotLight.position.copy(position);
     spotLight.shadow.mapSize.width = 2048;
     spotLight.shadow.mapSize.height = 2048;
-    spotLight.shadow.camera.fov = 15;
+    spotLight.shadow.camera.fov = degreesToRadians(20);
     spotLight.castShadow = true;
     spotLight.decay = 2;
     spotLight.penumbra = 0.05;
