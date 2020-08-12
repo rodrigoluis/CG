@@ -8,18 +8,44 @@
 		<link type="text/css" rel="stylesheet" href="resources/page.css" />
 	</head>
 	<body>
-		<h1>Title</h1>
+		<h1>Types of Materials</h1>
 		<br>
 		<hr>
 
-		<p>In this example...</p>
-
-		<h2>About...</h2>
-
-		<p>...</p>
+		<p>
+			One element as important as lights to set the appearance of a scene is the <i>materials</i> used in the scene objects. Defining a material to an object means defining the algorithm the object will use to interact with the lights available in the scene. In this example you will see the most common materials available in  <strong>Threejs</strong> applied to the Utah Teapot.
+		</p>
 
 		<iframe src="../src/lightingMaterials.html" onload="this.contentWindow.focus()" onmouseover="this.contentWindow.focus()"></iframe>
 		<a href="../src/lightingMaterials.html" target="_blank">Open in a new tab</a>
+
+		<h2>Using materials</h2>
+
+		<p>In Threejs we must define materials prior the definition of the mesh. By the way, the material to be used is one of the parameters required to define a mesh. See the example below how we applied the Phong Material in the desired object.</p>
+
+		<code>
+		var material = new THREE.MeshPhongMaterial({
+			color:"rgb(255,20,20)",     // Main color of the object
+			shininess:"200",            // Shininess of the object
+			specular:"rgb(255,255,255)" // Color of the specular component
+		});
+
+		var geometry = new THREE.TeapotBufferGeometry(0.5);
+
+		var obj = new THREE.Mesh(geometry, material);
+			obj.castShadow = true;
+			obj.visible = visibility;
+			obj.position.set(0.0, 0.5, 0.0);
+
+		scene.add( obj );
+		</code>
+
+		<p>In the example presented here we show the use of Phong and Gouraud materials (the most common), smooth normal material (maps the normal vectors to RGB colors), and flat normal material (using flat shading), toon material (use toon shading), solid basic material (just a solid color) and its wireframe visualization. </p>
+
+		<figure>
+			<img src="img/lightMaterials.png" width="1280">
+			<figcaption>Figure 1 - Light Materials. From left to right, up to bottom, Phong, Gouraud, Basic, normal smooth, normal flat and toon.</figcaption>
+		</figure>
 
 	</body>
 </html>

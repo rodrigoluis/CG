@@ -129,7 +129,6 @@ function main()
       obj.name = name;
       obj.castShadow = true;
       obj.visible = visibility;
-      obj.castShadow = true;
       obj.position.set(0.0, 0.5, 0.0);
 
     scene.add( obj );

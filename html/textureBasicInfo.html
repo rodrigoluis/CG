@@ -8,18 +8,33 @@
 		<link type="text/css" rel="stylesheet" href="resources/page.css" />
 	</head>
 	<body>
-		<h1>Title</h1>
+		<h1>Textures</h1>
 		<br>
 		<hr>
 
-		<p>In this example...</p>
-
-		<h2>About...</h2>
-
-		<p>...</p>
+		<p>The easiest way to add details to objects is through textures. Basically textures are images applied directed to the object's geometry and many methods can be used to accomplish this task. In the example below you can see textures used in all objects of the scene.</p>
 
 		<iframe src="../src/textureBasic.html" onload="this.contentWindow.focus()" onmouseover="this.contentWindow.focus()"></iframe>
 		<a href="../src/textureBasic.html" target="_blank">Open in a new tab</a>
+
+		<h2>Using Textures</h2>
+
+		<p>The most common use of textures in to apply the loaded image to the 'map' property of the object's material. If the object have internal texture coordinates the application is straightforward (see the sample code below).</p>
+
+		<code>
+		var cubeSize = 0.6;
+		var cubeGeometry = new THREE.BoxGeometry(cubeSize, cubeSize, cubeSize);
+		var cubeMaterial = new THREE.MeshLambertMaterial();
+		var cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+		scene.add(cube);
+
+		// Use TextureLoader to load texture files
+		var textureLoader = new THREE.TextureLoader();
+		var stone = textureLoader.load('../assets/textures/stone.jpg');
+
+		// Add texture to the 'map' property of the object's material
+		cube.material.map = stone;
+		</code>
 
 	</body>
 </html>
