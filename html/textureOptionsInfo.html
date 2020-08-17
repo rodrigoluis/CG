@@ -8,18 +8,39 @@
 		<link type="text/css" rel="stylesheet" href="resources/page.css" />
 	</head>
 	<body>
-		<h1>Title</h1>
+		<h1>Texture Options</h1>
 		<br>
 		<hr>
 
-		<p>In this example...</p>
+		<p>There are many options that can be used to manipulate textures. Here we will see the most common options: wrapping modes, magnification e minification. </p>
 
 		<iframe src="../src/textureOptions.html" onload="this.contentWindow.focus()" onmouseover="this.contentWindow.focus()"></iframe>
 		<a href="../src/textureOptions.html" target="_blank">Open in a new tab</a>
 
-		<h2>About...</h2>
+		<h2>Wrapping Modes</h2>
 
-		<p>...</p>
-		
+		<p>Wrapping modes are used to define how the graphics library will deal with the borders of the texture. You might want to use the last line/column of pixels and copied these colours through the rest of polygon (clamp option) or repeat the entire texture like a tile (repeat option). See Figure 1 to visually understand the differences between these modes.</p>
+
+		<figure>
+			<img src="img/textureWrapping.png" width="1280">
+			<figcaption>Figure 1 - Texture wrapping. From left to right, both using repeat, clamp in S, both using clamp.</figcaption>
+		</figure>
+
+		<h2>Minification and Magnification</h2>
+
+		<p>Pixels of a texture image normally do not match one-to-one with actual screen pixels when a texture is visible onscreen. The most common case happens when a single pixel of the texture is stretched over multiple screen pixels (called texture magnification), or the opposite, when multiple pixels of a texture contribute to the color of a single screen pixel (texture minification). </p>
+
+		<p>For both minification and magnification the most common options are <i>nearest</i> (in which the 'nearest' pixel is used) or <i>linear</i> (interpolates the four nearest pixels). Linear filter produces smoother images (See Figures 2 and 3) in both cases. </p>
+
+		<figure>
+			<img src="img/textureMagnification.png" width="800">
+			<figcaption>Figure 2 - Magnification Filter using 'nearest' (left) and 'linear' option.</figcaption>
+		</figure>
+
+		<figure>
+			<img src="img/textureMinification.png" width="1280">
+			<figcaption>Figure 3 - Minification Filter using 'nearest' (left) and 'linear' option. Look carefully the indicated region to spot the differences.</figcaption>
+		</figure>
+
 	</body>
 </html>
