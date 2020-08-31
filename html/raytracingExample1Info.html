@@ -8,18 +8,63 @@
 		<link type="text/css" rel="stylesheet" href="resources/page.css" />
 	</head>
 	<body>
-		<h1>Title</h1>
+		<h1>Ray Tracing - Example 1</h1>
 		<br>
 		<hr>
 
-		<p>In this example...</p>
-
-		<h2>About...</h2>
-
-		<p>...</p>
+		<p>There are many ray tracing libraries available in  <strong>threejs</strong> and here we will see one of them in action.</p>
 
 		<iframe src="../src/raytracingExample1.html" onload="this.contentWindow.focus()" onmouseover="this.contentWindow.focus()"></iframe>
 		<a href="../src/raytracingExample1.html" target="_blank">Open in a new tab</a>
+
+		<h2>Under the hood</h2>
+
+		<p>The use of the library is straightforward, we just have to add a perspective camera taking care of its position. Then we use the ray tracer as a renderer, setting the width and height of the window, the size of the render block and the camera.</p>
+
+		<code>
+		// The canvas is in the XY plane.
+		// Hint: put the camera in the positive side of the Z axis and the
+		// objects in the negative side
+		var camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 500 );
+		camera.position.z = 7;
+		camera.position.y = 0.5;
+
+		// Setting the ray tracer
+		renderer = new THREE.RaytracingRenderer(window.innerWidth, window.innerHeight, 32, camera);
+		container.appendChild( renderer.domElement );
+		</code>
+
+		<p>When adding objects we must carefully set material parameters. In the code fragment below we set a phong material highly specular and with mirror effect used in the yellow sphere. We also set a true mirror material (black color, white specular) and used in the center box.</p>
+
+		<code>
+		var phongMaterialAmarelo = new THREE.MeshPhongMaterial( {
+			color: "rgb(255,170,0)",
+			specular: "rgb(34,34,34)",
+			shininess: 10000,
+		} );
+		phongMaterialAmarelo.mirror = true;
+		phongMaterialAmarelo.reflectivity = 0.7;
+
+		var mirrorMaterial = new THREE.MeshPhongMaterial( {
+			color: "rgb(0,0,0)",
+			specular: "rgb(255,255,255)",
+			shininess: 1000,
+		} );
+		mirrorMaterial.mirror = true;
+		mirrorMaterial.reflectivity = 0.8;
+
+		(...)
+
+		box = new THREE.Mesh( boxGeometry, mirrorMaterial );
+		box.position.set(0, -1.0, -5);
+		box.rotation.y = degreesToRadians(39);
+		scene.add( box );
+
+		sphere = new THREE.Mesh( sphereGeometry, phongMaterialAmarelo );
+		sphere.scale.multiplyScalar( 0.5 );
+		sphere.position.set( 3, -1.5, -3 );
+		scene.add( sphere );
+		</code>
 
 	</body>
 </html>
