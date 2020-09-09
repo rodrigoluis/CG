@@ -10,10 +10,6 @@ function main()
   // Set angles of rotation
   var angle = [-1.57, 0]; // In degreesToRadians
 
-  //var angle2 = 0;
-  var selectedJoint = 0;
-  var animationOn = true; // control if animation is on or of
-
   // Show world axes
   var axesHelper = new THREE.AxesHelper( 12 );
   scene.add( axesHelper );
@@ -60,24 +56,23 @@ function main()
     s2.matrixAutoUpdate = false;
     c2.matrixAutoUpdate = false;
 
-    // Set angle's animation speed
-    if(animationOn)
-    {
-      var mat4 = new THREE.Matrix4();
+    var mat4 = new THREE.Matrix4();
 
-      // Will execute T1 and then R1
-      c1.matrix.identity();  // reset matrix
-      c1.matrix.multiply(mat4.makeRotationZ(angle[0])); // R1
-      c1.matrix.multiply(mat4.makeTranslation(0.0, 1.0, 0.0)); // T1
+    // resetting matrices
+    c1.matrix.identity();
+    s2.matrix.identity();
+    c2.matrix.identity();
 
-      s2.matrix.identity();  // reset matrix
-      s2.matrix.multiply(mat4.makeTranslation(0.0, 1.0, 0.0));
+    // Will execute T1 and then R1
+    c1.matrix.multiply(mat4.makeRotationZ(angle[0])); // R1
+    c1.matrix.multiply(mat4.makeTranslation(0.0, 1.0, 0.0)); // T1
+    
+    // Just need to translate the sphere to the right position
+    s2.matrix.multiply(mat4.makeTranslation(0.0, 1.0, 0.0));
 
-      // Will execute T2 and then R2
-      c2.matrix.identity();  // reset matrix
-      c2.matrix.multiply(mat4.makeRotationZ(angle[1])); // R2
-      c2.matrix.multiply(mat4.makeTranslation(0.0, 1.0, 0.0)); // T2
-    }
+    // Will execute T2 and then R2
+    c2.matrix.multiply(mat4.makeRotationZ(angle[1])); // R2
+    c2.matrix.multiply(mat4.makeTranslation(0.0, 1.0, 0.0)); // T2
   }
 
   function buildInterface()

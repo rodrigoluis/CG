@@ -54,10 +54,8 @@ function main()
 
     keyboard.update();
 
-    var speed = 30;
     var angle = degreesToRadians(10);
     var rotAxis = new THREE.Vector3(0,0,1); // Set Z axis
-  	var moveDistance = speed * clock.getDelta();
 
   	if ( keyboard.pressed("left") )     cube.translateX( -1 );
   	if ( keyboard.pressed("right") )    cube.translateX(  1 );
