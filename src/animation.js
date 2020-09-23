@@ -55,20 +55,19 @@ function main()
     {
       angle+=speed;
       angle2+=speed*2;
-
+      
       var mat4 = new THREE.Matrix4();
+      cylinder.matrix.identity();  // reset matrix
+      cylinder2.matrix.identity();  // reset
 
       // Will execute T1 and then R1
-      cylinder.matrix.identity();  // reset matrix
       cylinder.matrix.multiply(mat4.makeRotationZ(angle)); // R1
       cylinder.matrix.multiply(mat4.makeTranslation(0.0, 1.0, 0.0)); // T1
 
-      var c2angle = degreesToRadians(90);
-      cylinder2.matrix.identity();  // reset
       // Will execute R2, T1 and R1 in this order
       cylinder2.matrix.multiply(mat4.makeRotationY(angle2)); // R1
       cylinder2.matrix.multiply(mat4.makeTranslation(0.0, 1.0, 0.0)); // T1
-      cylinder2.matrix.multiply(mat4.makeRotationX(c2angle)); // R2
+      cylinder2.matrix.multiply(mat4.makeRotationX(degreesToRadians(90))); // R2
     }
   }
 

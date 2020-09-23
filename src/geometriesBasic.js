@@ -10,7 +10,6 @@ function main()
     camera.position.set(5,15,30);
     camera.up.set( 0, 1, 0 );
 
-  var clock = new THREE.Clock();
   var light = initDefaultLighting(scene, new THREE.Vector3(25, 30, 20)); // Use default light
 
   // Listen window size changes

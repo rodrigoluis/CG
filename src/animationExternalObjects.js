@@ -148,7 +148,7 @@ function main()
   function render()
   {
     stats.update();
-    var delta = clock.getDelta();
+    var delta = clock.getDelta(); // Get the seconds passed since the time 'oldTime' was set and sets 'oldTime' to the current time.
     trackballControls.update();
     requestAnimationFrame(render);
     renderer.render(scene, camera);
