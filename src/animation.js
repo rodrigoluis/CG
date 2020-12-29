@@ -25,7 +25,7 @@ function main()
   // Set initial position of the sphere
   sphere.translateX(1.0).translateY(1.0).translateZ(1.0);
 
-  // More information about cylinderGeometry here --> https://threejs.org/docs/#api/en/geometries/CylinderGeometry
+  // More information about cylinderGeometry here ---> https://threejs.org/docs/#api/en/geometries/CylinderGeometry
   var cylinderGeometry = new THREE.CylinderGeometry(0.1, 0.1, 2.0, 25);
   var cylinderMaterial = new THREE.MeshPhongMaterial( {color:'rgb(100,255,100)'} );
   var cylinder = new THREE.Mesh( cylinderGeometry, cylinderMaterial );
