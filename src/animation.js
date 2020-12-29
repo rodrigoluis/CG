@@ -79,8 +79,7 @@ function main()
         animationOn = !animationOn;
       };
       this.speed = 0.05;
-      // this.joint2 = 0;
-      //
+
       this.changeSpeed = function(){
         speed = this.speed;
       };
