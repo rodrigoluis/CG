@@ -46,6 +46,7 @@ var list = {
 				"Group Geometry": "html/exampleGroupInfo",
 				"Merge Geometry": "html/exampleMergeInfo",
 				"First Person": "html/exampleFirstPersonInfo",
+				"Drag Control": "html/exampleDragControlInfo",
 			},
 		},
 	},
