@@ -32,7 +32,7 @@ function main()
 
   //-- Scene Objects -----------------------------------------------------------
   // Ground
-  var groundPlane = createGroundPlane(4.0, 4.0); // width and height
+  var groundPlane = createGroundPlane(4.0, 4.0, 100, 100); // width and height
     groundPlane.rotateX(degreesToRadians(-90));
   scene.add(groundPlane);
 

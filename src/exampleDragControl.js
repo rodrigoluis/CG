@@ -9,7 +9,7 @@ function main() {
 
     initDefaultLighting(scene, new THREE.Vector3(30, -30, 30)); // Use default light
 
-    var groundPlane = createGroundPlane(40, 40); // width and height
+    var groundPlane = createGroundPlane(40, 40, 100, 100);
     scene.add(groundPlane);
 
     // To use the keyboard

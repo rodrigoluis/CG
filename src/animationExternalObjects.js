@@ -21,7 +21,7 @@ function main()
   // Listen window size changes
   window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
-  var groundPlane = createGroundPlane(5.0, 5.0, "rgb(100,140,90)");
+  var groundPlane = createGroundPlane(5.0, 5.0, 60, 60, "rgb(100,140,90)");
     groundPlane.rotateX(degreesToRadians(-90));
   scene.add(groundPlane);
 
