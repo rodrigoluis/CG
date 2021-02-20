@@ -1,0 +1,66 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+    <title></title>
+		<meta charset="utf-8">
+		<script src="resources/list.js"></script>
+		<script src="resources/page.js"></script>
+		<link type="text/css" rel="stylesheet" href="resources/page.css" />
+	</head>
+	<body>
+		<h1>Spotlight in Details</h1>
+		<br>
+		<hr>
+
+		<p>
+			This example shows how to set Threejs' Spotlight and present how to use helpers.
+		</p>
+
+		<p>
+			In the project below, you can change several parameters of the spotlight like intensity, penumbra, light distance, angle, position of the light and position of it's target. You can also change shadows' parameters like shadow map size and the near/far of the shadows' camera.
+		</p>
+
+		<iframe src="../src/lightingSpotlightDetails.html" onload="this.contentWindow.focus()" onmouseover="this.contentWindow.focus()"></iframe>
+		<a href="../src/lightingSpotlightDetails.html" target="_blank">Open in a new tab</a>
+
+		<h2>Penumbra resolution</h2>
+
+		<p>
+			One important parameter to set is the penumbra. If this parameter is set to zero, the quality of the penumbra 
+			will depend on the resolution of the object. Figure 1 shows some possible scenarios. In Figure 1.a penumbra is set to 0.5 and
+			that's an interesting value in most of the cases. In Figure 1.b penumbra is set to zero, showing the resolution of the 
+			ground plane used. Figura 1.c shows a high resolution ground plane (400 x 400) with penumbra also set to zero. 
+			<b>This configuration should be avoided</b> due to its high computational cost. In general, it's better to use 
+			the penumbra parameter higher than 0.5 to produce better visual effects. 
+		</p>
+
+		<figure>
+			<img src="img/lightSpotPenumbra.png" width="1280">
+			<figcaption>
+				Figure 1 - Penumbra scenarios. In (a) penumbra is set to 0.5 and in (b), set to 0.0, 
+				considering a ground plane with resolution 40 x 40. The far right image shows what happens 
+				if we set penumbra to zero with a high resolution ground plane (200 x 200).
+			</figcaption>
+		</figure>
+
+		<p>
+			The 'distance' parameter, when set to zero, light does not attenuate. When distance is non-zero, 
+			light will attenuate linearly from maximum intensity at the light's position down to zero at 
+			this distance from the light.
+		</p>
+
+		<p>
+			Finally, you must set de shadows' map size properly. Higher values give better quality shadows 
+			at the cost of computation time. See in Figure 2 what happens if you use the default value 512 (a) or 16 (b)
+		</p>		
+
+		<figure>
+			<img src="img/lightSpotMapsizes.png" width="850">
+			<figcaption>
+				Figure 2 - Shadows' map size. In (a) width and heigh are set to 512. In (b) both values are set to 16.
+			</figcaption>
+		</figure>
+
+
+	</body>
+</html>

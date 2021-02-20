@@ -10,14 +10,15 @@ function main()
     camera.position.set(2.18, 1.62, 3.31);
     camera.up.set( 0, 1, 0 );
 
-  var lightPosition = new THREE.Vector3(1.7, 0.8, 1.1);
+  var lightPosition = new THREE.Vector3(2.5, 0.8, 1.1);
   var light = initDefaultLighting(scene, lightPosition); // Use default light
+    light.angle = degreesToRadians(70); 
   var lightSphere = createLightSphere(scene, 0.1, 10, 10, lightPosition);
 
   // Set angles of rotation
   var angle = 0;
-  var speed = 0.05;
-  var animationOn = true; // control if animation is on or of
+  var speed = 0.01;
+  var animationOn = false; // control if animation is on or of
 
   // Enable mouse rotation, pan, zoom etc.
   var trackballControls = new THREE.TrackballControls( camera, renderer.domElement );
@@ -32,7 +33,7 @@ function main()
 
   //-- Scene Objects -----------------------------------------------------------
   // Ground
-  var groundPlane = createGroundPlane(4.0, 4.0, 100, 100); // width and height
+  var groundPlane = createGroundPlane(5.0, 5.0, 100, 100); // width and height
     groundPlane.rotateX(degreesToRadians(-90));
   scene.add(groundPlane);
 
@@ -73,13 +74,15 @@ function main()
 
   function rotateLight()
   {
-    // More info:
-    light.matrixAutoUpdate = false;
-    lightSphere.matrixAutoUpdate = false;
+
 
     // Set angle's animation speed
     if(animationOn)
     {
+      // More info:
+      light.matrixAutoUpdate = false;
+      lightSphere.matrixAutoUpdate = false;      
+
       angle+=speed;
 
       var mat4 = new THREE.Matrix4();
@@ -87,7 +90,7 @@ function main()
       // Will execute T1 and then R1
       light.matrix.identity();  // reset matrix
       light.matrix.multiply(mat4.makeRotationY(angle)); // R1
-      light.matrix.multiply(mat4.makeTranslation(2.0, 1.2, 0.0)); // T1
+      light.matrix.multiply(mat4.makeTranslation(lightPosition.x, lightPosition.y, lightPosition.z)); // T1
 
       lightSphere.matrix.copy(light.matrix);
     }

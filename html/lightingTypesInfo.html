@@ -35,19 +35,16 @@
 		</figure>
 
 		<p>
-			When using Spotlights, we have to set the <i>field of view</i> (FOV) of the camera, its position and, if necessary, the <i>target</i> (where the light points). By default the target is (0,0,0). Additionaly we can set maximum range of the light, the percentage of the spotlight cone that is attenuated due to penumbra and the decay of the light.
+			When using Spotlights, we have to set the angle of the camera, its position and, if necessary, the <i>target</i> (where the light points). By default the target is (0,0,0). Additionaly we can set maximum range of the light, the percentage of the spotlight cone that is attenuated due to penumbra and the decay of the light.
 		</p>
 
 		<code>
-		var lightPosition = new THREE.Vector3(1.7, 0.8, 1.1);
-		var lightColor = "rgb(255,255,255)";
-		(...)
-		var spotLight = new THREE.SpotLight(lightColor);
-			spotLight.position.copy(lightPosition);
-			spotLight.shadow.camera.fov = 15;
+		var spotLight = new THREE.SpotLight("rgb(255,255,255)");
+			spotLight.position.copy(new THREE.Vector3(1.7, 0.8, 1.1));
+			spotLight.angle = degreesToRadians(40);    
 			spotLight.castShadow = true;
 			spotLight.decay = 2;
-			spotLight.penumbra = 0.05;
+			spotLight.penumbra = 0.5;
 			spotLight.name = "Spot Light"
 		scene.add(spotLight);
 		</code>

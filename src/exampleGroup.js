@@ -10,7 +10,7 @@ function main()
     camera.up.set( 0, 1, 0 );
 
   var clock = new THREE.Clock();
-  var light = initDefaultLighting(scene, new THREE.Vector3(15, 17, 20)); // Use default light
+  var light = initDefaultLighting(scene, new THREE.Vector3(25, 20, 25)); // Use default light
   var lightSphere = createSphere(0.3, 10, 10);
     lightSphere.position.copy(light.position);
   scene.add(lightSphere);
@@ -18,7 +18,7 @@ function main()
   // Listen window size changes
   window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
-  var groundPlane = createGroundPlane(60, 60); // width and height
+  var groundPlane = createGroundPlane(60, 60, 50, 50); // width and height
     groundPlane.rotateX(degreesToRadians(-90));
   scene.add(groundPlane);
 

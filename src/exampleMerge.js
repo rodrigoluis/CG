@@ -13,12 +13,12 @@ function main()
     camera.lookAt(0, 0, 0);
     camera.position.set(25,25,70);
     camera.up.set( 0, 1, 0 );
-  var light = initDefaultLighting(scene, new THREE.Vector3(15, 25, 10)); // Use default light
+  var light = initDefaultLighting(scene, new THREE.Vector3(45, 45, 15)); // Use default light
   var lightSphere = createSphere(0.5, 10, 10);
     lightSphere.position.copy(light.position);
   scene.add(lightSphere);
 
-  var groundPlane = createGroundPlane(120, 120); // width and height
+  var groundPlane = createGroundPlane(120, 120, 80, 80); // width and height
     groundPlane.rotateX(degreesToRadians(-90));
     groundPlane.position.set(0,-0.1,0);
   scene.add(groundPlane);

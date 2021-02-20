@@ -21,7 +21,7 @@ function main()
   // Listen window size changes
   window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
-  var groundPlane = createGroundPlane(4.0, 2.5, 150, 150); // width and height
+  var groundPlane = createGroundPlane(4.0, 2.5, 50, 50); // width and height
     groundPlane.rotateX(degreesToRadians(-90));
   scene.add(groundPlane);
 
@@ -86,7 +86,8 @@ function main()
     pointLight.name = "Point Light"
     pointLight.castShadow = true;
     pointLight.visible = false;
-
+    spotLight.penumbra = 0.5;
+    
     scene.add( pointLight );
     lightArray.push( pointLight );
   }
@@ -96,12 +97,12 @@ function main()
   function setSpotLight(position)
   {
     spotLight.position.copy(position);
-    spotLight.shadow.mapSize.width = 2048;
-    spotLight.shadow.mapSize.height = 2048;
-    spotLight.shadow.camera.fov = degreesToRadians(20);
+    spotLight.shadow.mapSize.width = 512;
+    spotLight.shadow.mapSize.height = 512;
+    spotLight.angle = degreesToRadians(40);    
     spotLight.castShadow = true;
     spotLight.decay = 2;
-    spotLight.penumbra = 0.05;
+    spotLight.penumbra = 0.5;
     spotLight.name = "Spot Light"
 
     scene.add(spotLight);

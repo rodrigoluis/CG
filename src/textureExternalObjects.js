@@ -3,7 +3,7 @@ function main()
   var scene = new THREE.Scene();    // Create main scene
   var clock = new THREE.Clock();
   var stats = initStats();          // To show FPS information
-  var light = initDefaultLighting(scene, new THREE.Vector3(1, 2, 0.8)); // Use default light
+  var light = initDefaultLighting(scene, new THREE.Vector3(2, 3, 2)); // Use default light
   var lightSphere = createSphere(0.1, 10, 10);
     lightSphere.position.copy(light.position);
   scene.add(lightSphere);
@@ -24,7 +24,7 @@ function main()
   // Listen window size changes
   window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
-  var groundPlane = createGroundPlane(4.0, 2.5); // width and height
+  var groundPlane = createGroundPlane(4.0, 4.0, 80, 80); // width and height
     groundPlane.rotateX(degreesToRadians(-90));
   scene.add(groundPlane);
 

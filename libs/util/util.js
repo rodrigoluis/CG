@@ -68,38 +68,10 @@ function getMaxSize(obj)
 }
 
 /**
-  * ...
-  *
-  */
-class SecondaryBox
-{
-  constructor(defaultText) {
-    this.box = document.createElement('div');
-    this.box.id = "box";
-    this.box.style.padding = "6px 14px";
-    this.box.style.bottom = "0";
-    this.box.style.left= "0";
-    this.box.style.position = "fixed";
-    this.box.style.backgroundColor = "rgba(100,100,255,0.3)";
-    this.box.style.color = "white";
-    this.box.style.fontFamily = "sans-serif";
-    this.box.style.fontSize = "26px";
-
-    this.textnode = document.createTextNode(defaultText);
-    this.box.appendChild(this.textnode);
-    document.body.appendChild(this.box);
-  }
-  changeMessage(newText) {
-    this.textnode.nodeValue = newText;
-  }
-}
-
-
-/**
   * Class box - show information onscreen
   *
   */
-class InfoBox {
+ class InfoBox {
   constructor() {
     this.infoBox = document.createElement('div');
     this.infoBox.id = "InfoxBox";
@@ -127,6 +99,60 @@ class InfoBox {
 
   show() {
     document.body.appendChild(this.infoBox);
+  }
+}
+
+/**
+  * ...
+  *
+  */
+class SecondaryBox
+{
+  constructor(defaultText) {
+    this.box = document.createElement('div');
+    this.box.id = "box";
+    this.box.style.padding = "6px 14px";
+    this.box.style.bottom = "0";
+    this.box.style.left= "0";
+    this.box.style.position = "fixed";
+    this.box.style.backgroundColor = "rgba(100,100,255,0.3)";
+    this.box.style.color = "white";
+    this.box.style.fontFamily = "sans-serif";
+    this.box.style.fontSize = "26px";
+
+    this.textnode = document.createTextNode(defaultText);
+    this.box.appendChild(this.textnode);
+    document.body.appendChild(this.box);
+  }
+  changeMessage(newText) {
+    this.textnode.nodeValue = newText;
+  }
+}
+
+/**
+  * Do not allow that max is lower then min
+  *
+  */
+class MinMaxGUIHelper {
+  constructor(obj, minProp, maxProp, minDif) {
+    this.obj = obj;
+    this.minProp = minProp;
+    this.maxProp = maxProp;
+    this.minDif = minDif;
+  }
+  get min() {
+    return this.obj[this.minProp];
+  }
+  get max() {
+    return this.obj[this.maxProp];
+  }
+  set min(v) {
+    this.obj[this.minProp] = v;
+    this.obj[this.maxProp] = Math.max(this.obj[this.maxProp], v + this.minDif);
+  }
+  set max(v) {
+    this.obj[this.maxProp] = v;
+    this.min = this.min;  // this will call the min setter
   }
 }
 
@@ -226,15 +252,15 @@ function initDefaultLighting(scene, initialPosition) {
     var position = (initialPosition !== undefined) ? initialPosition : new THREE.Vector3(-10, 30, 40);
 
     var spotLight = new THREE.SpotLight(0xffffff);
-    spotLight.position.copy(position);
-    spotLight.shadow.mapSize.width = 2048;
-    spotLight.shadow.mapSize.height = 2048;
-    spotLight.shadow.camera.fov = 15;
-    spotLight.castShadow = true;
-    spotLight.decay = 2;
-    spotLight.penumbra = 0.05;
     spotLight.name = "spotLight"
-
+    spotLight.position.copy(position);
+    spotLight.castShadow = true;
+    spotLight.distance = 0;    
+    spotLight.decay = 2;
+    spotLight.penumbra = 0.5;
+    spotLight.angle = degreesToRadians(40);    
+    spotLight.shadow.mapSize.width = 512;
+    spotLight.shadow.mapSize.height = 512;
     scene.add(spotLight);
 
     var ambientLight = new THREE.AmbientLight(0x343434);
@@ -386,7 +412,6 @@ function createGroundPlane(width, height, widthSegments = 10, heightSegments = 1
   // create the ground plane
   var planeGeometry = new THREE.PlaneGeometry(width, height, widthSegments, heightSegments);
   var planeMaterial = new THREE.MeshLambertMaterial({color:gcolor, side:THREE.DoubleSide});
-//  var planeMaterial = new THREE.MeshLambertMaterial({color:"rgb(255,0,0)", side:THREE.DoubleSide});
   var plane = new THREE.Mesh(planeGeometry, planeMaterial);
   plane.receiveShadow = true;
 

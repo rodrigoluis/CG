@@ -22,6 +22,7 @@ var list = {
 			"Lighting":  {
 				"Types of lights": "html/lightingTypesInfo",
 				"Types of materials": "html/lightingMaterialsInfo",
+				"Spotlight in Details": "html/lightingSpotlightDetailsInfo",				
 			},
 			"Textures":  {
 				"Basic": "html/textureBasicInfo",
