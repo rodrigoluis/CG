@@ -7,13 +7,20 @@ function main()
 
   var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.lookAt(0, 0, 0);
-    camera.position.set(2.18, 1.62, 3.31);
+    camera.position.set(2.5, 2.0, 4.5);
     camera.up.set( 0, 1, 0 );
 
-  var lightPosition = new THREE.Vector3(2.5, 0.8, 1.1);
-  var light = initDefaultLighting(scene, lightPosition); // Use default light
-    light.angle = degreesToRadians(70); 
-  var lightSphere = createLightSphere(scene, 0.1, 10, 10, lightPosition);
+  var ambientLight = new THREE.AmbientLight("rgb(100, 100, 100)");
+  scene.add(ambientLight);
+
+  var lightPosition = new THREE.Vector3(2.5, 1.8, 0.0);
+    var light = new THREE.SpotLight(0xffffff);
+    light.position.copy(lightPosition);
+    light.castShadow = true;
+    light.penumbra = 0.5;    
+  scene.add(light);
+  
+  var lightSphere = createLightSphere(scene, 0.1, 10, 10, lightPosition);  
 
   // Set angles of rotation
   var angle = 0;
@@ -74,8 +81,6 @@ function main()
 
   function rotateLight()
   {
-
-
     // Set angle's animation speed
     if(animationOn)
     {

@@ -10,7 +10,7 @@ function main()
     camera.up.set( 0, 1, 0 );
 
   var clock = new THREE.Clock();
-  var light = initDefaultLighting(scene, new THREE.Vector3(25, 20, 25)); // Use default light
+  var light = initDefaultLighting(scene, new THREE.Vector3(35, 20, 30)); // Use default light
   var lightSphere = createSphere(0.3, 10, 10);
     lightSphere.position.copy(light.position);
   scene.add(lightSphere);
@@ -120,7 +120,7 @@ function main()
 
     keyboard.update();
 
-    if ( keyboard.pressed("A") ) axesHelper.visible = !axesHelper.visible;
+    if ( keyboard.down("A") ) axesHelper.visible = !axesHelper.visible;
 
     if ( keyboard.pressed("up") )    group.translateZ(  1 );
   	if ( keyboard.pressed("down") )  group.translateZ( -1 );

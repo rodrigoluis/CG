@@ -13,7 +13,7 @@ function main()
     camera.lookAt(0, 0, 0);
     camera.position.set(25,25,70);
     camera.up.set( 0, 1, 0 );
-  var light = initDefaultLighting(scene, new THREE.Vector3(45, 45, 15)); // Use default light
+  var light = initDefaultLighting(scene, new THREE.Vector3(60, 50, 20)); // Use default light
   var lightSphere = createSphere(0.5, 10, 10);
     lightSphere.position.copy(light.position);
   scene.add(lightSphere);

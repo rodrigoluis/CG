@@ -404,7 +404,7 @@ function addDefaultCubeAndSphere(scene) {
 }
 
 /**
- * Add a small and simple ground plane
+ * Add a small and simple ground plane. Width and Height are in X and Y
  */
 function createGroundPlane(width, height, widthSegments = 10, heightSegments = 10, gcolor = null)
 {
