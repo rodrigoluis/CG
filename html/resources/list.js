@@ -5,6 +5,7 @@ var list = {
 				"Basic Scene": "html/basicScene",
 				"Using the keyboard": "html/keyboardExampleInfo",
 				"Projection": "html/projectionInfo",
+				"Virtual Camera": "html/virtualCameraInfo",				
 				"Geometric Transformations 1": "html/geometricTransformationInfo",
 				"Geometric Transformations 2": "html/geometricTransformation2Info",
 			},
