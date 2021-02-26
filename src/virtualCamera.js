@@ -6,8 +6,6 @@ function main()
   var scene = new THREE.Scene();    // Create main scene
   
   var renderer = initRenderer();    // View function in util/utils
-    renderer.setClearColor("rgb(80, 70, 170)");
-    renderer.autoClear = false; // Disable autoclear feature of the renderer    
 
   var light = initDefaultLighting(scene, new THREE.Vector3(5.0, 5.0, 5.0)); // Use default light    
 
@@ -39,7 +37,7 @@ function main()
   var upVec = new THREE.Vector3( 0.0, 1.0, 0.0 );
   var vcWidth = 400; // virtual camera width
   var vcHeidth = 300; // virtual camera height
-  var virtualCamera = new THREE.PerspectiveCamera(45, vcWidth/vcHeidth, 1.0, 30.0);
+  var virtualCamera = new THREE.PerspectiveCamera(45, vcWidth/vcHeidth, 1.0, 20.0);
     virtualCamera.lookAt(lookAtVec);
     virtualCamera.position.set(3.7, 2.2, 1.0);
     virtualCamera.up = upVec;
@@ -67,7 +65,6 @@ function main()
     var lens = new THREE.Mesh(cLens, matLens);
       lens.rotateX(degreesToRadians(90));
       lens.position.set(0.0, 0.0, -0.1);
-
     body.add(lens); // Add lens to the body of the camera
 
     scene.add(body); // Add camera object to scene
@@ -169,16 +166,22 @@ function main()
   {
     var width = window.innerWidth;
     var height = window.innerHeight;
-     
-    renderer.clear(); 
 
     // Set main viewport
-    renderer.setViewport(0, 0, width, height);
-    renderer.render(scene, camera);    
-    
-    // Set virtual camera viewport
-    renderer.setViewport(0, height-vcHeidth-50, vcWidth, vcHeidth);
-    renderer.render(scene, virtualCamera);    
+    renderer.setViewport(0, 0, width, height); // Reset viewport    
+    renderer.setScissorTest(false); // Disable scissor to paint the entire window
+    renderer.setClearColor("rgb(80, 70, 170)");    
+    renderer.clear();   // Clean the window
+    renderer.render(scene, camera);   
+
+    // Set virtual camera viewport 
+    var offset = 30; 
+    renderer.setViewport(offset, height-vcHeidth-offset, vcWidth, vcHeidth);  // Set virtual camera viewport  
+    renderer.setScissor(offset, height-vcHeidth-offset, vcWidth, vcHeidth); // Set scissor with the same size as the viewport
+    renderer.setScissorTest(true); // Enable scissor to paint only the scissor are (i.e., the small viewport)
+    renderer.setClearColor("rgb(60, 50, 150)");  // Use a darker clear color in the small viewport 
+    renderer.clear(); // Clean the small viewport
+    renderer.render(scene, virtualCamera);  // Render scene of the virtual camera
   }
 
   function render()
