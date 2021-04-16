@@ -40,14 +40,13 @@ function main()
   var objectArray = new Array();
   var activeObject = 0;
 
-  loadOBJFile('../assets/objects/', 'dolphins', true, 1.5);
-  loadOBJFile('../assets/objects/', 'rose+vase', false, 1.5);
-  loadOBJFile('../assets/objects/', 'flowers', false, 1.5);
-  loadGLTFFile('../assets/objects/', 'TocoToucan', false, 2.0);
-  loadFBXFile('../assets/objects/', 'raptor', false, 2.5);
-  loadPLYFile('../assets/objects/', 'cow', false, 2.0);
-  loadOBJFile('../assets/objects/', 'f-16', false, 2.2);
-  loadOBJFile('../assets/objects/', 'soccerball', false, 1.2);
+ loadOBJFile('../assets/objects/', 'dolphins', true, 1.5);
+ loadOBJFile('../assets/objects/', 'rose+vase', false, 1.5);
+ loadOBJFile('../assets/objects/', 'flowers', false, 1.5);
+ loadGLTFFile('../assets/objects/', 'TocoToucan', false, 2.0);
+ loadPLYFile('../assets/objects/', 'cow', false, 2.0);
+ loadOBJFile('../assets/objects/', 'f-16', false, 2.2);
+ loadOBJFile('../assets/objects/', 'soccerball', false, 1.2);
 
   buildInterface();
   render();
@@ -74,33 +73,6 @@ function main()
 
 			}, onProgress, onError);
   }
-
-  function loadFBXFile(modelPath, modelName, visibility, desiredScale)
-  {
-    var loader = new THREE.FBXLoader( );
-    loader.load( modelPath + modelName + '.fbx', function ( object ) {
-      var obj = object;
-      obj.name = modelName;
-      obj.visible = visibility;
-      obj.traverse( function ( child ) {
-      	if ( child ) {
-           child.castShadow = true;
-      	}
-      });
-      obj.traverse( function( node )
-      {
-        if( node.material ) node.material.side = THREE.DoubleSide;
-      });
-
-      var obj = normalizeAndRescale(obj, desiredScale);
-      var obj = fixPosition(obj);
-
-      scene.add ( obj );
-      objectArray.push( obj );
-
-			}, onProgress, onError);
-  }
-
 
   function loadGLTFFile(modelPath, modelName, visibility, desiredScale)
   {
@@ -243,7 +215,7 @@ function main()
     var gui = new dat.GUI();
     gui.add(controls, 'type',
       ['Object0', 'Object1', 'Object2', 'Object3',
-       'Object4', 'Object5', 'Object6', 'Object7'])
+       'Object4', 'Object5', 'Object6'])
       .name("Change Object")
       .onChange(function(e) { controls.onChooseObject(); });
     gui.add(controls, 'viewAxes', false)

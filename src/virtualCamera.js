@@ -73,7 +73,7 @@ function main()
 
   function createTeapot(x, y, z, color )
   {
-    var geometry = new THREE.TeapotBufferGeometry(0.5);
+    var geometry = new THREE.TeapotGeometry(0.5);
     var material = new THREE.MeshPhongMaterial({color, shininess:"200"});
       material.side = THREE.DoubleSide;
     var obj = new THREE.Mesh(geometry, material);

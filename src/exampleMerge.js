@@ -1,3 +1,9 @@
+//
+//
+// TODO: Update example with a newer release (it uses R116)
+//
+//
+
 /*
 Example of the "Merge Geometry" Option
 With THREE.Geometry.merge(), you can merge geometries together and create a combined one.

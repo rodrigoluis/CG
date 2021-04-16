@@ -2222,7 +2222,7 @@ ARjs.MarkerControls.prototype._initArtoolkit = function(){
 	function onMarkerFound(event){
 		// honor his.parameters.minConfidence
 		if( event.data.type === artoolkit.PATTERN_MARKER && event.data.marker.cfPatt < _this.parameters.minConfidence )	return
-		if( event.data.type === artoolkit.BARCODE_MARKER && event.data.marker.cfMatt < _this.parameters.minConfidence )	return
+		if( event.data.type === artoolkit.BARCODE_MARKER && event.data.marker.cfMatrix < _this.parameters.minConfidence )	return
 
 		var modelViewMatrix = new THREE.Matrix4().fromArray(event.data.matrix)
 		_this.updateWithModelViewMatrix(modelViewMatrix)
@@ -2495,7 +2495,7 @@ Object.assign(ARjs.Context.prototype, THREE.EventDispatcher.prototype);
 
 // default to github page
 ARjs.Context.baseURL = 'https://ar-js-org.github.io/AR.js/three.js/'
-ARjs.Context.REVISION = '3.1.0';
+ARjs.Context.REVISION = '3.3.1';
 
 /**
  * Create a default camera for this trackingBackend
@@ -3003,9 +3003,12 @@ ARjs.Source.prototype._initSourceWebcam = function (onReady, onError) {
 
     // init default value
     onError = onError || function (error) {
-        alert('Webcam Error\nName: ' + error.name + '\nMessage: ' + error.message)
         var event = new CustomEvent('camera-error', { error: error });
         window.dispatchEvent(event);
+
+        setTimeout(() => {
+            alert('Webcam Error\nName: ' + error.name + '\nMessage: ' + error.message)
+        }, 1000);
     }
 
     var domElement = document.createElement('video');

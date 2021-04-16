@@ -150,7 +150,7 @@ function main()
 
   function createCubeKnot()
   {
-    var geometry	= new THREE.CubeGeometry(1,1,1);
+    var geometry	= new THREE.BoxGeometry(1,1,1);
   	var material	= new THREE.MeshNormalMaterial({
   		transparent : true,
   		opacity: 0.5,

@@ -37,7 +37,7 @@ function main()
   var infoBox = new SecondaryBox("");
 
   // Teapot
-  var geometry = new THREE.TeapotBufferGeometry(0.5);
+  var geometry = new THREE.TeapotGeometry(0.5);
 
   //---------------------------------------------------------
   // Build Materials

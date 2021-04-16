@@ -48,7 +48,7 @@ function main()
 
   // Global variables to be removed from memory each interaction
   var pointCloud = null;
-  var spGroup = null;
+//  var spGroup = null;
   var points = null;
   var objectSize = 10;
   var convexGeometry = null;
@@ -71,23 +71,19 @@ function main()
       var randomX = Math.round(-maxSize + Math.random() * maxSize*2);
       var randomY = Math.round(0.1 + Math.random() * maxSize); //
       var randomZ = Math.round(-maxSize + Math.random() * maxSize*2);
-
       points.push(new THREE.Vector3(randomX, randomY, randomZ));
     }
 
-    if(spGroup) spGroup.dispose();
+    var material = new THREE.MeshPhongMaterial({color:"rgb(255,255,0)"});
 
-    spGroup = new THREE.Geometry();
-    spMesh = new THREE.Mesh(sphereGeom);
+    pointCloud = new THREE.Object3D();
     points.forEach(function (point) {
+      var spGeom = new THREE.SphereGeometry(0.2);
+      var spMesh = new THREE.Mesh(spGeom, material);
       spMesh.position.set(point.x, point.y, point.z);
-      spMesh.updateMatrix();
-      spGroup.merge(spMesh.geometry, spMesh.matrix);
+      pointCloud.add(spMesh);
     });
 
-    pointCloud = new THREE.Mesh(spGroup, sphereMaterial);
-      pointCloud.castShadow = castShadow;
-      pointCloud.visible = pointCloudVisibility;
     scene.add(pointCloud);
 
     return points;
@@ -105,7 +101,7 @@ function main()
     var localPoints = generatePoints(numPoints);
 
     // Then, build the convex geometry with the generated points
-    convexGeometry = new THREE.ConvexBufferGeometry(localPoints);
+    convexGeometry = new THREE.ConvexGeometry(localPoints);
 
     object = new THREE.Mesh(convexGeometry, objectMaterial);
        object.castShadow = castShadow;

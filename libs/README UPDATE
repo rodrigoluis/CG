@@ -1,4 +1,4 @@
-Versão atual: r116
+Versão atual: r127
 
 Update scheme:
 
@@ -6,3 +6,8 @@ Update scheme:
 
 Modules (controls, geometries etc) from "three.js.r***/examples/js"
 (copiar tudo e dar merge na pasta atual).
+
+-------------------------------------------------
+
+Para ver a versão em execução do Three.js, com a aplicação em tela inteira, abrir o console e usar a string abaixo:
+THREE.REVISION

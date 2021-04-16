@@ -36,7 +36,7 @@ function main()
   var infoBox = new SecondaryBox("");
 
   // Teapot
-  var geometry = new THREE.TeapotBufferGeometry(0.5);
+  var geometry = new THREE.TeapotGeometry(0.5);
   var material = new THREE.MeshPhongMaterial({color:objColor, shininess:"200"});
     material.side = THREE.DoubleSide;
   var obj = new THREE.Mesh(geometry, material);

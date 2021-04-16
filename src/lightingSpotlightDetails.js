@@ -65,7 +65,7 @@ function main()
 
   function createTeapot(x, y, z, color )
   {
-    var geometry = new THREE.TeapotBufferGeometry(0.5);
+    var geometry = new THREE.TeapotGeometry(0.5);
     var material = new THREE.MeshPhongMaterial({color, shininess:"200"});
       material.side = THREE.DoubleSide;
     var obj = new THREE.Mesh(geometry, material);
@@ -116,7 +116,7 @@ function main()
       this.onUpdateShadowMap = function(){
         spotLight.shadow.mapSize.width = this.shadowMapSize;
         spotLight.shadow.mapSize.height = this.shadowMapSize;   
-        spotLight.shadow.map.dispose(); 
+        //spotLight.shadow.map.dispose(); 
         spotLight.shadow.map = null;
       };     
     };
