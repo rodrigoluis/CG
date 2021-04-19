@@ -4,7 +4,7 @@
  * @author rodrigoluis --> Add camera to work with threejs version r.116
  */
 
-THREE.RaytracingRenderer = function ( width = window.innerWidth, height = window.innerHeight, blockSize = 32, camera )
+var RaytracingRenderer = function ( width = window.innerWidth, height = window.innerHeight, blockSize = 32, camera )
 {
 	var parameters = {};
 
@@ -56,6 +56,51 @@ THREE.RaytracingRenderer = function ( width = window.innerWidth, height = window
 
 		context.fillStyle = 'white';
 	};
+
+	var computePixelNormal = ( function () {
+
+		var tmpVec1 = new THREE.Vector3();
+		var tmpVec2 = new THREE.Vector3();
+		var tmpVec3 = new THREE.Vector3();
+
+		return function ( outputVector, point, face, vertices ) {
+
+			var faceNormal = face.normal;
+			var vertexNormals = face.vertexNormals;
+
+			// compute barycentric coordinates
+			var vA = vertices[ face.a ];
+			var vB = vertices[ face.b ];
+			var vC = vertices[ face.c ];
+
+			tmpVec3.crossVectors( tmpVec1.subVectors( vB, vA ), tmpVec2.subVectors( vC, vA ) );
+			var areaABC = faceNormal.dot( tmpVec3 );
+
+			tmpVec3.crossVectors( tmpVec1.subVectors( vB, point ), tmpVec2.subVectors( vC, point ) );
+			var areaPBC = faceNormal.dot( tmpVec3 );
+			var a = areaPBC / areaABC;
+
+			tmpVec3.crossVectors( tmpVec1.subVectors( vC, point ), tmpVec2.subVectors( vA, point ) );
+			var areaPCA = faceNormal.dot( tmpVec3 );
+
+			var b = areaPCA / areaABC;
+
+			var c = 1.0 - a - b;
+
+			// compute interpolated vertex normal
+			tmpVec1.copy( vertexNormals[ 0 ] );
+			tmpVec1.multiplyScalar( a );
+
+			tmpVec2.copy( vertexNormals[ 1 ] );
+			tmpVec2.multiplyScalar( b );
+
+			tmpVec3.copy( vertexNormals[ 2 ] );
+			tmpVec3.multiplyScalar( c );
+
+			outputVector.addVectors( tmpVec1, tmpVec2 );
+			outputVector.add( tmpVec3 );
+		};
+	}() );
 
 	var spawnRay = ( function () {
 
@@ -305,51 +350,6 @@ THREE.RaytracingRenderer = function ( width = window.innerWidth, height = window
 				outputColor.multiplyScalar( 1 - weight );
 				outputColor.add( zColor );
 			}
-		};
-	}() );
-
-	var computePixelNormal = ( function () {
-
-		var tmpVec1 = new THREE.Vector3();
-		var tmpVec2 = new THREE.Vector3();
-		var tmpVec3 = new THREE.Vector3();
-
-		return function ( outputVector, point, face, vertices ) {
-
-			var faceNormal = face.normal;
-			var vertexNormals = face.vertexNormals;
-
-			// compute barycentric coordinates
-			var vA = vertices[ face.a ];
-			var vB = vertices[ face.b ];
-			var vC = vertices[ face.c ];
-
-			tmpVec3.crossVectors( tmpVec1.subVectors( vB, vA ), tmpVec2.subVectors( vC, vA ) );
-			var areaABC = faceNormal.dot( tmpVec3 );
-
-			tmpVec3.crossVectors( tmpVec1.subVectors( vB, point ), tmpVec2.subVectors( vC, point ) );
-			var areaPBC = faceNormal.dot( tmpVec3 );
-			var a = areaPBC / areaABC;
-
-			tmpVec3.crossVectors( tmpVec1.subVectors( vC, point ), tmpVec2.subVectors( vA, point ) );
-			var areaPCA = faceNormal.dot( tmpVec3 );
-
-			var b = areaPCA / areaABC;
-
-			var c = 1.0 - a - b;
-
-			// compute interpolated vertex normal
-			tmpVec1.copy( vertexNormals[ 0 ] );
-			tmpVec1.multiplyScalar( a );
-
-			tmpVec2.copy( vertexNormals[ 1 ] );
-			tmpVec2.multiplyScalar( b );
-
-			tmpVec3.copy( vertexNormals[ 2 ] );
-			tmpVec3.multiplyScalar( c );
-
-			outputVector.addVectors( tmpVec1, tmpVec2 );
-			outputVector.add( tmpVec3 );
 		};
 	}() );
 

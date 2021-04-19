@@ -15,7 +15,7 @@
  */
 
 // initialization
-KeyboardState = function()
+var KeyboardState = function()
 {
 	// bind keyEvents
 	document.addEventListener("keydown", KeyboardState.onKeyDown, false);
@@ -108,5 +108,7 @@ KeyboardState.prototype.debug = function()
 		list += " " + arg
 	console.log(list);
 }
+
+export default KeyboardState;
 
 ///////////////////////////////////////////////////////////////////////////////

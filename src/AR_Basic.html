@@ -1,5 +1,4 @@
 <!DOCTYPE html>
-
 <html>
 
 <head>
@@ -8,31 +7,19 @@
     <link rel="stylesheet" href="../html/resources/default.css">
     <meta charset="UTF-8">
     <!-- Changing viewport mess with AR Projection
-    <meta name="viewport" content="width=device-width, initial-scale=1">
-    -->
+    <meta name="viewport" content="width=device-width, initial-scale=1">    -->
     <meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 
     <!-- Not working with threejs' version r127 -->
-    <script type="text/javascript" charset="UTF-8" src="../libs/three/three_r116.js"></script>
-    <script type="text/javascript" charset="UTF-8" src="../libs/other/inflate.min.js"></script>
-    <script type="text/javascript" charset="UTF-8" src="../libs/three/controls/TrackballControls.js"></script>
-    <script type="text/javascript" charset="UTF-8" src="../libs/util/Stats.js"></script>
-    <script type="text/javascript" charset="UTF-8" src="../libs/util/dat.gui.min.js"></script>
-    <script type="text/javascript" charset="UTF-8" src="../libs/util/util.js"></script>
-    <script type="text/javascript" charset="UTF-8" src="../libs/util/KeyboardState.js"></script>
-
+    <script type="text/javascript" charset="UTF-8" src="../libs/old/three_r116.js"></script>
+    <script type="text/javascript" charset="UTF-8" src="../libs/old/dat.gui.min.js"></script>
+    <script type="text/javascript" charset="UTF-8" src="../libs/old/util_old.js"></script>
     <script type="text/javascript" charset="UTF-8" src="../libs/AR/ar.js"></script>
-
-    <script type="text/javascript" charset="UTF-8" src="../libs/three/loaders/GLTFLoader.js"></script>
-
-    <script type="text/javascript" charset="UTF-8" src="AR_Basic.js"></script>
 </head>
 
 <body>
   <div id="webgl-output">
-    <script type="text/javascript">
-      main();
-    </script>
+    <script type="text/javascript" src="AR_Basic.js" ></script>
   </div>
 </body>
 

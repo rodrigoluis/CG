@@ -1,4 +1,22 @@
-Versão atual: r127
+Versão atual: r128dev
+
+-- Passo-a-passo para atualização do Three.js -------------------------------------------
+
+* Em uma pasta qualquer (chamada aqui de 'npmBuild'), executar, abrir um terminal e 
+  executar o seguinte comando para baixar os módulos do tree.js:
+    npm install --save three
+
+* Remover todos os arquivos da pasta CG/Modules 
+
+* Da pasta usada para executar o comando 'npm', copiar para a pasta CG da seguinte forma:
+  npmBuild/node_modules/three/examples/jsm/*   -->  CG/Modules/
+  npmBuild/node_modules/three/build/*          -->  CG/build/  
+
+
+
+
+
+-- ANTERIOR --------------------------------------------------------
 
 Update scheme:
 
@@ -9,5 +27,5 @@ Modules (controls, geometries etc) from "three.js.r***/examples/js"
 
 -------------------------------------------------
 
-Para ver a versão em execução do Three.js, com a aplicação em tela inteira, abrir o console e usar a string abaixo:
+Para ver a versão em execução do Three.js, com a aplicação em tela inteira digitar no console:
 THREE.REVISION

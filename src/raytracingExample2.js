@@ -1,5 +1,4 @@
-function main()
-{
+
 		var controls, scene, renderer;
 
 		var container = document.createElement( 'div' );
@@ -14,7 +13,7 @@ function main()
 		camera.position.z = 600;
 		camera.position.y = 250;
 
-		renderer = new THREE.RaytracingRenderer(window.innerWidth, window.innerHeight, 32, camera);
+		renderer = new RaytracingRenderer(window.innerWidth, window.innerHeight, 32, camera);
 		container.appendChild( renderer.domElement );
 
 		// materials
@@ -160,4 +159,3 @@ function main()
 		{
 			renderer.render( scene, camera );
 		}
-}

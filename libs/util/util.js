@@ -1,3 +1,6 @@
+import * as THREE from '../../build/three.module.js';
+import {TrackballControls} from '../../modules/controls/TrackballControls.js';
+
 /**
  * Get ASCII table code of a given character
  * Use character in uppercase
@@ -5,8 +8,7 @@
  * @param {char} ch
  * @returns ASCII code of the caracter
  */
-
-function getCode(ch)
+export function getCode(ch)
 {
   var code = ch.charCodeAt(0);
   return code;
@@ -15,7 +17,7 @@ function getCode(ch)
 /**
  * Convert degrees to radians
  */
-function degreesToRadians(degrees)
+export function degreesToRadians(degrees)
 {
   var pi = Math.PI;
   return degrees * (pi/180);
@@ -24,7 +26,7 @@ function degreesToRadians(degrees)
 /**
  * Convert radians to degrees
  */
-function radiansToDegrees(radians)
+export function radiansToDegrees(radians)
 {
   var pi = Math.PI;
   return radians * (180/pi);
@@ -33,7 +35,7 @@ function radiansToDegrees(radians)
 /**
  * Format output to show 'num' number with 'decimalPlaces' decimal places
  */
-function formatOutput(num, decimalPlaces)
+export function formatOutput(num, decimalPlaces)
 {
   return (Math.round(num * 100) / 100).toFixed(decimalPlaces);
 }
@@ -43,7 +45,7 @@ function formatOutput(num, decimalPlaces)
  Compute the max size acording to XYZ axes
  Return the maxSzie
 */
-function getMaxSize(obj)
+export function getMaxSize(obj)
 {
   var maxSize;
   var box = new THREE.Box3().setFromObject( obj );
@@ -71,7 +73,7 @@ function getMaxSize(obj)
   * Class box - show information onscreen
   *
   */
- class InfoBox {
+ export class InfoBox {
   constructor() {
     this.infoBox = document.createElement('div');
     this.infoBox.id = "InfoxBox";
@@ -106,7 +108,7 @@ function getMaxSize(obj)
   * ...
   *
   */
-class SecondaryBox
+export class SecondaryBox
 {
   constructor(defaultText) {
     this.box = document.createElement('div');
@@ -133,7 +135,7 @@ class SecondaryBox
   * Do not allow that max is lower then min
   *
   */
-class MinMaxGUIHelper {
+export class MinMaxGUIHelper {
   constructor(obj, minProp, maxProp, minDif) {
     this.obj = obj;
     this.minProp = minProp;
@@ -159,7 +161,7 @@ class MinMaxGUIHelper {
 /**
  * Makes a definite light follows the camera
  */
-function lightFollowingCamera(light, camera)
+export function lightFollowingCamera(light, camera)
 {
   light.position.copy( camera.position );
 }
@@ -168,7 +170,7 @@ function lightFollowingCamera(light, camera)
 /**
  * Fix camera and renderer when window size changes
  */
-function onWindowResize(camera, renderer){
+export function onWindowResize(camera, renderer){
 
     if (camera instanceof THREE.PerspectiveCamera)
     {
@@ -187,7 +189,7 @@ function onWindowResize(camera, renderer){
  * @param {Number} type 0: fps, 1: ms, 2: mb, 3+: custom
  * @returns stats javascript object
  */
-function initStats(type) {
+export function initStats(type) {
 
     var panelType = (typeof type !== 'undefined' && type) && (!isNaN(type)) ? parseInt(type) : 0;
     var stats = new Stats();
@@ -204,7 +206,7 @@ function initStats(type) {
  *
  * @param additionalProperties Additional properties to pass into the renderer
  */
-function initRenderer(additionalProperties) {
+export function initRenderer(additionalProperties) {
 
     var props = (typeof additionalProperties !== 'undefined' && additionalProperties) ? additionalProperties : {};
     var renderer = new THREE.WebGLRenderer(props);
@@ -220,11 +222,13 @@ function initRenderer(additionalProperties) {
     return renderer;
 }
 
+
+
 /**
  * Initialize a simple default canvas renderer.
  *
  */
-function initCanvasRenderer() {
+export function initCanvasRenderer() {
 
     var canvasRenderer = new THREE.CanvasRenderer();
     canvasRenderer.setClearColor(new THREE.Color(0x000000));
@@ -239,7 +243,7 @@ function initCanvasRenderer() {
  *
  * @param {THREE.Vector3} [initialPosition]
  */
-function initCamera(initialPosition) {
+export function initCamera(initialPosition) {
     var position = (initialPosition !== undefined) ? initialPosition : new THREE.Vector3(-30, 40, 30);
     var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
     camera.position.copy(position);
@@ -248,7 +252,7 @@ function initCamera(initialPosition) {
     return camera;
 }
 
-function initDefaultLighting(scene, initialPosition) {
+export function initDefaultLighting(scene, initialPosition) {
     var position = (initialPosition !== undefined) ? initialPosition : new THREE.Vector3(-10, 30, 40);
 
     var spotLight = new THREE.SpotLight(0xffffff);
@@ -273,7 +277,7 @@ function initDefaultLighting(scene, initialPosition) {
 /*
  * Sphere to represent light position
  */
-function createLightSphere(scene, radius, widthSegments, heightSegments, position)
+export function createLightSphere(scene, radius, widthSegments, heightSegments, position)
 {
   var geometry = new THREE.SphereGeometry(radius, widthSegments, heightSegments, 0, Math.PI * 2, 0, Math.PI);
   var material = new THREE.MeshBasicMaterial({color:"rgb(255,255,50)"});
@@ -285,7 +289,7 @@ function createLightSphere(scene, radius, widthSegments, heightSegments, positio
   return object;
 }
 
-function initDefaultDirectionalLighting(scene, initialPosition) {
+export function initDefaultDirectionalLighting(scene, initialPosition) {
     var position = (initialPosition !== undefined) ? initialPosition : new THREE.Vector3(100, 200, 200);
 
     var dirLight = new THREE.DirectionalLight(0xffffff);
@@ -312,8 +316,8 @@ function initDefaultDirectionalLighting(scene, initialPosition) {
  * @param {THREE.Camera} camera
  * @param {THREE.Renderer} renderer
  */
-function initTrackballControls(camera, renderer) {
-    var trackballControls = new THREE.TrackballControls(camera, renderer.domElement);
+export function initTrackballControls(camera, renderer) {
+    var trackballControls = new TrackballControls(camera, renderer.domElement);
     trackballControls.rotateSpeed = 1.0;
     trackballControls.zoomSpeed = 1.2;
     trackballControls.panSpeed = 0.8;
@@ -364,7 +368,7 @@ var applyMeshNormalMaterial = function(geometry, material) {
  *
  * @param {THREE.Scene} scene
  */
-function addDefaultCubeAndSphere(scene) {
+export function addDefaultCubeAndSphere(scene) {
 
     // create a cube
     var cubeGeometry = new THREE.BoxGeometry(4, 4, 4);
@@ -406,7 +410,7 @@ function addDefaultCubeAndSphere(scene) {
 /**
  * Add a small and simple ground plane. Width and Height are in X and Y
  */
-function createGroundPlane(width, height, widthSegments = 10, heightSegments = 10, gcolor = null)
+export function createGroundPlane(width, height, widthSegments = 10, heightSegments = 10, gcolor = null)
 {
   if(!gcolor) gcolor = "rgb(200,200,200)";
   // create the ground plane
@@ -424,7 +428,7 @@ function createGroundPlane(width, height, widthSegments = 10, heightSegments = 1
  *
  * @param {THREE.Scene} scene
  */
-function addGroundPlane(scene) {
+export function addGroundPlane(scene) {
     // create the ground plane
     var planeGeometry = new THREE.PlaneGeometry(60, 20, 120, 120);
     var planeMaterial = new THREE.MeshPhongMaterial({
@@ -449,7 +453,7 @@ function addGroundPlane(scene) {
  *
  * @param {THREE.Scene} scene
  */
-function addLargeGroundPlane(scene, useTexture) {
+export function addLargeGroundPlane(scene, useTexture) {
 
     var withTexture = (useTexture !== undefined) ? useTexture : false;
 
@@ -479,7 +483,7 @@ function addLargeGroundPlane(scene, useTexture) {
     return plane;
 }
 
-function addHouseAndTree(scene) {
+export function addHouseAndTree(scene) {
 
     createBoundingWall(scene);
     createGroundPlane(scene);
