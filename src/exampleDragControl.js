@@ -1,6 +1,6 @@
 import * as THREE from  '../build/three.module.js';
-import {TrackballControls} from '../modules/controls/TrackballControls.js';
-import {DragControls} from '../modules/controls/DragControls.js'
+import {TrackballControls} from '../modules/jsm/controls/TrackballControls.js';
+import {DragControls} from '../modules/jsm/controls/DragControls.js'
 import KeyboardState from '../libs/util/KeyboardState.js';
 import {initRenderer, 
         initCamera,        

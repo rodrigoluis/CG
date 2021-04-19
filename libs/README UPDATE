@@ -9,7 +9,7 @@ Versão atual: r128dev
 * Remover todos os arquivos da pasta CG/Modules 
 
 * Da pasta usada para executar o comando 'npm', copiar para a pasta CG da seguinte forma:
-  npmBuild/node_modules/three/examples/jsm/*   -->  CG/Modules/
+  npmBuild/node_modules/three/examples/jsm/*   -->  CG/Modules/jsm
   npmBuild/node_modules/three/build/*          -->  CG/build/  
 
 

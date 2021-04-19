@@ -1,7 +1,7 @@
 import * as THREE from  '../build/three.module.js';
-import {GUI} from       '../modules/libs/dat.gui.module.js';
-import {TrackballControls} from '../modules/controls/TrackballControls.js';
-import {TeapotGeometry} from '../modules/geometries/TeapotGeometry.js';
+import {GUI} from       '../modules/jsm/libs/dat.gui.module.js';
+import {TrackballControls} from '../modules/jsm/controls/TrackballControls.js';
+import {TeapotGeometry} from '../modules/jsm/geometries/TeapotGeometry.js';
 import {initRenderer, 
         initDefaultLighting,
         createGroundPlane,

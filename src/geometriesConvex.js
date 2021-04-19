@@ -1,21 +1,8 @@
-/*
-    <script type="text/javascript" charset="UTF-8" src="../libs/three/three.js"></script>
-    <script type="text/javascript" charset="UTF-8" src="../libs/three/utils/BufferGeometryUtils.js"></script>    
-    <script type="text/javascript" charset="UTF-8" src="../libs/three/controls/TrackballControls.js"></script>
-    <script type="text/javascript" charset="UTF-8" src="../libs/three/math/ConvexHull.js"></script>    
-    <script type="text/javascript" charset="UTF-8" src="../libs/three/geometries/ConvexGeometry.js"></script>
-    <script type="text/javascript" charset="UTF-8" src="../libs/util/Stats.js"></script>
-    <script type="text/javascript" charset="UTF-8" src="../libs/util/dat.gui.min.js"></script>
-    <script type="text/javascript" charset="UTF-8" src="../libs/util/util.js"></script>
-    <script type="text/javascript" charset="UTF-8" src="../libs/util/KeyboardState.js"></script>
-    <script type="text/javascript" charset="UTF-8" src="geometriesConvex.js"></script>*/
-
 import * as THREE from  '../build/three.module.js';
-import Stats from       '../modules/libs/stats.module.js';
-import {GUI} from       '../modules/libs/dat.gui.module.js';
-import {TrackballControls} from '../modules/controls/TrackballControls.js';
-import {ConvexGeometry} from '../modules/geometries/ConvexGeometry.js';
-import KeyboardState from '../libs/util/KeyboardState.js';
+import Stats from       '../modules/jsm/libs/stats.module.js';
+import {GUI} from       '../modules/jsm/libs/dat.gui.module.js';
+import {TrackballControls} from '../modules/jsm/controls/TrackballControls.js';
+import {ConvexGeometry} from '../modules/jsm/geometries/ConvexGeometry.js';
 import {initRenderer, 
         initDefaultLighting,
         createGroundPlane,

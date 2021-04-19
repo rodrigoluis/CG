@@ -1,5 +1,5 @@
 import * as THREE from '../../build/three.module.js';
-import {TrackballControls} from '../../modules/controls/TrackballControls.js';
+import {TrackballControls} from '../../modules/jsm/controls/TrackballControls.js';
 
 /**
  * Get ASCII table code of a given character

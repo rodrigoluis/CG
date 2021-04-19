@@ -1,10 +1,10 @@
 import * as THREE from  '../build/three.module.js';
-import Stats from       '../modules/libs/stats.module.js';
-import {GUI} from       '../modules/libs/dat.gui.module.js';
-import {TrackballControls} from '../modules/controls/TrackballControls.js';
-import {GLTFLoader} from '../modules/loaders/GLTFLoader.js';
-import {OBJLoader} from '../modules/loaders/OBJLoader.js';
-import {MTLLoader} from '../modules/loaders/MTLLoader.js';
+import Stats from       '../modules/jsm/libs/stats.module.js';
+import {GUI} from       '../modules/jsm/libs/dat.gui.module.js';
+import {TrackballControls} from '../modules/jsm/controls/TrackballControls.js';
+import {GLTFLoader} from '../modules/jsm/loaders/GLTFLoader.js';
+import {OBJLoader} from '../modules/jsm/loaders/OBJLoader.js';
+import {MTLLoader} from '../modules/jsm/loaders/MTLLoader.js';
 import {initRenderer, 
         SecondaryBox,
         initDefaultLighting,
