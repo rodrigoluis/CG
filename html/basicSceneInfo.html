@@ -22,7 +22,7 @@
 		<p>Basically we have, at the beginning, the definition of the scene, renderer and camera (the last two created through functions as they will be subject in further classes). To create the camera we must define where it will be created. By default the camera will point to the origin of the world. See the code below to understand how these elements are created.</p>
 
 		<code>
-		var stats = initStats();          // To show FPS information
+		var stats = Stats();          // To show FPS information
 		var scene = new THREE.Scene();    // Create main scene
 		var renderer = initRenderer();    // View function in util/utils
 		var camera = initCamera(new THREE.Vector3(0, -30, 15)); // Init camera in this position
@@ -31,7 +31,7 @@
 		<p>The interaction is performed by a trackball control as you can see in the next code.</p>
 
 		<code>
-		var trackballControls = new THREE.TrackballControls( camera, renderer.domElement );
+		var trackballControls = new TrackballControls( camera, renderer.domElement );
 		</code>
 
 		<p>We will not focus on the creation of  the objects for now, but it's worth noting how the objects are added in the scene. In the example below you can see a cube being added to the scene. </p>

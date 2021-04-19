@@ -44,7 +44,7 @@
 		<code>
 		function loadGLTFFile(modelPath, modelName, visibility, desiredScale)
 		{
-			var loader = new THREE.GLTFLoader( );
+			var loader = new GLTFLoader( );
 			loader.load( modelPath + modelName + '.gltf', function ( gltf ) {
 				var obj = gltf.scene;
 				obj.name = modelName;
