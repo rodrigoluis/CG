@@ -1,6 +1,6 @@
 import * as THREE from  '../build/three.module.js';
-import Stats from       '../modules/jsm/libs/stats.module.js';
-import {TrackballControls} from '../modules/jsm/controls/TrackballControls.js';
+import Stats from       '../build/jsm/libs/stats.module.js';
+import {TrackballControls} from '../build/jsm/controls/TrackballControls.js';
 import KeyboardState from '../libs/util/KeyboardState.js';
 import {initRenderer, 
         initCamera, 

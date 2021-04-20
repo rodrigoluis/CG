@@ -1,6 +1,6 @@
 import * as THREE from  '../build/three.module.js';
-import Stats from       '../modules/jsm/libs/stats.module.js';
-import {PointerLockControls} from '../modules/jsm/controls/PointerLockControls.js';
+import Stats from       '../build/jsm/libs/stats.module.js';
+import {PointerLockControls} from '../build/jsm/controls/PointerLockControls.js';
 import {initRenderer,
         onWindowResize} from "../libs/util/util.js";
 
