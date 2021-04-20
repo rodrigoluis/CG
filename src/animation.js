@@ -6,7 +6,8 @@ import {initRenderer,
         initCamera, 
         initDefaultLighting, 
         degreesToRadians, 
-        lightFollowingCamera} from "../libs/util/util.js";
+        lightFollowingCamera,
+        onWindowResize} from "../libs/util/util.js";
 
 var stats = new Stats();          // To show FPS information
 var scene = new THREE.Scene();    // Create main scene

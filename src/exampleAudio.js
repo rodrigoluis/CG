@@ -18,7 +18,6 @@ var light = initDefaultLighting(scene, new THREE.Vector3(2, 4, 2)); // Use defau
 var renderer = initRenderer();    // View function in util/utils
   renderer.setClearColor("rgb(30, 30, 42)");
 var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.lookAt(0, 0, 0);
   camera.position.set(2.8, 1.8, 4.0);
   camera.up.set( 0, 1, 0 );
 
@@ -27,6 +26,7 @@ var firstRender = false;
 
 // Enable mouse rotation, pan, zoom etc.
 var trackballControls = new TrackballControls( camera, renderer.domElement );
+  trackballControls.target = new THREE.Vector3(0, 1.0, 0);
 
 // Listen window size changes
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
@@ -42,18 +42,48 @@ scene.add( axesHelper );
 
 //----------------------------------------------------------------------------
 var man = null;
-var playAction = true;
+var playAction = false;
 var time = 0;
 var mixer = new Array();
 
+//----------------------------------------------------------------------------
+//-- AUDIO STUFF -------------------------------------------------------------
+
+//-------------------------------------------------------
+// Create a listener and add it to que camera
+var firstPlay = true;
+var listener = new THREE.AudioListener();
+  camera.add( listener );
+
+// create a global audio source
+const sound = new THREE.Audio( listener );  
+
+// Create ambient sound
+var audioLoader = new THREE.AudioLoader();
+audioLoader.load( '../assets/sounds/sampleMusic.mp3', function( buffer ) {
+	sound.setBuffer( buffer );
+	sound.setLoop( true );
+	sound.setVolume( 0.5 );
+	//sound.play(); // Will play when start button is pressed
+});
+
+//-- Create windmill sound ---------------------------------------------------       
+const windmillSound = new THREE.PositionalAudio( listener );
+audioLoader.load( '../assets/sounds/sampleSound.ogg', function ( buffer ) {
+  windmillSound.setBuffer( buffer );
+  //sound1.play(); // Will play when start button is pressed
+} ); // Will be added to the target object
+
+//-- END OF AUDIO STUFF -------------------------------------------------------
+
 // Load animated files
-loadGLTFFile('../assets/objects/windmill/','scene.gltf', true);
+loadGLTFFile('../assets/objects/windmill/','scene.gltf', true, windmillSound);
 loadGLTFFile('../assets/objects/walkingMan/','scene.gltf', false);
 
 buildInterface();
 render();
 
-function loadGLTFFile(modelPath, modelName, centerObject)
+function loadGLTFFile(modelPath, modelName, centerObject, sound = null)
 {
   var loader = new GLTFLoader( );
   loader.load( modelPath + modelName, function ( gltf ) {
@@ -68,15 +98,16 @@ function loadGLTFFile(modelPath, modelName, centerObject)
       if( node.material ) node.material.side = THREE.DoubleSide;
     });
 
-    // Only fix the position of the centered object
-    // The man around will have a different geometric transformation
+    // Only fix the position of the windmill
     if(centerObject)
     {
         obj = normalizeAndRescale(obj, 2);
         obj = fixPosition(obj);
+        obj.add( sound ); // Add sound to windmill
     }
     else {
       man = obj;
+      rotateMan(0);
     }
     scene.add ( obj );
 
@@ -84,6 +115,8 @@ function loadGLTFFile(modelPath, modelName, centerObject)
     var mixerLocal = new THREE.AnimationMixer(obj);
     mixerLocal.clipAction( gltf.animations[0] ).play();
     mixer.push(mixerLocal);
+
+    return obj;
     }, onProgress, onError);
 }
 
@@ -138,21 +171,41 @@ function buildInterface()
   // Interface
   var controls = new function ()
   {
-    this.viewAxes = false;
+    this.playMusic = true;
+    this.playWindmill = true;    
     this.onPlayAnimation = function(){
-      playAction = !playAction;
-    };
-    this.onViewAxes = function(){
-      axesHelper.visible = this.viewAxes;
-    };
+      if(firstPlay) 
+      { // Execute only once
+        playAction = !playAction;        
+        sound.play();
+        windmillSound.play();
+        firstPlay = false;
+      }
+    };    
+    this.onPlayMusic = function(){
+      if(this.playMusic)
+        sound.play();
+      else
+        sound.pause();
+     };
+     this.onPlayWindmill = function(){
+      if(this.playWindmill)
+        windmillSound.play();
+      else
+        windmillSound.pause();
+     };     
   };
 
   // GUI interface
   var gui = new GUI();
-  gui.add(controls, 'onPlayAnimation').name("Play / Stop Anim.");
-  gui.add(controls, 'viewAxes', false)
-  .name("View Axes")
-  .onChange(function(e) { controls.onViewAxes() });
+  gui.add(controls, 'onPlayAnimation').name("START");  
+  gui.add(controls, 'playMusic', true)
+  .name("Play Music")
+  .onChange(function(e) { controls.onPlayMusic() });
+  gui.add(controls, 'playWindmill', true)
+  .name("Play Windmill Sound")
+  .onChange(function(e) { controls.onPlayWindmill() });
+
 }
 
 function render()

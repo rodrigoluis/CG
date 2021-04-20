@@ -7,7 +7,8 @@ import {initRenderer,
         initDefaultLighting,
         SecondaryBox,        
         createGroundPlane, 
-        InfoBox} from "../libs/util/util.js";
+        InfoBox,
+        onWindowResize} from "../libs/util/util.js";
 
 var scene = new THREE.Scene();    // Create main scene
 scene.background = new THREE.Color(0xf0f0f0);

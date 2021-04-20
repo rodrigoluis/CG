@@ -3,7 +3,8 @@ import Stats from       '../build/jsm/libs/stats.module.js';
 import {TrackballControls} from '../build/jsm/controls/TrackballControls.js';
 import {initRenderer, 
         initCamera,
-        InfoBox} from "../libs/util/util.js";
+        InfoBox,
+        onWindowResize} from "../libs/util/util.js";
 
 var stats = new Stats();          // To show FPS information
 var scene = new THREE.Scene();    // Create main scene
