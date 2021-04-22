@@ -2,7 +2,6 @@ import * as THREE from '../build/three.module.js';
 import {TeapotGeometry} from '../build/jsm/geometries/TeapotGeometry.js';
 import { ARButton } from 	 '../build/jsm/webxr/ARButton.js';
 import {initDefaultLighting,
-		SecondaryBox,
 		onWindowResize} from "../libs/util/util.js";
 
 //-------------------------------------------------------------------------------------------------
@@ -16,8 +15,6 @@ let hitTestSourceRequested = false;
 container = document.createElement( 'div' );
 document.body.appendChild( container );
 window.addEventListener( 'resize', onWindowResize );
-
-var projectionMessage = new SecondaryBox("When rectile is visible, click to add an object");
 
 scene = new THREE.Scene();
 initDefaultLighting(scene, new THREE.Vector3(2, 4, 2));
