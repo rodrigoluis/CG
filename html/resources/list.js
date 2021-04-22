@@ -41,6 +41,7 @@ var list = {
 				"VR - Panorama": "html/VR_PanoramaInfo",
 				"VR - External Models": "html/VR_ExternalModelInfo",
 				"AR - Fiducial Marker": "html/AR_BasicInfo",
+				"AR - Hit and Build": "html/AR_HitAndBuildInfo",				
 			},
 		},
 		"Additional Examples":{
