@@ -31,14 +31,14 @@ container.appendChild( renderer.domElement );
 document.body.appendChild( ARButton.createButton( renderer, { requiredFeatures: [ 'hit-test' ] } ) );
 
 // Teapot
-var geometry = new TeapotGeometry(0.2);
+var geometry = new TeapotGeometry(0.1);
 
 controller = renderer.xr.getController( 0 );
 controller.addEventListener( 'select', onSelect);
 scene.add( controller );
 
 reticle = new THREE.Mesh(
-	new THREE.RingGeometry( 0.18, 0.20, 32 ).rotateX( - Math.PI / 2 ),
+	new THREE.RingGeometry( 0.12, 0.15, 32 ).rotateX( - Math.PI / 2 ),
 	new THREE.MeshBasicMaterial()
 );
 reticle.matrixAutoUpdate = false;
