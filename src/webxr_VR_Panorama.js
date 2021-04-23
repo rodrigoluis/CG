@@ -20,7 +20,7 @@ let camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHe
 camera.layers.enable( 1 );
 
 //-- Creating equirectangular Panomara ----------------------------------------------------------
-const geometry = new THREE.SphereGeometry( 500, 60, 40 );
+const geometry = new THREE.SphereGeometry( 1000, 60, 60 );
 	geometry.scale( - 1, 1, 1 ); // invert the geometry on the x-axis (faces will point inward)
 
 const texture = new THREE.TextureLoader().load( '../assets/textures/panorama.jpg' );
