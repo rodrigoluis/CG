@@ -40,9 +40,13 @@ var list = {
 				"VR - Primitives": "html/VR_BasicInfo",
 				"VR - Panorama": "html/VR_PanoramaInfo",
 				"VR - External Models": "html/VR_ExternalModelInfo",
-				"AR - Fiducial Marker": "html/AR_BasicInfo",
-				"AR - Hit and Build (WebXR)": "html/AR_HitAndBuildInfo",				
+				"AR - Fiducial Marker": "html/AR_BasicInfo",	
 			},
+			"AR & VR with WebXR":  {
+				"AR - Hit and Build": "html/webxr_AR_HitAndBuildInfo",
+				"VR - Panorama": "html/webxr_VR_PanoramaInfo",				
+			},
+
 		},
 		"Additional Examples":{
 			"Misc":  {
