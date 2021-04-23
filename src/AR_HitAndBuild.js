@@ -31,6 +31,7 @@ container.appendChild( renderer.domElement );
 document.body.appendChild( ARButton.createButton( renderer, { requiredFeatures: [ 'hit-test' ] } ) );
 
 // Teapot
+const size = 0.1;
 var geometry = new TeapotGeometry(0.1);
 
 controller = renderer.xr.getController( 0 );
@@ -58,6 +59,7 @@ function addTeapot()
 	const material = new THREE.MeshPhongMaterial( { color: 0xffffff * Math.random() } );
 	const mesh = new THREE.Mesh( geometry, material );
 	mesh.position.setFromMatrixPosition( reticle.matrix );
+	mesh.translateY(size); // To put the teapot over the rectile
 	scene.add( mesh );
 }
 
