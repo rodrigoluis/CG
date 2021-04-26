@@ -1,3 +1,7 @@
+import * as THREE 			from '../libs/other/three.module.r82.js';
+import {RaytracingRenderer} from '../libs/other/raytracingRenderer.js';
+import {degreesToRadians} 	from '../libs/util/util.js';
+
 var scene = new THREE.Scene();    // Create main scene
 var controls, scene, renderer;
 

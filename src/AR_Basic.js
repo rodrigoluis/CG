@@ -1,8 +1,11 @@
+import * as THREE from  '../build/three.module.js';
+import {GUI} from       '../build/jsm/libs/dat.gui.module.js';
+import {ARjs}    from  '../libs/AR/ar.js';
+import {InfoBox,
+		initDefaultLighting} from "../libs/util/util.js";
 
-var renderer	= new THREE.WebGLRenderer({
-	antialias: true,
-	alpha: true
-});
+
+var renderer	= new THREE.WebGLRenderer({antialias: true, alpha: true});
 renderer.setSize( 640, 480 );
 document.body.appendChild( renderer.domElement );
 // init scene and camera
@@ -19,7 +22,8 @@ showInformation();
 //----------------------------------------------------------------------------
 // Handle arToolkitSource
 // More info: https://ar-js-org.github.io/AR.js-Docs/marker-based/
-var arToolkitSource = new THREEx.ArToolkitSource({
+//var arToolkitSource = new THREEx.ArToolkitSource({
+var arToolkitSource = new ARjs.Source({	
 	// to read from the webcam
 	sourceType : 'webcam',
 
@@ -33,9 +37,9 @@ var arToolkitSource = new THREEx.ArToolkitSource({
 })
 
 arToolkitSource.init(function onReady(){
-setTimeout(() => {
-	onResize()
-}, 2000);
+	setTimeout(() => {
+		onResize()
+	}, 2000);
 })
 
 // handle resize
@@ -53,9 +57,10 @@ function onResize(){
 
 //----------------------------------------------------------------------------
 // initialize arToolkitContext
-
+//
 // create atToolkitContext
-var arToolkitContext = new THREEx.ArToolkitContext({
+//var arToolkitContext = new THREEx.ArToolkitContext({
+var arToolkitContext = new ARjs.Context({
 	cameraParametersUrl: '../libs/AR/data/camera_para.dat',
 	detectionMode: 'mono',
 })
@@ -76,9 +81,10 @@ onRenderFcts.push(function(){
 
 //----------------------------------------------------------------------------
 // Create a ArMarkerControls
-
+//
 // init controls for camera
-var markerControls = new THREEx.ArMarkerControls(arToolkitContext, camera, {
+//var markerControls = new THREEx.ArMarkerControls(arToolkitContext, camera, {
+var markerControls = new ARjs.MarkerControls(arToolkitContext, camera, {	
 	type : 'pattern',
 	patternUrl : '../libs/AR/data/patt.kanji',
 	changeMatrixMode: 'cameraTransformMatrix' // as we controls the camera, set changeMatrixMode: 'cameraTransformMatrix'
@@ -103,23 +109,24 @@ var firstObject = true;
 
 var controls = new function ()
 {
-this.onChangeObject = function(){
-	firstObject = !firstObject;
-	if(firstObject)
-	{
-	cubeKnot.visible = true;
-	torus.visible = false;
-	}
-	else
-	{
-	cubeKnot.visible = false;
-	torus.visible = true;
-	}
-};
+	this.onChangeObject = function(){
+		firstObject = !firstObject;
+		if(firstObject)
+		{
+			cubeKnot.visible = true;
+			torus.visible = false;
+		}
+		else
+		{
+			cubeKnot.visible = false;
+			torus.visible = true;
+		}
+	};
 };
 
 // GUI interface
-var gui = new dat.GUI();
+//var gui = new dat.GUI();
+var gui = new GUI();
 gui.add(controls, 'onChangeObject').name("Change Object");
 
 //----------------------------------------------------------------------------
@@ -132,59 +139,59 @@ onRenderFcts.push(function(){
 
 function createTorus()
 {
-var light = initDefaultLighting(scene, new THREE.Vector3(25, 30, 20)); // Use default light
-var geometry = new THREE.TorusGeometry(0.6, 0.2, 20, 20, Math.PI * 2);
-var objectMaterial = new THREE.MeshPhongMaterial({
-	color:"rgb(255,0,0)",     // Main color of the object
-	shininess:"200",            // Shininess of the object
-	specular:"rgb(255,255,255)" // Color of the specular component
-});
-var object = new THREE.Mesh(geometry, objectMaterial);
-	object.position.set(0.0, 0.2, 0.0);
-	object.rotation.x = Math.PI/2;
+	var light = initDefaultLighting(scene, new THREE.Vector3(25, 30, 20)); // Use default light
+	var geometry = new THREE.TorusGeometry(0.6, 0.2, 20, 20, Math.PI * 2);
+	var objectMaterial = new THREE.MeshPhongMaterial({
+		color:"rgb(255,0,0)",     // Main color of the object
+		shininess:"200",            // Shininess of the object
+		specular:"rgb(255,255,255)" // Color of the specular component
+	});
+	var object = new THREE.Mesh(geometry, objectMaterial);
+		object.position.set(0.0, 0.2, 0.0);
+		object.rotation.x = Math.PI/2;
 
-torus.add(object);
-torus.visible = false;
+	torus.add(object);
+	torus.visible = false;
 }
 
 function createCubeKnot()
 {
-var geometry	= new THREE.BoxGeometry(1,1,1);
-var material	= new THREE.MeshNormalMaterial({
-	transparent : true,
-	opacity: 0.5,
-	side: THREE.DoubleSide
-});
-var mesh	= new THREE.Mesh( geometry, material );
-mesh.position.y	= geometry.parameters.height/2
-cubeKnot.add( mesh );
+	var geometry	= new THREE.BoxGeometry(1,1,1);
+	var material	= new THREE.MeshNormalMaterial({
+		transparent : true,
+		opacity: 0.5,
+		side: THREE.DoubleSide
+	});
+	var mesh	= new THREE.Mesh( geometry, material );
+	mesh.position.y	= geometry.parameters.height/2
+	cubeKnot.add( mesh );
 
-var geometry	= new THREE.TorusKnotGeometry(0.3,0.1,64,16);
-var material	= new THREE.MeshNormalMaterial();
-var mesh	= new THREE.Mesh( geometry, material );
-mesh.position.y	= 0.5
-cubeKnot.add( mesh );
+	var geometry	= new THREE.TorusKnotGeometry(0.3,0.1,64,16);
+	var material	= new THREE.MeshNormalMaterial();
+	var mesh	= new THREE.Mesh( geometry, material );
+	mesh.position.y	= 0.5
+	cubeKnot.add( mesh );
 
-onRenderFcts.push(function(delta){
-	mesh.rotation.x += Math.PI*delta
-})
+	onRenderFcts.push(function(delta){
+		mesh.rotation.x += Math.PI*delta
+	})
 }
 
 function showInformation()
 {
-// Use this to show information onscreen
-controls = new InfoBox();
-	controls.add("Augmented Reality - Basic Example");
-	controls.addParagraph();
-	controls.add("Put the 'KANJI' marker in front of the camera.");
-	controls.show();
+	// Use this to show information onscreen
+	controls = new InfoBox();
+		controls.add("Augmented Reality - Basic Example");
+		controls.addParagraph();
+		controls.add("Put the 'KANJI' marker in front of the camera.");
+		controls.show();
 }
 
 // run the rendering loop
-var lastTimeMsec= null
 requestAnimationFrame(function animate(nowMsec)
 {
-// keep looping
+	var lastTimeMsec= null;	
+	// keep looping
 	requestAnimationFrame( animate );
 	// measure time
 	lastTimeMsec	= lastTimeMsec || nowMsec-1000/60

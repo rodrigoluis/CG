@@ -51,7 +51,6 @@ var list = {
 		"Additional Examples":{
 			"Misc":  {
 				"Group Geometry": "html/exampleGroupInfo",
-				"Merge Geometry": "html/exampleMergeInfo",
 				"First Person": "html/exampleFirstPersonInfo",
 				"Drag Control": "html/exampleDragControlInfo",
 				"Audio Example": "html/exampleAudioInfo",				

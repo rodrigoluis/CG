@@ -1,8 +1,10 @@
 /**
  * @author mrdoob / http://mrdoob.com/
  * @author alteredq / http://alteredqualia.com/
- * @author rodrigoluis --> Add camera to work with threejs version r.116
  */
+
+// TODO: It's not working on newer versions of threejs
+import * as THREE from  './three.module.r82.js'; 
 
 var RaytracingRenderer = function ( width = window.innerWidth, height = window.innerHeight, blockSize = 32, camera )
 {
@@ -467,3 +469,5 @@ var RaytracingRenderer = function ( width = window.innerWidth, height = window.i
 		renderBlock( 0, 0 );
 	};
 };
+
+export { RaytracingRenderer };
