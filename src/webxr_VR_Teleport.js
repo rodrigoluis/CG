@@ -1,3 +1,7 @@
+/*
+NOT WORKING - UNDER DEVELOPMENT
+*/
+
 import * as THREE from '../build/three.module.js';
 import { VRButton } from '../build/jsm/webxr/VRButton.js';
 import {onWindowResize,
