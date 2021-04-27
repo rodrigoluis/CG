@@ -5,7 +5,7 @@ Versão atual: r128dev
 * Remover todos os arquivos da pasta "CG/build"
 
 * Em uma pasta qualquer (chamada aqui de 'npmBuild'), abrir um terminal e 
-  executar o seguinte comando para baixar os módulos do tree.js:
+  executar o seguinte comando para baixar os módulos do three.js:
     npm install --save three
 
 * Dos arquivos gerados, copiar para a pasta CG os seguintes:
