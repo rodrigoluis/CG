@@ -53,11 +53,11 @@ controller1.add( rectile );
 //-- Create environment -------------------------------------------------------------------------
 //-- Creating equirectangular Panomara ----------------------------------------------------------
 const geometry = new THREE.SphereGeometry( 1000, 60, 60 );
-	geometry.scale( -1, 1, 1 ); // invert the geometry on the x-axis (faces will point inward)
 const texture = new THREE.TextureLoader().load( '../assets/textures/panorama2.jpg' );
 var material = new THREE.MeshBasicMaterial({
     color:"rgb(255,255,255)",     // Main color of the object
-	map: texture
+	map: texture,
+	side: THREE.BackSide
   });
 const mesh = new THREE.Mesh( geometry, material );
 scene.add( mesh );
@@ -69,7 +69,9 @@ const floorPosition = -150.0;
 var planeGeometry = new THREE.PlaneGeometry(2000, 2000, 50, 50);
 var planeMaterial = new THREE.MeshBasicMaterial({
     color:"rgb(200,200,200)",     // Main color of the object
-    wireframe: true
+    wireframe: true,
+	opacity: 0.7, 
+	transparent: true
   });
 var plane = new THREE.Mesh(planeGeometry, planeMaterial);
 	plane.position.set(0.0, floorPosition, 0.0);
@@ -103,11 +105,13 @@ function onSelectStart( event ) {
 		rectile.visible = false;
 		const intersection = intersections[ 0 ];
 		sphere.position.set(intersection.point.x, intersection.point.y, intersection.point.z);
+		sphere.visible = true;
 	}
 }
 
 function onSelectEnd( event ) {
 	rectile.visible = true;
+	sphere.visible = false;
 	if ( intersections.length > 0 ) {
 		const intersection = intersections[ 0 ];
 		if(intersection.point.y < floorPosition+1) intersection.point.y = 1.60;
@@ -115,15 +119,6 @@ function onSelectEnd( event ) {
 	}
 }
 
-// function intersectObjects( controller ) {
-// 	if(select && intersections.length > 0 )
-// 	{
-// 		const intersection = intersections[ 0 ];
-// 		sphere.position.set(intersection.point.x, intersection.point.y, intersection.point.z);
-// 	}
-// }
-
 function render() {
-	//intersectObjects(controller1);
 	renderer.render( scene, camera );
 }
