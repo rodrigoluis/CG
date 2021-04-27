@@ -47,27 +47,27 @@ train.add( controller1 );
 // controller2.addEventListener( 'selectend', onSelectEnd );
 // scene.add( controller2 );
 
-//
-const geoline = new THREE.BufferGeometry().setFromPoints( [ new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, 0, - 1 ) ] );
-
-const line = new THREE.Line( geoline );
-line.name = 'line';
-line.scale.z = 100;
-
 // // create a sphere
 var size = 40;
-var sphereGeometry = new THREE.SphereGeometry(50, 60, 60);
+var sphereGeometry = new THREE.SphereGeometry(20, 60, 60);
 var sphereMaterial = new THREE.MeshNormalMaterial();
 var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
 //sphere.position.set(0.0, 0.0, 0.0);
 scene.add(sphere);
 
 
+// const geoline = new THREE.BufferGeometry().setFromPoints( [ new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, 0, - 1 ) ] );
+// const line = new THREE.Line( geoline );
+// line.scale.z = 100;
+// var sphereGeo = new THREE.SphereGeometry(10, 60, 60);
+// var sphereMat = new THREE.MeshNormalMaterial();
+// var line = new THREE.Mesh(sphereGeo, sphereMat);
+// 	line.position.set(0, 0, -100);
+var ringGeo = new THREE.RingGeometry( 3, 6, 32 ).translate( 0, 0, - 1 );
+var ringMat = new THREE.MeshBasicMaterial( { opacity: 0.8, transparent: true } );
+var line = new THREE.Mesh( ringGeo, ringMat );
+ 	line.position.set(0, 0, -100);
 controller1.add( line );
-//controller1.add( sphere );
-//controller2.add( line.clone() );
-
-var raycaster = new THREE.Raycaster();
 
 //-- Creating equirectangular Panomara ----------------------------------------------------------
 const geometry = new THREE.SphereGeometry( 1000, 60, 60 );
@@ -95,13 +95,14 @@ var planeMaterial = new THREE.MeshBasicMaterial({
     wireframe: true
   });
 
-
+const floorPosition = -150.0;
 var plane = new THREE.Mesh(planeGeometry, planeMaterial);
-	plane.position.set(0.0, -150.0, 0.0);
+	plane.position.set(0.0, floorPosition, 0.0);
 	plane.rotateOnAxis(rotAxis,  angle );
 scene.add(plane);
 
 //-- Start main loop
+var raycaster = new THREE.Raycaster();
 let select = false;
 let intersections;
 
@@ -128,6 +129,7 @@ function onSelectStart( event ) {
 		const intersection = intersections[ 0 ];
 		console.log(intersection.point);
 		console.log("selectStart");
+		sphere.position.set(intersection.point.x, intersection.point.y, intersection.point.z);
 		//cameraPosition = intersection.point;
 		
 //		train.position.set(intersection.point.x, 1.60, intersection.point.z);
@@ -149,7 +151,8 @@ function onSelectEnd( event ) {
 
 	if ( intersections.length > 0 ) {
 		const intersection = intersections[ 0 ];
-		train.position.set(intersection.point.x, 1.60, intersection.point.z);
+		if(intersection.point.y < floorPosition+1) intersection.point.y = 1.60;
+		train.position.set(intersection.point.x,  intersection.point.y, intersection.point.z);
 	}
 
 
