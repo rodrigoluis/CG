@@ -1,17 +1,12 @@
 /*
-NOT WORKING - UNDER DEVELOPMENT
+UNDER DEVELOPMENT
 */
 
 import * as THREE from '../build/three.module.js';
 import { VRButton } from '../build/jsm/webxr/VRButton.js';
-import { XRControllerModelFactory } from '../build/jsm/webxr/XRControllerModelFactory.js';
 import {onWindowResize,
 		initDefaultLighting,
 		degreesToRadians } from "../libs/util/util.js";
-
-const intersected = [];
-const tempMatrix = new THREE.Matrix4();
-//let cameraPosition = new THREE.Matrix3();
 
 //-- Setting renderer ---------------------------------------------------------------------------
 let renderer = new THREE.WebGLRenderer();
@@ -32,84 +27,65 @@ initDefaultLighting(scene, new THREE.Vector3(250, 40, 2));
 let camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 3000 );
 camera.layers.enable( 1 );
 
-const train = new THREE.Object3D();
-scene.add( train );
-train.add (camera);
+const cameraHolder = new THREE.Object3D();
+scene.add( cameraHolder );
+cameraHolder.add (camera);
 
 // controllers
 var controller1 = renderer.xr.getController( 0 );
 controller1.addEventListener( 'selectstart', onSelectStart );
 controller1.addEventListener( 'selectend', onSelectEnd );
-train.add( controller1 );
-
-// var controller2 = renderer.xr.getController( 1 );
-// controller2.addEventListener( 'selectstart', onSelectStart );
-// controller2.addEventListener( 'selectend', onSelectEnd );
-// scene.add( controller2 );
+cameraHolder.add( controller1 );
 
 // // create a sphere
-var size = 40;
-var sphereGeometry = new THREE.SphereGeometry(20, 60, 60);
+var sphereGeometry = new THREE.SphereGeometry(10, 60, 60);
 var sphereMaterial = new THREE.MeshNormalMaterial();
 var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-//sphere.position.set(0.0, 0.0, 0.0);
 scene.add(sphere);
 
-
-// const geoline = new THREE.BufferGeometry().setFromPoints( [ new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, 0, - 1 ) ] );
-// const line = new THREE.Line( geoline );
-// line.scale.z = 100;
-// var sphereGeo = new THREE.SphereGeometry(10, 60, 60);
-// var sphereMat = new THREE.MeshNormalMaterial();
-// var line = new THREE.Mesh(sphereGeo, sphereMat);
-// 	line.position.set(0, 0, -100);
+// VR Camera Rectile
 var ringGeo = new THREE.RingGeometry( 3, 6, 32 ).translate( 0, 0, - 1 );
-var ringMat = new THREE.MeshBasicMaterial( { opacity: 0.8, transparent: true } );
-var line = new THREE.Mesh( ringGeo, ringMat );
- 	line.position.set(0, 0, -100);
-controller1.add( line );
+var ringMat = new THREE.MeshBasicMaterial( { opacity: 0.9, transparent: true } );
+var rectile = new THREE.Mesh( ringGeo, ringMat );
+ 	rectile.position.set(0, 0, -150);
+controller1.add( rectile );
 
+//-- Create environment -------------------------------------------------------------------------
 //-- Creating equirectangular Panomara ----------------------------------------------------------
 const geometry = new THREE.SphereGeometry( 1000, 60, 60 );
-	geometry.scale( - 1, 1, 1 ); // invert the geometry on the x-axis (faces will point inward)
-
+	geometry.scale( -1, 1, 1 ); // invert the geometry on the x-axis (faces will point inward)
 const texture = new THREE.TextureLoader().load( '../assets/textures/panorama2.jpg' );
 var material = new THREE.MeshBasicMaterial({
     color:"rgb(255,255,255)",     // Main color of the object
-    //wireframe: true,
 	map: texture
   });
-//const material = new THREE.MeshBasicMaterial( { map: texture } )
 const mesh = new THREE.Mesh( geometry, material );
 scene.add( mesh );
 
 // // create the ground plane
 var angle = degreesToRadians(-90);
 var rotAxis = new THREE.Vector3(1,0,0); // Set Z axis
-const texture2 = new THREE.TextureLoader().load("../assets/textures/sand.jpg");
-
-var planeGeometry = new THREE.PlaneGeometry(2000, 2000, 100, 100);
-//var planeMaterial = new THREE.MeshBasicMaterial({map:texture2});
+const floorPosition = -150.0;
+var planeGeometry = new THREE.PlaneGeometry(2000, 2000, 50, 50);
 var planeMaterial = new THREE.MeshBasicMaterial({
-    color:"rgb(255,255,255)",     // Main color of the object
+    color:"rgb(200,200,200)",     // Main color of the object
     wireframe: true
   });
-
-const floorPosition = -150.0;
 var plane = new THREE.Mesh(planeGeometry, planeMaterial);
 	plane.position.set(0.0, floorPosition, 0.0);
 	plane.rotateOnAxis(rotAxis,  angle );
 scene.add(plane);
 
-//-- Start main loop
+//-- Raycaster 
 var raycaster = new THREE.Raycaster();
-let select = false;
 let intersections;
 
+//-- Start main loop
 renderer.setAnimationLoop( render );
 
 function getIntersections( controller ) 
 {
+	let tempMatrix = new THREE.Matrix4();
 	tempMatrix.identity().extractRotation( controller.matrixWorld );
 
 	raycaster.ray.origin.setFromMatrixPosition( controller.matrixWorld );
@@ -124,92 +100,30 @@ function onSelectStart( event ) {
 	intersections = getIntersections( controller );
 
 	if ( intersections.length > 0 ) {
-		select = true;
-		line.visible = false;
+		rectile.visible = false;
 		const intersection = intersections[ 0 ];
-		console.log(intersection.point);
-		console.log("selectStart");
 		sphere.position.set(intersection.point.x, intersection.point.y, intersection.point.z);
-		//cameraPosition = intersection.point;
-		
-//		train.position.set(intersection.point.x, 1.60, intersection.point.z);
-
-		// const object = intersection.object;
-		// object.material.emissive.b = 1;
-		// controller.attach( object );
-
-		// controller.userData.selected = object;
-
 	}
-
 }
 
 function onSelectEnd( event ) {
-	line.visible = true;
-	select = false;
-	console.log("selectEnd");	
-
+	rectile.visible = true;
 	if ( intersections.length > 0 ) {
 		const intersection = intersections[ 0 ];
 		if(intersection.point.y < floorPosition+1) intersection.point.y = 1.60;
-		train.position.set(intersection.point.x,  intersection.point.y, intersection.point.z);
+		cameraHolder.position.set(intersection.point.x,  intersection.point.y, intersection.point.z);
 	}
-
-
-
-//	const controller = event.target;
-
-//	if ( controller.userData.selected !== undefined ) {
-	//if ( intersections.length > 0 ) {
-		// select = false;
-		// console.log("selectEnd");		
-		// const object = controller.userData.selected;
-		// // object.material.emissive.b = 0;
-		// // group.attach( object );
-
-		// controller.userData.selected = undefined;
-
-	//}
 }
 
-function intersectObjects( controller ) {
-	if(select && intersections.length > 0 )
-	{
-		const intersection = intersections[ 0 ];
-		sphere.position.set(intersection.point.x, intersection.point.y, intersection.point.z);
-	}
-	// Do not highlight when already selected
-
-	// if ( controller.userData.selected !== undefined ) return;
-
-	// const line = controller.getObjectByName( 'line' );
-	// const intersections = getIntersections( controller );
-
-	// if ( intersections.length > 0 ) {
-
-	// 	const intersection = intersections[ 0 ];
-
-	// 	const object = intersection.object;
-	// 	object.material.emissive.r = 1;
-	// 	intersected.push( object );
-
-	// 	line.scale.z = intersection.distance;
-
-	// } else {
-
-	// 	line.scale.z = 5;
-
-	// }
-
-}
+// function intersectObjects( controller ) {
+// 	if(select && intersections.length > 0 )
+// 	{
+// 		const intersection = intersections[ 0 ];
+// 		sphere.position.set(intersection.point.x, intersection.point.y, intersection.point.z);
+// 	}
+// }
 
 function render() {
-	// if(select && intersections)
-	// { 
-	// 	let intersection = intersections[ 0 ];
-	// 	sphere.position.set(intersection.point.x, intersection.point.y, intersection.point.z);		
-	// 	//console.log(".");
-	// }
-	intersectObjects(controller1);
+	//intersectObjects(controller1);
 	renderer.render( scene, camera );
 }
