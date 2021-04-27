@@ -40,7 +40,7 @@ train.add (camera);
 var controller1 = renderer.xr.getController( 0 );
 controller1.addEventListener( 'selectstart', onSelectStart );
 controller1.addEventListener( 'selectend', onSelectEnd );
-scene.add( controller1 );
+train.add( controller1 );
 
 // var controller2 = renderer.xr.getController( 1 );
 // controller2.addEventListener( 'selectstart', onSelectStart );
@@ -52,9 +52,19 @@ const geoline = new THREE.BufferGeometry().setFromPoints( [ new THREE.Vector3( 0
 
 const line = new THREE.Line( geoline );
 line.name = 'line';
-line.scale.z = 5;
+line.scale.z = 100;
 
-controller1.add( line.clone() );
+// // create a sphere
+var size = 40;
+var sphereGeometry = new THREE.SphereGeometry(50, 60, 60);
+var sphereMaterial = new THREE.MeshNormalMaterial();
+var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
+//sphere.position.set(0.0, 0.0, 0.0);
+scene.add(sphere);
+
+
+controller1.add( line );
+//controller1.add( sphere );
 //controller2.add( line.clone() );
 
 var raycaster = new THREE.Raycaster();
@@ -91,45 +101,36 @@ var plane = new THREE.Mesh(planeGeometry, planeMaterial);
 	plane.rotateOnAxis(rotAxis,  angle );
 scene.add(plane);
 
-
-
-// // create a sphere
-// var size = 40;
-// var sphereGeometry = new THREE.SphereGeometry(50, 60, 60);
-// var sphereMaterial = new THREE.MeshNormalMaterial();
-// var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-// sphere.position.set(0.0, 0.0, -250.0);
-// scene.add(sphere);
-
-
-
 //-- Start main loop
+let select = false;
+let intersections;
+
 renderer.setAnimationLoop( render );
 
-function getIntersections( controller ) {
-
+function getIntersections( controller ) 
+{
 	tempMatrix.identity().extractRotation( controller.matrixWorld );
 
 	raycaster.ray.origin.setFromMatrixPosition( controller.matrixWorld );
 	raycaster.ray.direction.set( 0, 0, - 1 ).applyMatrix4( tempMatrix );
 
 	return raycaster.intersectObjects( scene.children );
-
 }
 
 function onSelectStart( event ) {
 
 	const controller = event.target;
-
-	const intersections = getIntersections( controller );
+	intersections = getIntersections( controller );
 
 	if ( intersections.length > 0 ) {
-
+		select = true;
+		line.visible = false;
 		const intersection = intersections[ 0 ];
 		console.log(intersection.point);
+		console.log("selectStart");
 		//cameraPosition = intersection.point;
 		
-		train.position.set(intersection.point.x, 1.60, intersection.point.z);
+//		train.position.set(intersection.point.x, 1.60, intersection.point.z);
 
 		// const object = intersection.object;
 		// object.material.emissive.b = 1;
@@ -142,22 +143,70 @@ function onSelectStart( event ) {
 }
 
 function onSelectEnd( event ) {
+	line.visible = true;
+	select = false;
+	console.log("selectEnd");	
 
-	const controller = event.target;
+	if ( intersections.length > 0 ) {
+		const intersection = intersections[ 0 ];
+		train.position.set(intersection.point.x, 1.60, intersection.point.z);
+	}
 
-	if ( controller.userData.selected !== undefined ) {
 
+
+//	const controller = event.target;
+
+//	if ( controller.userData.selected !== undefined ) {
+	//if ( intersections.length > 0 ) {
+		// select = false;
+		// console.log("selectEnd");		
 		// const object = controller.userData.selected;
 		// // object.material.emissive.b = 0;
 		// // group.attach( object );
 
 		// controller.userData.selected = undefined;
 
-	}
+	//}
+}
 
+function intersectObjects( controller ) {
+	if(select && intersections.length > 0 )
+	{
+		const intersection = intersections[ 0 ];
+		sphere.position.set(intersection.point.x, intersection.point.y, intersection.point.z);
+	}
+	// Do not highlight when already selected
+
+	// if ( controller.userData.selected !== undefined ) return;
+
+	// const line = controller.getObjectByName( 'line' );
+	// const intersections = getIntersections( controller );
+
+	// if ( intersections.length > 0 ) {
+
+	// 	const intersection = intersections[ 0 ];
+
+	// 	const object = intersection.object;
+	// 	object.material.emissive.r = 1;
+	// 	intersected.push( object );
+
+	// 	line.scale.z = intersection.distance;
+
+	// } else {
+
+	// 	line.scale.z = 5;
+
+	// }
 
 }
 
 function render() {
+	// if(select && intersections)
+	// { 
+	// 	let intersection = intersections[ 0 ];
+	// 	sphere.position.set(intersection.point.x, intersection.point.y, intersection.point.z);		
+	// 	//console.log(".");
+	// }
+	intersectObjects(controller1);
 	renderer.render( scene, camera );
 }
