@@ -17,64 +17,6 @@ const cameraHolder = new THREE.Object3D();
 	cameraHolder.add(camera);
 scene.add( cameraHolder );
 
-const floorGeometry = new THREE.PlaneGeometry( 8, 8 );
-const floorMaterial = new THREE.MeshStandardMaterial( {
-	color: 0xeeeeee,
-	roughness: 1.0,
-	metalness: 0.0
-} );
-const floor = new THREE.Mesh( floorGeometry, floorMaterial );
-floor.rotation.x = - Math.PI / 2;
-floor.receiveShadow = true;
-scene.add( floor );
-
-scene.add( new THREE.HemisphereLight( 0x808080, 0x606060 ) );
-
-const light = new THREE.DirectionalLight( 0xffffff );
-light.position.set( 0, 6, 0 );
-light.castShadow = true;
-light.shadow.mapSize.set( 4096, 4096 );
-scene.add( light );
-
-let group = new THREE.Group();
-scene.add( group );
-
-const geometries = [
-	new THREE.BoxGeometry( 0.2, 0.2, 0.2 ),
-	new THREE.ConeGeometry( 0.2, 0.2, 64 ),
-	new THREE.CylinderGeometry( 0.2, 0.2, 0.2, 64 ),
-	new THREE.IcosahedronGeometry( 0.2, 8 ),
-	new THREE.TorusGeometry( 0.2, 0.04, 64, 32 )
-];
-
-const range = 8;
-for ( let i = 0; i < 50; i ++ ) {
-
-	const geometry = geometries[ Math.floor( Math.random() * geometries.length ) ];
-	const material = new THREE.MeshStandardMaterial( {
-		color: Math.random() * 0xffffff,
-		roughness: 0.7,
-		metalness: 0.0
-	} );
-
-	const object = new THREE.Mesh( geometry, material );
-
-	object.position.x = Math.random() * range - range/2;
-	object.position.y = Math.random() * range/2.0;
-	object.position.z = Math.random() * range - range/2;
-
-	object.rotation.x = Math.random() * 2 * Math.PI;
-	object.rotation.y = Math.random() * 2 * Math.PI;
-	object.rotation.z = Math.random() * 2 * Math.PI;
-
-	object.scale.setScalar( Math.random() + 0.5 );
-
-	object.castShadow = true;
-	object.receiveShadow = true;
-
-	group.add( object );
-}
-
 //
 let renderer = new THREE.WebGLRenderer( { antialias: true } );
 renderer.setPixelRatio( window.devicePixelRatio );
@@ -102,8 +44,68 @@ var rectile = new THREE.Mesh( ringGeo, ringMat );
  	rectile.position.set(0, 0, -1);
 controller1.add( rectile );
 
-//
+let group = new THREE.Group();
+createScene();
 animate();
+
+function createScene()
+{
+	const light = new THREE.DirectionalLight( 0xffffff );
+	light.position.set( 0, 6, 0 );
+	light.castShadow = true;
+	light.shadow.mapSize.set( 4096, 4096 );
+	scene.add( light );
+
+	scene.add( new THREE.HemisphereLight( 0x808080, 0x606060 ) );
+
+	const floorGeometry = new THREE.PlaneGeometry( 10, 10 );
+	const floorMaterial = new THREE.MeshStandardMaterial( {
+		color: 0xeeeeee,
+		roughness: 1.0,
+		metalness: 0.0
+	} );
+	const floor = new THREE.Mesh( floorGeometry, floorMaterial );
+	floor.rotation.x = -Math.PI / 2;
+	floor.receiveShadow = true;
+	scene.add( floor );
+
+	const geometries = [
+		new THREE.BoxGeometry( 0.2, 0.2, 0.2 ),
+		new THREE.ConeGeometry( 0.2, 0.2, 64 ),
+		new THREE.CylinderGeometry( 0.2, 0.2, 0.2, 64 ),
+		new THREE.IcosahedronGeometry( 0.2, 8 ),
+		new THREE.TorusGeometry( 0.2, 0.04, 64, 32 )
+	];
+	
+	const range = 8;
+	for ( let i = 0; i < 50; i ++ ) {
+	
+		const geometry = geometries[ Math.floor( Math.random() * geometries.length ) ];
+		const material = new THREE.MeshStandardMaterial( {
+			color: Math.random() * 0xffffff,
+			roughness: 0.7,
+			metalness: 0.0
+		} );
+	
+		const object = new THREE.Mesh( geometry, material );
+	
+		object.position.x = Math.random() * range - range/2;
+		object.position.y = Math.random() * range/2.0;
+		object.position.z = Math.random() * range - range/2;
+	
+		object.rotation.x = Math.random() * 2 * Math.PI;
+		object.rotation.y = Math.random() * 2 * Math.PI;
+		object.rotation.z = Math.random() * 2 * Math.PI;
+	
+		object.scale.setScalar( Math.random() + 0.5 );
+	
+		object.castShadow = true;
+		object.receiveShadow = true;
+	
+		group.add( object );
+	}	
+	scene.add( group );
+}
 
 function onSelectStart( event ) {
 	const controller = event.target;
