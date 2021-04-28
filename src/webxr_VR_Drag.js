@@ -1,30 +1,18 @@
-/*
-UNDER DEVELOPMENT
-*/
-
 import * as THREE from '../build/three.module.js';
 import { VRButton } from '../build/jsm/webxr/VRButton.js';
 import {onWindowResize} from "../libs/util/util.js";
 
-
-let container;
-let camera, scene, renderer;
-let controller1;
-let raycaster;
-
-const intersected = [];
-const tempMatrix = new THREE.Matrix4();
-
-let group;
-
-container = document.createElement( 'div' );
+let container = document.createElement( 'div' );
 document.body.appendChild( container );
 window.addEventListener( 'resize', onWindowResize );
 
-scene = new THREE.Scene();
+let scene = new THREE.Scene();
 scene.background = new THREE.Color( 0x808080 );
 
-camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.1, 30 );
+let raycaster = new THREE.Raycaster();
+const intersected = [];
+
+let camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.1, 30 );
 const cameraHolder = new THREE.Object3D();
 	cameraHolder.add(camera);
 scene.add( cameraHolder );
@@ -48,7 +36,7 @@ light.castShadow = true;
 light.shadow.mapSize.set( 4096, 4096 );
 scene.add( light );
 
-group = new THREE.Group();
+let group = new THREE.Group();
 scene.add( group );
 
 const geometries = [
@@ -88,7 +76,7 @@ for ( let i = 0; i < 50; i ++ ) {
 }
 
 //
-renderer = new THREE.WebGLRenderer( { antialias: true } );
+let renderer = new THREE.WebGLRenderer( { antialias: true } );
 renderer.setPixelRatio( window.devicePixelRatio );
 renderer.setSize( window.innerWidth, window.innerHeight );
 renderer.outputEncoding = THREE.sRGBEncoding;
@@ -99,19 +87,20 @@ container.appendChild( renderer.domElement );
 document.body.appendChild( VRButton.createButton( renderer ) );
 
 // controllers
-controller1 = renderer.xr.getController( 0 );
+let controller1 = renderer.xr.getController( 0 );
 controller1.addEventListener( 'selectstart', onSelectStart );
 controller1.addEventListener( 'selectend', onSelectEnd );
 scene.add( controller1 );
 
 // VR Camera Rectile
-var ringGeo = new THREE.RingGeometry( .02, .04, 32 );//.translate( 0, 0, -1 );
-var ringMat = new THREE.MeshBasicMaterial( { opacity: 0.9, transparent: true } );
+var ringGeo = new THREE.RingGeometry( .015, .030, 32 );
+var ringMat = new THREE.MeshBasicMaterial( {
+	color:"rgb(255,255,0)", 
+	opacity: 0.9, 
+	transparent: true } );
 var rectile = new THREE.Mesh( ringGeo, ringMat );
  	rectile.position.set(0, 0, -1);
 controller1.add( rectile );
-
-raycaster = new THREE.Raycaster();
 
 //
 animate();
@@ -121,13 +110,10 @@ function onSelectStart( event ) {
 	const intersections = getIntersections( controller );
 
 	if ( intersections.length > 0 ) {
-
 		const intersection = intersections[ 0 ];
-
 		const object = intersection.object;
 		object.material.emissive.b = 1;
 		controller.attach( object );
-
 		controller.userData.selected = object;
 	}
 }
@@ -135,21 +121,18 @@ function onSelectStart( event ) {
 function onSelectEnd( event ) {
 	const controller = event.target;
 	if ( controller.userData.selected !== undefined ) {
-
 		const object = controller.userData.selected;
 		object.material.emissive.b = 0;
 		group.attach( object );
-
 		controller.userData.selected = undefined;
 	}
 }
 
 function getIntersections( controller ) {
+	const tempMatrix = new THREE.Matrix4();	
 	tempMatrix.identity().extractRotation( controller.matrixWorld );
-
 	raycaster.ray.origin.setFromMatrixPosition( controller.matrixWorld );
 	raycaster.ray.direction.set( 0, 0, - 1 ).applyMatrix4( tempMatrix );
-
 	return raycaster.intersectObjects( group.children );
 }
 
@@ -157,51 +140,30 @@ function intersectObjects( controller ) {
 	// Do not highlight when already selected
 	if ( controller.userData.selected !== undefined ) return;
 
-	//const line = controller.getObjectByName( 'line' );
 	const intersections = getIntersections( controller );
 
 	if ( intersections.length > 0 ) {
-
 		const intersection = intersections[ 0 ];
-
 		const object = intersection.object;
 		object.material.emissive.r = 1;
 		intersected.push( object );
-
-		//line.scale.z = intersection.distance;
-
-	} else {
-
-		//line.scale.z = 5;
-
-	}
-
+	} 
 }
 
 function cleanIntersected() {
-
 	while ( intersected.length ) {
-
 		const object = intersected.pop();
 		object.material.emissive.r = 0;
-
 	}
 }
 
 //
 function animate() {
-
 	renderer.setAnimationLoop( render );
-
 }
 
 function render() {
-
 	cleanIntersected();
-
 	intersectObjects( controller1 );
-	//intersectObjects( controller2 );
-
 	renderer.render( scene, camera );
-
 }
