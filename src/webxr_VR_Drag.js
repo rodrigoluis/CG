@@ -4,17 +4,12 @@ UNDER DEVELOPMENT
 
 import * as THREE from '../build/three.module.js';
 import { VRButton } from '../build/jsm/webxr/VRButton.js';
-import {createGroundPlane,
-		onWindowResize,
-		initDefaultLighting,
-		degreesToRadians } from "../libs/util/util.js";
+import {onWindowResize} from "../libs/util/util.js";
 
 
 let container;
 let camera, scene, renderer;
-let controller1, controller2;
-let controllerGrip1, controllerGrip2;
-
+let controller1;
 let raycaster;
 
 const intersected = [];
@@ -37,8 +32,8 @@ scene.add( cameraHolder );
 const floorGeometry = new THREE.PlaneGeometry( 4, 4 );
 const floorMaterial = new THREE.MeshStandardMaterial( {
 	color: 0xeeeeee,
-//	roughness: 1.0,
-//	metalness: 0.0
+	roughness: 1.0,
+	metalness: 0.0
 } );
 const floor = new THREE.Mesh( floorGeometry, floorMaterial );
 floor.rotation.x = - Math.PI / 2;
@@ -109,37 +104,11 @@ controller1.addEventListener( 'selectend', onSelectEnd );
 scene.add( controller1 );
 
 // VR Camera Rectile
-var ringGeo = new THREE.RingGeometry( .1, .2, 32 ).translate( 0, 0, - 15 );
+var ringGeo = new THREE.RingGeometry( .05, .1, 32 );//.translate( 0, 0, -1 );
 var ringMat = new THREE.MeshBasicMaterial( { opacity: 0.9, transparent: true } );
 var rectile = new THREE.Mesh( ringGeo, ringMat );
- 	//rectile.position.set(0, 0, -3);
+ 	rectile.position.set(0, 0, -0.5);
 controller1.add( rectile );
-
-
-// controller2 = renderer.xr.getController( 1 );
-// controller2.addEventListener( 'selectstart', onSelectStart );
-// controller2.addEventListener( 'selectend', onSelectEnd );
-// scene.add( controller2 );
-
-// const controllerModelFactory = new XRControllerModelFactory();
-
-// controllerGrip1 = renderer.xr.getControllerGrip( 0 );
-// controllerGrip1.add( controllerModelFactory.createControllerModel( controllerGrip1 ) );
-// scene.add( controllerGrip1 );
-
-// controllerGrip2 = renderer.xr.getControllerGrip( 1 );
-// controllerGrip2.add( controllerModelFactory.createControllerModel( controllerGrip2 ) );
-// scene.add( controllerGrip2 );
-
-//
-
-// const geometry = new THREE.BufferGeometry().setFromPoints( [ new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, 0, - 1 ) ] );
-// const line = new THREE.Line( geometry );
-// line.name = 'line';
-// line.scale.z = 5;
-
-//controller1.add( line.clone() );
-// controller2.add( line.clone() );
 
 raycaster = new THREE.Raycaster();
 
