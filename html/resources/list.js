@@ -46,6 +46,7 @@ var list = {
 				"AR - Hit and Build": "html/webxr_AR_HitAndBuildInfo",
 				"VR - Panorama": "html/webxr_VR_PanoramaInfo",				
 				"VR - Teleport": "html/webxr_VR_TeleportInfo",
+				"VR - Dragging": "html/webxr_VR_DraggingInfo",				
 			},
 
 		},
