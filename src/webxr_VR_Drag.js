@@ -105,10 +105,10 @@ controller1.addEventListener( 'selectend', onSelectEnd );
 scene.add( controller1 );
 
 // VR Camera Rectile
-var ringGeo = new THREE.RingGeometry( .01, .02, 32 );//.translate( 0, 0, -1 );
+var ringGeo = new THREE.RingGeometry( .02, .04, 32 );//.translate( 0, 0, -1 );
 var ringMat = new THREE.MeshBasicMaterial( { opacity: 0.9, transparent: true } );
 var rectile = new THREE.Mesh( ringGeo, ringMat );
- 	rectile.position.set(0, 0, -0.5);
+ 	rectile.position.set(0, 0, -1);
 controller1.add( rectile );
 
 raycaster = new THREE.Raycaster();
