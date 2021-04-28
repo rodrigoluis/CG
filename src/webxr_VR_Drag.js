@@ -29,7 +29,7 @@ const cameraHolder = new THREE.Object3D();
 	cameraHolder.add(camera);
 scene.add( cameraHolder );
 
-const floorGeometry = new THREE.PlaneGeometry( 4, 4 );
+const floorGeometry = new THREE.PlaneGeometry( 8, 8 );
 const floorMaterial = new THREE.MeshStandardMaterial( {
 	color: 0xeeeeee,
 	roughness: 1.0,
@@ -59,7 +59,8 @@ const geometries = [
 	new THREE.TorusGeometry( 0.2, 0.04, 64, 32 )
 ];
 
-for ( let i = 0; i < 30; i ++ ) {
+const range = 8;
+for ( let i = 0; i < 50; i ++ ) {
 
 	const geometry = geometries[ Math.floor( Math.random() * geometries.length ) ];
 	const material = new THREE.MeshStandardMaterial( {
@@ -70,9 +71,9 @@ for ( let i = 0; i < 30; i ++ ) {
 
 	const object = new THREE.Mesh( geometry, material );
 
-	object.position.x = Math.random() * 4 - 2;
-	object.position.y = Math.random() * 2;
-	object.position.z = Math.random() * 4 - 2;
+	object.position.x = Math.random() * range - range/2;
+	object.position.y = Math.random() * range/2.0;
+	object.position.z = Math.random() * range - range/2;
 
 	object.rotation.x = Math.random() * 2 * Math.PI;
 	object.rotation.y = Math.random() * 2 * Math.PI;
@@ -104,7 +105,7 @@ controller1.addEventListener( 'selectend', onSelectEnd );
 scene.add( controller1 );
 
 // VR Camera Rectile
-var ringGeo = new THREE.RingGeometry( .05, .1, 32 );//.translate( 0, 0, -1 );
+var ringGeo = new THREE.RingGeometry( .01, .02, 32 );//.translate( 0, 0, -1 );
 var ringMat = new THREE.MeshBasicMaterial( { opacity: 0.9, transparent: true } );
 var rectile = new THREE.Mesh( ringGeo, ringMat );
  	rectile.position.set(0, 0, -0.5);
