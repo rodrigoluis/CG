@@ -30,14 +30,9 @@ scene = new THREE.Scene();
 scene.background = new THREE.Color( 0x808080 );
 
 camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.1, 30 );
-	//camera.position.set( 0, 0, 2 );
 const cameraHolder = new THREE.Object3D();
 	cameraHolder.add(camera);
-	//cameraHolder.position.set(0, 0, 3);
 scene.add( cameraHolder );
-// controls = new OrbitControls( camera, container );
-// controls.target.set( 0, 1.6, 0 );
-// controls.update();
 
 const floorGeometry = new THREE.PlaneGeometry( 4, 4 );
 const floorMaterial = new THREE.MeshStandardMaterial( {
@@ -55,10 +50,6 @@ scene.add( new THREE.HemisphereLight( 0x808080, 0x606060 ) );
 const light = new THREE.DirectionalLight( 0xffffff );
 light.position.set( 0, 6, 0 );
 light.castShadow = true;
-light.shadow.camera.top = 2;
-light.shadow.camera.bottom = - 2;
-light.shadow.camera.right = 2;
-light.shadow.camera.left = - 2;
 light.shadow.mapSize.set( 4096, 4096 );
 scene.add( light );
 
@@ -73,7 +64,7 @@ const geometries = [
 	new THREE.TorusGeometry( 0.2, 0.04, 64, 32 )
 ];
 
-for ( let i = 0; i < 20; i ++ ) {
+for ( let i = 0; i < 30; i ++ ) {
 
 	const geometry = geometries[ Math.floor( Math.random() * geometries.length ) ];
 	const material = new THREE.MeshStandardMaterial( {
@@ -98,11 +89,9 @@ for ( let i = 0; i < 20; i ++ ) {
 	object.receiveShadow = true;
 
 	group.add( object );
-
 }
 
 //
-
 renderer = new THREE.WebGLRenderer( { antialias: true } );
 renderer.setPixelRatio( window.devicePixelRatio );
 renderer.setSize( window.innerWidth, window.innerHeight );
@@ -114,17 +103,16 @@ container.appendChild( renderer.domElement );
 document.body.appendChild( VRButton.createButton( renderer ) );
 
 // controllers
-
 controller1 = renderer.xr.getController( 0 );
 controller1.addEventListener( 'selectstart', onSelectStart );
 controller1.addEventListener( 'selectend', onSelectEnd );
 scene.add( controller1 );
 
 // VR Camera Rectile
-var ringGeo = new THREE.RingGeometry( .3, .6, 32 ).translate( 0, 0, - 15 );
+var ringGeo = new THREE.RingGeometry( .1, .2, 32 ).translate( 0, 0, - 15 );
 var ringMat = new THREE.MeshBasicMaterial( { opacity: 0.9, transparent: true } );
 var rectile = new THREE.Mesh( ringGeo, ringMat );
- 	//rectile.position.set(0, 0, -15);
+ 	//rectile.position.set(0, 0, -3);
 controller1.add( rectile );
 
 
@@ -145,12 +133,12 @@ controller1.add( rectile );
 
 //
 
-const geometry = new THREE.BufferGeometry().setFromPoints( [ new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, 0, - 1 ) ] );
-const line = new THREE.Line( geometry );
-line.name = 'line';
-line.scale.z = 5;
+// const geometry = new THREE.BufferGeometry().setFromPoints( [ new THREE.Vector3( 0, 0, 0 ), new THREE.Vector3( 0, 0, - 1 ) ] );
+// const line = new THREE.Line( geometry );
+// line.name = 'line';
+// line.scale.z = 5;
 
-controller1.add( line.clone() );
+//controller1.add( line.clone() );
 // controller2.add( line.clone() );
 
 raycaster = new THREE.Raycaster();
@@ -199,7 +187,7 @@ function intersectObjects( controller ) {
 	// Do not highlight when already selected
 	if ( controller.userData.selected !== undefined ) return;
 
-	const line = controller.getObjectByName( 'line' );
+	//const line = controller.getObjectByName( 'line' );
 	const intersections = getIntersections( controller );
 
 	if ( intersections.length > 0 ) {
@@ -210,11 +198,11 @@ function intersectObjects( controller ) {
 		object.material.emissive.r = 1;
 		intersected.push( object );
 
-		line.scale.z = intersection.distance;
+		//line.scale.z = intersection.distance;
 
 	} else {
 
-		line.scale.z = 5;
+		//line.scale.z = 5;
 
 	}
 
