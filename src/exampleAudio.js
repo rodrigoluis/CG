@@ -71,6 +71,7 @@ audioLoader.load( '../assets/sounds/sampleMusic.mp3', function( buffer ) {
 const windmillSound = new THREE.PositionalAudio( listener );
 audioLoader.load( '../assets/sounds/sampleSound.ogg', function ( buffer ) {
   windmillSound.setBuffer( buffer );
+  windmillSound.setLoop( true );
   //sound1.play(); // Will play when start button is pressed
 } ); // Will be added to the target object
 

@@ -182,11 +182,11 @@ function createWindMill()
 	//-- Create windmill sound --------------------------------------       
 	var listener = new THREE.AudioListener();
 	camera.add( listener );
-	const sound = new THREE.Audio( listener );  
 	const windmillSound = new THREE.PositionalAudio( listener );
 	var audioLoader = new THREE.AudioLoader();
-	audioLoader.load( '../assets/sounds/sampleSound.ogg', function ( buffer ) {
+		audioLoader.load( '../assets/sounds/sampleSound.ogg', function ( buffer ) {
 		windmillSound.setBuffer( buffer );
+		windmillSound.setLoop(true);
 		windmillSound.play(); 
 	} ); 
 
@@ -201,7 +201,7 @@ function createWindMill()
 		});
 		obj = normalizeAndRescale(obj, 8);
 		obj.rotateY(degreesToRadians(-90));				
-		obj.add( sound ); // Add sound to windmill
+		obj.add( windmillSound ); // Add sound to windmill
 	scene.add ( obj );
 
 	// Create animationMixer and push it in the array of mixers
