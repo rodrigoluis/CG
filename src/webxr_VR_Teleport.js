@@ -47,22 +47,23 @@ var controller1 = renderer.xr.getController( 0 );
 	controller1.addEventListener( 'selectend', onSelectEnd );
 cameraHolder.add( controller1 );
 
+controller1.addEventListener
+
 //-- VR Camera Rectile ---------------------------------------------------------------------------
-var ringGeo = new THREE.RingGeometry( .05, .1, 32 );
-var ringMat = new THREE.MeshBasicMaterial( {
-	color:"rgb(255,255,0)", 
-	opacity: 0.9, 
-	transparent: true } );
-var rectile = new THREE.Mesh( ringGeo, ringMat );
- 	rectile.position.set(0, 0, -2);
+const bufflines = new THREE.BufferGeometry().setFromPoints( [ new THREE.Vector3( -0.2, 0, 0 ), new THREE.Vector3( 0.2, 0, 0 ),
+															  new THREE.Vector3( 0, -0.2, 0 ), new THREE.Vector3( 0, 0.2, 0 ) ] );
+const rectile = new THREE.LineSegments( bufflines );
+	rectile.position.set(0, 0, -2);
+	rectile.visible = false;
 controller1.add( rectile );
 
-//-- Create sphere to show where the user will be teleported -------------------------------------
-var sphereGeometry = new THREE.SphereGeometry(0.5, 20, 20);
-var sphereMaterial = new THREE.MeshNormalMaterial();
-var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-	sphere.visible = false;
-scene.add(sphere);
+//-- Create pin to show where the user will be teleported -------------------------------------
+const geometry = new THREE.ConeGeometry( 0.1, 1.0, 20 );
+const material = new THREE.MeshPhongMaterial( {color: "rgb(255,50,50)"} );
+const pin = new THREE.Mesh( geometry, material );	
+	pin.visible = false;
+	pin.rotateX(Math.PI);
+scene.add(pin);
 
 // Create Scene
 createScene();
@@ -81,31 +82,49 @@ function getIntersections( controller )
 	tempMatrix.identity().extractRotation( controller.matrixWorld );
 
 	raycaster.ray.origin.setFromMatrixPosition( controller.matrixWorld );
-	raycaster.ray.direction.set( 0, 0, - 1 ).applyMatrix4( tempMatrix );
+	raycaster.ray.direction.set( 0, 0, -1 ).applyMatrix4( tempMatrix );
 
 	return raycaster.intersectObjects( scene.children );
 }
 
 function onSelectStart( event ) {
-
+	rectile.visible = true;
 	const controller = event.target;
 	intersections = getIntersections( controller );
 
 	if ( intersections.length > 0 ) {
-		rectile.visible = false;
-		const intersection = intersections[ 0 ];
-		sphere.position.set(intersection.point.x, intersection.point.y, intersection.point.z);
-		sphere.visible = true;
+		pin.visible = true;
 	}
 }
 
-function onSelectEnd( ) {
-	rectile.visible = true;
-	sphere.visible = false;
+function pinpointIntersection( controller ) 
+{
+	if ( rectile.visible ) 
+	{
+		let p = new THREE.Vector3();		
+		const intersections = getIntersections( controller );
+		if ( intersections.length > 0 ) {
+			pin.visible = true;			
+			p.copy(intersections[ 0 ].point);
+			pin.position.set(p.x, 1, p.z);				
+		} 		 
+		else
+		{
+			pin.visible = false;			
+		}
+	}
+}
+
+
+function onSelectEnd( event ) {
+	const controller = event.target;
+	intersections = getIntersections( controller );
+	console.log(intersections)
 	if ( intersections.length > 0 ) {
 		const intersection = intersections[ 0 ];
 		cameraHolder.position.set(intersection.point.x, 1.60, intersection.point.z);
 	}
+	rectile.visible = false;
 }
 
 
@@ -115,6 +134,7 @@ function animate() {
 }
 
 function render() {
+	pinpointIntersection( controller1 );	
 	var delta = clock.getDelta(); 
 	for(var i = 0; i<mixer.length; i++) mixer[i].update( delta );
 	renderer.render( scene, camera );
@@ -146,7 +166,7 @@ function createScene()
 
 	// Create Ground Plane
 	var groundPlane = createGroundPlane(60.0, 60.0, 100, 100, "rgb(200,200,150)");
-		groundPlane.rotateX(degreesToRadians(90));
+		groundPlane.rotateX(degreesToRadians(-90));
 		groundPlane.material.map = floor;		
 		groundPlane.material.map.wrapS = THREE.RepeatWrapping;
 		groundPlane.material.map.wrapT = THREE.RepeatWrapping;
