@@ -59,14 +59,6 @@ const rectile = new THREE.LineSegments( bufflines, matNotIntersected );
 	rectile.visible = false;
 controller1.add( rectile );
 
-//-- Create pin to show where the user will be teleported -------------------------------------
-// const geometry = new THREE.ConeGeometry( 0.1, 1.0, 20 );
-// const material = new THREE.MeshPhongMaterial( {color: "rgb(255,50,50)"} );
-// const pin = new THREE.Mesh( geometry, material );	
-// 	pin.visible = false;
-// 	pin.rotateX(Math.PI);
-// scene.add(pin);
-
 // Create Scene
 createScene();
 
@@ -89,40 +81,25 @@ function getIntersections( controller )
 	return raycaster.intersectObjects( scene.children );
 }
 
-function onSelectStart( event ) {
+function onSelectStart( ) {
 	rectile.visible = true;
-	// const controller = event.target;
-	// intersections = getIntersections( controller );
-
-	// if ( intersections.length > 0 ) {
-	// 	pin.visible = true;
-	// }
 }
 
-function pinpointIntersection( controller ) 
+function checkIntersection( controller ) 
 {
 	if ( rectile.visible ) 
 	{
-		let p = new THREE.Vector3();		
 		const intersections = getIntersections( controller );
-		if ( intersections.length > 0 ) {
-			rectile.material = matIntersected;
-			// pin.visible = true;			
-			// p.copy(intersections[ 0 ].point);
-			// pin.position.set(p.x, 1.0, p.z);				
-		} 		 
+		if ( intersections.length > 0 )
+			rectile.material = matIntersected;		
 		else
-		{
-			// pin.visible = false;	
 			rectile.material = matNotIntersected;		
-		}
 	}
 }
 
 function onSelectEnd( event ) {
 	const controller = event.target;
 	intersections = getIntersections( controller );
-	console.log(intersections)
 	if ( intersections.length > 0 ) {
 		const intersection = intersections[ 0 ];
 		// Effectivelly move the camera to the desired position
@@ -137,7 +114,7 @@ function animate() {
 }
 
 function render() {
-	pinpointIntersection( controller1 );	
+	checkIntersection( controller1 );	
 	var delta = clock.getDelta(); 
 	for(var i = 0; i<mixer.length; i++) mixer[i].update( delta );
 	renderer.render( scene, camera );
@@ -150,7 +127,7 @@ function render() {
 //-- Create Scene --------------------------------------------------------------------------------
 function createScene()
 {
-	// Light stuff --------------------------------------------------
+	// Light stuff 
 	const light = new THREE.PointLight(0xaaaaaa);
 		light.position.set(30,30,20);
 		light.castShadow = true;
@@ -162,7 +139,7 @@ function createScene()
 	var ambientLight = new THREE.AmbientLight(0x121212);
 		scene.add(ambientLight);
 
-	// Load all textures --------------------------------------------
+	// Load all textures 
 	var textureLoader = new THREE.TextureLoader();
 		var floor 	= textureLoader.load('../assets/textures/sand.jpg');	
 		var cubeTex = textureLoader.load('../assets/textures/crate.jpg');			
@@ -202,7 +179,7 @@ function createCube(cubeSize, xPos, zPos, texture)
 
 function createWindMill()
 {
-	//-- Create windmill sound --------------------------------------       
+	//-- Create windmill sound       
 	var listener = new THREE.AudioListener();
 	camera.add( listener );
 	const windmillSound = new THREE.PositionalAudio( listener );
