@@ -50,20 +50,22 @@ cameraHolder.add( controller1 );
 controller1.addEventListener
 
 //-- VR Camera Rectile ---------------------------------------------------------------------------
-const bufflines = new THREE.BufferGeometry().setFromPoints( [ new THREE.Vector3( -0.2, 0, 0 ), new THREE.Vector3( 0.2, 0, 0 ),
-															  new THREE.Vector3( 0, -0.2, 0 ), new THREE.Vector3( 0, 0.2, 0 ) ] );
-const rectile = new THREE.LineSegments( bufflines );
-	rectile.position.set(0, 0, -2);
+const bufflines = new THREE.BufferGeometry().setFromPoints( [ new THREE.Vector3( -0.15, 0, 0 ), new THREE.Vector3( 0.15, 0, 0 ),
+															  new THREE.Vector3( 0, -0.15, 0 ), new THREE.Vector3( 0, 0.15, 0 ) ] );
+const matNotIntersected = new THREE.MeshBasicMaterial( {color: "rgb(255,255,255)"} );
+const matIntersected    = new THREE.MeshBasicMaterial( {color: "rgb(255,100,25)"} );
+const rectile = new THREE.LineSegments( bufflines, matNotIntersected );
+	rectile.position.set(0, 0, -2.5);
 	rectile.visible = false;
 controller1.add( rectile );
 
 //-- Create pin to show where the user will be teleported -------------------------------------
-const geometry = new THREE.ConeGeometry( 0.1, 1.0, 20 );
-const material = new THREE.MeshPhongMaterial( {color: "rgb(255,50,50)"} );
-const pin = new THREE.Mesh( geometry, material );	
-	pin.visible = false;
-	pin.rotateX(Math.PI);
-scene.add(pin);
+// const geometry = new THREE.ConeGeometry( 0.1, 1.0, 20 );
+// const material = new THREE.MeshPhongMaterial( {color: "rgb(255,50,50)"} );
+// const pin = new THREE.Mesh( geometry, material );	
+// 	pin.visible = false;
+// 	pin.rotateX(Math.PI);
+// scene.add(pin);
 
 // Create Scene
 createScene();
@@ -89,12 +91,12 @@ function getIntersections( controller )
 
 function onSelectStart( event ) {
 	rectile.visible = true;
-	const controller = event.target;
-	intersections = getIntersections( controller );
+	// const controller = event.target;
+	// intersections = getIntersections( controller );
 
-	if ( intersections.length > 0 ) {
-		pin.visible = true;
-	}
+	// if ( intersections.length > 0 ) {
+	// 	pin.visible = true;
+	// }
 }
 
 function pinpointIntersection( controller ) 
@@ -104,17 +106,18 @@ function pinpointIntersection( controller )
 		let p = new THREE.Vector3();		
 		const intersections = getIntersections( controller );
 		if ( intersections.length > 0 ) {
-			pin.visible = true;			
-			p.copy(intersections[ 0 ].point);
-			pin.position.set(p.x, 1, p.z);				
+			rectile.material = matIntersected;
+			// pin.visible = true;			
+			// p.copy(intersections[ 0 ].point);
+			// pin.position.set(p.x, 1.0, p.z);				
 		} 		 
 		else
 		{
-			pin.visible = false;			
+			// pin.visible = false;	
+			rectile.material = matNotIntersected;		
 		}
 	}
 }
-
 
 function onSelectEnd( event ) {
 	const controller = event.target;
@@ -122,11 +125,11 @@ function onSelectEnd( event ) {
 	console.log(intersections)
 	if ( intersections.length > 0 ) {
 		const intersection = intersections[ 0 ];
+		// Effectivelly move the camera to the desired position
 		cameraHolder.position.set(intersection.point.x, 1.60, intersection.point.z);
 	}
 	rectile.visible = false;
 }
-
 
 //-- Main loop -----------------------------------------------------------------------------------
 function animate() {
