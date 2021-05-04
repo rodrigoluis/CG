@@ -39,16 +39,15 @@ controller1.addEventListener( 'selectend', onSelectEnd );
 scene.add( controller1 );
 
 // VR Camera Rectile
-var ringGeo = new THREE.RingGeometry( .1, .2, 32 );
+var ringGeo = new THREE.RingGeometry( .04, .08, 32 );
 var ringMat = new THREE.MeshBasicMaterial( {
 	color:"rgb(255,255,0)", 
 	opacity: 0.9, 
 	transparent: true } );
 var rectile = new THREE.Mesh( ringGeo, ringMat );
- 	rectile.position.set(0, 0, -2);
+ 	rectile.position.set(0, 0, -2.5);
 controller1.add( rectile );
 
-let message = "Three.js";
 let group = new THREE.Group();
 createScene();
 animate();
@@ -61,9 +60,9 @@ function onSelectStart( event ) {
 		const intersection = intersections[ 0 ];
 		const object = intersection.object;
 		object.material.emissive.b = 1;
-		controller.attach( object );
 		changeFont(object.name + " selected");
 		controller.userData.selected = object;
+		controller.attach( object );
 	}
 }
 
@@ -159,8 +158,9 @@ function createScene()
 		const geometry = geometries[i];
 		const material = new THREE.MeshPhongMaterial( {color: Math.random() * 0xffffff} );
 	
+		let id = i+1;
 		const object = new THREE.Mesh( geometry, material );
-			object.name = "Object" + i;
+			object.name = "Object " + id;
 	
 		object.position.x = i * 2 - 4;
 		object.position.y = 2;
@@ -182,7 +182,7 @@ function changeFont(message)
 	fontLoader.load( '../assets/fonts/helvetiker_regular.typeface.json', function ( font ) 
 	{
 		const matLite = new THREE.MeshBasicMaterial( { color: "rgb(0, 0, 255)" } );
-		const shapes = font.generateShapes( message, 0.2 );
+		const shapes = font.generateShapes( message, 0.1 );
 
 		const geometry = new THREE.ShapeGeometry( shapes );
 		geometry.computeBoundingBox();
