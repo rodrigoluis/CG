@@ -16,7 +16,7 @@ const intersected = [];
 const fontLoader = new THREE.FontLoader();
 let fontGeometry = null;
 
-let camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.1, 50 );
+let camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.1, 20 );
 const cameraHolder = new THREE.Object3D();
 	cameraHolder.add(camera);
 scene.add( cameraHolder );
@@ -126,13 +126,14 @@ function render() {
 //-- Auxiliary Scene Creation function
 function createScene()
 {
-	const light = new THREE.DirectionalLight( 0xffffff );
-	light.position.set( 0, 6, 3 );
-	light.castShadow = true;
-	light.shadow.mapSize.set( 4096, 4096 );
+	const light = new THREE.PointLight( "rgb(255, 255, 255)" );
+		light.position.set( 0, 10, 3 );
+		light.castShadow = true;
+		light.shadow.mapSize.width = 1024; // default
+		light.shadow.mapSize.height = 1024; // default
 	scene.add( light );
 
-	scene.add( new THREE.HemisphereLight( 0x808080, 0x606060 ) );
+	scene.add( new THREE.HemisphereLight( "rgb(80, 80, 80)" ) );
 
 	const floorGeometry = new THREE.PlaneGeometry( 20, 20 );
 	const floorMaterial = new THREE.MeshStandardMaterial( {
