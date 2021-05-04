@@ -47,6 +47,7 @@ var list = {
 				"VR - Panorama": "html/webxr_VR_PanoramaInfo",				
 				"VR - Teleport": "html/webxr_VR_TeleportInfo",
 				"VR - Dragging": "html/webxr_VR_DraggingInfo",				
+				"VR - Labelling":"html/webxr_VR_LabellingInfo",
 			},
 
 		},
