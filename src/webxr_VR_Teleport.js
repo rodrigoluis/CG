@@ -59,10 +59,8 @@ const rectile = new THREE.LineSegments( bufflines, matNotIntersected );
 	rectile.visible = false;
 controller1.add( rectile );
 
-// Create Scene
+//-- Creating Scene and calling the main loop ----------------------------------------------------
 createScene();
-
-// Calling main loop
 animate();
 
 //------------------------------------------------------------------------------------------------

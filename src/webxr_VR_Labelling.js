@@ -1,44 +1,49 @@
+// Imports ---------------------------------------------------------------------------------------
 import * as THREE from '../build/three.module.js';
 import { VRButton } from '../build/jsm/webxr/VRButton.js';
 import {onWindowResize} from "../libs/util/util.js";
 
-let container = document.createElement( 'div' );
-document.body.appendChild( container );
-window.addEventListener( 'resize', onWindowResize );
+//-----------------------------------------------------------------------------------------------
+//-- MAIN SCRIPT --------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------
 
+//--  General globals ---------------------------------------------------------------------------
+let raycaster = new THREE.Raycaster();	// Raycaster to enable selection and dragging
+let group = new THREE.Group(); 			// Objects of the scene will be added in this group
+const intersected = [];					// will be used to help controlling the intersected objects
+
+//-- Renderer and html settings ------------------------------------------------------------------
+let renderer = new THREE.WebGLRenderer( { antialias: true } );
+	renderer.setClearColor(new THREE.Color("rgb(70, 150, 240)"));
+	renderer.setPixelRatio( window.devicePixelRatio );
+	renderer.setSize( window.innerWidth, window.innerHeight );
+	renderer.outputEncoding = THREE.sRGBEncoding;
+	renderer.shadowMap.enabled = true;
+	renderer.xr.enabled = true;
+
+// let container = document.createElement( 'div' );
+// 	container.appendChild( renderer.domElement );
+// 	document.body.appendChild( container );
+	window.addEventListener( 'resize', onWindowResize );
+
+//-- Setting scene and camera --------------------------------------------------------------------
 let scene = new THREE.Scene();
-scene.background = new THREE.Color( 0x808080 );
+let camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.1, 20 );
 
-let raycaster = new THREE.Raycaster();
-const intersected = [];
-
-// Font loader
+//-- Font loader ---------------------------------------------------------------------------------
 const fontLoader = new THREE.FontLoader();
 let fontGeometry = null;
 
-let camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.1, 20 );
-const cameraHolder = new THREE.Object3D();
-	cameraHolder.add(camera);
-scene.add( cameraHolder );
-
-//
-let renderer = new THREE.WebGLRenderer( { antialias: true } );
-renderer.setPixelRatio( window.devicePixelRatio );
-renderer.setSize( window.innerWidth, window.innerHeight );
-renderer.outputEncoding = THREE.sRGBEncoding;
-renderer.shadowMap.enabled = true;
-renderer.xr.enabled = true;
-container.appendChild( renderer.domElement );
-
+//-- Create VR button and settings ---------------------------------------------------------------
 document.body.appendChild( VRButton.createButton( renderer ) );
 
 // controllers
 let controller1 = renderer.xr.getController( 0 );
-controller1.addEventListener( 'selectstart', onSelectStart );
-controller1.addEventListener( 'selectend', onSelectEnd );
+	controller1.addEventListener( 'selectstart', onSelectStart );
+	controller1.addEventListener( 'selectend', onSelectEnd );
 scene.add( controller1 );
 
-// VR Camera Rectile
+// VR Camera Rectile 
 var ringGeo = new THREE.RingGeometry( .04, .08, 32 );
 var ringMat = new THREE.MeshBasicMaterial( {
 	color:"rgb(255,255,0)", 
@@ -48,9 +53,13 @@ var rectile = new THREE.Mesh( ringGeo, ringMat );
  	rectile.position.set(0, 0, -2.5);
 controller1.add( rectile );
 
-let group = new THREE.Group();
+//-- Creating Scene and calling the main loop ----------------------------------------------------
 createScene();
 animate();
+
+//------------------------------------------------------------------------------------------------
+//-- FUNCTIONS -----------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------
 
 function onSelectStart( event ) {
 	const controller = event.target;
@@ -60,7 +69,7 @@ function onSelectStart( event ) {
 		const intersection = intersections[ 0 ];
 		const object = intersection.object;
 		object.material.emissive.b = 1;
-		changeFont(object.name + " selected");
+		changeFont(object.name + " selected"); // This function add text on a specific position in the VR environment
 		controller.userData.selected = object;
 		controller.attach( object );
 	}
@@ -92,7 +101,6 @@ function getIntersections( controller ) {
 }
 
 function intersectObjects( controller ) {
-	// Do not highlight when already selected
 	if ( controller.userData.selected !== undefined ) return;
 
 	const intersections = getIntersections( controller );
@@ -176,7 +184,7 @@ function createScene()
 	scene.add( group );
 }
 
-
+//-- Function to create and render the text in the VR environment --------------------------------
 function changeFont(message)
 {
 	if(fontGeometry) scene.remove( fontGeometry );
@@ -186,6 +194,7 @@ function changeFont(message)
 		const shapes = font.generateShapes( message, 0.1 );
 
 		const geometry = new THREE.ShapeGeometry( shapes );
+		// Compute bounding box to help centralize the text
 		geometry.computeBoundingBox();
 		const xMid = - 0.5 * ( geometry.boundingBox.max.x - geometry.boundingBox.min.x );
 		geometry.translate( xMid, 2, 0 );
