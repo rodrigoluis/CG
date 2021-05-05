@@ -46,8 +46,6 @@ var controller1 = renderer.xr.getController( 0 );
 	controller1.addEventListener( 'selectend', onSelectEnd );
 cameraHolder.add( controller1 );
 
-controller1.addEventListener
-
 //-- VR Camera Rectile ---------------------------------------------------------------------------
 const bufflines = new THREE.BufferGeometry().setFromPoints( [ new THREE.Vector3( -0.15, 0, 0 ), new THREE.Vector3( 0.15, 0, 0 ),
 															  new THREE.Vector3( 0, -0.15, 0 ), new THREE.Vector3( 0, 0.15, 0 ) ] );

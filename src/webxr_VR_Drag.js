@@ -3,30 +3,30 @@ import * as THREE from '../build/three.module.js';
 import { VRButton } from '../build/jsm/webxr/VRButton.js';
 import {onWindowResize} from "../libs/util/util.js";
 
-let container = document.createElement( 'div' );
-document.body.appendChild( container );
+//-----------------------------------------------------------------------------------------------
+//-- MAIN SCRIPT --------------------------------------------------------------------------------
+//-----------------------------------------------------------------------------------------------
+
+//--  General globals ---------------------------------------------------------------------------
+let raycaster = new THREE.Raycaster();	// Raycaster to enable selection and dragging
+let group = new THREE.Group(); 			// Objects of the scene will be added in this group
+const intersected = [];					// will be used to help controlling the intersected objects
 window.addEventListener( 'resize', onWindowResize );
 
-let scene = new THREE.Scene();
-scene.background = new THREE.Color( 0x808080 );
-
-let raycaster = new THREE.Raycaster();
-const intersected = [];
-
-let camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.1, 30 );
-const cameraHolder = new THREE.Object3D();
-	cameraHolder.add(camera);
-scene.add( cameraHolder );
-
-//
+//-- Renderer and html settings ------------------------------------------------------------------
 let renderer = new THREE.WebGLRenderer( { antialias: true } );
-renderer.setPixelRatio( window.devicePixelRatio );
-renderer.setSize( window.innerWidth, window.innerHeight );
-renderer.outputEncoding = THREE.sRGBEncoding;
-renderer.shadowMap.enabled = true;
-renderer.xr.enabled = true;
-container.appendChild( renderer.domElement );
+	renderer.setClearColor(new THREE.Color("rgb(70, 150, 240)"));
+	renderer.setPixelRatio( window.devicePixelRatio );
+	renderer.setSize( window.innerWidth, window.innerHeight );
+	renderer.outputEncoding = THREE.sRGBEncoding;
+	renderer.shadowMap.enabled = true;
+	renderer.xr.enabled = true;
 
+//-- Setting scene and camera --------------------------------------------------------------------
+let scene = new THREE.Scene();
+let camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.1, 30 );
+
+//-- Create VR button and settings ---------------------------------------------------------------
 document.body.appendChild( VRButton.createButton( renderer ) );
 
 // controllers
@@ -45,9 +45,14 @@ var rectile = new THREE.Mesh( ringGeo, ringMat );
  	rectile.position.set(0, 0, -1);
 controller1.add( rectile );
 
-let group = new THREE.Group();
+//-- Creating Scene and calling the main loop ----------------------------------------------------
 createScene();
 animate();
+
+
+//------------------------------------------------------------------------------------------------
+//-- FUNCTIONS -----------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------
 
 function onSelectStart( event ) {
 	const controller = event.target;
@@ -101,7 +106,6 @@ function cleanIntersected() {
 	}
 }
 
-//
 function animate() {
 	renderer.setAnimationLoop( render );
 }
