@@ -1,16 +1,17 @@
-// Imports ---------------------------------------------------------------------------------------
+//-- Imports -------------------------------------------------------------------------------------
 import * as THREE from '../build/three.module.js';
 import { VRButton } from '../build/jsm/webxr/VRButton.js';
 import {onWindowResize} from "../libs/util/util.js";
 
-//-----------------------------------------------------------------------------------------------
-//-- MAIN SCRIPT --------------------------------------------------------------------------------
-//-----------------------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------
+//-- MAIN SCRIPT ---------------------------------------------------------------------------------
+//------------------------------------------------------------------------------------------------
 
-//--  General globals ---------------------------------------------------------------------------
+//--  General globals ----------------------------------------------------------------------------
 let raycaster = new THREE.Raycaster();	// Raycaster to enable selection and dragging
 let group = new THREE.Group(); 			// Objects of the scene will be added in this group
 const intersected = [];					// will be used to help controlling the intersected objects
+window.addEventListener( 'resize', onWindowResize );
 
 //-- Renderer and html settings ------------------------------------------------------------------
 let renderer = new THREE.WebGLRenderer( { antialias: true } );
@@ -20,11 +21,6 @@ let renderer = new THREE.WebGLRenderer( { antialias: true } );
 	renderer.outputEncoding = THREE.sRGBEncoding;
 	renderer.shadowMap.enabled = true;
 	renderer.xr.enabled = true;
-
-// let container = document.createElement( 'div' );
-// 	container.appendChild( renderer.domElement );
-// 	document.body.appendChild( container );
-	window.addEventListener( 'resize', onWindowResize );
 
 //-- Setting scene and camera --------------------------------------------------------------------
 let scene = new THREE.Scene();

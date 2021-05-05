@@ -1,4 +1,4 @@
-// Imports
+//-- Imports -------------------------------------------------------------------------------------
 import * as THREE from '../build/three.module.js';
 import { VRButton } from '../build/jsm/webxr/VRButton.js';
 import {GLTFLoader} from '../build/jsm/loaders/GLTFLoader.js'
@@ -26,7 +26,6 @@ let renderer = new THREE.WebGLRenderer();
 	renderer.xr.enabled = true;
 	renderer.outputEncoding = THREE.sRGBEncoding;
 	renderer.shadowMap.enabled = true;
-document.body.appendChild( renderer.domElement );
 
 //-- Setting scene and camera -------------------------------------------------------------------
 let scene = new THREE.Scene();
