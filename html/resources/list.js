@@ -30,24 +30,24 @@ var list = {
 				"Main Options": "html/textureOptionsInfo",
 				"Textured External Objects": "html/textureExternalObjectsInfo",
 			},
-		},
-		"Advanced Topics": {
 			"Raytracing":  {
 				"Example 1": "html/raytracingExample1Info",
 				"Example 2": "html/raytracingExample2Info",
-			},
-			"Augmented & Virtual Reality":  {
+			},			
+		},
+		"XR": {
+			"AR & VR with external libs":  {
 				"VR - Primitives": "html/VR_BasicInfo",
 				"VR - Panorama": "html/VR_PanoramaInfo",
 				"VR - External Models": "html/VR_ExternalModelInfo",
 				"AR - Fiducial Marker": "html/AR_BasicInfo",	
 			},
 			"AR & VR with WebXR":  {
-				"AR - Hit and Build": "html/webxr_AR_HitAndBuildInfo",
 				"VR - Panorama": "html/webxr_VR_PanoramaInfo",				
 				"VR - Teleport": "html/webxr_VR_TeleportInfo",
 				"VR - Dragging": "html/webxr_VR_DraggingInfo",				
 				"VR - Labelling":"html/webxr_VR_LabellingInfo",
+				"AR - Hit and Build": "html/webxr_AR_HitAndBuildInfo",				
 			},
 
 		},

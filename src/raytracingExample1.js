@@ -3,22 +3,17 @@ import {RaytracingRenderer} from '../libs/other/raytracingRenderer.js';
 import {degreesToRadians} 	from '../libs/util/util.js';
 
 var scene = new THREE.Scene();    // Create main scene
-var controls, scene, renderer;
-
-var container = document.createElement( 'div' );
-document.body.appendChild( container );
-
-var scene = new THREE.Scene();
 
 // The canvas is in the XY plane.
 // Hint: put the camera in the positive side of the Z axis and the
 // objects in the negative side
-var camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 500 );
-camera.position.z = 7;
-camera.position.y = 0.5;
+var camera = new THREE.PerspectiveCamera( 55, window.innerWidth / window.innerHeight, 1, 10 );
+	camera.position.z = 5;
 
-renderer = new RaytracingRenderer(window.innerWidth, window.innerHeight, 32, camera);
-container.appendChild( renderer.domElement );
+var renderer = new RaytracingRenderer(window.innerWidth, window.innerHeight, 32, camera);
+var container = document.createElement( 'div' );
+	document.body.appendChild( container );
+	container.appendChild( renderer.domElement );
 
 // environment
 var planeGeometry = new THREE.BoxGeometry( 10, .1, 5 );

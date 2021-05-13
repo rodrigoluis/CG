@@ -26,12 +26,10 @@
 		// Hint: put the camera in the positive side of the Z axis and the
 		// objects in the negative side
 		var camera = new THREE.PerspectiveCamera( 60, window.innerWidth / window.innerHeight, 1, 500 );
-		camera.position.z = 7;
-		camera.position.y = 0.5;
+		camera.position.z = 5;
 
 		// Setting the ray tracer
 		renderer = new THREE.RaytracingRenderer(window.innerWidth, window.innerHeight, 32, camera);
-		container.appendChild( renderer.domElement );
 		</code>
 
 		<p>When adding objects we must carefully set material parameters. In the code fragment below we set a phong material highly specular and with mirror effect used in the yellow sphere. We also set a true mirror material (black color, white specular) and used in the center box.</p>
