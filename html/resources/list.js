@@ -4,10 +4,10 @@ var list = {
 			"Basics":  {
 				"Basic Scene": "html/basicSceneInfo",
 				"Using the keyboard": "html/keyboardExampleInfo",
-				"Projection": "html/projectionInfo",
-				"Virtual Camera": "html/virtualCameraInfo",				
 				"Geometric Transformations 1": "html/geometricTransformationInfo",
 				"Geometric Transformations 2": "html/geometricTransformation2Info",
+				"Projection": "html/projectionInfo",
+				"Virtual Camera": "html/virtualCameraInfo",				
 			},
 			"Animations":  {
 				"Basic": "html/animationInfo",
