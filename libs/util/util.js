@@ -408,7 +408,7 @@ export function addDefaultCubeAndSphere(scene) {
 }
 
 /**
- * Add a small and simple ground plane. Width and Height are in X and Y
+ * Create a small and simple ground plane. Width and Height are in X and Y
  */
 export function createGroundPlane(width, height, widthSegments = 10, heightSegments = 10, gcolor = null)
 {
@@ -417,11 +417,40 @@ export function createGroundPlane(width, height, widthSegments = 10, heightSegme
   var planeGeometry = new THREE.PlaneGeometry(width, height, widthSegments, heightSegments);
   var planeMaterial = new THREE.MeshLambertMaterial({color:gcolor, side:THREE.DoubleSide});
   var plane = new THREE.Mesh(planeGeometry, planeMaterial);
-  plane.receiveShadow = true;
+    plane.receiveShadow = true;
 
   return plane;
 }
 
+/**
+ * Create a ground plane that has a wireframe over it
+ */
+export function createGroundPlaneWired(width, height, widthSegments = 10, heightSegments = 10, gcolor = null)
+{
+  if(!gcolor) gcolor = "rgb(60, 30, 150)";  
+  
+  //---------------------------------------------------------------------------------------
+  // create the ground plane with wireframe
+  var planeGeometry = new THREE.PlaneGeometry(width, height, widthSegments, heightSegments);
+    planeGeometry.translate(0.0, 0.0, -0.02); // To avoid conflict with the axeshelper
+  var planeMaterial = new THREE.MeshPhongMaterial({
+    color: gcolor,
+    polygonOffset: true,
+    polygonOffsetFactor: 1, // positive value pushes polygon further away
+    polygonOffsetUnits: 1
+  });
+  
+  var wireframe = new THREE.WireframeGeometry( planeGeometry );
+    var line = new THREE.LineSegments( wireframe );
+    line.material.color.setStyle( "rgb(150, 150, 150)" );  
+
+  var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+    plane.receiveShadow = true;  
+    plane.add(line);
+    plane.rotateX(-Math.PI/2);
+  
+  return plane;
+}
 
 /**
  * Add a simple ground plance to the provided scene
