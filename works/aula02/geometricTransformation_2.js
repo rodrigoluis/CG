@@ -86,7 +86,9 @@ function rotateCylinder()
   c3.matrix.identity();
 
   // Will execute T1 and then R1
-  c1.matrix.multiply(mat4.makeRotationZ(angle[0])); // R1
+   /*Pra rodar em Y */
+  c1.matrix.multiply(mat4.makeRotationY(angle[3]));
+  c1.matrix.multiply(mat4.makeRotationZ(angle[0])); // R1 
   c1.matrix.multiply(mat4.makeTranslation(0.0, 1.0, 0.0)); // T1
   
   // Just need to translate the sphere to the right position
@@ -109,11 +111,13 @@ function buildInterface()
     this.joint1 = 270;
     this.joint2 = 0;
     this.joint3 = 0;
+    this.joint4 = 0;
 
     this.rotate = function(){
       angle[0] = degreesToRadians(this.joint1);
       angle[1] = degreesToRadians(this.joint2);
       angle[2] = degreesToRadians(this.joint3);
+      angle[3] = degreesToRadians(this.joint4);
       rotateCylinder();
     };
   };
@@ -122,7 +126,10 @@ function buildInterface()
   var gui = new GUI();
   gui.add(controls, 'joint1', 0, 360)
     .onChange(function(e) { controls.rotate() })
-    .name("First Joint");
+    .name("First Joint in Z");
+gui.add(controls, 'joint4', 0, 360)
+    .onChange(function(e) { controls.rotate() })
+    .name("First Joint in Y");
   gui.add(controls, 'joint2', 0, 360)
     .onChange(function(e) { controls.rotate() })
     .name("Second Joint");
