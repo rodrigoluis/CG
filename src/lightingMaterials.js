@@ -7,7 +7,7 @@ import KeyboardState from '../libs/util/KeyboardState.js';
 import {initRenderer, 
         InfoBox,
         SecondaryBox,
-        initDefaultLighting,
+        initDefaultSpotlight,
         createGroundPlane,
         createLightSphere,        
         onWindowResize, 
@@ -16,7 +16,7 @@ import {initRenderer,
 var scene = new THREE.Scene();    // Create main scene
 var stats = new Stats();          // To show FPS information
 var lightPosition = new THREE.Vector3(1.7, 0.8, 1.1);
-var light = initDefaultLighting(scene, lightPosition); // Use default light
+var light = initDefaultSpotlight(scene, lightPosition); // Use default light
 var lightSphere = createLightSphere(scene, 0.1, 10, 10, lightPosition);
 
 var renderer = initRenderer();    // View function in util/utils

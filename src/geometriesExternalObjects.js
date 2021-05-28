@@ -8,7 +8,7 @@ import {PLYLoader} from '../build/jsm/loaders/PLYLoader.js';
 import {MTLLoader} from '../build/jsm/loaders/MTLLoader.js';
 import {initRenderer, 
         SecondaryBox,
-        initDefaultLighting,
+        initDefaultBasicLight,
         createGroundPlane,
         onWindowResize, 
         getMaxSize,
@@ -17,11 +17,7 @@ import {initRenderer,
 var scene = new THREE.Scene();    // Create main scene
 var stats = new Stats();          // To show FPS information
 
-var clock = new THREE.Clock();
-var light = initDefaultLighting(scene, new THREE.Vector3(2, 3, 2)); // Use default light
-var lightSphere = createSphere(0.1, 10, 10);
-  lightSphere.position.copy(light.position);
-scene.add(lightSphere);
+initDefaultBasicLight(scene, true); // Use default light
 
 var renderer = initRenderer();    // View function in util/utils
   renderer.setClearColor("rgb(30, 30, 42)");

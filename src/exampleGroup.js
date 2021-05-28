@@ -4,7 +4,7 @@ import {TrackballControls} from '../build/jsm/controls/TrackballControls.js';
 import KeyboardState from '../libs/util/KeyboardState.js';
 import {initRenderer, 
         InfoBox,
-        initDefaultLighting,
+        initDefaultSpotlight,
         createGroundPlane,
         onWindowResize, 
         degreesToRadians} from "../libs/util/util.js";
@@ -20,7 +20,7 @@ var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHei
   camera.up.set( 0, 1, 0 );
 
 var clock = new THREE.Clock();
-var light = initDefaultLighting(scene, new THREE.Vector3(35, 20, 30)); // Use default light
+var light = initDefaultSpotlight(scene, new THREE.Vector3(35, 20, 30)); // Use default light
 var lightSphere = createSphere(0.3, 10, 10);
   lightSphere.position.copy(light.position);
 scene.add(lightSphere);

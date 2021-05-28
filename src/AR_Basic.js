@@ -2,7 +2,7 @@ import * as THREE from  '../build/three.module.js';
 import {GUI} from       '../build/jsm/libs/dat.gui.module.js';
 import {ARjs}    from  '../libs/AR/ar.js';
 import {InfoBox,
-		initDefaultLighting} from "../libs/util/util.js";
+		initDefaultSpotlight} from "../libs/util/util.js";
 
 
 var renderer	= new THREE.WebGLRenderer({antialias: true, alpha: true});
@@ -139,7 +139,7 @@ onRenderFcts.push(function(){
 
 function createTorus()
 {
-	var light = initDefaultLighting(scene, new THREE.Vector3(25, 30, 20)); // Use default light
+	var light = initDefaultSpotlight(scene, new THREE.Vector3(25, 30, 20)); // Use default light
 	var geometry = new THREE.TorusGeometry(0.6, 0.2, 20, 20, Math.PI * 2);
 	var objectMaterial = new THREE.MeshPhongMaterial({
 		color:"rgb(255,0,0)",     // Main color of the object

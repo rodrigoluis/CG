@@ -1,7 +1,7 @@
 import * as THREE from '../build/three.module.js';
 import {TeapotGeometry} from '../build/jsm/geometries/TeapotGeometry.js';
 import { ARButton } from 	 '../build/jsm/webxr/ARButton.js';
-import {initDefaultLighting,
+import {initDefaultSpotlight,
 		onWindowResize} from "../libs/util/util.js";
 
 //-------------------------------------------------------------------------------------------------
@@ -17,7 +17,7 @@ document.body.appendChild( container );
 window.addEventListener( 'resize', onWindowResize );
 
 scene = new THREE.Scene();
-initDefaultLighting(scene, new THREE.Vector3(2, 4, 2));
+initDefaultSpotlight(scene, new THREE.Vector3(2, 4, 2));
 camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 20 );
 
 //

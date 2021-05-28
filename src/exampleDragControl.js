@@ -4,7 +4,7 @@ import {DragControls} from '../build/jsm/controls/DragControls.js'
 import KeyboardState from '../libs/util/KeyboardState.js';
 import {initRenderer, 
         initCamera,        
-        initDefaultLighting,
+        initDefaultSpotlight,
         SecondaryBox,        
         createGroundPlane, 
         InfoBox,
@@ -18,7 +18,7 @@ renderer.setClearColor("rgb(30, 30, 42)");
 
 var camera = initCamera(new THREE.Vector3(0, -33, 15)); // Init camera in this position
 
-initDefaultLighting(scene, new THREE.Vector3(30, -30, 30)); // Use default light
+initDefaultSpotlight(scene, new THREE.Vector3(30, -30, 30)); // Use default light
 
 var groundPlane = createGroundPlane(40, 40, 100, 100);
 scene.add(groundPlane);

@@ -3,7 +3,7 @@ import Stats from       '../build/jsm/libs/stats.module.js';
 import {GUI} from       '../build/jsm/libs/dat.gui.module.js';
 import {TrackballControls} from '../build/jsm/controls/TrackballControls.js';
 import {initRenderer, 
-        initDefaultLighting,
+        initDefaultSpotlight,
         onWindowResize} from "../libs/util/util.js";
 
 var scene = new THREE.Scene();    // Create main scene
@@ -17,7 +17,7 @@ var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHei
   camera.up.set( 0, 1, 0 );
 
 var lightPosition = new THREE.Vector3(0.0, 0.0, 5.0);
-var light = initDefaultLighting(scene, lightPosition); // Use default light
+var light = initDefaultSpotlight(scene, lightPosition); // Use default light
 
 // Enable mouse rotation, pan, zoom etc.
 var trackballControls = new TrackballControls( camera, renderer.domElement );
