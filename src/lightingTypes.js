@@ -126,14 +126,16 @@ function setSpotLight(position)
 function setDirectionalLighting(position)
 {
   dirLight.position.copy(position);
-  dirLight.shadow.mapSize.width = 2048;
-  dirLight.shadow.mapSize.height = 2048;
+  dirLight.shadow.mapSize.width = 512;
+  dirLight.shadow.mapSize.height = 512;
   dirLight.castShadow = true;
 
-  dirLight.shadow.camera.left = -200;
-  dirLight.shadow.camera.right = 200;
-  dirLight.shadow.camera.top = 200;
-  dirLight.shadow.camera.bottom = -200;
+  dirLight.shadow.camera.near = 1;
+  dirLight.shadow.camera.far = 20;
+  dirLight.shadow.camera.left = -5;
+  dirLight.shadow.camera.right = 5;
+  dirLight.shadow.camera.top = 5;
+  dirLight.shadow.camera.bottom = -5;
   dirLight.name = "Direction Light";
   dirLight.visible = false;
 

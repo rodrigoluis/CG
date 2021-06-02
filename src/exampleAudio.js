@@ -4,7 +4,7 @@ import Stats from '../build/jsm/libs/stats.module.js';
 import {TrackballControls} from '../build/jsm/controls/TrackballControls.js';
 import {GLTFLoader} from '../build/jsm/loaders/GLTFLoader.js'
 import {initRenderer, 
-        initDefaultLighting, 
+        initDefaultSpotlight, 
         createGroundPlane,
         degreesToRadians,
         getMaxSize,
@@ -13,7 +13,7 @@ import {initRenderer,
 var scene = new THREE.Scene();    // Create main scene
 var clock = new THREE.Clock();
 var stats = new Stats();          // To show FPS information
-var light = initDefaultLighting(scene, new THREE.Vector3(2, 4, 2)); // Use default light
+var light = initDefaultSpotlight(scene, new THREE.Vector3(2, 4, 2)); // Use default light
 
 var renderer = initRenderer();    // View function in util/utils
   renderer.setClearColor("rgb(30, 30, 42)");

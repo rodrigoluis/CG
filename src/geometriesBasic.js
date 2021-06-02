@@ -4,7 +4,7 @@ import {GUI} from       '../build/jsm/libs/dat.gui.module.js';
 import {TrackballControls} from '../build/jsm/controls/TrackballControls.js';
 import KeyboardState from '../libs/util/KeyboardState.js';
 import {initRenderer, 
-        initDefaultLighting,
+        initDefaultSpotlight,
         createGroundPlane,
         onWindowResize, 
         degreesToRadians} from "../libs/util/util.js";
@@ -20,7 +20,7 @@ var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHei
   camera.position.set(5,15,30);
   camera.up.set( 0, 1, 0 );
 
-var light = initDefaultLighting(scene, new THREE.Vector3(25, 30, 20)); // Use default light
+var light = initDefaultSpotlight(scene, new THREE.Vector3(25, 30, 20)); // Use default light
 
 // Listen window size changes
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );

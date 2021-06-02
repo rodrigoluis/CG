@@ -6,7 +6,7 @@ import {initRenderer,
         initCamera, 
         initTrackballControls,
         SecondaryBox,
-        initDefaultLighting,
+        initDefaultSpotlight,
         onWindowResize, 
         lightFollowingCamera} from "../libs/util/util.js";
 
@@ -15,7 +15,7 @@ var stats = new Stats();          // To show FPS information
 
 var renderer = initRenderer();    // View function in util/utils
 var camera = initCamera(new THREE.Vector3(0, 0, 30)); // Init camera in this position
-var light = initDefaultLighting(scene, new THREE.Vector3(0, 0, 30)); // Use default light
+var light = initDefaultSpotlight(scene, new THREE.Vector3(0, 0, 30)); // Use default light
 
 // Enable mouse rotation, pan, zoom etc.
 var trackballControls = new TrackballControls( camera, renderer.domElement );

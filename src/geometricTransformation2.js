@@ -4,18 +4,17 @@ import {GUI} from       '../build/jsm/libs/dat.gui.module.js';
 import {TrackballControls} from '../build/jsm/controls/TrackballControls.js';
 import {initRenderer, 
         initCamera, 
-        initDefaultLighting,
         onWindowResize, 
         degreesToRadians, 
-        lightFollowingCamera} from "../libs/util/util.js";
+        initDefaultBasicLight} from "../libs/util/util.js";
 
         
 var scene = new THREE.Scene();    // Create main scene
 var stats = new Stats();          // To show FPS information
 var renderer = initRenderer();    // View function in util/utils
 var camera = initCamera(new THREE.Vector3(7, 7, 7)); // Init camera in this position
-var light  = initDefaultLighting(scene, new THREE.Vector3(7, 7, 7));
 var trackballControls = new TrackballControls( camera, renderer.domElement );
+initDefaultBasicLight(scene);
 
 // Set angles of rotation
 var angle = [-1.57, 0]; // In degreesToRadians
@@ -102,10 +101,10 @@ function buildInterface()
   // GUI interface
   var gui = new GUI();
   gui.add(controls, 'joint1', 0, 360)
-    .onChange(function(e) { controls.rotate() })
+    .onChange(function() { controls.rotate() })
     .name("First Joint");
   gui.add(controls, 'joint2', 0, 360)
-    .onChange(function(e) { controls.rotate() })
+    .onChange(function() { controls.rotate() })
     .name("Second Joint");
 }
 
@@ -114,7 +113,6 @@ function render()
   stats.update(); // Update FPS
   trackballControls.update();
   rotateCylinder();
-  lightFollowingCamera(light, camera);
   requestAnimationFrame(render); // Show events
   renderer.render(scene, camera) // Render scene
 }
