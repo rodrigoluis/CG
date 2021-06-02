@@ -1,0 +1,5 @@
+{
+  "dependencies": {
+    "@tweenjs/tween.js": "github:tweenjs/tween.js"
+  }
+}
