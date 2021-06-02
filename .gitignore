@@ -3,4 +3,6 @@ alunosMelhoresTrabalhos/
 exercises/
 tests/
 .vscode/
+.gitignore
 README_UPDATE
+indexBasic.html
