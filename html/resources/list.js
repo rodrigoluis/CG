@@ -56,7 +56,9 @@ var list = {
 				"Group Geometry": "html/exampleGroupInfo",
 				"First Person": "html/exampleFirstPersonInfo",
 				"Drag Control": "html/exampleDragControlInfo",
-				"Audio Example": "html/exampleAudioInfo",				
+				"Fly Controls":"html/exampleFlyControlInfo",				
+				"Audio": "html/exampleAudioInfo",
+
 			},
 		},
 	},
