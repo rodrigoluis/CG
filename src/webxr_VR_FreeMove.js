@@ -24,14 +24,12 @@ let renderer = new THREE.WebGLRenderer();
 //-- Setting scene and camera -------------------------------------------------------------------
 let scene = new THREE.Scene();
 let camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, .1, 1000 );
-let moveCamera;
+let moveCamera; // Move when a button is pressed 
 
 //-- 'Camera Holder' to help moving the camera
 const cameraHolder = new THREE.Object3D();
-	cameraHolder.position.set(0.0, 0.0, 0.0);
-scene.add( cameraHolder );
 cameraHolder.add(camera);
-
+scene.add( cameraHolder );
 //-- Create VR button and settings ---------------------------------------------------------------
 document.body.appendChild( VRButton.createButton( renderer ) );
 
@@ -53,27 +51,34 @@ function move()
 {
 	if(moveCamera)
 	{
+		// Get Camera Rotation
 		let quaternion = new THREE.Quaternion();
 		quaternion = camera.quaternion;
-		var vec = new THREE.Vector3(0, 0, -0.1);
-		vec.applyQuaternion(quaternion);
-		cameraHolder.translateX(vec.x);
-		cameraHolder.translateY(vec.y);
-		cameraHolder.translateZ(vec.z);	
+
+		// Get direction to translate from quaternion
+		var moveTo = new THREE.Vector3(0, 0, -0.1);
+		moveTo.applyQuaternion(quaternion);
+
+		// Move the camera Holder to the computed direction
+		cameraHolder.translateX(moveTo.x);
+		cameraHolder.translateY(moveTo.y);
+		cameraHolder.translateZ(moveTo.z);	
 	}
 }
 
-function onSelectStart( ) {
+function onSelectStart( ) 
+{
 	moveCamera = true;
 }
 
-
-function onSelectEnd( event ) {
+function onSelectEnd( ) 
+{
 	moveCamera = false;
 }
 
 //-- Main loop -----------------------------------------------------------------------------------
-function animate() {
+function animate() 
+{
 	renderer.setAnimationLoop( render );
 }
 
@@ -107,7 +112,7 @@ function createScene()
 		var cubeTex = textureLoader.load('../assets/textures/crate.jpg');			
 
 	// Create Ground Plane
-	var groundPlane = createGroundPlane(60.0, 60.0, 100, 100, "rgb(200,200,150)");
+	var groundPlane = createGroundPlane(80.0, 80.0, 100, 100, "rgb(200,200,150)");
 		groundPlane.rotateX(degreesToRadians(-90));
 		groundPlane.material.map = floor;		
 		groundPlane.material.map.wrapS = THREE.RepeatWrapping;
