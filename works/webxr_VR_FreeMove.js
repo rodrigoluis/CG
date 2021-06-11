@@ -31,7 +31,7 @@ let renderer = new THREE.WebGLRenderer();
 
 //-- Setting scene and camera -------------------------------------------------------------------
 let scene = new THREE.Scene();
-let camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, .1, 1000 );
+let camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, .1, 5000 );
 let moveCamera; // Move when a button is pressed 
 
 //-- 'Camera Holder' to help moving the camera
@@ -64,7 +64,7 @@ function move()
 		quaternion = camera.quaternion;
 
 		// Get direction to translate from quaternion
-		var moveTo = new THREE.Vector3(0, 0, -10);
+		var moveTo = new THREE.Vector3(0, 0, -1.5);
 		moveTo.applyQuaternion(quaternion);
 
 		// Move the camera Holder to the computed direction
