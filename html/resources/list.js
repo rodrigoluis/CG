@@ -45,6 +45,7 @@ var list = {
 			"AR & VR with WebXR":  {
 				"VR - Panorama": "html/webxr_VR_PanoramaInfo",				
 				"VR - Teleport": "html/webxr_VR_TeleportInfo",
+				"VR - Free Move": "html/webxr_VR_FreeMoveInfo",				
 				"VR - Dragging": "html/webxr_VR_DraggingInfo",				
 				"VR - Labelling":"html/webxr_VR_LabellingInfo",
 				"AR - Hit and Build": "html/webxr_AR_HitAndBuildInfo",				
@@ -56,7 +57,9 @@ var list = {
 				"Group Geometry": "html/exampleGroupInfo",
 				"First Person": "html/exampleFirstPersonInfo",
 				"Drag Control": "html/exampleDragControlInfo",
-				"Audio Example": "html/exampleAudioInfo",				
+				"Fly Controls":"html/exampleFlyControlInfo",				
+				"Audio": "html/exampleAudioInfo",
+
 			},
 		},
 	},
