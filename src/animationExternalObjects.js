@@ -143,7 +143,7 @@ function buildInterface()
       playAction = !playAction;
     };
     this.onViewAxes = function(){
-      axesHelper.visible = this.viewAxes;
+      axesHelper.visible = !this.viewAxes;
     };
   };
 
