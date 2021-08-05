@@ -1,6 +1,5 @@
 import * as THREE from  '../build/three.module.js';
 import { FlyControls } from '../build/jsm/controls/FlyControls.js';
-import {GUI} from       '../build/jsm/libs/dat.gui.module.js';
 import Stats from '../build/jsm/libs/stats.module.js';
 import KeyboardState from '../libs/util/KeyboardState.js';        
 import {initRenderer,
@@ -10,14 +9,12 @@ import {initRenderer,
         InfoBox,
         createGroundPlane} from "../libs/util/util.js";
 
-var scene = new THREE.Scene();    // Create main scene
+var scene = new THREE.Scene();    
 const clock = new THREE.Clock();
 
 const container = document.getElementById( 'container' );
 const stats = new Stats();
 container.appendChild( stats.dom );
-
-setLight();
 
 var renderer = initRenderer();    // View function in util/utils
   renderer.setClearColor("cornflowerblue");
@@ -41,44 +38,37 @@ var groundPlane = createGroundPlane(400, 400, 80, 80, "rgb(60, 30, 150)"); // wi
   groundPlane.rotateX(degreesToRadians(-90));
 scene.add(groundPlane);
 
-
-// To use the keyboard
 var keyboard = new KeyboardState();
-
 var autoUpdateBox = new SecondaryBox("");
 
+setLights();
 addObjects();
-
 showInformation();
 render();
 
-
-function setLight() 
+//-- FUNCTIONS -------------------------------------------------------
+function setLights() 
 {
   var position = new THREE.Vector3(100, 200, 200);
 
   var dirLight = new THREE.DirectionalLight(0xffffff);
-  dirLight.position.copy(position);
-  dirLight.shadow.mapSize.width = 4092;
-  dirLight.shadow.mapSize.height = 4092;
-  dirLight.castShadow = true;
-
-  dirLight.shadow.camera.left = -400;
-  dirLight.shadow.camera.right = 400;
-  dirLight.shadow.camera.top = 400;
-  dirLight.shadow.camera.bottom = -400;
-
+    dirLight.position.copy(position);
+    dirLight.shadow.mapSize.width = 4092;
+    dirLight.shadow.mapSize.height = 4092;
+    dirLight.castShadow = true;
+    dirLight.shadow.camera.left = -400;
+    dirLight.shadow.camera.right = 400;
+    dirLight.shadow.camera.top = 400;
+    dirLight.shadow.camera.bottom = -400;
   scene.add(dirLight);
 
   var ambientLight = new THREE.AmbientLight("rgb(80,80,80)");
-  ambientLight.name = "ambientLight";
   scene.add(ambientLight);
 }
 
 
 function addObjects()
 {
-  var objColor = "rgb(255,20,20)";  
   const geometry = new THREE.TorusKnotGeometry( 2.0, 0.5, 80, 80 );
 
   let i, j;
@@ -123,10 +113,9 @@ function showInformation()
     controls.show();
 }
 
-function keyboardUpdate() {
-
+function keyboardUpdate() 
+{
   keyboard.update();
-
   if ( keyboard.down("enter") )
   {
     if(renderer.shadowMap.autoUpdate)
@@ -145,10 +134,10 @@ function keyboardUpdate() {
 
 function render()
 {
-  const delta = clock.getDelta();
   stats.update();
-  flyCamera.update(delta);
   keyboardUpdate();
+  const delta = clock.getDelta();
+  flyCamera.update(delta);
   requestAnimationFrame(render);
   renderer.render(scene, camera)
 }
