@@ -18,6 +18,11 @@ var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHei
   camera.position.set(3.6, 4.6, 8.2);
   camera.up.set( 0, 1, 0 );
 
+// More info here: https://threejs.org/docs/#api/en/lights/AmbientLight
+const ambientColor = "rgb(60,60,60)";
+var ambientLight = new THREE.AmbientLight(ambientColor);
+scene.add( ambientLight );
+
 // Enable mouse rotation, pan, zoom etc.
 var trackballControls = new TrackballControls(camera, renderer.domElement );
 
@@ -128,14 +133,18 @@ function buildInterface()
   };
 
   var gui = new GUI();
+  
+  spotHelper
 
   var spotFolder = gui.addFolder("SpotLight Parameters");
-  spotFolder.open();    
+  spotFolder.open();  
+  spotFolder.add(spotHelper, 'visible', true)
+    .name("Helper");    
   spotFolder.add(spotLight, 'intensity', 0, 5);
   spotFolder.add(spotLight, 'penumbra', 0, 1);    
   spotFolder.add(spotLight, 'distance', 0, 40, 0.5)
     .onChange(function(){updateLight()});        
-  spotFolder.add(controls, 'angle', 20, 80)
+  spotFolder.add(controls, 'angle', 20, 60)
     .name("Angle")
     .onChange(function() { controls.onUpdateLightAngle() });
   makeXYZGUI(spotFolder, spotLight.position, 'position', updateLight);
@@ -143,8 +152,13 @@ function buildInterface()
   
   var shadowFolder = gui.addFolder("Shadow");
   shadowFolder.open();    
-  shadowFolder.add(shadowHelper, 'visible', true);
-  shadowFolder.add(controls, 'shadowMapSize', 16, 512, 16)
+  shadowFolder.add(shadowHelper, 'visible', true)
+    .name("Helper");
+  // Controls if the shadow needs to be updated
+  shadowFolder.add(renderer.shadowMap, 'autoUpdate', true)
+    .onChange(function() { controls.onUpdateShadowNear() })
+    .name("Auto Update");
+  shadowFolder.add(controls, 'shadowMapSize', 16, 1024, 16)
     .onChange(function() { controls.onUpdateShadowMap() });
   shadowFolder.add(spotLight.shadow.camera, 'near', .1, 30, 0.1)
     .onChange(function() { controls.onUpdateShadowNear() })
