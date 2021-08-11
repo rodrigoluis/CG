@@ -134,8 +134,6 @@ function buildInterface()
 
   var gui = new GUI();
   
-  spotHelper
-
   var spotFolder = gui.addFolder("SpotLight Parameters");
   spotFolder.open();  
   spotFolder.add(spotHelper, 'visible', true)

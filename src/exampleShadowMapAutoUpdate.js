@@ -1,100 +1,138 @@
 import * as THREE from  '../build/three.module.js';
-import { FlyControls } from '../build/jsm/controls/FlyControls.js';
 import Stats from '../build/jsm/libs/stats.module.js';
-import KeyboardState from '../libs/util/KeyboardState.js';        
+import { FlyControls } from '../build/jsm/controls/FlyControls.js';
+import { GUI } from       '../build/jsm/libs/dat.gui.module.js';
 import {initRenderer,
         degreesToRadians,
-        SecondaryBox,
         onWindowResize, 
         InfoBox,
         createGroundPlane} from "../libs/util/util.js";
 
-var scene = new THREE.Scene();    
+//---------------------------------------------------------------------------------------
+const scene = new THREE.Scene();    
 const clock = new THREE.Clock();
 
 const container = document.getElementById( 'container' );
 const stats = new Stats();
 container.appendChild( stats.dom );
 
-var renderer = initRenderer();    // View function in util/utils
+const renderer = initRenderer();
   renderer.setClearColor("cornflowerblue");
-var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.position.set(10.0, 15.0, 0.0);
+
+const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+  camera.position.set(0.0, 25.0, 70.0);
   camera.up.set( 0, 1, 0 );
+  camera.lookAt(new THREE.Vector3( 0.0, 4.0, 0.0 ));
 
-// Details here:
-// https://threejs.org/docs/index.html#examples/en/controls/FlyControls
-var flyCamera = new FlyControls( camera, renderer.domElement );
-  flyCamera.movementSpeed = 10;
-  flyCamera.domElement = renderer.domElement;
-  flyCamera.rollSpeed = 0.20;
-  flyCamera.autoForward = false;
-  flyCamera.dragToLook = false;
-
-// Listen window size changes
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
-var groundPlane = createGroundPlane(400, 400, 80, 80, "rgb(60, 30, 150)"); // width and height
+const flyCamera = new FlyControls( camera, renderer.domElement );
+  flyCamera.movementSpeed = 20;
+  flyCamera.rollSpeed = 0.20;
+  flyCamera.dragToLook = true; // Do not move if not dragging.
+
+const groundPlane = createGroundPlane(400, 400, 80, 80, "rgb(60, 30, 150)"); 
   groundPlane.rotateX(degreesToRadians(-90));
 scene.add(groundPlane);
 
-var keyboard = new KeyboardState();
-var autoUpdateBox = new SecondaryBox("");
+// Globals
+let firstRendering = true, time = 0, delta = 0, centerTorusAngle = 0;
+let staticLight, dynamicLight, spotHelper, centerTorus;
 
+// Main functions
 setLights();
 addObjects();
 showInformation();
+buildInterface();
 render();
 
-//-- FUNCTIONS -------------------------------------------------------
+//---------------------------------------------------------------------------------------
+//-- FUNCTIONS --------------------------------------------------------------------------
+//---------------------------------------------------------------------------------------
 function setLights() 
-{
-  var position = new THREE.Vector3(100, 200, 200);
+{ 
+  /* 
+    Main directional light. 
+    This light will be used to light and drop shadow of the static objects. The
+    'autoupdate' parameter of this light must be set to false after the first rendering
+    to increase performance (look at this inside de 'render' function)
+    You can observe the large size of the shadow map and the size of the orthographic camera used. 
+    You can create more than one directional light to cover bigger enviroments. 
+  */
+  staticLight = new THREE.DirectionalLight(0xffffff);
+    staticLight.position.copy(new THREE.Vector3(100, 200, 100));
+    staticLight.shadow.mapSize.width = 4092;
+    staticLight.shadow.mapSize.height = 4092;
+    staticLight.shadow.camera.left = -400;
+    staticLight.shadow.camera.right = 400;
+    staticLight.shadow.camera.top = 400;
+    staticLight.shadow.camera.bottom = -400;
+    staticLight.castShadow = true;    
+  scene.add(staticLight);
 
-  var dirLight = new THREE.DirectionalLight(0xffffff);
-    dirLight.position.copy(position);
-    dirLight.shadow.mapSize.width = 4092;
-    dirLight.shadow.mapSize.height = 4092;
-    dirLight.castShadow = true;
-    dirLight.shadow.camera.left = -400;
-    dirLight.shadow.camera.right = 400;
-    dirLight.shadow.camera.top = 400;
-    dirLight.shadow.camera.bottom = -400;
-  scene.add(dirLight);
+  /* 
+    Dynamic directional light
+    You can create a smaller directional light to be used to drop shadow of 
+    dynamic objects. This light must "follow" the object (a car, person or a plane 
+    for example) to drop the shadow accordingly. This light can have the 
+    intensity = 0 because it is used mainly to drop shadow. This light must be 
+    positioned in the same direction of the main light to keep shadow's coherence.
+  */
+  dynamicLight = new THREE.DirectionalLight(0xffffff);
+    dynamicLight.intensity = 0.0; // No need to iluminate, just used to drop shadow
+    dynamicLight.position.copy(new THREE.Vector3(10, 20, 10));
+    dynamicLight.shadow.mapSize.width = 256;
+    dynamicLight.shadow.mapSize.height = 256;
+    dynamicLight.castShadow = true;
+    dynamicLight.shadow.camera.left = -7;
+    dynamicLight.shadow.camera.right = 7;
+    dynamicLight.shadow.camera.top = 7;
+    dynamicLight.shadow.camera.bottom = -7;
 
-  var ambientLight = new THREE.AmbientLight("rgb(80,80,80)");
-  scene.add(ambientLight);
+  // Create helper for the dynamicLight
+  spotHelper = new THREE.CameraHelper(dynamicLight.shadow.camera, 0xFF8C00);
+    scene.add(spotHelper); 
+    
+  // Ambient light
+  let ambientLight = new THREE.AmbientLight("rgb(80,80,80)");
+    scene.add(ambientLight);    
 }
 
 
 function addObjects()
 {
   const geometry = new THREE.TorusKnotGeometry( 2.0, 0.5, 80, 80 );
-
-  let i, j;
-  for(j = -190; j < 190; j+=10)   
+  let objectStep = 10
+  ; // Use values between 10 (high density) or 20 (low density) to chance number of objects
+  let material;
+  for(let j = -190; j < 190; j+=objectStep)   
   { 
-    const material = new THREE.MeshPhongMaterial({shininess:"200"});    
-      material.color.set(Math.random() * 0xffffff);
-    for(i = -190; i < 190; i+=10)  
+    material = new THREE.MeshPhongMaterial({shininess:"200"});    
+    material.color.set(Math.random() * 0xffffff);
+    for(let i = -190; i < 190; i+=objectStep)  
     {
+      // Avoid the creation of object where the animation will appear
+      let r = 10;
+      if(i>=-r && i<=r && j>=-r && j<=r)
+        continue;
       const obj = new THREE.Mesh( geometry, material );
-        obj.castShadow = true;  
-        obj.receiveShadow = true;  
-        obj.position.set(i, 3.2, j);  
+      obj.castShadow = true;  
+      obj.receiveShadow = true;        
+      obj.position.set(i, 3.2, j);  
       scene.add( obj );  
     }
   }
+
+  // Center object that will receive an animation
+  centerTorus = new THREE.Mesh( geometry, material );
+    centerTorus.castShadow = true;  
+    centerTorus.receiveShadow = true;  
+    centerTorus.position.set(0, 3.2, 0);  
 }
 
 function showInformation()
 {  
   var controls = new InfoBox();
-    controls.add("Shadow AUTOUPDATE");
-    controls.addParagraph();
-    controls.add("Press ENTER to turn ON/OFF");            
-    controls.addParagraph();
-    controls.addParagraph();    
     controls.add("Movement controls");
     controls.addParagraph();
     controls.add("Keyboard:");            
@@ -102,42 +140,80 @@ function showInformation()
     controls.add("* R | F - up | down");
     controls.add("* Q | E - roll");
     controls.addParagraph();    
-    controls.add("Mouse and Keyboard arrows:");            
+    controls.add("Keyboard arrows and mouse:");            
     controls.add("* up | down    - pitch");        
     controls.add("* left | right - yaw");
-    controls.addParagraph();    
-    controls.add("Mouse buttons:");            
-    controls.add("* Left  - Move forward");        
-    controls.add("* Right - Move backward");
+    controls.add("--Click and drag to use mouse.");
 
     controls.show();
 }
 
-function keyboardUpdate() 
+
+function rotateCenterTorus()
 {
-  keyboard.update();
-  if ( keyboard.down("enter") )
-  {
-    if(renderer.shadowMap.autoUpdate)
-    {
-      renderer.shadowMap.autoUpdate = false;
-      autoUpdateBox.changeMessage("AutoUpdate OFF");
-    }
-    else
-    {
-      renderer.shadowMap.autoUpdate = true;
-      renderer.shadowMap.needsUpdate = true;
-      autoUpdateBox.changeMessage("AutoUpdate ON");      
-    }
-  } 
+  time+=delta/20;  
+  if(centerTorusAngle == 360) centerTorusAngle = 0;
+   centerTorusAngle += .1;
+   centerTorus.rotateX(degreesToRadians(time));
+
+}
+
+function moveLightAndTarget() {
+  dynamicLight.shadow.camera.updateProjectionMatrix();     
+
+  dynamicLight.target.position.x = dynamicLight.position.x-10;    
+  dynamicLight.target.position.z = dynamicLight.position.z-10;      
+  dynamicLight.target.updateMatrixWorld();
+
+  spotHelper.update();  
+}
+
+
+
+function buildInterface()
+{
+  function makeXZGUI(gui, vector3, name, onChangeFn) {
+    const folder = gui.addFolder(name);
+    folder.add(vector3, 'x', -30, 30, 0.1).onChange(onChangeFn);
+    folder.add(vector3, 'z', -30, 30, 0.1).onChange(onChangeFn);
+    folder.open();
+  }    
+
+  const gui = new GUI();
+
+  const staticFolder = gui.addFolder("Static Directional Light (main) ");
+  staticFolder.open();  
+  staticFolder.add(staticLight.shadow, 'autoUpdate', false).listen(); 
+  staticFolder.add(staticLight, 'castShadow', true)
+    .name("View Shadow");  
+  //----------------------------------------------------
+  const spotFolder = gui.addFolder("Dynamic Directional Light (secondary)");
+  spotFolder.open();  
+  spotFolder.add(dynamicLight.shadow, 'autoUpdate', true);
+  spotFolder.add(spotHelper, 'visible', true)
+    .name("Helper");    
+
+  makeXZGUI(spotFolder, dynamicLight.position, 'Position and Target', moveLightAndTarget);
 }
 
 function render()
 {
   stats.update();
-  keyboardUpdate();
-  const delta = clock.getDelta();
+  delta = clock.getDelta();
   flyCamera.update(delta);
+
+  rotateCenterTorus();
+
   requestAnimationFrame(render);
-  renderer.render(scene, camera)
+  renderer.render(scene, camera);
+
+  // Add dynamic objects and light to the scene
+  // Also change the 'autoUpdate' parameter of the staticLight to false.
+  if(firstRendering)
+  {
+    staticLight.shadow.autoUpdate = false;
+    scene.add( centerTorus );
+    scene.add( dynamicLight );    
+    firstRendering = false;
+  }
 }

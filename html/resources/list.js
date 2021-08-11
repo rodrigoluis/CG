@@ -58,7 +58,7 @@ var list = {
 				"First Person": "html/exampleFirstPersonInfo",
 				"Drag Control": "html/exampleDragControlInfo",
 				"Fly Controls":"html/exampleFlyControlInfo",
-				"Shadow Maps":"html/exampleShadowMapAutoUpdateInfo",
+				"Dynamic vs Static shadows":"html/exampleShadowMapAutoUpdateInfo",
 				"Audio": "html/exampleAudioInfo",
 
 			},

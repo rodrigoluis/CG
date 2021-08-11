@@ -8,15 +8,25 @@
 		<link type="text/css" rel="stylesheet" href="resources/page.css" />
 	</head>
 	<body>
-		<h1>Shadow Map Autoupdate</h1>
+		<h1>Dynamic vs Static shadows</h1>
 		<br>
 		<hr>
 
 		<p>
-			In this example, you can see the impact on the application's performance by turning off the auto update 
-			parameter of the renderer, regarding the shadow map. This option is especially interesting in applications where shadows 
-			don't need to be updated at runtime. Check the FPS counter to spot the difference.
+			In this example, you can see the impact on the application's performance by turning off the 'AutoUpdate' 
+			parameter of a directional light. This option is especially interesting in applications where shadows 
+			don't need to be updated every frame. Check the FPS counter to spot the difference when turning ON this parameter.	
 		</p>
+
+		<p>
+			This example also presents a secondary directional light to be used with dynamic objects. 
+			This light can have a smaller area of influence to reduce computational consumption.
+		</p>		
+
+		<p>
+			If you have multiple lights and all of them are used with static objects, you can change the 
+			"AutoUpdate" parameter of the render object itself.
+		</p>		
 
 		<iframe src="../src/exampleShadowMapAutoUpdate.html" onload="this.contentWindow.focus()" onmouseover="this.contentWindow.focus()"></iframe>
 		<a href="../src/exampleShadowMapAutoUpdate.html" target="_blank">Open in a new tab</a>
