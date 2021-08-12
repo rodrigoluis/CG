@@ -31,10 +31,6 @@ const flyCamera = new FlyControls( camera, renderer.domElement );
   flyCamera.rollSpeed = 0.20;
   flyCamera.dragToLook = true; // Do not move if not dragging.
 
-const groundPlane = createGroundPlane(400, 400, 80, 80, "rgb(60, 30, 150)"); 
-  groundPlane.rotateX(degreesToRadians(-90));
-scene.add(groundPlane);
-
 // Globals
 let firstRendering = true, time = 0, delta = 0, centerTorusAngle = 0;
 let staticLight, dynamicLight, spotHelper, centerTorus;
@@ -43,7 +39,7 @@ let torusInitialHeight = 3.2;
 
 // Main functions
 setLights();
-addObjects();
+setEnvironment();
 showInformation();
 buildInterface();
 render();
@@ -77,11 +73,11 @@ function setLights()
     You can create a smaller directional light to be used to drop shadow of 
     dynamic objects. This light must "follow" the object (a car, person or a plane 
     for example) to drop the shadow accordingly. This light can have the 
-    intensity = 0 because it is used mainly to drop shadow. This light must be 
+    intensity set to 0 because it is used mainly to drop shadow. This light must be 
     positioned in the same direction of the main light to keep shadow's coherence.
   */
   dynamicLight = new THREE.DirectionalLight(0xffffff);
-    dynamicLight.intensity = 0.0; // No need to iluminate, just used to drop shadow
+    dynamicLight.intensity = 0.0; // No need to iluminate, just used to drop shadow.
     dynamicLight.position.set(initialDynamicLightPos.x, initialDynamicLightPos.y, initialDynamicLightPos.z);
     dynamicLight.shadow.mapSize.width = 256;
     dynamicLight.shadow.mapSize.height = 256;
@@ -101,11 +97,16 @@ function setLights()
 }
 
 
-function addObjects()
+function setEnvironment()
 {
+  // Ground plane
+  const groundPlane = createGroundPlane(400, 400, 80, 80, "rgb(60, 30, 150)"); 
+    groundPlane.rotateX(degreesToRadians(-90));
+  scene.add(groundPlane);
+
+  // Objects grid
   const geometry = new THREE.TorusKnotGeometry( 2.0, 0.5, 80, 80 );
-  let objectStep = 10
-  ; // Use values between 10 (high density) or 20 (low density) to chance number of objects
+  let objectStep = 10; // Use values between 10 (high density) or 20 (low density) to chance number of objects
   let material;
   for(let j = -190; j < 190; j+=objectStep)   
   { 
@@ -146,10 +147,8 @@ function showInformation()
     controls.add("* up | down    - pitch");        
     controls.add("* left | right - yaw");
     controls.add("--Click and drag to use mouse.");
-
     controls.show();
 }
-
 
 function rotateCenterTorus()
 {
@@ -157,7 +156,6 @@ function rotateCenterTorus()
   if(centerTorusAngle == 360) centerTorusAngle = 0;
    centerTorusAngle += .1;
    centerTorus.rotateX(degreesToRadians(time));
-
 }
 
 function moveLightAndTarget() 
