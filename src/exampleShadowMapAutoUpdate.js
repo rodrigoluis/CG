@@ -38,6 +38,8 @@ scene.add(groundPlane);
 // Globals
 let firstRendering = true, time = 0, delta = 0, centerTorusAngle = 0;
 let staticLight, dynamicLight, spotHelper, centerTorus;
+let initialDynamicLightPos = new THREE.Vector3(10, 20, 10);
+let torusInitialHeight = 3.2;
 
 // Main functions
 setLights();
@@ -80,7 +82,7 @@ function setLights()
   */
   dynamicLight = new THREE.DirectionalLight(0xffffff);
     dynamicLight.intensity = 0.0; // No need to iluminate, just used to drop shadow
-    dynamicLight.position.copy(new THREE.Vector3(10, 20, 10));
+    dynamicLight.position.set(initialDynamicLightPos.x, initialDynamicLightPos.y, initialDynamicLightPos.z);
     dynamicLight.shadow.mapSize.width = 256;
     dynamicLight.shadow.mapSize.height = 256;
     dynamicLight.castShadow = true;
@@ -118,7 +120,7 @@ function addObjects()
       const obj = new THREE.Mesh( geometry, material );
       obj.castShadow = true;  
       obj.receiveShadow = true;        
-      obj.position.set(i, 3.2, j);  
+      obj.position.set(i, torusInitialHeight, j);  
       scene.add( obj );  
     }
   }
@@ -127,7 +129,7 @@ function addObjects()
   centerTorus = new THREE.Mesh( geometry, material );
     centerTorus.castShadow = true;  
     centerTorus.receiveShadow = true;  
-    centerTorus.position.set(0, 3.2, 0);  
+    centerTorus.position.set(0, torusInitialHeight, 0);  
 }
 
 function showInformation()
@@ -158,11 +160,18 @@ function rotateCenterTorus()
 
 }
 
-function moveLightAndTarget() {
+function moveLightAndTarget() 
+{
   dynamicLight.shadow.camera.updateProjectionMatrix();     
 
-  dynamicLight.target.position.x = dynamicLight.position.x-10;    
-  dynamicLight.target.position.z = dynamicLight.position.z-10;      
+  centerTorus.position.set(dynamicLight.position.x-initialDynamicLightPos.x,
+                           dynamicLight.position.y-initialDynamicLightPos.y+torusInitialHeight,
+                           dynamicLight.position.z-initialDynamicLightPos.z);
+  
+  //dynamicLight.target.position.copy(centerTorus.position); 
+  dynamicLight.target.position.set( centerTorus.position.x,
+                                    centerTorus.position.y-torusInitialHeight,
+                                    centerTorus.position.z);   
   dynamicLight.target.updateMatrixWorld();
 
   spotHelper.update();  
@@ -172,9 +181,10 @@ function moveLightAndTarget() {
 
 function buildInterface()
 {
-  function makeXZGUI(gui, vector3, name, onChangeFn) {
+  function makeXYZGUI(gui, vector3, name, onChangeFn) {
     const folder = gui.addFolder(name);
     folder.add(vector3, 'x', -30, 30, 0.1).onChange(onChangeFn);
+    folder.add(vector3, 'y',  20, 50, 0.1).onChange(onChangeFn);    
     folder.add(vector3, 'z', -30, 30, 0.1).onChange(onChangeFn);
     folder.open();
   }    
@@ -193,7 +203,7 @@ function buildInterface()
   spotFolder.add(spotHelper, 'visible', true)
     .name("Helper");    
 
-  makeXZGUI(spotFolder, dynamicLight.position, 'Position and Target', moveLightAndTarget);
+  makeXYZGUI(spotFolder, dynamicLight.position, 'Object/Light Position', moveLightAndTarget);
 }
 
 function render()
