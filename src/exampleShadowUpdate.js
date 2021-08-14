@@ -58,6 +58,7 @@ function setLights()
     You can create more than one directional light to cover bigger enviroments. 
   */
   staticLight = new THREE.DirectionalLight(0xffffff);
+    staticLight.intensity = 0.5;
     staticLight.position.copy(new THREE.Vector3(100, 200, 100));
     staticLight.shadow.mapSize.width = 4092;
     staticLight.shadow.mapSize.height = 4092;
@@ -77,7 +78,7 @@ function setLights()
     positioned in the same direction of the main light to keep shadow's coherence.
   */
   dynamicLight = new THREE.DirectionalLight(0xffffff);
-    dynamicLight.intensity = 0.0; // No need to iluminate, just used to drop shadow.
+    dynamicLight.intensity = 0.5; // No need to iluminate, just used to drop shadow.
     dynamicLight.position.set(initialDynamicLightPos.x, initialDynamicLightPos.y, initialDynamicLightPos.z);
     dynamicLight.shadow.mapSize.width = 256;
     dynamicLight.shadow.mapSize.height = 256;
