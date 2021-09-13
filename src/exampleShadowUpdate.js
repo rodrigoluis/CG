@@ -56,10 +56,13 @@ function setLights()
     to increase performance (look at this inside de 'render' function)
     You can observe the large size of the shadow map and the size of the orthographic camera used. 
     You can create more than one directional light to cover bigger enviroments. 
+  	As we create two lights, the intensity of each light is cut by half (i.e., 0.5 for each light).
   */
   staticLight = new THREE.DirectionalLight(0xffffff);
-    staticLight.intensity = 0.5;
-    staticLight.position.copy(new THREE.Vector3(100, 200, 100));
+    staticLight.intensity = 0.5; // Intensity cut by half because we will create a second light in the same direction
+    // Despite being only one direction (could be a unit vector), the shadow projection depends on 
+    // the position of the orthographic camera used to control the extent of its projection
+    staticLight.position.copy(new THREE.Vector3(100, 200, 100)); // 
     staticLight.shadow.mapSize.width = 4092;
     staticLight.shadow.mapSize.height = 4092;
     staticLight.shadow.camera.left = -400;
@@ -71,11 +74,12 @@ function setLights()
 
   /* 
     Dynamic directional light
-    You can create a smaller directional light to be used to drop shadow of 
+    You can create a smaller directional light to be used to drop shadow on 
     dynamic objects. This light must "follow" the object (a car, person or a plane 
-    for example) to drop the shadow accordingly. This light can have the 
-    intensity set to 0 because it is used mainly to drop shadow. This light must be 
+    for example) to drop the shadow accordingly. This light must be 
     positioned in the same direction of the main light to keep shadow's coherence.
+    As mentioned before, the intensity of this light is cut by half and despite of its position
+    it lights all objects. The shadow is computed only inside the shadow's camera area.
   */
   dynamicLight = new THREE.DirectionalLight(0xffffff);
     dynamicLight.intensity = 0.5; // No need to iluminate, just used to drop shadow.
@@ -167,7 +171,6 @@ function moveLightAndTarget()
                            dynamicLight.position.y-initialDynamicLightPos.y+torusInitialHeight,
                            dynamicLight.position.z-initialDynamicLightPos.z);
   
-  //dynamicLight.target.position.copy(centerTorus.position); 
   dynamicLight.target.position.set( centerTorus.position.x,
                                     centerTorus.position.y-torusInitialHeight,
                                     centerTorus.position.z);   

@@ -31,6 +31,7 @@ const cameraHolder = new THREE.Object3D();
 cameraHolder.add(camera);
 scene.add( cameraHolder );
 //-- Create VR button and settings ---------------------------------------------------------------
+document.body.appendChild( renderer.domElement );
 document.body.appendChild( VRButton.createButton( renderer ) );
 
 // controllers

@@ -27,6 +27,7 @@ let scene = new THREE.Scene();
 let camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.1, 30 );
 
 //-- Create VR button and settings ---------------------------------------------------------------
+document.body.appendChild( renderer.domElement );
 document.body.appendChild( VRButton.createButton( renderer ) );
 
 // controllers

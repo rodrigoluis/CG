@@ -31,6 +31,7 @@ const fontLoader = new THREE.FontLoader();
 let fontGeometry = null;
 
 //-- Create VR button and settings ---------------------------------------------------------------
+document.body.appendChild( renderer.domElement );
 document.body.appendChild( VRButton.createButton( renderer ) );
 
 // controllers
