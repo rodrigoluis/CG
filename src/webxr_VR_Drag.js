@@ -35,12 +35,6 @@ document.body.appendChild( VRButton.createButton( renderer ) );
 // To be used outside a VR environment (Desktop, for example)
 setLookNonVRBehavior(camera, renderer, "On desktop, press 'Q' or 'E' to change orientation","Dragging functions are available only in VR mode.");
 
-//-- 'Camera Holder' to help moving the camera
-const cameraHolder = new THREE.Object3D();
-	cameraHolder.position.set(0.0, 0.2, 0.0);
-	cameraHolder.add (camera);
-scene.add( cameraHolder );
-
 // controllers
 let controller1 = renderer.xr.getController( 0 );
 controller1.addEventListener( 'selectstart', onSelectStart );
@@ -141,13 +135,10 @@ function createScene()
 	scene.add( new THREE.HemisphereLight( 0x808080, 0x606060 ) );
 
 	const floorGeometry = new THREE.PlaneGeometry( 10, 10 );
-	const floorMaterial = new THREE.MeshStandardMaterial( {
-		color: 0xeeeeee,
-		roughness: 1.0,
-		metalness: 0.0
-	} );
+	const floorMaterial = new THREE.MeshLambertMaterial( {color: "rgb(80, 80, 80)"} );
 	const floor = new THREE.Mesh( floorGeometry, floorMaterial );
 	floor.rotation.x = -Math.PI / 2;
+	floor.position.y -= 0.2;
 	floor.receiveShadow = true;
 	scene.add( floor );
 
