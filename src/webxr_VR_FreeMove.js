@@ -1,6 +1,9 @@
 //-- Imports -------------------------------------------------------------------------------------
 import * as THREE from '../build/three.module.js';
 import { VRButton } from '../build/jsm/webxr/VRButton.js';
+//import { FlyControls } from '../build/jsm/controls/FlyControls.js';
+import {setFlyNonVRBehavior,
+		updateFlyNonVRBehavior} from "../libs/util/utilVR.js";
 import {onWindowResize,
 		degreesToRadians,
 		createGroundPlane} from "../libs/util/util.js";
@@ -23,11 +26,22 @@ let renderer = new THREE.WebGLRenderer();
 
 //-- Setting scene and camera -------------------------------------------------------------------
 let scene = new THREE.Scene();
+
 let camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, .1, 1000 );
 let moveCamera; // Move when a button is pressed 
 
+// To be used outside a VR environment
+setFlyNonVRBehavior(camera, renderer);
+// var flyCamera = new FlyControls( camera, renderer.domElement );
+//   flyCamera.movementSpeed = 5;
+//   flyCamera.domElement = renderer.domElement;
+//   flyCamera.rollSpeed = 0.20;
+//   //flyCamera.autoForward = false;
+//   //flyCamera.dragToLook = false;
+
 //-- 'Camera Holder' to help moving the camera
 const cameraHolder = new THREE.Object3D();
+	cameraHolder.position.set(0.0, 1.0, 0.0);
 cameraHolder.add(camera);
 scene.add( cameraHolder );
 //-- Create VR button and settings ---------------------------------------------------------------
@@ -84,6 +98,7 @@ function animate()
 }
 
 function render() {
+	updateFlyNonVRBehavior(); // Desktop behavior
 	move();
 	renderer.render( scene, camera );
 }
