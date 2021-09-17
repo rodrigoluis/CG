@@ -33,11 +33,11 @@ document.body.appendChild( renderer.domElement );
 document.body.appendChild( VRButton.createButton( renderer ) );
 
 // To be used outside a VR environment (Desktop, for example)
-setLookNonVRBehavior(camera, renderer, "On desktop, press 'Q' or 'E' to fix orientation","Dragging functions are available only in VR mode.");
+setLookNonVRBehavior(camera, renderer, "On desktop, press 'Q' or 'E' to change orientation","Dragging functions are available only in VR mode.");
 
 //-- 'Camera Holder' to help moving the camera
 const cameraHolder = new THREE.Object3D();
-	cameraHolder.position.set(0.0, 1.6, 8.0);
+	cameraHolder.position.set(0.0, 1.6, 0.0);
 	cameraHolder.add (camera);
 scene.add( cameraHolder );
 
