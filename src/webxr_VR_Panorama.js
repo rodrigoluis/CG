@@ -23,7 +23,7 @@ let camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHe
 camera.layers.enable( 1 );
 
 // To be used outside a VR environment (Desktop, for example)
-setLookNonVRBehavior(camera, renderer);
+setLookNonVRBehavior(camera, renderer, "On desktop, press 'Q' or 'E' to fix orientation");
 
 //-- Creating equirectangular Panomara ----------------------------------------------------------
 const geometry = new THREE.SphereGeometry( 1000, 60, 60 );
@@ -38,6 +38,6 @@ scene.add( mesh );
 renderer.setAnimationLoop( render );
 
 function render() {
-	updateLookNonVRBehavior(); // Fly desktop behavior	
+	updateLookNonVRBehavior(); 
 	renderer.render( scene, camera );
 }

@@ -2,6 +2,8 @@
 import * as THREE from '../build/three.module.js';
 import { VRButton } from '../build/jsm/webxr/VRButton.js';
 import {onWindowResize} from "../libs/util/util.js";
+import {setLookNonVRBehavior,
+		updateLookNonVRBehavior} from "../libs/util/utilVR.js";
 
 //-----------------------------------------------------------------------------------------------
 //-- MAIN SCRIPT --------------------------------------------------------------------------------
@@ -29,6 +31,15 @@ let camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHe
 //-- Create VR button and settings ---------------------------------------------------------------
 document.body.appendChild( renderer.domElement );
 document.body.appendChild( VRButton.createButton( renderer ) );
+
+// To be used outside a VR environment (Desktop, for example)
+setLookNonVRBehavior(camera, renderer, "On desktop, press 'Q' or 'E' to fix orientation","Dragging functions are available only in VR mode.");
+
+//-- 'Camera Holder' to help moving the camera
+const cameraHolder = new THREE.Object3D();
+	cameraHolder.position.set(0.0, 1.6, 8.0);
+	cameraHolder.add (camera);
+scene.add( cameraHolder );
 
 // controllers
 let controller1 = renderer.xr.getController( 0 );
@@ -112,6 +123,7 @@ function animate() {
 }
 
 function render() {
+	updateLookNonVRBehavior(); 	
 	cleanIntersected();
 	intersectObjects( controller1 );
 	renderer.render( scene, camera );

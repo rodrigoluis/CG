@@ -29,7 +29,7 @@ let camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHe
 let moveCamera; // Move when a button is pressed 
 
 // To be used outside a VR environment (Desktop, for example)
-setFlyNonVRBehavior(camera, renderer);
+setFlyNonVRBehavior(camera, renderer, "On desktop, use mouse and WASD-QE to navigate");
 
 //-- 'Camera Holder' to help moving the camera
 let cameraHolder = new THREE.Object3D();

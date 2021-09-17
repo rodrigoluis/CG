@@ -6,17 +6,23 @@ let clock = new THREE.Clock();
 let flyCamera;
 let lookCamera;
 
-export function setFlyNonVRBehavior(camera, renderer)
+function showMessages(message1, message2)
+{
+    // Use this to show information onscreen
+    var controls = new InfoBox();
+        controls.add(message1);
+        if(message2) controls.add(message2);        
+    controls.show();     
+}
+
+export function setFlyNonVRBehavior(camera, renderer, message1, message2 = null)
 {
     flyCamera = new FlyControls( camera, renderer.domElement );
     flyCamera.movementSpeed = 5;
     flyCamera.domElement = renderer.domElement;
     flyCamera.rollSpeed = 0.2;
 
-    // Use this to show information onscreen
-    var controls = new InfoBox();
-        controls.add("On desktop, use mouse and WASD-QE to navigate");
-        controls.show();     
+    showMessages(message1, message2);
 }
 
 export function updateFlyNonVRBehavior()
@@ -25,17 +31,14 @@ export function updateFlyNonVRBehavior()
     flyCamera.update(delta);    
 }
 
-export function setLookNonVRBehavior(camera, renderer)
+export function setLookNonVRBehavior(camera, renderer, message1, message2 = null)
 {
     lookCamera = new FlyControls( camera, renderer.domElement );
     lookCamera.domElement = renderer.domElement;
     lookCamera.movementSpeed = 0; // Avoid moving
     lookCamera.rollSpeed = 0.3;
 
-  // Use this to show information onscreen
-  var controls = new InfoBox();
-    controls.add("On desktop, press 'Q' or 'E' to fix orientation");
-    controls.show();    
+    showMessages(message1, message2);  
 }
 
 export function updateLookNonVRBehavior()

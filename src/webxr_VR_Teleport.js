@@ -7,6 +7,10 @@ import {onWindowResize,
 		createGroundPlane,
 		getMaxSize} from "../libs/util/util.js";
 
+import {setFlyNonVRBehavior,
+		updateFlyNonVRBehavior} from "../libs/util/utilVR.js";
+	
+
 //-----------------------------------------------------------------------------------------------
 //-- MAIN SCRIPT --------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------
@@ -30,6 +34,9 @@ let renderer = new THREE.WebGLRenderer();
 //-- Setting scene and camera -------------------------------------------------------------------
 let scene = new THREE.Scene();
 let camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, .1, 1000 );
+
+// To be used outside a VR environment (Desktop, for example)
+setFlyNonVRBehavior(camera, renderer, "On desktop, use mouse and WASD-QE to navigate.","Teleport available only in VR mode.");
 
 //-- 'Camera Holder' to help moving the camera
 const cameraHolder = new THREE.Object3D();
@@ -110,6 +117,7 @@ function animate() {
 }
 
 function render() {
+	updateFlyNonVRBehavior(); // Fly desktop behavior	
 	checkIntersection( controller1 );	
 	var delta = clock.getDelta(); 
 	for(var i = 0; i<mixer.length; i++) mixer[i].update( delta );
