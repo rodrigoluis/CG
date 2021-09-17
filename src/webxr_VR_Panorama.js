@@ -2,6 +2,8 @@
 import * as THREE from '../build/three.module.js';
 import { VRButton } from '../build/jsm/webxr/VRButton.js';
 import { onWindowResize } from "../libs/util/util.js";
+import {setLookNonVRBehavior,
+		updateLookNonVRBehavior} from "../libs/util/utilVR.js";
 
 //-- Setting renderer ---------------------------------------------------------------------------
 let renderer = new THREE.WebGLRenderer();
@@ -20,6 +22,9 @@ let scene = new THREE.Scene();
 let camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 1000 );
 camera.layers.enable( 1 );
 
+// To be used outside a VR environment (Desktop, for example)
+setLookNonVRBehavior(camera, renderer);
+
 //-- Creating equirectangular Panomara ----------------------------------------------------------
 const geometry = new THREE.SphereGeometry( 1000, 60, 60 );
 	geometry.scale( - 1, 1, 1 ); // invert the geometry on the x-axis (faces will point inward)
@@ -33,5 +38,6 @@ scene.add( mesh );
 renderer.setAnimationLoop( render );
 
 function render() {
+	updateLookNonVRBehavior(); // Fly desktop behavior	
 	renderer.render( scene, camera );
 }
