@@ -37,7 +37,7 @@ setLookNonVRBehavior(camera, renderer, "On desktop, press 'Q' or 'E' to change o
 
 //-- 'Camera Holder' to help moving the camera
 const cameraHolder = new THREE.Object3D();
-	cameraHolder.position.set(0.0, 1.6, 0.0);
+	cameraHolder.position.set(0.0, 0.2, 0.0);
 	cameraHolder.add (camera);
 scene.add( cameraHolder );
 
