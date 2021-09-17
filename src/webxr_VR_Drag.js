@@ -37,8 +37,8 @@ setLookNonVRBehavior(camera, renderer, "On desktop, press 'Q' or 'E' to change o
 
 // controllers
 let controller1 = renderer.xr.getController( 0 );
-controller1.addEventListener( 'selectstart', onSelectStart );
-controller1.addEventListener( 'selectend', onSelectEnd );
+	controller1.addEventListener( 'selectstart', onSelectStart );
+	controller1.addEventListener( 'selectend', onSelectEnd );
 scene.add( controller1 );
 
 // VR Camera Rectile

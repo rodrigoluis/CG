@@ -2,6 +2,8 @@
 import * as THREE from '../build/three.module.js';
 import { VRButton } from '../build/jsm/webxr/VRButton.js';
 import {onWindowResize} from "../libs/util/util.js";
+import {setLookNonVRBehavior,
+		updateLookNonVRBehavior} from "../libs/util/utilVR.js";
 
 //------------------------------------------------------------------------------------------------
 //-- MAIN SCRIPT ---------------------------------------------------------------------------------
@@ -33,6 +35,9 @@ let fontGeometry = null;
 //-- Create VR button and settings ---------------------------------------------------------------
 document.body.appendChild( renderer.domElement );
 document.body.appendChild( VRButton.createButton( renderer ) );
+
+// To be used outside a VR environment (Desktop, for example)
+setLookNonVRBehavior(camera, renderer, "On desktop, press 'Q' or 'E' to change orientation","Labelling functions are available only in VR mode.");
 
 // controllers
 let controller1 = renderer.xr.getController( 0 );
@@ -123,6 +128,7 @@ function animate() {
 }
 
 function render() {
+	updateLookNonVRBehavior(); 		
 	cleanIntersected();
 	intersectObjects( controller1 );
 	renderer.render( scene, camera );
@@ -141,13 +147,10 @@ function createScene()
 	scene.add( new THREE.HemisphereLight( "rgb(80, 80, 80)" ) );
 
 	const floorGeometry = new THREE.PlaneGeometry( 20, 20 );
-	const floorMaterial = new THREE.MeshStandardMaterial( {
-		color: 0xeeeeee,
-		roughness: 1.0,
-		metalness: 0.0
-	} );
+	const floorMaterial = new THREE.MeshLambertMaterial( {color: "rgb(80, 80, 80)"} );
 	const floor = new THREE.Mesh( floorGeometry, floorMaterial );
 	floor.rotation.x = -Math.PI / 2;
+	floor.position.y -= 0.2;	
 	floor.receiveShadow = true;
 	scene.add( floor );
 
