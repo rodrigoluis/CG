@@ -36,12 +36,6 @@ var list = {
 			},			
 		},
 		"XR": {
-			"AR & VR with external libs":  {
-				"VR - Primitives": "html/VR_BasicInfo",
-				"VR - Panorama": "html/VR_PanoramaInfo",
-				"VR - External Models": "html/VR_ExternalModelInfo",
-				"AR - Fiducial Marker": "html/AR_BasicInfo",	
-			},
 			"AR & VR with WebXR":  {
 				"VR - Panorama": "html/webxr_VR_PanoramaInfo",				
 				"VR - Teleport": "html/webxr_VR_TeleportInfo",
@@ -50,7 +44,12 @@ var list = {
 				"VR - Labelling":"html/webxr_VR_LabellingInfo",
 				"AR - Hit and Build": "html/webxr_AR_HitAndBuildInfo",				
 			},
-
+			"AR & VR with external libs":  {
+				"VR - Primitives": "html/VR_BasicInfo",
+				"VR - Panorama": "html/VR_PanoramaInfo",
+				"VR - External Models": "html/VR_ExternalModelInfo",
+				"AR - Fiducial Marker": "html/AR_BasicInfo",	
+			},
 		},
 		"Additional Examples":{
 			"Misc":  {
@@ -59,6 +58,7 @@ var list = {
 				"Drag Control": "html/exampleDragControlInfo",
 				"Fly Controls":"html/exampleFlyControlInfo",
 				"Shadow Update":"html/exampleShadowUpdateInfo",
+				"Shadow Map Types":"html/exampleShadowMapTypesInfo",
 				"Audio": "html/exampleAudioInfo",
 
 			},
