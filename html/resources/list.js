@@ -58,7 +58,8 @@ var list = {
 				"Drag Control": "html/exampleDragControlInfo",
 				"Fly Controls":"html/exampleFlyControlInfo",
 				"Shadow Update":"html/exampleShadowUpdateInfo",
-				"Shadow Map Types":"html/exampleShadowMapTypesInfo",
+				"Shadow Map Viewer":"html/exampleShadowMapViewerInfo",
+				"Shadow Map Types":"html/exampleShadowMapTypesInfo",			
 				"Audio": "html/exampleAudioInfo",
 
 			},
