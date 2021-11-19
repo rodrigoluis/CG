@@ -25,6 +25,11 @@ var list = {
 				"Types of materials": "html/lightingMaterialsInfo",
 				"Spotlight in Details": "html/lightingSpotlightDetailsInfo",				
 			},
+			"Shadows":  {
+				"Shadow Map Types":"html/shadowMapTypesInfo",			
+				"Shadow Map Viewer":"html/shadowMapViewerInfo",
+				"Shadow Update":"html/shadowUpdateInfo",				
+			},			
 			"Textures":  {
 				"Basic": "html/textureBasicInfo",
 				"Main Options": "html/textureOptionsInfo",
@@ -56,12 +61,8 @@ var list = {
 				"Group Geometry": "html/exampleGroupInfo",
 				"First Person": "html/exampleFirstPersonInfo",
 				"Drag Control": "html/exampleDragControlInfo",
-				"Fly Controls":"html/exampleFlyControlInfo",
-				"Shadow Update":"html/exampleShadowUpdateInfo",
-				"Shadow Map Viewer":"html/exampleShadowMapViewerInfo",
-				"Shadow Map Types":"html/exampleShadowMapTypesInfo",			
+				"Fly Controls":"html/exampleFlyControlInfo",		
 				"Audio": "html/exampleAudioInfo",
-
 			},
 		},
 	},
