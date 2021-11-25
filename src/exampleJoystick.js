@@ -8,6 +8,7 @@ import {initRenderer,
         
 // vars
 let scale = 1;
+let previousScale = 0;
 let size = 5;
 let fwdValue = 0;
 let bkdValue = 0;
@@ -154,10 +155,13 @@ function addJoysticks(){
   });
 
   joystickR.on('move', function (evt, data) {
-    const localScale = data.vector.y;
+    const changeScale = data.vector.y;
 
-    scale += localScale;
-    if(scale > 3.0) scale = 3.0;
+    if(changeScale > previousScale) scale+=0.1;
+    if(changeScale < previousScale) scale-=0.1;
+    if(scale > 4.0) scale = 4.0;
     if(scale < 0.5) scale = 0.5;
+
+    previousScale = changeScale;
   })
 }
