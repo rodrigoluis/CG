@@ -24,7 +24,7 @@ var scene = new THREE.Scene();
 var renderer = initRenderer();   
   renderer.setClearColor( 0xbfd1e5 );
 var camera = initCamera(new THREE.Vector3(0, 30, 60));
-var light = initDefaultBasicLight(scene, true, new THREE.Vector3(-30, 15, 0), 80, 1024) ;
+var light = initDefaultBasicLight(scene, true, new THREE.Vector3(30, 20, 10), 80, 1024) ;
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
 // Add OrbitControls so that we can pan around with the mouse.
@@ -40,10 +40,12 @@ scene.add(groundPlane);
 
 // create the inner cube
 var geometry = new THREE.BoxGeometry(size, size, size);
-var material = new THREE.MeshLambertMaterial({color:"rgb(250,140,0)"});
+var material = new THREE.MeshLambertMaterial();
 var mesh = new THREE.Mesh(geometry, material);
   mesh.position.y = size/2.0;
   mesh.scale.set(scale, scale, scale);
+  mesh.castShadow = true;
+  mesh.material.map = new THREE.TextureLoader().load('../assets/textures/crate.jpg');
 scene.add(mesh);
 
 render();

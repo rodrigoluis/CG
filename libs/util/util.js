@@ -282,6 +282,8 @@ export function initDefaultBasicLight(scene, castShadow = false, position = new 
 
   scene.add(ambientLight);
   scene.add(mainLight);
+
+  return mainLight;
 }
 
 export function initDefaultSpotlight(scene, initialPosition) {
