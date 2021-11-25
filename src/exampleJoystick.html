@@ -6,55 +6,38 @@
     <link rel="stylesheet" href="../html/resources/default.css">
     <meta name="viewport" content="width=device-width, initial-scale=1">  
 
-    <style>
-    #mobileInterface {
-      position: fixed;
-      width: calc(100% - 20px);
-      height: 50vh;
-      pointer-events: none;
-      z-index: 11;
-      top: auto;
-      bottom: 120px;
-      left: 10px;
-      touch-action: manipulation;
-    }
+    <style>  
+      #joystickWrapper1 {
+        pointer-events: auto;
+        display: block;
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        width: 120px;
+        height: 120px;
+        touch-action: manipulation;
+      }
     
-    #joystickWrapper1 {
-      pointer-events: auto;
-      display: block;
-      position: absolute;
-      bottom: 0;
-      left: 0;
-      background-color: transparent;
-      width: 120px;
-      height: 120px;
-      z-index: 12;
-      touch-action: manipulation;
-    }
-  
-    #joystickWrapper2 {
-      pointer-events: auto;
-      display: block;
-      position: absolute;
-      bottom: 0;
-      right: 0;
-      left: auto;
-      background-color: transparent;
-      width: 120px;
-      height: 120px;
-      z-index: 12;
-      touch-action: manipulation;
-    }
+      #joystickWrapper2 {
+        pointer-events: auto;
+        display: block;
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        left: auto;
+        width: 120px;
+        height: 120px;
+        touch-action: manipulation;
+      }
   </style>
-
 </head>
 
 <body>
   <div id="webgl-output"></div>
-  <div id="mobileInterface" >
+
     <div id="joystickWrapper1"></div>
     <div id="joystickWrapper2"></div>
-  </div>  
+
     <script src="../libs/other/nipplejs.js"></script>        
     <script type="module" src="exampleJoystick.js"></script>
   </div>

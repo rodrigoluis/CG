@@ -121,7 +121,7 @@ function addJoysticks(){
   let joystickL = nipplejs.create({
     zone: document.getElementById('joystickWrapper1'),
     mode: 'static',
-    position: { top: '160px', left: '60px' }
+    position: { top: '40px', left: '80px' }
   });
   
   joystickL.on('move', function (evt, data) {
@@ -156,7 +156,7 @@ function addJoysticks(){
     zone: document.getElementById('joystickWrapper2'),
     mode: 'static',
     lockY: true,                 // only move on the Y axis
-    position: { top: '160px', right: '60px' },
+    position: { top: '40px', right: '80px' },
   });
 
   joystickR.on('move', function (evt, data) {
