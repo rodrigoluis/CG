@@ -62,6 +62,7 @@ var list = {
 				"First Person": "html/exampleFirstPersonInfo",
 				"Drag Control": "html/exampleDragControlInfo",
 				"Fly Controls":"html/exampleFlyControlInfo",		
+				"Joystick":"html/exampleJoystickInfo",						
 				"Audio": "html/exampleAudioInfo",
 			},
 		},
