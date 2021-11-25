@@ -252,7 +252,8 @@ export function initCamera(initialPosition) {
     return camera;
 }
 
-export function initDefaultBasicLight(scene, castShadow = false, position = new THREE.Vector3(1, 1, 1)) 
+export function initDefaultBasicLight(scene, castShadow = false, position = new THREE.Vector3(1, 1, 1), 
+                                      shadowSide = 16, shadowMapSize = 512, shadowNear = 0.1, shadowFar = 100 ) 
 {
   //let position = (initialPosition !== undefined) ? initialPosition : new THREE.Vector3(1, 1, 1);
 
@@ -270,14 +271,14 @@ export function initDefaultBasicLight(scene, castShadow = false, position = new 
   // and its left, right, bottom, top, near and far parameters are, respectively,
   // (-5, 5, -5, 5, 0.5, 500).    
   const shadow = mainLight.shadow;
-    shadow.mapSize.width  =  512; 
-    shadow.mapSize.height =  512; 
-    shadow.camera.near    =  0.1; 
-    shadow.camera.far     =  50; 
-    shadow.camera.left    = -8.0; 
-    shadow.camera.right   =  8.0; 
-    shadow.camera.bottom  = -8.0; 
-    shadow.camera.top     =  8.0; 
+    shadow.mapSize.width  =  shadowMapSize; 
+    shadow.mapSize.height =  shadowMapSize; 
+    shadow.camera.near    =  shadowNear;
+    shadow.camera.far     =  shadowFar; 
+    shadow.camera.left    = -shadowSide/2; 
+    shadow.camera.right   =  shadowSide/2; 
+    shadow.camera.bottom  = -shadowSide/2; 
+    shadow.camera.top     =  shadowSide/2; 
 
   scene.add(ambientLight);
   scene.add(mainLight);
