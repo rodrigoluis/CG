@@ -2,12 +2,9 @@ import * as THREE from  '../build/three.module.js';
 import {OrbitControls} from '../build/jsm/controls/OrbitControls.js';
 import {initRenderer, 
         initCamera,
-        InfoBox,
-        createGroundPlane,
         createGroundPlaneWired,
         onWindowResize, 
-        initDefaultBasicLight,
-        degreesToRadians} from "../libs/util/util.js";      
+        initDefaultBasicLight} from "../libs/util/util.js";      
         
 // vars
 let scale = 1;
@@ -24,7 +21,7 @@ var scene = new THREE.Scene();
 var renderer = initRenderer();   
   renderer.setClearColor( 0xbfd1e5 );
 var camera = initCamera(new THREE.Vector3(0, 30, 60));
-var light = initDefaultBasicLight(scene, true, new THREE.Vector3(30, 20, 10), 80, 1024) ;
+var light = initDefaultBasicLight(scene, true, new THREE.Vector3(80, 80, 20), 400, 1024, 0.1, 300) ;
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
 // Add OrbitControls so that we can pan around with the mouse.
