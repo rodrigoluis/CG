@@ -46,8 +46,11 @@ var mesh = new THREE.Mesh(geometry, material);
   mesh.material.map = new THREE.TextureLoader().load('../assets/textures/crate.jpg');
 scene.add(mesh);
 
-render();
+// Add joysticks to the scene
 addJoysticks();
+
+render();
+
 
 // Renders the scene
 function render() {

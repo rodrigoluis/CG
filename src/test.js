@@ -377,42 +377,41 @@ function addJoysticks(){
 	// Details in the link bellow:
 	// https://yoannmoi.net/nipplejs/
 
-	let joystickL = nipplejs.create({
+	let joystickR = nipplejs.create({
 		zone: document.getElementById('joystickWrapper2'),
 		mode: 'static',
-		lockX: true, // only move on the Y axis
+		lockY: true, // only move on the Y axis
 		position: { top: '-80px', right: '80px' },
-	});
-
-	joystickL.on('move', function (evt, data) {
-		const steer = data.vector.x;
-		if(steer >= 0) actions['right'] = true;
-		if(steer < 0) actions['left'] = true;				
-	})
-
-	joystickL.on('end', function (evt) {
-		actions['right'] = false;
-		actions['left'] = false;
-			
-	})
-
-	let joystickR = nipplejs.create({
-		zone: document.getElementById('joystickWrapper1'),
-		mode: 'static',
-		lockY: true, // only move on the Y axis		
-		position: { top: '-80px', left: '80px' }
 	});
 
 	joystickR.on('move', function (evt, data) {
 		const forward = data.vector.y;		
-		if(forward >= 0) actions['acceleration'] = true;
-		if(forward < 0) actions['braking'] = true;				
+		actions.acceleration = actions.braking = false;				
+
+		if(forward > 0) actions.acceleration = true;
+		if(forward < 0) actions.braking = true;				
 	})
 
 	joystickR.on('end', function (evt) {
-		actions['acceleration'] = false;
-		actions['braking'] = false;		
-		
+		actions.acceleration = actions.braking = false;				
+	})
+
+	let joystickL = nipplejs.create({
+		zone: document.getElementById('joystickWrapper1'),
+		mode: 'static',
+		lockX: true, // only move on the Y axis				
+		position: { top: '-80px', left: '80px' }
+	});
+
+	joystickL.on('move', function (evt, data) {
+		const steer = data.vector.x;
+		actions.left = actions.right = false;
+		if(steer > 0) actions.right = true;
+		if(steer < 0) actions.left = true;			
+	})
+
+	joystickL.on('end', function (evt) {
+		actions.left = actions.right = false;
 	})
 
 }
