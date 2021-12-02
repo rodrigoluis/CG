@@ -57,6 +57,10 @@ var list = {
 			},
 		},
 		"Additional Examples":{
+			"Physics":  {
+				"Ammo - Vehicle": "html/ammoVehicleInfo",
+				"Ammo - Breakable Objects": "html/ammoBreakableObjectsInfo",
+			},
 			"Misc":  {
 				"Group Geometry": "html/exampleGroupInfo",
 				"First Person": "html/exampleFirstPersonInfo",
