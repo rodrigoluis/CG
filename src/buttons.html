@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Buttons</title>
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../html/resources/default.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">  
+
+    <style>
+      body {
+        overflow: hidden;
+        margin: 0;
+      }
+
+      .ui {
+        position: absolute;
+      }
+
+      button{
+        margin: 20px;
+      }
+    </style>
+</head>
+
+<body>
+  <div style="width:100%;height:50px;text-align: center; color:white;" class="ui">Info header</div>
+  <button style="top:0" id="fire" class="ui">Fire</button>
+  <button style="bottom:0" id="spell" class="ui">Spell</button>
+  <button style="right:0" id="health" class="ui">Health</button>
+  <div id="webgl-output">
+    <script type="module" src="buttons.js"></script>
+  </div>
+</body>
+
+</html>
