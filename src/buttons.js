@@ -6,23 +6,45 @@ import {initRenderer,
         onWindowResize,
         degreesToRadians} from "../libs/util/util.js";
 
-var pressed = false;        
+var pressedA = false;        
+var pressedB = false;        
+var pressedFull = false;        
 var buttons = document.getElementsByTagName("button");
 for (let i = 0; i < buttons.length; i++) {
-  buttons[i].addEventListener("touchstart", onButtonClick, false);
   buttons[i].addEventListener("mousedown", onButtonClick, false);
+  buttons[i].addEventListener("touchstart", onButtonClick, false);
   buttons[i].addEventListener("mouseup", onButtonUp, false);      
-  buttons[i].addEventListener("touchend", onButtonUp, false);   
+  buttons[i].addEventListener("touchend", onButtonUp, false); 
 };
 
 function onButtonClick(event) {
-  console.log("down");
-  pressed = true;
+  switch(event.target.id)
+  {
+    case "A":
+      pressedA = true;
+    break;
+    case "B":
+      pressedB = true;
+    break;    
+    case "full":
+      pressedFull = true;
+    break;    
+  }
 }
 
 function onButtonUp(event) {
-  console.log("up");
-  pressed = false;
+  switch(event.target.id)
+  {
+    case "A":
+      pressedA = false;
+    break;
+    case "B":
+      pressedB = false;
+    break;    
+    case "full":
+      pressedFull = false;
+    break;        
+  }
 }
 
 
@@ -73,10 +95,21 @@ function render()
 
 function doSomething()
 {
-  if(pressed)
+  if(pressedA)
   {
     var angle = degreesToRadians(1);
     var rotAxis = new THREE.Vector3(0,0,1); // Set Z axis
     cube.rotateOnAxis(rotAxis,  angle );    
+  }
+  if(pressedB)
+  {
+    var angle = degreesToRadians(-1);
+    var rotAxis = new THREE.Vector3(0,0,1); // Set Z axis
+    cube.rotateOnAxis(rotAxis,  angle );    
+  }
+
+  if(pressedFull)
+  {
+    renderer.domElement.requestFullscreen();    
   }
 }
