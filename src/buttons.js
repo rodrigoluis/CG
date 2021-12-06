@@ -112,4 +112,8 @@ function doSomething()
   {
     renderer.domElement.requestFullscreen();    
   }
+  else
+  {
+
+  }
 }
