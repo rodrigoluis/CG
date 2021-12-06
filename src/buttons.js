@@ -3,7 +3,6 @@ import Stats from       '../build/jsm/libs/stats.module.js';
 import {TrackballControls} from '../build/jsm/controls/TrackballControls.js';
 import {initRenderer, 
         initCamera,
-        InfoBox,
         onWindowResize,
         degreesToRadians} from "../libs/util/util.js";
 
@@ -11,7 +10,9 @@ var pressed = false;
 var buttons = document.getElementsByTagName("button");
 for (let i = 0; i < buttons.length; i++) {
   buttons[i].addEventListener("touchstart", onButtonClick, false);
-  buttons[i].addEventListener("touchend", onButtonUp, false);  
+  buttons[i].addEventListener("mousedown", onButtonClick, false);
+  buttons[i].addEventListener("mouseup", onButtonUp, false);      
+  buttons[i].addEventListener("touchend", onButtonUp, false);   
 };
 
 function onButtonClick(event) {
@@ -56,16 +57,6 @@ var cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
 cube.position.set(0.0, 0.0, 2.0);
 // add the cube to the scene
 scene.add(cube);
-
-// Use this to show information onscreen
-var controls = new InfoBox();
-  controls.add("Basic Scene");
-  controls.addParagraph();
-  controls.add("Use mouse to interact:");
-  controls.add("* Left button to rotate");
-  controls.add("* Right button to translate (pan)");
-  controls.add("* Scroll to zoom in/out.");
-  controls.show();
 
 // Listen window size changes
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );

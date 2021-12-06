@@ -8,25 +8,35 @@
 
     <style>
       body {
-        overflow: hidden;
-        margin: 0;
-      }
+        background-color: black;
+        font-size: 5pt;
 
-      .ui {
-        position: absolute;
       }
-
-      button{
-        margin: 20px;
+      .video-game-button {
+        text-shadow: 1px 1px pink, -1px -1px maroon;
+        line-height: 5em;
+        width: 5em;
+        text-align: center;
+        border-radius: 2.5em;
+        background-color: red;
+        box-shadow:  0 .2em maroon;
+        color: red;
+        margin: 5px;
+        background-image: -webkit-linear-gradient(left top, pink 3%, red 22%, maroon 99%);
+        cursor: pointer;
+        position: absolute;        
       }
+      .video-game-button:active, .start-btn:active {
+        box-shadow: none;
+      }        
     </style>
 </head>
 
 <body>
   <div style="width:100%;height:50px;text-align: center; color:white;" class="ui">Info header</div>
-  <button style="top:0" id="fire" class="ui">Touch</button>
-  <button style="bottom:0" id="spell" class="ui">Spell</button>
-  <button style="right:0" id="health" class="ui">Health</button>
+  <button style="top:0" id="A" class="video-game-button">A</button>
+  <button style="bottom:0" id="B" class="video-game-button">B</button>
+  <button style="right:0" id="C" class="video-game-button">C</button>
   <div id="webgl-output">
     <script type="module" src="buttons.js"></script>
   </div>

@@ -13,13 +13,6 @@ var list = {
 				"Basic": "html/animationInfo",
 				"Using External Objects": "html/animationExternalObjectsInfo",
 			},
-			"Geometries":  {
-				"Basic": "html/geometriesBasicInfo",
-				"Lathe": "html/geometriesLatheInfo",
-				"Extrusion": "html/geometriesExtrusionInfo",
-				"Convex": "html/geometriesConvexInfo",
-				"Loading External Files": "html/geometriesExternalObjectsInfo",
-			},
 			"Lighting":  {
 				"Types of lights": "html/lightingTypesInfo",
 				"Types of materials": "html/lightingMaterialsInfo",
@@ -29,6 +22,13 @@ var list = {
 				"Shadow Map Types":"html/shadowMapTypesInfo",			
 				"Shadow Map Viewer":"html/shadowMapViewerInfo",
 				"Shadow Update":"html/shadowUpdateInfo",				
+			},			
+			"Geometries":  {
+				"Basic": "html/geometriesBasicInfo",
+				"Lathe": "html/geometriesLatheInfo",
+				"Extrusion": "html/geometriesExtrusionInfo",
+				"Convex": "html/geometriesConvexInfo",
+				"Loading External Files": "html/geometriesExternalObjectsInfo",
 			},			
 			"Textures":  {
 				"Basic": "html/textureBasicInfo",
