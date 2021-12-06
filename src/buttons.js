@@ -33,18 +33,7 @@ function onButtonClick(event) {
 }
 
 function onButtonUp(event) {
-  switch(event.target.id)
-  {
-    case "A":
-      pressedA = false;
-    break;
-    case "B":
-      pressedB = false;
-    break;    
-    case "full":
-      pressedFull = false;
-    break;        
-  }
+  pressedA = pressedB = pressedFull = false;
 }
 
 
