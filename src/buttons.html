@@ -10,28 +10,29 @@
       body {
         background-color: black;
       }
+
       .video-game-button {       
+        border-radius: 1em; /* 1.5 to be round */
         line-height: 3em;
         width: 3em;
-        border-radius: 1em; /* 1.5 to be round */
+
         box-shadow:  0 .14em rgb(40, 40, 40);
         color: black;
         margin: 5px;
         text-shadow: 1px 1px rgb(128, 128, 128), -1px -1px rgb(0,0,255);        
         background-image: linear-gradient(top, blue 3%, red 22%, maroon 99%);
         background-image: -webkit-linear-gradient(top, rgb(66, 218, 245) 3%,rgb(117, 143, 255) 22%, rgb(5, 51, 247) 99%);        
+        tap-highlight-color: rgba(0,0,0,0);
+        -webkit-tap-highlight-color: rgba(0,0,0,0);
         cursor: pointer;
         position: absolute;             
         font-size: 20pt;     
         outline: none;
+        text-shadow: 1px 1px pink, -1px -1px maroon;
+  
       }
-      .video-game-button:active {
-        box-shadow: none;     
-      }    
-      .video-game-button:focus{
-        border-color:transparent;
-        outline:none;
-      }              
+      
+      
     </style>
 </head>
 
