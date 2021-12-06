@@ -22,11 +22,16 @@
         background-image: -webkit-linear-gradient(top, rgb(66, 218, 245) 3%,rgb(117, 143, 255) 22%, rgb(5, 51, 247) 99%);        
         cursor: pointer;
         position: absolute;             
-        font-size: 20pt;        
+        font-size: 20pt;     
+        outline: none;
       }
       .video-game-button:active {
-        box-shadow: none;
-      }        
+        box-shadow: none;     
+      }    
+      .video-game-button:focus{
+        border-color:transparent;
+        outline:none;
+      }              
     </style>
 </head>
 
