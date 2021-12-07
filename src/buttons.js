@@ -65,11 +65,8 @@ function render()
 
 function onOrientationChange()
 {
-  console.log("rodou.");
   var viewport = document.getElementsByName('viewport')[0];
-  //var viewport = document.querySelector("meta[name=viewport]");
   viewport.setAttribute('content', 'width=device-width, height=device-height initial-scale=1, maximum-scale=1.0')
-
 }
 
 function onButtonClick(event) {
