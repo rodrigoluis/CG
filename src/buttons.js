@@ -8,7 +8,7 @@ import {initRenderer,
 
 var pressedA = false;        
 var pressedB = false;        
-var pressedFull = false;        
+var pressedFull = true;        
 var buttons = document.getElementsByTagName("button");
 for (let i = 0; i < buttons.length; i++) {
   buttons[i].addEventListener("mousedown", onButtonClick, false);
@@ -16,26 +16,6 @@ for (let i = 0; i < buttons.length; i++) {
   buttons[i].addEventListener("mouseup", onButtonUp, false);      
   buttons[i].addEventListener("touchend", onButtonUp, false); 
 };
-
-function onButtonClick(event) {
-  switch(event.target.id)
-  {
-    case "A":
-      pressedA = true;
-    break;
-    case "B":
-      pressedB = true;
-    break;    
-    case "full":
-      pressedFull = true;
-    break;    
-  }
-}
-
-function onButtonUp(event) {
-  pressedA = pressedB = pressedFull = false;
-}
-
 
 var stats = new Stats();          // To show FPS information
 var scene = new THREE.Scene();    // Create main scene
@@ -82,6 +62,66 @@ function render()
   renderer.render(scene, camera) // Render scene
 }
 
+function onButtonClick(event) {
+  switch(event.target.id)
+  {
+    case "A":
+      pressedA = true;
+     break;
+    case "B":
+      pressedB = true;
+    break;    
+    case "full":
+      pressedFull = !pressedFull;
+      console.log("entrou " + pressedFull)
+      // if(pressedFull)
+      //   document.querySelector("body").requestFullscreen();
+      // else
+      // {
+      //   // if (document.exitFullscreen) {
+      //   //   document.exitFullscreen();
+      //   // } else 
+      //   if (document.mozCancelFullScreen) {
+      //     document.mozCancelFullScreen();
+      //   } else if (document.webkitExitFullscreen) {
+      //     document.webkitExitFullscreen();
+      //   }
+      // }      
+
+       //if(pressedFull) 
+       {
+        if (!document.fullscreenElement &&    // alternative standard method
+            !document.mozFullScreenElement && !document.webkitFullscreenElement && !document.msFullscreenElement ) {  // current working methods
+          if (document.documentElement.webkitRequestFullscreen) {
+             document.documentElement.webkitRequestFullscreen(Element.ALLOW_KEYBOARD_INPUT);
+          } else   if (document.documentElement.requestFullscreen) {
+            document.documentElement.requestFullscreen();
+          } else if (document.documentElement.msRequestFullscreen) {
+            document.documentElement.msRequestFullscreen();
+          } else if (document.documentElement.mozRequestFullScreen) {
+            document.documentElement.mozRequestFullScreen();
+          }
+        } else {
+          if (document.exitFullscreen) {
+            document.exitFullscreen();
+          } else if (document.msExitFullscreen) {
+            document.msExitFullscreen();
+          } else if (document.mozCancelFullScreen) {
+            document.mozCancelFullScreen();
+          } else if (document.webkitExitFullscreen) {
+            document.webkitExitFullscreen();
+          }
+        }
+      }      
+
+    break;    
+  }
+}
+
+function onButtonUp(event) {
+  pressedA = pressedB = false;
+}
+
 function doSomething()
 {
   if(pressedA)
@@ -96,13 +136,15 @@ function doSomething()
     var rotAxis = new THREE.Vector3(0,0,1); // Set Z axis
     cube.rotateOnAxis(rotAxis,  angle );    
   }
-
+  /*
   if(pressedFull)
   {
     document.querySelector("body").requestFullscreen();
   }
   else
   {
+    document.webkitExitFullscreen();    
+    
     if (document.exitFullscreen) {
       document.exitFullscreen();
     } else if (document.mozCancelFullScreen) {
@@ -110,5 +152,5 @@ function doSomething()
     } else if (document.webkitExitFullscreen) {
       document.webkitExitFullscreen();
   }
-  }
+  }*/
 }
