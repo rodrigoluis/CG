@@ -99,10 +99,16 @@ function doSomething()
 
   if(pressedFull)
   {
-    renderer.domElement.requestFullscreen();    
+    document.querySelector("body").requestFullscreen();
   }
   else
   {
-
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.mozCancelFullScreen) {
+      document.mozCancelFullScreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+  }
   }
 }
