@@ -6,17 +6,12 @@ import {initRenderer,
         onWindowResize,
         degreesToRadians} from "../libs/util/util.js";
 
+//import {createButtons} from "../libs/other/buttons.js";
+
 var pressedA = false;        
 var pressedB = false;        
-var pressedFull = true;        
-var buttons = document.getElementsByTagName("button");
-for (let i = 0; i < buttons.length; i++) {
-  buttons[i].addEventListener("mousedown", onButtonClick, false);
-  buttons[i].addEventListener("touchstart", onButtonClick, false);
-  buttons[i].addEventListener("mouseup", onButtonUp, false);      
-  buttons[i].addEventListener("touchend", onButtonUp, false); 
-};
 
+var buttons = createButtons();
 var stats = new Stats();          // To show FPS information
 var scene = new THREE.Scene();    // Create main scene
 var renderer = initRenderer();    // View function in util/utils
@@ -61,6 +56,18 @@ function render()
   doSomething();
   requestAnimationFrame(render);
   renderer.render(scene, camera) // Render scene
+}
+
+function createButtons()
+{
+    buttons = document.getElementsByTagName("button");
+    for (let i = 0; i < buttons.length; i++) {
+        buttons[i].addEventListener("mousedown", onButtonClick, false);
+        buttons[i].addEventListener("touchstart", onButtonClick, false);
+        buttons[i].addEventListener("mouseup", onButtonUp, false);      
+        buttons[i].addEventListener("touchend", onButtonUp, false); 
+    };
+    return buttons;
 }
 
 function onOrientationChange()
@@ -124,21 +131,4 @@ function doSomething()
     var rotAxis = new THREE.Vector3(0,0,1); // Set Z axis
     cube.rotateOnAxis(rotAxis,  angle );    
   }
-  /*
-  if(pressedFull)
-  {
-    document.querySelector("body").requestFullscreen();
-  }
-  else
-  {
-    document.webkitExitFullscreen();    
-    
-    if (document.exitFullscreen) {
-      document.exitFullscreen();
-    } else if (document.mozCancelFullScreen) {
-      document.mozCancelFullScreen();
-    } else if (document.webkitExitFullscreen) {
-      document.webkitExitFullscreen();
-  }
-  }*/
 }
