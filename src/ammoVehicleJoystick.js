@@ -34,8 +34,8 @@ var speedometer;
 var scene = new THREE.Scene();
 var renderer = initRenderer();
 	renderer.setClearColor( 0xbfd1e5 )
-	var camera = initCamera(new THREE.Vector3(-40, 25, 0)); // Init camera in this position
-var light = initDefaultBasicLight(scene, true, new THREE.Vector3(-30, 15, 0), 80, 1024) ;
+var camera = initCamera(new THREE.Vector3(-40, 25, 0)); // Init camera in this position
+var light = initDefaultBasicLight(scene, true, new THREE.Vector3(-60, 40, -20), 120, 1024, 0.1, 150) ;
 var controls = new OrbitControls( camera, renderer.domElement);
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 window.addEventListener( 'orientationchange', onOrientationChange );
