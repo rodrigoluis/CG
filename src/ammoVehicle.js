@@ -21,7 +21,7 @@ var speedometer;
 var scene = new THREE.Scene();
 var renderer = initRenderer();
 	renderer.setClearColor( 0xbfd1e5 )
-var camera = initCamera(new THREE.Vector3(-30, 15, 0)); // Init camera in this position
+var camera = initCamera(new THREE.Vector3(-40, 25, 0)); // Init camera in this position
 var light = initDefaultBasicLight(scene, true, new THREE.Vector3(-60, 40, -20), 120, 1024, 0.1, 150) ;
 
 // Helper, if necessary
@@ -236,7 +236,7 @@ function createVehicle(pos, quat) {
 	var chassisWidth = 2.0;
 	var chassisHeight = 1.0;
 	var chassisLength = 4.2;
-	var massVehicle = 800;
+	var massVehicle = 1000;
 
 	var wheelRadiusFront = .4;
 	var wheelWidthFront = .4;

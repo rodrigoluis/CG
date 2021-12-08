@@ -58,7 +58,7 @@ function render()
 {
   stats.update(); // Update FPS
   trackballControls.update(); // Enable mouse movements
-  doSomething();
+  executeIfKeyPressed();
   requestAnimationFrame(render);
   renderer.render(scene, camera) // Render scene
 }
@@ -82,7 +82,7 @@ function onButtonUp(event) {
   pressedA = pressedB = false;
 }
 
-function doSomething()
+function executeIfKeyPressed()
 {
   if(pressedA)
   {

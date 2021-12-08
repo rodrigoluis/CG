@@ -7,7 +7,13 @@ import {initRenderer,
         initCamera, 
         initDefaultBasicLight,
 		onWindowResize,
+		onOrientationChange,
 		degreesToRadians} from "../libs/util/util.js";
+
+import { Buttons } from "../libs/other/buttons.js";
+var buttons = new Buttons(onButtonDown, onButtonUp);
+var pressedA = false;        
+var pressedB = false;      	
 
 let fwdValue = 0;
 let bkdValue = 0;
@@ -28,12 +34,11 @@ var speedometer;
 var scene = new THREE.Scene();
 var renderer = initRenderer();
 	renderer.setClearColor( 0xbfd1e5 )
-var camera = initCamera(new THREE.Vector3(-30, 15, 0)); // Init camera in this position
+	var camera = initCamera(new THREE.Vector3(-40, 25, 0)); // Init camera in this position
 var light = initDefaultBasicLight(scene, true, new THREE.Vector3(-30, 15, 0), 80, 1024) ;
 var controls = new OrbitControls( camera, renderer.domElement);
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
-window.addEventListener( 'keydown', keydown);
-window.addEventListener( 'keyup', keyup);
+window.addEventListener( 'orientationchange', onOrientationChange );
 speedometer = document.getElementById( 'speedometer' );
 
 var stats = new Stats();
@@ -41,7 +46,13 @@ document.getElementById("webgl-output").appendChild(stats.domElement);
 
 var materialDynamic = new THREE.MeshPhongMaterial( { color: "rgba(255, 160, 0)" } );
 var materialGround = new THREE.MeshPhongMaterial({ color: "rgb(180, 180, 180)" });
-var materialRamp = new THREE.MeshPhongMaterial( { color: "rgb(120, 120, 200)" } );	
+// mesh
+var materialRamp = new THREE.MeshLambertMaterial( {
+    color: "rgb(120, 120, 200)",
+    polygonOffset: true,
+    polygonOffsetFactor: 0.5, // positive value pushes polygon further away
+    polygonOffsetUnits: 2
+} );
 var materialInteractive = new THREE.MeshPhongMaterial( { color: "rgb(255, 50, 50)" } );
 var materialWheels = new THREE.MeshPhongMaterial( { color: "rgb(30, 30, 30)" } );	
 var materialWheels2 = new THREE.MeshPhongMaterial( { color: "rgb(200, 200, 200)" } );	
@@ -56,14 +67,8 @@ var physicsWorld;
 var syncList = [];
 var time = 0;
 
-// Keybord actions
+// actions
 var actions = {};
-var keysActions = {
-	"ArrowUp":'acceleration',
-	"ArrowDown":'braking',
-	"ArrowLeft":'left',
-	"ArrowRight":'right'
-};
 
 // Main loop
 Ammo().then(function() {
@@ -95,23 +100,6 @@ function initPhysics() {
 	physicsWorld.setGravity( new Ammo.btVector3( 0, -9.82, 0 ) );
 }
 
-function keyup(e) {
-	if(keysActions[e.code]) {
-		actions[keysActions[e.code]] = false;
-		e.preventDefault();
-		e.stopPropagation();
-		return false;
-	}
-}
-function keydown(e) {
-	if(keysActions[e.code]) {
-		actions[keysActions[e.code]] = true;
-		e.preventDefault();
-		e.stopPropagation();
-		return false;
-	}
-}
-
 function setGroundTexture(mesh)
 {
 	var textureLoader = new THREE.TextureLoader();
@@ -124,6 +112,15 @@ function setGroundTexture(mesh)
 	} );
 }
 
+function createWireFrame(mesh)
+{	
+	// wireframe
+	var geo = new THREE.EdgesGeometry( mesh.geometry ); // or WireframeGeometry
+	var mat = new THREE.LineBasicMaterial( { color: "rgb(80, 80, 80)", linewidth: 1.5} );
+	var wireframe = new THREE.LineSegments( geo, mat );
+	mesh.add( wireframe );
+}
+
 function createObjects() {
 	// Ground plane
 	var ground = createBox(new THREE.Vector3(0, -0.5, 0), ZERO_QUATERNION, 100, 1, 100, 0, 2, materialGround, true);
@@ -131,12 +128,16 @@ function createObjects() {
 
 	// Ramps
 	var quaternion = new THREE.Quaternion(0, 0, 0, 1);
+	var ramp;
 	quaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), degreesToRadians(-15));
-	createBox(new THREE.Vector3(0, -1.5, 0), quaternion, 8, 4, 10, 0, 0, materialRamp);
+	ramp = createBox(new THREE.Vector3(0, -1.5, 0), quaternion, 8, 4, 10, 0, 0, materialRamp);
+	createWireFrame(ramp);
 	quaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), degreesToRadians(30));	
-	createBox(new THREE.Vector3(25, -3.0, 0), quaternion, 8, 8, 15, 0, 0, materialRamp);	
+	ramp = createBox(new THREE.Vector3(25, -3.0, 0), quaternion, 8, 8, 15, 0, 0, materialRamp);	
+	createWireFrame(ramp);	
 	quaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), degreesToRadians(-5));	
-	createBox(new THREE.Vector3(-25, -1.5, 0), quaternion, 8, 4, 15, 0, 0, materialRamp);	
+	ramp = createBox(new THREE.Vector3(-25, -1.5, 0), quaternion, 8, 4, 15, 0, 0, materialRamp);	
+	createWireFrame(ramp);
 
 	// Boxes
 	var size = .75, nw = 8, nh = 7;
@@ -377,25 +378,6 @@ function addJoysticks(){
 	// Details in the link bellow:
 	// https://yoannmoi.net/nipplejs/
 
-	let joystickR = nipplejs.create({
-		zone: document.getElementById('joystickWrapper2'),
-		mode: 'static',
-		lockY: true, // only move on the Y axis
-		position: { top: '-80px', right: '80px' },
-	});
-
-	joystickR.on('move', function (evt, data) {
-		const forward = data.vector.y;		
-		actions.acceleration = actions.braking = false;				
-
-		if(forward > 0) actions.acceleration = true;
-		if(forward < 0) actions.braking = true;				
-	})
-
-	joystickR.on('end', function (evt) {
-		actions.acceleration = actions.braking = false;				
-	})
-
 	let joystickL = nipplejs.create({
 		zone: document.getElementById('joystickWrapper1'),
 		mode: 'static',
@@ -413,5 +395,27 @@ function addJoysticks(){
 	joystickL.on('end', function (evt) {
 		actions.left = actions.right = false;
 	})
-
 }
+
+function onButtonDown(event) {
+	switch(event.target.id)
+	{
+		case "A":
+			actions.braking = false;				
+			actions.acceleration = true;
+		break;
+		case "B":
+			actions.braking = true;				
+			actions.acceleration = false;
+		break;    
+		case "full":
+			buttons.setFullScreen();
+		break;    
+	}
+}
+  
+function onButtonUp(event) {
+	actions.acceleration = false;	
+	actions.braking = false;	
+}
+  
