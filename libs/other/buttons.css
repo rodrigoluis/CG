@@ -8,7 +8,12 @@ body
 {
     background-color: transparent; 
 }
-  
+
+:root {
+    --unselected: top, rgba(200, 200, 200, 0.5) 3%,rgba(140, 140, 140, 0.5) 22%, rgba(100, 100, 100, 0.5) 99%;
+    --selected:   top, rgba(60, 220, 240, 1) 3%,   rgba(120, 150, 255, 1) 22%,   rgba(0, 60, 240, 1) 99%;    
+  }
+
 .video-game-button {       
     width: 3em;
     line-height: 3em;
@@ -18,13 +23,17 @@ body
     font-size: 20pt;            
     color: rgb(0, 0, 0);       
     background-color: transparent;        
-    background-image:         linear-gradient(top, rgba(66, 218, 245, 0.5) 3%,rgba(117, 143, 255, 0.5) 22%, rgba(5, 51, 247, 0.5) 99%);
-    background-image: -webkit-linear-gradient(top, rgba(66, 218, 245, 0.5) 3%,rgba(117, 143, 255, 0.5) 22%, rgba(5, 51, 247, 0.5) 99%);
-    -webkit-tap-highlight-color: rgba(0,0,0,0);   
+    background-image: linear-gradient(var(--unselected));
+    background-image: -moz-linear-gradient(var(--unselected)); 
+    background-image: -o-linear-gradient(var(--unselected));
+    background-image: -webkit-linear-gradient(var(--unselected));
+    -webkit-tap-highlight-color: rgba(0,0,0,0);            
     user-select: none;     
 } 
 .video-game-button:active 
 {
-    background-image:         linear-gradient(top, rgba(66, 218, 245, 1) 3%,rgba(117, 143, 255, 1) 22%, rgba(5, 51, 247, 1) 99%);
-    background-image: -webkit-linear-gradient(top, rgba(66, 218, 245, 1) 3%,rgba(117, 143, 255, 1) 22%, rgba(5, 51, 247, 1) 99%);
+    background-image: linear-gradient(var(--selected));
+    background-image: -moz-linear-gradient(var(--selected)); 
+    background-image: -o-linear-gradient(var(--selected));
+    background-image: -webkit-linear-gradient(var(--selected));
 }   

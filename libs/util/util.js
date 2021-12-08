@@ -183,6 +183,15 @@ export function onWindowResize(camera, renderer){
     }
 }
 
+/*
+ * Used when orientation of mobile devices changes
+ */
+export function onOrientationChange()
+{
+  var viewport = document.getElementsByName('viewport')[0];
+  viewport.setAttribute('content', 'width=device-width, height=device-height initial-scale=1, maximum-scale=1.0')
+}
+
 /**
  * Initialize the statistics domelement
  *
