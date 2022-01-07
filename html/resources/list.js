@@ -24,6 +24,7 @@ var list = {
 				"Shadow Update":"html/shadowUpdateInfo",				
 			},			
 			"Geometries":  {
+				"Manual Creation": "html/geometriesManualInfo",				
 				"Basic": "html/geometriesBasicInfo",
 				"Lathe": "html/geometriesLatheInfo",
 				"Extrusion": "html/geometriesExtrusionInfo",

@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+    <title></title>
+		<meta charset="utf-8">
+		<script src="resources/list.js"></script>
+		<script src="resources/page.js"></script>
+		<link type="text/css" rel="stylesheet" href="resources/page.css" />
+	</head>
+	<body>
+		<h1>Geometries - Manual creation</h1>
+		<br>
+		<hr>
+
+		<p>To create objects manually in Threejs, one way is to use the <a href="https://threejs.org/docs/#api/en/core/BufferGeometry" target="_blank">THREE.BufferGeometry</a>.
+			This object can be used to represent a mesh, lines, points etc. In CG the main use is to create triangles.
+		</p>
+
+		<p>In this first example, the vertices are created manually and used in the buffer to be consumed by the THREE.BufferGeometry.
+			This is a <a href="https://en.wikipedia.org/wiki/Polygon_mesh#Vertex-vertex_meshes" target="_blank">vertex-vertex mesh</a> representation where the faces (triangles) information is implicit.
+		</p>
+
+		<iframe src="../src/geometriesManual.html" onload="this.contentWindow.focus()" onmouseover="this.contentWindow.focus()"></iframe>
+		<a href="../src/geometriesManual.html" target="_blank">Open in a new tab</a>
+
+		<p>
+			A better way to represent objects is through <a href="https://en.wikipedia.org/wiki/Polygon_mesh#Face-vertex_meshes" target="_blank">Face-vertex meshes</a>, 
+			where an object is representated as a set of faces and a set of vertices. The example above was created using this representation.
+		</p>
+		
+		<iframe src="../src/geometriesManual2.html" onload="this.contentWindow.focus()" onmouseover="this.contentWindow.focus()"></iframe>
+		<a href="../src/geometriesManual2.html" target="_blank">Open in a new tab</a>
+		
+		<h2>Creating vertices and faces</h2>
+
+		<p>
+			The following code show how to use the THREE.BufferGeometry in a face-vertex mesh representation.
+		</p>
+
+		<code>
+		// Set the Buffer Geometry
+		const geometry = new THREE.BufferGeometry();
+		  
+		// Create all vertices of the object
+		// In this example, we have six vertices
+		const v = [
+		  [-3.0, 0.0, -2.0], // p0
+		  [-1.0, 2.5, -1.0], // p1 
+		  [-1.0, 0.0,  0.5], // p2    
+		  [ 1.0, 2.5,  0.5], // p3
+		  [ 1.0, 0.0,  0.5], // p4
+		  [ 3.0, 0.0, -1.0], // p5       
+		] 
+		  
+		// Create the triangular faces
+		// In this example we have 4 triangular faces
+		const f = [
+		  [v[0], v[1], v[2]],
+		  [v[1], v[2], v[3]],
+		  [v[2], v[3], v[4]],
+		  [v[3], v[4], v[5]],        
+		]
+		  
+		// The length of the necessary Float32Array will be:
+		// Number of faces * vertices per face * components per vertex
+		// In this example we have 4 faces, 3 vertices per face and 3 components per vertex
+		const numberOfFaces = f.length;
+		const vertexPerFace = f[0].length; // 3
+		const vertexComponents = v[0].length;  // 3
+		const size = numberOfFaces * vertexPerFace * vertexComponents;
+		const buffer = new Float32Array(size);
+		
+		// Populate the final buffer
+		// check all faces
+		let b = 0;
+		for (let i = 0; i < numberOfFaces; i++)
+		{
+			// check all vertices per face
+			for (let j = 0; j < vertexPerFace; j++)      
+			{
+				// check all components per vertex
+				for (let k = 0; k < vertexComponents; k++)      
+				{
+					buffer[b] = f[i][j][k];
+					b++;
+				}
+			}
+		}
+			
+		// itemSize = 3 because there are 3 values (components) per vertex
+		geometry.setAttribute( 'position', new THREE.BufferAttribute( buffer, 3 ) );
+		geometry.computeVertexNormals(); // to avoid a flat surface
+		const material = new THREE.MeshPhongMaterial({color:"rgb(255,0,0)"});
+			material.side =  THREE.DoubleSide; // Show front and back polygons
+		const mesh = new THREE.Mesh( geometry, material );
+		
+		scene.add(mesh);
+		</code>
+
+	</body>
+</html>
