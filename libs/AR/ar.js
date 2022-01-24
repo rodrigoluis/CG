@@ -2125,7 +2125,8 @@ ARjs.MarkerControls.prototype.updateWithModelViewMatrix = function(modelViewMatr
 			markerObject3D.matrix.copy(modelViewMatrix)
 		}
 	}else if( this.parameters.changeMatrixMode === 'cameraTransformMatrix' ){
-		markerObject3D.matrix.getInverse( modelViewMatrix )
+		//markerObject3D.matrix.getInverse( modelViewMatrix );
+		markerObject3D.matrix.copy(modelViewMatrix).invert();		
 	}else {
 		console.assert(false)
 	}

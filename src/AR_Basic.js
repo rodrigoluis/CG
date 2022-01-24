@@ -4,9 +4,11 @@ import {ARjs}    from  '../libs/AR/ar.js';
 import {InfoBox,
 		initDefaultSpotlight} from "../libs/util/util.js";
 
-
 var renderer	= new THREE.WebGLRenderer({antialias: true, alpha: true});
-renderer.setSize( 640, 480 );
+	renderer.setSize( 640, 480 );
+	renderer.shadowMap.type = THREE.VSMShadowMap;
+	renderer.shadowMap.enabled = true;
+	
 document.body.appendChild( renderer.domElement );
 // init scene and camera
 var scene	= new THREE.Scene();
