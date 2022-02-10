@@ -91,13 +91,13 @@ function setTexture(mesh) {
   // You must set an individual UV coordinate for each vertex of your scene
   // Learn more here:
   // https://discoverthreejs.com/book/first-steps/textures-intro/
-  var quad_uvs = [0.0, 0.0,
+  var uvCoords = [0.0, 0.0,
                   0.3, 1.0,
                   0.5, 0.0,
                   0.7, 1.0,
                   1.0, 0.0];
 
-  geometry.setAttribute( 'uv', new THREE.BufferAttribute( new Float32Array( quad_uvs), 2 ) );
+  geometry.setAttribute( 'uv', new THREE.BufferAttribute( new Float32Array( uvCoords), 2 ) );
 
   // Load the texture and set to the material of the mesh
   let texture = new THREE.TextureLoader().load('../assets/textures/art.jpg');
