@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+    <title>UV Mappping</title>
+		<meta charset="utf-8">
+		<script src="resources/list.js"></script>
+		<script src="resources/page.js"></script>
+		<link type="text/css" rel="stylesheet" href="resources/page.css" />
+	</head>
+	<body>
+		<h1>Manual application of textures through UV Mapping</h1>
+		<br>
+		<hr>
+
+		<p>
+		In general, to use textures in Threejs you will use objects that already have UV coordinates (such as planes, cubes etc) 
+		or objects created in external programs (such as blender). But sometimes you may have to apply textures to a custom 
+		object and in this case, you will have to create the UV coordinates manually.
+		</p>
+
+		<p>
+		In summary, UV mapping is the process of assigning 2D points in the texture to 3D points in the geometry. 
+		You will find an interesting explanation about that process 
+		<a href="https://discoverthreejs.com/book/first-steps/textures-intro/" target="_blank">in this tutorial</a>. 
+		
+		<iframe src="../src/textureUVMapping.html" onload="this.contentWindow.focus()" onmouseover="this.contentWindow.focus()"></iframe>
+		<a href="../src/textureUVMapping.html" target="_blank">Open in a new tab</a>
+		
+		<h2>Setting UV Coordinates</h2>
+
+		<p>
+		In Figure 1 you can observe how UV coordinates were applied in our example and the following shows
+		how to add these coordinates in our code.		
+		</p>
+
+		<figure>
+			<img src="img/uv.png" width="1280">
+			<figcaption>Figure 1 - UV coordinates in our example.</figcaption>
+		</figure>		
+	
+
+		<code>
+		function setTexture(mesh) {
+			let geometry = mesh.geometry;
+			let material = mesh.material;
+			
+			// You must set an individual UV coordinate for each vertex of your scene
+			var quad_uvs = [0.0, 0.0,
+							0.3, 1.0,
+							0.5, 0.0,
+							0.7, 1.0,
+							1.0, 0.0];
+			
+			geometry.setAttribute( 'uv', new THREE.BufferAttribute( new Float32Array( quad_uvs), 2 ) );
+			
+			// Load the texture and set to the material of the mesh
+			let texture = new THREE.TextureLoader().load('../assets/textures/art.jpg');
+			material.map =  texture;
+		}
+		</code>
+	</body>
+</html>

@@ -35,6 +35,7 @@ var list = {
 				"Basic": "html/textureBasicInfo",
 				"Main Options": "html/textureOptionsInfo",
 				"Textured External Objects": "html/textureExternalObjectsInfo",
+				"UV Mapping":"html/textureUVMappingInfo",
 			},
 			"Raytracing":  {
 				"Example 1": "html/raytracingExample1Info",

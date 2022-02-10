@@ -13,7 +13,7 @@ let stats = new Stats();          // To show FPS information
 
 let renderer = initRenderer();    // View function in util/utils
   renderer.setClearColor("rgb(30, 30, 40)");
-let camera = initCamera(new THREE.Vector3(1,2,9)); // Init camera in this position
+let camera = initCamera(new THREE.Vector3(0,0,9)); // Init camera in this position
 let light = initDefaultBasicLight(scene, false, new THREE.Vector3(25, 30, 20)); // Use default light
   
 // Listen window size changes
@@ -40,21 +40,18 @@ render();
 function createCustomGeometry()
 {
   // Create all vertices of the object
-  // In this example, we have six vertices
-  let v = [
-    -4.0, -2.0, -1.5, // p0
-    -1.0, -2.0,  1.5, // p1  
-    -2.0,  2.0,  0.0, // p2 
-     2.5, -2.0,  1.5, // p3
-     1.0,  2.0,  1.0, // p4
-     4.0, -2.0, -0.5] // p5       
+  // In this example, we have five vertices
+  let v = [-4.0, -2.0, -1.5, // p0
+           -2.0,  2.0,  0.0, // p1 
+            0.0, -2.0,  1.5, // p2  
+            2.0,  2.0,  0.0, // p4
+            4.0, -2.0,  -1.5] // p3            
 
   // Create the triangular faces
-  // In this example we have 4 triangular faces
-  let f =  [0, 1, 2,   
-            2, 1, 4,
-            1, 3, 4,
-            4, 3, 5];
+  // In this example we have 3 triangular faces
+  let f =  [0, 2, 1,   
+            1, 2, 3,
+            4, 3, 2];
 
   // In this example normals = vertices because the center of the object is the origin. 
   // You may have to compute your normals manually.
@@ -73,15 +70,38 @@ function createCustomGeometry()
   geometry.setIndex( new THREE.BufferAttribute( indices, 1 ) );
   geometry.computeVertexNormals(); 
 
-  material = new THREE.MeshPhongMaterial({color:"rgb(255,150,0)"});
+  material = new THREE.MeshPhongMaterial({color:"rgb(255,255,255)"});
     material.side =  THREE.DoubleSide; // Show front and back polygons
     material.flatShading = true;
   const mesh = new THREE.Mesh( geometry, material );
+
+  // This function will set UV coordinates and texture
+  setTexture(mesh);
 
   scene.add(mesh);
  
   // Create auxiliary spheres to visualize the points
   createPointSpheres(v);
+}
+
+function setTexture(mesh) {
+  let geometry = mesh.geometry;
+  let material = mesh.material;
+
+  // You must set an individual UV coordinate for each vertex of your scene
+  // Learn more here:
+  // https://discoverthreejs.com/book/first-steps/textures-intro/
+  var quad_uvs = [0.0, 0.0,
+                  0.3, 1.0,
+                  0.5, 0.0,
+                  0.7, 1.0,
+                  1.0, 0.0];
+
+  geometry.setAttribute( 'uv', new THREE.BufferAttribute( new Float32Array( quad_uvs), 2 ) );
+
+  // Load the texture and set to the material of the mesh
+  let texture = new THREE.TextureLoader().load('../assets/textures/art.jpg');
+  material.map =  texture;
 }
 
 function createPointSpheres(points)
