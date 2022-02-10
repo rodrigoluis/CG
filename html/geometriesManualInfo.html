@@ -33,13 +33,12 @@
 		<code>
 		// Create all vertices of the object
 		// In this example, we have six vertices
-		let v = [
-		-4.0, -2.0, -1.5, // p0
-		-1.0, -2.0,  1.5, // p1  
-		-2.0,  2.0,  0.0, // p2 
-		 2.5, -2.0,  1.5, // p3
-		 1.0,  2.0,  1.0, // p4
-		 4.0, -2.0, -0.5] // p5
+		let v = [-4.0, -2.0, -1.5,  // p0
+				 -1.0, -2.0,  1.5,  // p1  
+				 -2.0,  2.0,  0.0,  // p2 
+		 		  2.5, -2.0,  1.5,  // p3
+		 		  1.0,  2.0,  1.0,  // p4
+		 		  4.0, -2.0, -0.5]; // p5
 		
 		// Create the triangular faces
 		// In this example we have 4 triangular faces
@@ -65,7 +64,7 @@
 		geometry.computeVertexNormals(); 
 		
 		material = new THREE.MeshPhongMaterial({color:"rgb(255,150,0)"});
-			material.side =  THREE.DoubleSide; // Show front and back polygons
+			material.side = THREE.DoubleSide; // Show front and back polygons
 			material.flatShading = true;
 		const mesh = new THREE.Mesh( geometry, material );
 		

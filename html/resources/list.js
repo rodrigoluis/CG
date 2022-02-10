@@ -69,8 +69,12 @@ var list = {
 				"Drag Control": "html/exampleDragControlInfo",
 				"Fly Controls":"html/exampleFlyControlInfo",		
 				"Joystick Elements":"html/exampleJoystickInfo",						
-				"Audio": "html/exampleAudioInfo",
 			},
+			"Auxiliary":  {
+				"Loading Screen": "html/exampleLoadingScreenInfo",
+				"Audio": "html/exampleAudioInfo",				
+			},
+
 		},
 	},
 };
