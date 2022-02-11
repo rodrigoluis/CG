@@ -31,7 +31,7 @@ scene.add( gridHelper );
 const loadingManager = new THREE.LoadingManager( () => {
   let button  = document.getElementById("myBtn")
   button.style.backgroundColor = 'Red';
-  button.innerHTML = 'Start';
+  button.innerHTML = 'Click to Enter';
 
   let loadingScreen = document.getElementById( 'loading-screen' );
   loadingScreen.transition = 0;
