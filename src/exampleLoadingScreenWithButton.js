@@ -29,19 +29,32 @@ scene.add( gridHelper );
 
 // Create the loading manager
 const loadingManager = new THREE.LoadingManager( () => {
+  let button  = document.getElementById("myBtn")
+  button.style.backgroundColor = 'Red';
+  button.innerHTML = 'Start';
+
   const loadingScreen = document.getElementById( 'loading-screen' );
-  loadingScreen.classList.add( 'fade-out' );
-  loadingScreen.addEventListener( 'transitionend', (e) => {
-    const element = e.target;
-    element.remove();  
-  });  
+  loadingScreen.transition = 0;
 });
+
+const element = document.getElementById("myBtn");
+element.addEventListener("click", myFunction);
 
 // Loading animated objects passing the manager as a parameter
 loadColladaObject(loadingManager, ' ../assets/objects/stormtrooper/stormtrooper.dae');
 loadGLTFObject(loadingManager, '../assets/objects/walkingMan/scene.gltf');
 
 render();
+
+function myFunction() {
+  const loadingScreen = document.getElementById( 'loading-screen' );
+  loadingScreen.transition = 0;
+  loadingScreen.classList.add( 'fade-out' );
+  loadingScreen.addEventListener( 'transitionend', (e) => {
+    const element = e.target;
+    element.remove();  
+  });  
+}
 
 function loadColladaObject(manager, object)
 {
