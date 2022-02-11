@@ -33,8 +33,11 @@ const loadingManager = new THREE.LoadingManager( () => {
   button.style.backgroundColor = 'Red';
   button.innerHTML = 'Start';
 
-  const loadingScreen = document.getElementById( 'loading-screen' );
+  let loadingScreen = document.getElementById( 'loading-screen' );
   loadingScreen.transition = 0;
+  loadingScreen.style.setProperty('--speed1', '0');  
+  loadingScreen.style.setProperty('--speed2', '0');  
+  loadingScreen.style.setProperty('--speed3', '0');      
 });
 
 const element = document.getElementById("myBtn");
