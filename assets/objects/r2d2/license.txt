@@ -1,0 +1,11 @@
+Model Information:
+* title:	R2D2 High Poly
+* source:	https://sketchfab.com/3d-models/r2d2-high-poly-a3888189455f48f0aef8620c1edbf3da
+* author:	SybranAerts (https://sketchfab.com/SybranAerts)
+
+Model License:
+* license type:	CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)
+* requirements:	Author must be credited. Commercial use is allowed.
+
+If you use this 3D model in your project be sure to copy paste this credit wherever you share it:
+This work is based on "R2D2 High Poly" (https://sketchfab.com/3d-models/r2d2-high-poly-a3888189455f48f0aef8620c1edbf3da) by SybranAerts (https://sketchfab.com/SybranAerts) licensed under CC-BY-4.0 (http://creativecommons.org/licenses/by/4.0/)

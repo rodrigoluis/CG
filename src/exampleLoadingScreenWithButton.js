@@ -1,5 +1,4 @@
 import * as THREE from  '../build/three.module.js';
-import Stats from       '../build/jsm/libs/stats.module.js';
 import {OrbitControls} from '../build/jsm/controls/OrbitControls.js';
 import {ColladaLoader} from '../build/jsm/loaders/ColladaLoader.js';
 import {GLTFLoader} from '../build/jsm/loaders/GLTFLoader.js'
@@ -12,7 +11,6 @@ import {initRenderer,
 
 //----------------------------------------------------------------------        
 let scene = new THREE.Scene();    // Create main scene
-let stats = new Stats();          // To show FPS information
 let clock = new THREE.Clock();
 let renderer = initRenderer();    // View function in util/utils
     renderer.setClearColor("rgb(60, 60, 80)");
@@ -22,34 +20,33 @@ let orbit = new OrbitControls( camera, renderer.domElement );
   orbit.update();
 let light = initDefaultBasicLight(scene, true, new THREE.Vector3(1, 1, -1)) ;	
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
-let mixer1, mixer2, man, manScale = 2, time = 0;
-
-const gridHelper = new THREE.PolarGridHelper( 8, 16 );
-scene.add( gridHelper );
+let mixer, audioLoader, audioPath, r2d2, time = 0;
 
 // Create the loading manager
 const loadingManager = new THREE.LoadingManager( () => {
-  let button  = document.getElementById("myBtn")
-  button.style.backgroundColor = 'Red';
-  button.innerHTML = 'Click to Enter';
-
   let loadingScreen = document.getElementById( 'loading-screen' );
   loadingScreen.transition = 0;
   loadingScreen.style.setProperty('--speed1', '0');  
   loadingScreen.style.setProperty('--speed2', '0');  
   loadingScreen.style.setProperty('--speed3', '0');      
+
+  let button  = document.getElementById("myBtn")
+  button.style.backgroundColor = 'Red';
+  button.innerHTML = 'Click to Enter';
+  button.addEventListener("click", onButtonPressed);
 });
 
-const element = document.getElementById("myBtn");
-element.addEventListener("click", myFunction);
-
-// Loading animated objects passing the manager as a parameter
+// Loading objects and audio
 loadColladaObject(loadingManager, ' ../assets/objects/stormtrooper/stormtrooper.dae');
-loadGLTFObject(loadingManager, '../assets/objects/walkingMan/scene.gltf');
+loadGLTFObject(loadingManager, '../assets/objects/r2d2/scene.gltf');
+loadAudio(loadingManager, '../assets/sounds/imperial.mp3');
+let gridHelper = new THREE.PolarGridHelper( 9 );
+scene.add( gridHelper );
 
 render();
 
-function myFunction() {
+//-- Functions --------------------------------------------------------
+function onButtonPressed() {
   const loadingScreen = document.getElementById( 'loading-screen' );
   loadingScreen.transition = 0;
   loadingScreen.classList.add( 'fade-out' );
@@ -57,17 +54,23 @@ function myFunction() {
     const element = e.target;
     element.remove();  
   });  
+  // Config and play the loaded audio
+  let sound = new THREE.Audio( new THREE.AudioListener() );
+  audioLoader.load( audioPath, function( buffer ) {
+    sound.setBuffer( buffer );
+    sound.setLoop( true );
+    sound.play(); 
+  });
 }
 
 function loadColladaObject(manager, object)
 {
-  // Create the first object that will use de loadingManager
   const loader = new ColladaLoader( manager );
   loader.load( object, ( collada ) => {
     const avatar = collada.scene;
     const animations = avatar.animations;
-    mixer1 = new THREE.AnimationMixer( avatar );
-    mixer1.clipAction( animations[ 0 ] ).play();
+    mixer = new THREE.AnimationMixer( avatar );
+    mixer.clipAction( animations[ 0 ] ).play();
     scene.add( avatar );
   } );
 }
@@ -76,37 +79,38 @@ function loadGLTFObject(manager, object)
 {
   var loader = new GLTFLoader( manager );
   loader.load( object, function ( gltf ) {
-    var obj = gltf.scene;
-    man = obj;
-    scene.add ( obj );
-    mixer2 = new THREE.AnimationMixer(obj);
-    mixer2.clipAction( gltf.animations[0] ).play();
+    r2d2 = gltf.scene;
+    scene.add ( r2d2 );
     }, null, null);
 }
 
+function loadAudio(manager, audio)
+{
+  // Create ambient sound
+  audioLoader = new THREE.AudioLoader(manager);
+  audioPath = audio;
+}
 
 // Function to rotate the man around the center object
-function rotateMan(delta) {
-  if(man) {
+function rotateR2D2(delta) {
+  if(r2d2) {
     let radius = 7.0;
+    let scale = 0.005;
     time+=delta*30;
     var mat4 = new THREE.Matrix4();
-    man.matrixAutoUpdate = false;
-    man.matrix.identity();  // reset matrix
-    man.matrix.multiply(mat4.makeRotationY(degreesToRadians(-time)));
-    man.matrix.multiply(mat4.makeTranslation(radius, 0.0, 0.0));
-    man.matrix.multiply(mat4.makeScale(manScale,manScale,manScale));
+    r2d2.matrixAutoUpdate = false;
+    r2d2.matrix.identity();  // reset matrix
+    r2d2.matrix.multiply(mat4.makeRotationY(degreesToRadians(-time)));
+    r2d2.matrix.multiply(mat4.makeTranslation(radius, 0.0, 0.0));
+    r2d2.matrix.multiply(mat4.makeScale(scale,scale,scale));
   }
 }
 
 function render() {
-    stats.update();
     const delta = clock.getDelta();
-    if ( mixer1 !== undefined ) mixer1.update( delta );
-    if ( mixer2 !== undefined ) {
-      mixer2.update( delta );    
-      rotateMan(delta);
-    }
+    if ( mixer !== undefined ) mixer.update( delta );
+    if ( r2d2 !== undefined ) rotateR2D2( delta );
+
     lightFollowingCamera(light, camera) // Makes light follow the camera    
     requestAnimationFrame( render );
     renderer.render( scene, camera );
