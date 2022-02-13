@@ -72,6 +72,7 @@ var list = {
 			},
 			"Auxiliary":  {
 				"Loading Screen": "html/exampleLoadingScreenInfo",
+				"Loading Screen with button": "html/exampleLoadingScreenWithButtonInfo",				
 				"Audio": "html/exampleAudioInfo",				
 			},
 
