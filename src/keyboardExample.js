@@ -65,7 +65,7 @@ function keyboardUpdate() {
   if ( keyboard.down("up") )     cube.translateY(  1 );
   if ( keyboard.down("down") )   cube.translateY( -1 );
 
-    // Keyboard.pressed - execute while is pressed
+  // Keyboard.pressed - execute while is pressed
   if ( keyboard.pressed("A") )  cube.translateX( -moveDistance );
   if ( keyboard.pressed("D") )  cube.translateX(  moveDistance );
   if ( keyboard.pressed("W") )  cube.translateY(  moveDistance );
