@@ -1,9 +1,8 @@
 import * as THREE from '../build/three.module.js';
-import KeyboardState from '../libs/util/KeyboardState.js';
+import {GUI} from       '../build/jsm/libs/dat.gui.module.js';
 import {OrbitControls} from '../build/jsm/controls/OrbitControls.js';
 import {TeapotGeometry} from '../build/jsm/geometries/TeapotGeometry.js';
 import {initRenderer, 
-		InfoBox,
 		onWindowResize,
 		initDefaultSpotlight,
 		lightFollowingCamera} from "../libs/util/util.js";
@@ -16,9 +15,7 @@ let camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHe
 
 // Controls and window management
 new OrbitControls( camera, renderer.domElement );
-let keyboard = new KeyboardState();
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
-showInformation();
 
 //-- CREATING THE CUBE MAP ---------------------------------------------------------------------
 // Setting the 6 textures of the cubemap
@@ -49,35 +46,37 @@ let teapotReflection = createTeapot(cubeReflection);
 let teapotRefraction = createTeapot(cubeRefraction);
 	teapotRefraction.visible = false; // Starts with the reflective teapot
 
+	buildInterface();
 render();
 
 //-- Functions -------------------------------------------------------------------------------
 function render() {
-	keyboardUpdate();
 	lightFollowingCamera(light, camera);
 	requestAnimationFrame( render );
 	renderer.render( scene, camera );
 }
+
+function buildInterface()
+{
+  var controls = new function ()
+  {
+    this.refraction = false;
+    this.onSetRefraction = function(){
+		teapotReflection.visible = !this.refraction;
+		teapotRefraction.visible = this.refraction;	
+    };
+  };
+
+  var gui = new GUI();
+  gui.add(controls, 'refraction', false)
+    .name("Refraction")
+    .onChange(function(e) { controls.onSetRefraction() });
+}
+
 
 function createTeapot(material) {
 	var geometry = new TeapotGeometry(1);
 	var teapot = new THREE.Mesh(geometry, material);
 	scene.add(teapot);		
 	return teapot;
-}
-
-function keyboardUpdate() {
-	keyboard.update();
-	if ( keyboard.down("space") ) { 
-		teapotReflection.visible = !teapotReflection.visible;
-		teapotRefraction.visible = !teapotRefraction.visible;		
-	}
-}
-
-function showInformation(){
-  let controls = new InfoBox();
-      controls.add("Cube Mapping");
-      controls.addParagraph();
-      controls.add("Press SPACE to toogle between reflection and refraction material.");
-      controls.show();
 }

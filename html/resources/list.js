@@ -60,7 +60,7 @@ var list = {
 		},
 		"Additional Examples":{
 			"Textures - Advanced":  {
-				"Cube Mapping": "html/textureAdvancedCubeMappingInfo",
+				"Environment mapping 1": "html/textureAdvancedCubeMappingInfo",
 			},
 			"Physics":  {
 				"Ammo - Vehicle": "html/ammoVehicleInfo",
