@@ -59,11 +59,13 @@ function keyboardUpdate() {
   var speed = 30;
   var moveDistance = speed * clock.getDelta();
 
+  // Keyboard.down - execute only once per key pressed
   if ( keyboard.down("left") )   cube.translateX( -1 );
   if ( keyboard.down("right") )  cube.translateX(  1 );
   if ( keyboard.down("up") )     cube.translateY(  1 );
   if ( keyboard.down("down") )   cube.translateY( -1 );
 
+    // Keyboard.pressed - execute while is pressed
   if ( keyboard.pressed("A") )  cube.translateX( -moveDistance );
   if ( keyboard.pressed("D") )  cube.translateX(  moveDistance );
   if ( keyboard.pressed("W") )  cube.translateY(  moveDistance );
