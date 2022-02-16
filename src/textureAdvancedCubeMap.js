@@ -9,9 +9,12 @@ import {initRenderer,
 
 //-- MAIN SCRIPT -------------------------------------------------------------------------------
 let scene = new THREE.Scene();    
-let renderer = initRenderer();    // View function in util/utils
+let renderer = initRenderer();    
 let camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 1, 100 );
 	camera.position.z = 7;
+
+// Set lights
+let light = initDefaultSpotlight(scene, camera.position); 
 
 // Controls and window management
 new OrbitControls( camera, renderer.domElement );
@@ -27,26 +30,18 @@ const urls = [
 	path + 'posz' + format, path + 'negz' + format
 ];
 // Setting the two cube maps, one for refraction and one for reflection
-const reflectionCube = new THREE.CubeTextureLoader().load( urls );
-const refractionCube = new THREE.CubeTextureLoader().load( urls );
-refractionCube.mapping = THREE.CubeRefractionMapping;
+let cubeMapTexture = new THREE.CubeTextureLoader().load( urls );
 
 // Create the main scene and Set its background as a cubemap (using a CubeTexture)
-scene.background = reflectionCube;
+scene.background = cubeMapTexture;
 
-// Set lights
-let light = initDefaultSpotlight(scene, camera.position); 
+// Create the main object (teapot)
+let geometry = new TeapotGeometry(1);
+let teapotMaterial = new THREE.MeshLambertMaterial( { color: 0xffffff, envMap: cubeMapTexture, refractionRatio: 0.95 } );
+let teapot = new THREE.Mesh(geometry, teapotMaterial);
+scene.add(teapot);	
 
-// Create reflective and refractive material
-const cubeReflection = new THREE.MeshLambertMaterial( { color: 0xffffff, envMap: reflectionCube } );
-const cubeRefraction = new THREE.MeshLambertMaterial( { color: 0xffffff, envMap: refractionCube, refractionRatio: 0.95 } );	
-
-// Create two teapots, each with one material.
-let teapotReflection = createTeapot(cubeReflection);
-let teapotRefraction = createTeapot(cubeRefraction);
-	teapotRefraction.visible = false; // Starts with the reflective teapot
-
-	buildInterface();
+buildInterface();
 render();
 
 //-- Functions -------------------------------------------------------------------------------
@@ -62,21 +57,15 @@ function buildInterface()
   {
     this.refraction = false;
     this.onSetRefraction = function(){
-		teapotReflection.visible = !this.refraction;
-		teapotRefraction.visible = this.refraction;	
+		if(this.refraction)
+			cubeMapTexture.mapping = THREE.CubeRefractionMapping;		
+		else
+			cubeMapTexture.mapping = THREE.CubeReflectionMapping;
+		teapotMaterial.needsUpdate = true;
     };
   };
-
   var gui = new GUI();
   gui.add(controls, 'refraction', false)
     .name("Refraction")
     .onChange(function(e) { controls.onSetRefraction() });
-}
-
-
-function createTeapot(material) {
-	var geometry = new TeapotGeometry(1);
-	var teapot = new THREE.Mesh(geometry, material);
-	scene.add(teapot);		
-	return teapot;
 }
