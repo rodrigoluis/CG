@@ -63,6 +63,7 @@ var list = {
 				"Environment mapping 1": "html/textureAdvancedCubeMapInfo",
 				"Environment mapping 2": "html/textureAdvancedEquirectangularMapInfo",				
 				"Normal mapping": "html/textureAdvancedNormalMappingInfo",								
+				"Displacement mapping": "html/textureAdvancedDisplacementMappingInfo",												
 			},
 			"Physics":  {
 				"Ammo - Vehicle": "html/ammoVehicleInfo",
