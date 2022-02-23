@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+    <title></title>
+		<meta charset="utf-8">
+		<script src="resources/list.js"></script>
+		<script src="resources/page.js"></script>
+		<link type="text/css" rel="stylesheet" href="resources/page.css" />
+	</head>
+	<body>
+		<h1>Normal Mapping</h1>
+		<br>
+		<hr>
+
+		<p>
+		Normal mapping (also known as <i>Bump Mapping</i>) is a texture mapping technique used for faking the 
+		lighting of bumps and dents. 
+		It is used to add details without using more polygons. A common use of this technique is to greatly 
+		enhance the appearance and details of a low polygon model by generating a normal map from a 
+		high polygon model or height map. Normal maps are commonly stored as regular RGB images where 
+		the RGB components correspond to the X, Y, and Z coordinates, respectively, of the surface normal 
+		(more details about this technique <a href="https://en.wikipedia.org/wiki/Cube_mapping" target="_blank">here</a>).
+		</p>
+		
+		<p>
+		The following example was based on the code available in <a href="http://jyunming-chen.github.io/tutsplus/tutsplus28.html" target="_blank">here</a>.
+		</p>
+
+		<iframe src="../src/textureAdvancedNormalMap.html" onload="this.contentWindow.focus()" onmouseover="this.contentWindow.focus()"></iframe>
+		<a href="../src/textureAdvancedNormalMap.html" target="_blank">Open in a new tab</a>
+
+		<h2>How many textures should I use?</h2>
+
+		<p>
+		You must use at least two 2D textures, one for the color (diffuse) map and the other to store the per-fragment 
+		normals derived from the shape of the surface as showed above. More details about the generation of the per-fragment 
+		normals are available <a href="https://learnopengl.com/Advanced-Lighting/Normal-Mapping" target="_blank">here</a>.
+		</p>
+
+		<figure>
+			<img src="./img/normalMap.png" width="420">
+			<figcaption>Diffuse texture (left) and "normal" texture (right).</figcaption>
+		</figure>
+
+
+	</body>
+</html>
