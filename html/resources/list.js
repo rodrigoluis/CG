@@ -70,6 +70,7 @@ var list = {
 				"Ammo - Breakable Objects": "html/ammoBreakableObjectsInfo",
 			},
 			"Misc":  {
+				"Linear Interpolation": "html/exampleLerpInfo",				
 				"Group Geometry": "html/exampleGroupInfo",
 				"First Person": "html/exampleFirstPersonInfo",
 				"Drag Control": "html/exampleDragControlInfo",

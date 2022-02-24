@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+    <title></title>
+		<meta charset="utf-8">
+		<script src="resources/list.js"></script>
+		<script src="resources/page.js"></script>
+		<link type="text/css" rel="stylesheet" href="resources/page.css" />
+	</head>
+	<body>
+		<h1>Linear Interpolation</h1>
+		<br>
+		<hr>
+
+		<p>
+		<b>L</b>inear int<b>erp</b>olation (or "Lerp" for short) is a form of interpolation, which involves the generation 
+		of new values based on an existing set of values.  In principle, a lerp function "eases" the transition between 
+		two values over time, using some simple math. This could be used to slide a character between two coordinates, 
+		or to animate a change in size.
+		</p>
+		
+		<p>
+		Threejs has an implementation of lerp in its 
+		<a href="https://threejs.org/docs/?q=vector3#api/en/math/Vector3" target="_blank">Vector3</a> class and can be used in
+		many ways. In the following example, it was used to move an object between its current position and a new one.
+		</p>
+
+		<iframe src="../src/exampleLerp.html" onload="this.contentWindow.focus()" onmouseover="this.contentWindow.focus()"></iframe>
+		<a href="../src/exampleLerp.html" target="_blank">Open in a new tab</a>
+
+	</body>
+</html>
