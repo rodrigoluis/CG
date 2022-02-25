@@ -1,56 +1,43 @@
-import { Color } from '../../../../build/three.module.js';
+import InputNode from '../core/InputNode.js';
+import { Color } from 'three';
 
-import { InputNode } from '../core/InputNode.js';
-import { NodeUtils } from '../core/NodeUtils.js';
+class ColorNode extends InputNode {
 
-function ColorNode( color, g, b ) {
+	constructor( value = new Color() ) {
 
-	InputNode.call( this, 'c' );
+		super( 'color' );
 
-	this.value = color instanceof Color ? color : new Color( color || 0, g, b );
-
-}
-
-ColorNode.prototype = Object.create( InputNode.prototype );
-ColorNode.prototype.constructor = ColorNode;
-ColorNode.prototype.nodeType = 'Color';
-
-NodeUtils.addShortcuts( ColorNode.prototype, 'value', [ 'r', 'g', 'b' ] );
-
-ColorNode.prototype.generateReadonly = function ( builder, output, uuid, type/*, ns, needsUpdate */ ) {
-
-	return builder.format( 'vec3( ' + this.r + ', ' + this.g + ', ' + this.b + ' )', type, output );
-
-};
-
-ColorNode.prototype.copy = function ( source ) {
-
-	InputNode.prototype.copy.call( this, source );
-
-	this.value.copy( source );
-
-	return this;
-
-};
-
-ColorNode.prototype.toJSON = function ( meta ) {
-
-	var data = this.getJSONNode( meta );
-
-	if ( ! data ) {
-
-		data = this.createJSONNode( meta );
-
-		data.r = this.r;
-		data.g = this.g;
-		data.b = this.b;
-
-		if ( this.readonly === true ) data.readonly = true;
+		this.value = value;
 
 	}
 
-	return data;
+	serialize( data ) {
 
-};
+		super.serialize( data );
 
-export { ColorNode };
+		const { r, g, b } = this.value;
+
+		data.r = r;
+		data.g = g;
+		data.b = b;
+
+	}
+
+	deserialize( data ) {
+
+		super.serialize( data );
+
+		const { r, g, b } = data;
+		const value = this.value;
+
+		value.r = r;
+		value.g = g;
+		value.b = b;
+
+	}
+
+}
+
+ColorNode.prototype.isColorNode = true;
+
+export default ColorNode;

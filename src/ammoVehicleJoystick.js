@@ -1,6 +1,6 @@
 // Based on the "vehicle" example available in https://github.com/kripken/ammo.js/
 
-import * as THREE from  '../build/three.module.js';
+import * as THREE from 'three';
 import Stats from       '../build/jsm/libs/stats.module.js';
 import { OrbitControls } from '../build/jsm/controls/OrbitControls.js';
 import {initRenderer, 

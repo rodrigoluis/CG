@@ -1,4 +1,4 @@
-import * as THREE from '../build/three.module.js';
+import * as THREE from 'three';
 import {TeapotGeometry} from '../build/jsm/geometries/TeapotGeometry.js';
 import { ARButton } from 	 '../build/jsm/webxr/ARButton.js';
 import {initDefaultSpotlight,

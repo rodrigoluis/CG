@@ -1,57 +1,45 @@
-import { Vector4 } from '../../../../build/three.module.js';
+import InputNode from '../core/InputNode.js';
+import { Vector4 } from 'three';
 
-import { InputNode } from '../core/InputNode.js';
-import { NodeUtils } from '../core/NodeUtils.js';
+class Vector4Node extends InputNode {
 
-function Vector4Node( x, y, z, w ) {
+	constructor( value = new Vector4() ) {
 
-	InputNode.call( this, 'v4' );
+		super( 'vec4' );
 
-	this.value = x instanceof Vector4 ? x : new Vector4( x, y, z, w );
-
-}
-
-Vector4Node.prototype = Object.create( InputNode.prototype );
-Vector4Node.prototype.constructor = Vector4Node;
-Vector4Node.prototype.nodeType = 'Vector4';
-
-NodeUtils.addShortcuts( Vector4Node.prototype, 'value', [ 'x', 'y', 'z', 'w' ] );
-
-Vector4Node.prototype.generateReadonly = function ( builder, output, uuid, type/*, ns, needsUpdate*/ ) {
-
-	return builder.format( 'vec4( ' + this.x + ', ' + this.y + ', ' + this.z + ', ' + this.w + ' )', type, output );
-
-};
-
-Vector4Node.prototype.copy = function ( source ) {
-
-	InputNode.prototype.copy.call( this, source );
-
-	this.value.copy( source );
-
-	return this;
-
-};
-
-Vector4Node.prototype.toJSON = function ( meta ) {
-
-	var data = this.getJSONNode( meta );
-
-	if ( ! data ) {
-
-		data = this.createJSONNode( meta );
-
-		data.x = this.x;
-		data.y = this.y;
-		data.z = this.z;
-		data.w = this.w;
-
-		if ( this.readonly === true ) data.readonly = true;
+		this.value = value;
 
 	}
 
-	return data;
+	serialize( data ) {
 
-};
+		super.serialize( data );
 
-export { Vector4Node };
+		const { x, y, z, w } = this.value;
+
+		data.x = x;
+		data.y = y;
+		data.z = z;
+		data.w = w;
+
+	}
+
+	deserialize( data ) {
+
+		super.serialize( data );
+
+		const { x, y, z, w } = data;
+		const value = this.value;
+
+		value.x = x;
+		value.y = y;
+		value.z = z;
+		value.w = w;
+
+	}
+
+}
+
+Vector4Node.prototype.isVector4Node = true;
+
+export default Vector4Node;

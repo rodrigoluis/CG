@@ -11,7 +11,10 @@
     <div id="loader"></div> 
     <button class="button" id="myBtn">Loading...</button>
   </section>
-  <div id="webgl-output">
+  <div id="webgl-output">    
+    <script type="importmap">
+      {"imports": {"three": "../build/three.module.js"}}
+    </script>    
     <script type="module" src="exampleLoadingScreenWithButton.js"></script>
   </div>
 </body>

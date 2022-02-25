@@ -1,73 +1,36 @@
-import { TempNode } from '../core/TempNode.js';
-import { FunctionNode } from '../core/FunctionNode.js';
-import { UVNode } from '../accessors/UVNode.js';
+import Node from '../core/Node.js';
+import UVNode from '../accessors/UVNode.js';
 
-function CheckerNode( uv ) {
+import { ShaderNode, add, mul, floor, mod, sign } from '../ShaderNode.js';
 
-	TempNode.call( this, 'f' );
+const checkerShaderNode = new ShaderNode( ( inputs ) => {
 
-	this.uv = uv || new UVNode();
+	const uv = mul( inputs.uv, 2.0 );
 
-}
+	const cx = floor( uv.x );
+	const cy = floor( uv.y );
+	const result = mod( add( cx, cy ), 2.0 );
 
-CheckerNode.prototype = Object.create( TempNode.prototype );
-CheckerNode.prototype.constructor = CheckerNode;
-CheckerNode.prototype.nodeType = 'Noise';
+	return sign( result );
 
-CheckerNode.Nodes = ( function () {
+} );
 
-	// https://github.com/mattdesl/glsl-checker/blob/master/index.glsl
+class CheckerNode extends Node {
 
-	var checker = new FunctionNode( [
-		'float checker( vec2 uv ) {',
+	constructor( uvNode = new UVNode() ) {
 
-		'	float cx = floor( uv.x );',
-		'	float cy = floor( uv.y ); ',
-		'	float result = mod( cx + cy, 2.0 );',
+		super( 'float' );
 
-		'	return sign( result );',
-
-		'}'
-	].join( '\n' ) );
-
-	return {
-		checker: checker
-	};
-
-} )();
-
-CheckerNode.prototype.generate = function ( builder, output ) {
-
-	var snoise = builder.include( CheckerNode.Nodes.checker );
-
-	return builder.format( snoise + '( ' + this.uv.build( builder, 'v2' ) + ' )', this.getType( builder ), output );
-
-};
-
-CheckerNode.prototype.copy = function ( source ) {
-
-	TempNode.prototype.copy.call( this, source );
-
-	this.uv = source.uv;
-
-	return this;
-
-};
-
-CheckerNode.prototype.toJSON = function ( meta ) {
-
-	var data = this.getJSONNode( meta );
-
-	if ( ! data ) {
-
-		data = this.createJSONNode( meta );
-
-		data.uv = this.uv.toJSON( meta ).uuid;
+		this.uvNode = uvNode;
 
 	}
 
-	return data;
+	generate( builder ) {
 
-};
+		return checkerShaderNode( { uv: this.uvNode } ).build( builder );
 
-export { CheckerNode };
+	}
+
+}
+
+export default CheckerNode;

@@ -1,4 +1,4 @@
-import * as THREE from  '../build/three.module.js';
+import * as THREE from 'three';
 import {OrbitControls} from '../build/jsm/controls/OrbitControls.js';
 import {ColladaLoader} from '../build/jsm/loaders/ColladaLoader.js';
 import {GLTFLoader} from '../build/jsm/loaders/GLTFLoader.js'

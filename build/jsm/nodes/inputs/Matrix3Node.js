@@ -1,70 +1,18 @@
-import { Matrix3 } from '../../../../build/three.module.js';
+import InputNode from '../core/InputNode.js';
+import { Matrix3 } from 'three';
 
-import { InputNode } from '../core/InputNode.js';
+class Matrix3Node extends InputNode {
 
-function Matrix3Node( matrix ) {
+	constructor( value = new Matrix3() ) {
 
-	InputNode.call( this, 'm3' );
+		super( 'mat3' );
 
-	this.value = matrix || new Matrix3();
+		this.value = value;
+
+	}
 
 }
 
-Matrix3Node.prototype = Object.create( InputNode.prototype );
-Matrix3Node.prototype.constructor = Matrix3Node;
-Matrix3Node.prototype.nodeType = 'Matrix3';
+Matrix3Node.prototype.isMatrix3Node = true;
 
-Object.defineProperties( Matrix3Node.prototype, {
-
-	elements: {
-
-		set: function ( val ) {
-
-			this.value.elements = val;
-
-		},
-
-		get: function () {
-
-			return this.value.elements;
-
-		}
-
-	}
-
-} );
-
-Matrix3Node.prototype.generateReadonly = function ( builder, output, uuid, type/*, ns, needsUpdate */ ) {
-
-	return builder.format( 'mat3( ' + this.value.elements.join( ', ' ) + ' )', type, output );
-
-};
-
-
-Matrix3Node.prototype.copy = function ( source ) {
-
-	InputNode.prototype.copy.call( this, source );
-
-	this.value.fromArray( source.elements );
-
-	return this;
-
-};
-
-Matrix3Node.prototype.toJSON = function ( meta ) {
-
-	var data = this.getJSONNode( meta );
-
-	if ( ! data ) {
-
-		data = this.createJSONNode( meta );
-
-		data.elements = this.value.elements.concat();
-
-	}
-
-	return data;
-
-};
-
-export { Matrix3Node };
+export default Matrix3Node;

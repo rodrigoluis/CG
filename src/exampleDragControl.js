@@ -1,4 +1,4 @@
-import * as THREE from  '../build/three.module.js';
+import * as THREE from 'three';
 import {TrackballControls} from '../build/jsm/controls/TrackballControls.js';
 import {DragControls} from '../build/jsm/controls/DragControls.js'
 import KeyboardState from '../libs/util/KeyboardState.js';

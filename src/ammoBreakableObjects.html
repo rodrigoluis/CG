@@ -19,7 +19,10 @@
 <body>
   <div id="info">Click to shoot a ball</div>  
  
-  <div id="webgl-output">
+  <div id="webgl-output">    
+    <script type="importmap">
+      {"imports": {"three": "../build/three.module.js"}}
+    </script>    
     <script src="../libs/other/ammo.wasm.js"></script>      
     <script type="module" src="ammoBreakableObjects.js"></script>
   </div>

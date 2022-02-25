@@ -1,4 +1,4 @@
-import * as THREE from  '../build/three.module.js';
+import * as THREE from  'three';
 import KeyboardState from '../libs/util/KeyboardState.js';
 import { TrackballControls } from '../build/jsm/controls/TrackballControls.js';
 import { TeapotGeometry } from '../build/jsm/geometries/TeapotGeometry.js';

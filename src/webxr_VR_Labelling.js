@@ -1,5 +1,5 @@
 //-- Imports -------------------------------------------------------------------------------------
-import * as THREE from '../build/three.module.js';
+import * as THREE from  'three';
 import { VRButton } from '../build/jsm/webxr/VRButton.js';
 import {onWindowResize} from "../libs/util/util.js";
 import {setLookNonVRBehavior,

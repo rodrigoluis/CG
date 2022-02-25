@@ -1,49 +1,33 @@
-import { InputNode } from '../core/InputNode.js';
+import InputNode from '../core/InputNode.js';
 
-function FloatNode( value ) {
+class FloatNode extends InputNode {
 
-	InputNode.call( this, 'f' );
+	constructor( value = 0 ) {
 
-	this.value = value || 0;
+		super( 'float' );
 
-}
-
-FloatNode.prototype = Object.create( InputNode.prototype );
-FloatNode.prototype.constructor = FloatNode;
-FloatNode.prototype.nodeType = 'Float';
-
-FloatNode.prototype.generateReadonly = function ( builder, output, uuid, type/*, ns, needsUpdate */ ) {
-
-	return builder.format( this.value + ( this.value % 1 ? '' : '.0' ), type, output );
-
-};
-
-FloatNode.prototype.copy = function ( source ) {
-
-	InputNode.prototype.copy.call( this, source );
-
-	this.value = source.value;
-
-	return this;
-
-};
-
-FloatNode.prototype.toJSON = function ( meta ) {
-
-	var data = this.getJSONNode( meta );
-
-	if ( ! data ) {
-
-		data = this.createJSONNode( meta );
-
-		data.value = this.value;
-
-		if ( this.readonly === true ) data.readonly = true;
+		this.value = value;
 
 	}
 
-	return data;
+	serialize( data ) {
 
-};
+		super.serialize( data );
 
-export { FloatNode };
+		data.value = this.value;
+
+	}
+
+	deserialize( data ) {
+
+		super.serialize( data );
+
+		data.value = this.value;
+
+	}
+
+}
+
+FloatNode.prototype.isFloatNode = true;
+
+export default FloatNode;

@@ -1,6 +1,6 @@
-import * as THREE from  '../libs/other/three.module.r82.js';
+import * as THREE 			from  'three';
 import {RaytracingRenderer} from  '../libs/other/raytracingRenderer.js';
-import {degreesToRadians} from "../libs/util/util.js";
+import {degreesToRadians}   from "../libs/util/util.js";
 
 var scene, renderer;
 

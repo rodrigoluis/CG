@@ -24,7 +24,10 @@
 <body>
   <div id="speedometer">0.0 km/h</div>
   <div id="info">Ammo - Raycast vehicle<br>Press arrow keys to move.</div>  
-  <div id="webgl-output">
+  <div id="webgl-output">    
+    <script type="importmap">
+      {"imports": {"three": "../build/three.module.js"}}
+    </script>    
     <script src="../libs/other/ammo.wasm.js"></script>      
     <script type="module" src="ammoVehicle.js"></script>
   </div>

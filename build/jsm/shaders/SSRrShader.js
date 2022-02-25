@@ -1,9 +1,9 @@
 import {
 	Matrix4,
 	Vector2
-} from "../../../build/three.module.js";
+} from 'three';
 
-var SSRrShader = {
+const SSRrShader = {
 
 	defines: {
 		MAX_STEP: 0,
@@ -15,21 +15,21 @@ var SSRrShader = {
 
 	uniforms: {
 
-		"tDiffuse": { value: null },
-		"tSpecular": { value: null },
-		"tNormalSelects": { value: null },
-		"tRefractive": { value: null },
-		"tDepth": { value: null },
-		"tDepthSelects": { value: null },
-		"cameraNear": { value: null },
-		"cameraFar": { value: null },
-		"resolution": { value: new Vector2() },
-		"cameraProjectionMatrix": { value: new Matrix4() },
-		"cameraInverseProjectionMatrix": { value: new Matrix4() },
-		"ior": { value: 1.03 },
-		"cameraRange": { value: 0 },
-		"maxDistance": { value: 180 },
-		"surfDist": { value: .007 },
+		'tDiffuse': { value: null },
+		'tSpecular': { value: null },
+		'tNormalSelects': { value: null },
+		'tRefractive': { value: null },
+		'tDepth': { value: null },
+		'tDepthSelects': { value: null },
+		'cameraNear': { value: null },
+		'cameraFar': { value: null },
+		'resolution': { value: new Vector2() },
+		'cameraProjectionMatrix': { value: new Matrix4() },
+		'cameraInverseProjectionMatrix': { value: new Matrix4() },
+		'ior': { value: 1.03 },
+		'cameraRange': { value: 0 },
+		'maxDistance': { value: 180 },
+		'surfDist': { value: .007 },
 
 	},
 
@@ -190,7 +190,7 @@ var SSRrShader = {
 				vec3 vP=getViewPosition( uv, d, cW );
 
 				#ifdef PERSPECTIVE_CAMERA
-					// https://www.comp.nus.edu.sg/~lowkl/publications/lowk_persp_interp_techrep.pdf
+					// https://comp.nus.edu.sg/~lowkl/publications/lowk_persp_interp_techrep.pdf
 					float recipVPZ=1./viewPosition.z;
 					float viewRefractRayZ=1./(recipVPZ+s*(1./d1viewPosition.z-recipVPZ));
 					float sD=surfDist*cW;
@@ -237,17 +237,17 @@ var SSRrShader = {
 
 };
 
-var SSRrDepthShader = {
+const SSRrDepthShader = {
 
 	defines: {
-		"PERSPECTIVE_CAMERA": 1
+		'PERSPECTIVE_CAMERA': 1
 	},
 
 	uniforms: {
 
-		"tDepth": { value: null },
-		"cameraNear": { value: null },
-		"cameraFar": { value: null },
+		'tDepth': { value: null },
+		'cameraNear': { value: null },
+		'cameraFar': { value: null },
 
 	},
 

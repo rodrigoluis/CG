@@ -12,9 +12,7 @@ import WebGPUTextures from './WebGPUTextures.js';
 import WebGPUBackground from './WebGPUBackground.js';
 import WebGPUNodes from './nodes/WebGPUNodes.js';
 
-import glslang from '../../libs/glslang.js';
-
-import { Frustum, Matrix4, Vector3, Color } from 'three';
+import { Frustum, Matrix4, Vector3, Color, LinearEncoding } from 'three';
 
 console.info( 'THREE.WebGPURenderer: Modified Matrix4.makePerspective() and Matrix4.makeOrtographic() to work with WebGPU, see https://github.com/mrdoob/three.js/issues/20276.' );
 
@@ -76,6 +74,8 @@ class WebGPURenderer {
 		this.autoClearDepth = true;
 		this.autoClearStencil = true;
 
+		this.outputEncoding = LinearEncoding;
+
 		this.sortObjects = true;
 
 		// internals
@@ -92,7 +92,6 @@ class WebGPURenderer {
 		this._adapter = null;
 		this._device = null;
 		this._context = null;
-		this._swapChain = null;
 		this._colorBuffer = null;
 		this._depthBuffer = null;
 
@@ -136,8 +135,8 @@ class WebGPURenderer {
 
 		}
 
-		this._parameters.nonGuaranteedFeatures = ( parameters.nonGuaranteedFeatures === undefined ) ? [] : parameters.nonGuaranteedFeatures;
-		this._parameters.nonGuaranteedLimits = ( parameters.nonGuaranteedLimits === undefined ) ? {} : parameters.nonGuaranteedLimits;
+		this._parameters.requiredFeatures = ( parameters.requiredFeatures === undefined ) ? [] : parameters.requiredFeatures;
+		this._parameters.requiredLimits = ( parameters.requiredLimits === undefined ) ? {} : parameters.requiredLimits;
 
 	}
 
@@ -151,37 +150,40 @@ class WebGPURenderer {
 
 		const adapter = await navigator.gpu.requestAdapter( adapterOptions );
 
+		if ( adapter === null ) {
+
+			throw new Error( 'WebGPURenderer: Unable to create WebGPU adapter.' );
+
+		}
+
 		const deviceDescriptor = {
-			nonGuaranteedFeatures: parameters.nonGuaranteedFeatures,
-			nonGuaranteedLimits: parameters.nonGuaranteedLimits
+			requiredFeatures: parameters.requiredFeatures,
+			requiredLimits: parameters.requiredLimits
 		};
 
 		const device = await adapter.requestDevice( deviceDescriptor );
 
-		const compiler = await glslang();
+		const context = ( parameters.context !== undefined ) ? parameters.context : this.domElement.getContext( 'webgpu' );
 
-		const context = ( parameters.context !== undefined ) ? parameters.context : this.domElement.getContext( 'gpupresent' );
-
-		const swapChain = context.configureSwapChain( {
+		context.configure( {
 			device: device,
-			format: GPUTextureFormat.BRGA8Unorm // this is the only valid swap chain format right now (r121)
+			format: GPUTextureFormat.BGRA8Unorm // this is the only valid context format right now (r121)
 		} );
 
 		this._adapter = adapter;
 		this._device = device;
 		this._context = context;
-		this._swapChain = swapChain;
 
 		this._info = new WebGPUInfo();
 		this._properties = new WebGPUProperties();
 		this._attributes = new WebGPUAttributes( device );
 		this._geometries = new WebGPUGeometries( this._attributes, this._info );
-		this._textures = new WebGPUTextures( device, this._properties, this._info, compiler );
+		this._textures = new WebGPUTextures( device, this._properties, this._info );
 		this._objects = new WebGPUObjects( this._geometries, this._info );
 		this._nodes = new WebGPUNodes( this );
-		this._renderPipelines = new WebGPURenderPipelines( this, this._properties, device, compiler, parameters.sampleCount, this._nodes );
-		this._computePipelines = new WebGPUComputePipelines( device, compiler );
-		this._bindings = new WebGPUBindings( device, this._info, this._properties, this._textures, this._renderPipelines, this._computePipelines, this._attributes, this._nodes );
+		this._computePipelines = new WebGPUComputePipelines( device );
+		this._renderPipelines = new WebGPURenderPipelines( this, device, parameters.sampleCount, this._nodes );
+		this._bindings = this._renderPipelines.bindings = new WebGPUBindings( device, this._info, this._properties, this._textures, this._renderPipelines, this._computePipelines, this._attributes, this._nodes );
 		this._renderLists = new WebGPURenderLists();
 		this._background = new WebGPUBackground( this );
 
@@ -189,10 +191,10 @@ class WebGPURenderer {
 
 		this._renderPassDescriptor = {
 			colorAttachments: [ {
-				attachment: null
+				view: null
 			} ],
-			 depthStencilAttachment: {
-				attachment: null,
+			depthStencilAttachment: {
+				view: null,
 				depthStoreOp: GPUStoreOp.Store,
 				stencilStoreOp: GPUStoreOp.Store
 			}
@@ -246,24 +248,24 @@ class WebGPURenderer {
 
 			const renderTargetProperties = this._properties.get( renderTarget );
 
-			colorAttachment.attachment = renderTargetProperties.colorTextureGPU.createView();
-			depthStencilAttachment.attachment = renderTargetProperties.depthTextureGPU.createView();
+			colorAttachment.view = renderTargetProperties.colorTextureGPU.createView();
+			depthStencilAttachment.view = renderTargetProperties.depthTextureGPU.createView();
 
 		} else {
 
 			if ( this._parameters.antialias === true ) {
 
-				colorAttachment.attachment = this._colorBuffer.createView();
-				colorAttachment.resolveTarget = this._swapChain.getCurrentTexture().createView();
+				colorAttachment.view = this._colorBuffer.createView();
+				colorAttachment.resolveTarget = this._context.getCurrentTexture().createView();
 
 			} else {
 
-				colorAttachment.attachment = this._swapChain.getCurrentTexture().createView();
+				colorAttachment.view = this._context.getCurrentTexture().createView();
 				colorAttachment.resolveTarget = undefined;
 
 			}
 
-			depthStencilAttachment.attachment = this._depthBuffer.createView();
+			depthStencilAttachment.view = this._depthBuffer.createView();
 
 		}
 
@@ -311,7 +313,7 @@ class WebGPURenderer {
 
 		// finish render pass
 
-		passEncoder.endPass();
+		passEncoder.end();
 		device.queue.submit( [ cmdEncoder.finish() ] );
 
 	}
@@ -358,6 +360,7 @@ class WebGPURenderer {
 		this.domElement.width = Math.floor( width * pixelRatio );
 		this.domElement.height = Math.floor( height * pixelRatio );
 
+		this._configureContext();
 		this._setupColorBuffer();
 		this._setupDepthBuffer();
 
@@ -378,6 +381,7 @@ class WebGPURenderer {
 
 		}
 
+		this._configureContext();
 		this._setupColorBuffer();
 		this._setupDepthBuffer();
 
@@ -460,6 +464,55 @@ class WebGPURenderer {
 			};
 
 		}
+
+	}
+
+	getCurrentEncoding() {
+
+		const renderTarget = this.getRenderTarget();
+		return ( renderTarget !== null ) ? renderTarget.texture.encoding : this.outputEncoding;
+
+	}
+
+	getCurrentColorFormat() {
+
+		let format;
+
+		const renderTarget = this.getRenderTarget();
+
+		if ( renderTarget !== null ) {
+
+			const renderTargetProperties = this._properties.get( renderTarget );
+			format = renderTargetProperties.colorTextureFormat;
+
+		} else {
+
+			format = GPUTextureFormat.BGRA8Unorm; // default context format
+
+		}
+
+		return format;
+
+	}
+
+	getCurrentDepthStencilFormat() {
+
+		let format;
+
+		const renderTarget = this.getRenderTarget();
+
+		if ( renderTarget !== null ) {
+
+			const renderTargetProperties = this._properties.get( renderTarget );
+			format = renderTargetProperties.depthTextureFormat;
+
+		} else {
+
+			format = GPUTextureFormat.Depth24PlusStencil8;
+
+		}
+
+		return format;
 
 	}
 
@@ -567,7 +620,7 @@ class WebGPURenderer {
 
 		}
 
-		passEncoder.endPass();
+		passEncoder.end();
 		device.queue.submit( [ cmdEncoder.finish() ] );
 
 	}
@@ -580,7 +633,6 @@ class WebGPURenderer {
 
 	_projectObject( object, camera, groupOrder ) {
 
-		const info = this._info;
 		const currentRenderList = this._currentRenderList;
 
 		if ( object.visible === false ) return;
@@ -633,19 +685,6 @@ class WebGPURenderer {
 				console.error( 'THREE.WebGPURenderer: Objects of type THREE.LineLoop are not supported. Please use THREE.Line or THREE.LineSegments.' );
 
 			} else if ( object.isMesh || object.isLine || object.isPoints ) {
-
-				if ( object.isSkinnedMesh ) {
-
-					// update skeleton only once in a frame
-
-					if ( object.skeleton.frame !== info.render.frame ) {
-
-						object.skeleton.update();
-						object.skeleton.frame = info.render.frame;
-
-					}
-
-				}
 
 				if ( ! object.frustumCulled || _frustum.intersectsObject( object ) ) {
 
@@ -732,7 +771,7 @@ class WebGPURenderer {
 						passEncoder.setViewport( vp.x, vp.y, vp.width, vp.height, minDepth, maxDepth );
 
 						this._nodes.update( object, camera2 );
-						this._bindings.update( object, camera2 );
+						this._bindings.update( object );
 						this._renderObject( object, passEncoder );
 
 					}
@@ -742,7 +781,7 @@ class WebGPURenderer {
 			} else {
 
 				this._nodes.update( object, camera );
-				this._bindings.update( object, camera );
+				this._bindings.update( object );
 				this._renderObject( object, passEncoder );
 
 			}
@@ -757,8 +796,8 @@ class WebGPURenderer {
 
 		// pipeline
 
-		const pipeline = this._renderPipelines.get( object );
-		passEncoder.setPipeline( pipeline );
+		const renderPipeline = this._renderPipelines.get( object );
+		passEncoder.setPipeline( renderPipeline.pipeline );
 
 		// bind group
 
@@ -780,7 +819,7 @@ class WebGPURenderer {
 
 		// vertex buffers
 
-		this._setupVertexBuffers( geometry.attributes, passEncoder, pipeline );
+		this._setupVertexBuffers( geometry.attributes, passEncoder, renderPipeline );
 
 		// draw
 
@@ -818,9 +857,9 @@ class WebGPURenderer {
 
 	}
 
-	_setupVertexBuffers( geometryAttributes, encoder, pipeline ) {
+	_setupVertexBuffers( geometryAttributes, encoder, renderPipeline ) {
 
-		const shaderAttributes = this._renderPipelines.getShaderAttributes( pipeline );
+		const shaderAttributes = renderPipeline.shaderAttributes;
 
 		for ( const shaderAttribute of shaderAttributes ) {
 
@@ -850,12 +889,12 @@ class WebGPURenderer {
 
 			this._colorBuffer = this._device.createTexture( {
 				size: {
-					width: this._width * this._pixelRatio,
-					height: this._height * this._pixelRatio,
+					width: Math.floor( this._width * this._pixelRatio ),
+					height: Math.floor( this._height * this._pixelRatio ),
 					depthOrArrayLayers: 1
 				},
 				sampleCount: this._parameters.sampleCount,
-				format: GPUTextureFormat.BRGA8Unorm,
+				format: GPUTextureFormat.BGRA8Unorm,
 				usage: GPUTextureUsage.RENDER_ATTACHMENT
 			} );
 
@@ -873,13 +912,34 @@ class WebGPURenderer {
 
 			this._depthBuffer = this._device.createTexture( {
 				size: {
-					width: this._width * this._pixelRatio,
-					height: this._height * this._pixelRatio,
+					width: Math.floor( this._width * this._pixelRatio ),
+					height: Math.floor( this._height * this._pixelRatio ),
 					depthOrArrayLayers: 1
 				},
 				sampleCount: this._parameters.sampleCount,
 				format: GPUTextureFormat.Depth24PlusStencil8,
 				usage: GPUTextureUsage.RENDER_ATTACHMENT
+			} );
+
+		}
+
+	}
+
+	_configureContext() {
+
+		const device = this._device;
+
+		if ( device ) {
+
+			this._context.configure( {
+				device: device,
+				format: GPUTextureFormat.BGRA8Unorm,
+				usage: GPUTextureUsage.RENDER_ATTACHMENT,
+				size: {
+					width: Math.floor( this._width * this._pixelRatio ),
+					height: Math.floor( this._height * this._pixelRatio ),
+					depthOrArrayLayers: 1
+				},
 			} );
 
 		}
@@ -895,5 +955,7 @@ class WebGPURenderer {
 	}
 
 }
+
+WebGPURenderer.prototype.isWebGPURenderer = true;
 
 export default WebGPURenderer;

@@ -3,8 +3,8 @@ Based on the following example:
 http://jyunming-chen.github.io/tutsplus/tutsplus28.html
 */
 
-import * as THREE from '../build/three.module.js';
-import {GUI} from       '../build/jsm/libs/dat.gui.module.js';
+import * as THREE from  'three';
+import GUI from '../libs/util/dat.gui.module.js'
 import {OrbitControls} from '../build/jsm/controls/OrbitControls.js';
 import {initRenderer, 
 		initCamera,

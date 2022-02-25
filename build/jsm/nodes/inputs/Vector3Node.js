@@ -1,56 +1,43 @@
-import { Vector3 } from '../../../../build/three.module.js';
+import InputNode from '../core/InputNode.js';
+import { Vector3 } from 'three';
 
-import { InputNode } from '../core/InputNode.js';
-import { NodeUtils } from '../core/NodeUtils.js';
+class Vector3Node extends InputNode {
 
-function Vector3Node( x, y, z ) {
+	constructor( value = new Vector3() ) {
 
-	InputNode.call( this, 'v3' );
+		super( 'vec3' );
 
-	this.value = x instanceof Vector3 ? x : new Vector3( x, y, z );
-
-}
-
-Vector3Node.prototype = Object.create( InputNode.prototype );
-Vector3Node.prototype.constructor = Vector3Node;
-Vector3Node.prototype.nodeType = 'Vector3';
-
-NodeUtils.addShortcuts( Vector3Node.prototype, 'value', [ 'x', 'y', 'z' ] );
-
-Vector3Node.prototype.generateReadonly = function ( builder, output, uuid, type/*, ns, needsUpdate*/ ) {
-
-	return builder.format( 'vec3( ' + this.x + ', ' + this.y + ', ' + this.z + ' )', type, output );
-
-};
-
-Vector3Node.prototype.copy = function ( source ) {
-
-	InputNode.prototype.copy.call( this, source );
-
-	this.value.copy( source );
-
-	return this;
-
-};
-
-Vector3Node.prototype.toJSON = function ( meta ) {
-
-	var data = this.getJSONNode( meta );
-
-	if ( ! data ) {
-
-		data = this.createJSONNode( meta );
-
-		data.x = this.x;
-		data.y = this.y;
-		data.z = this.z;
-
-		if ( this.readonly === true ) data.readonly = true;
+		this.value = value;
 
 	}
 
-	return data;
+	serialize( data ) {
 
-};
+		super.serialize( data );
 
-export { Vector3Node };
+		const { x, y, z } = this.value;
+
+		data.x = x;
+		data.y = y;
+		data.z = z;
+
+	}
+
+	deserialize( data ) {
+
+		super.serialize( data );
+
+		const { x, y, z } = data;
+		const value = this.value;
+
+		value.x = x;
+		value.y = y;
+		value.z = z;
+
+	}
+
+}
+
+Vector3Node.prototype.isVector3Node = true;
+
+export default Vector3Node;

@@ -1,6 +1,6 @@
-import * as THREE from  '../build/three.module.js';
-import Stats from       '../build/jsm/libs/stats.module.js';
-import {GUI} from       '../build/jsm/libs/dat.gui.module.js';
+import * as THREE from  'three';
+import Stats from '../build/jsm/libs/stats.module.js';
+import GUI from '../libs/util/dat.gui.module.js'
 import {TrackballControls} from '../build/jsm/controls/TrackballControls.js';
 import {TeapotGeometry} from '../build/jsm/geometries/TeapotGeometry.js';
 import {initRenderer, 
@@ -135,7 +135,7 @@ function buildInterface()
   gui.add(controls, 'animation', true)
     .name("Animation")
     .onChange(function(e) { controls.onEnableAnimation() });
-  gui.add(controls, 'speed', 0.01, 0.5)
+  gui.add(controls, 'speed', 0.01, 0.05)
     .name("Light Speed")
     .onChange(function(e) { controls.onUpdateSpeed() });
   gui.add(controls, 'viewAxes', false)
