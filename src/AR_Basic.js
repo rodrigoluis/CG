@@ -1,19 +1,22 @@
 import * as THREE from 'three';
 import GUI from '../libs/util/dat.gui.module.js'
 import {ARjs}    from  '../libs/AR/ar.js';
+import {TeapotGeometry} from '../build/jsm/geometries/TeapotGeometry.js';
 import {InfoBox,
 		initDefaultSpotlight} from "../libs/util/util.js";
 
-var renderer	= new THREE.WebGLRenderer({antialias: true, alpha: true});
-	renderer.setSize( 640, 480 );
-	renderer.shadowMap.type = THREE.VSMShadowMap;
-	renderer.shadowMap.enabled = true;
-	
-document.body.appendChild( renderer.domElement );
 // init scene and camera
 var scene	= new THREE.Scene();
 var camera = new THREE.Camera();
 scene.add(camera);
+var renderer	= new THREE.WebGLRenderer({antialias: true, alpha: true});
+	renderer.shadowMap.type = THREE.VSMShadowMap;
+	renderer.shadowMap.enabled = true;
+	renderer.setClearColor(new THREE.Color('lightgrey'), 0)
+	renderer.setSize( 1280, 960 ); // Change here to render in low resolution (for example 640 x 480)
+	document.body.appendChild( renderer.domElement );
+
+var light = initDefaultSpotlight(scene, new THREE.Vector3(25, 30, 20)); // Use default light
 
 // array of functions for the rendering loop
 var onRenderFcts= [];
@@ -102,9 +105,9 @@ var cubeKnot = new THREE.Object3D();
 createCubeKnot();
 scene.add( cubeKnot );
 
-var torus = new THREE.Object3D();
-createTorus();
-scene.add( torus );
+var tea = new THREE.Object3D();
+createTeapot();
+scene.add( tea );
 
 // controls which object should be rendered
 var firstObject = true;
@@ -113,21 +116,19 @@ var controls = new function ()
 {
 	this.onChangeObject = function(){
 		firstObject = !firstObject;
-		if(firstObject)
-		{
+		if(firstObject) {
 			cubeKnot.visible = true;
-			torus.visible = false;
+			tea.visible = false;
 		}
-		else
-		{
+		else {
 			cubeKnot.visible = false;
-			torus.visible = true;
+			tea.visible = true;
 		}
 	};
 };
 
 // GUI interface
-//var gui = new dat.GUI();
+
 var gui = new GUI();
 gui.add(controls, 'onChangeObject').name("Change Object");
 
@@ -139,21 +140,22 @@ onRenderFcts.push(function(){
 	renderer.render( scene, camera );
 })
 
-function createTorus()
+function createTeapot()
 {
-	var light = initDefaultSpotlight(scene, new THREE.Vector3(25, 30, 20)); // Use default light
-	var geometry = new THREE.TorusGeometry(0.6, 0.2, 20, 20, Math.PI * 2);
-	var objectMaterial = new THREE.MeshPhongMaterial({
-		color:"rgb(255,0,0)",     // Main color of the object
-		shininess:"200",            // Shininess of the object
-		specular:"rgb(255,255,255)" // Color of the specular component
-	});
-	var object = new THREE.Mesh(geometry, objectMaterial);
-		object.position.set(0.0, 0.2, 0.0);
-		object.rotation.x = Math.PI/2;
+	var textureLoader = new THREE.TextureLoader();
+	var glass  = textureLoader.load('../assets/textures/granite.png');
+	glass.mapping = THREE.EquirectangularReflectionMapping; // Reflection as default
+	glass.encoding = THREE.sRGBEncoding;
 
-	torus.add(object);
-	torus.visible = false;
+	// Create the main object (teapot)
+	var geometry = new TeapotGeometry(0.5);
+	var material = new THREE.MeshLambertMaterial({color:"rgb(255,255,255)", envMap:glass, refractionRatio: 0.95 });
+	  material.side = THREE.DoubleSide;
+	var obj = new THREE.Mesh(geometry, material);
+	  obj.position.set(0.0, 0.5, 0.0);
+
+	  tea.add(obj);
+	tea.visible = false;
 }
 
 function createCubeKnot()

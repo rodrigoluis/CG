@@ -35,7 +35,7 @@ scene.add(plane);
 //----------------------------------------------------------------------------
 //-- Use TextureLoader to load texture files
 var textureLoader = new THREE.TextureLoader();
-var floor  = textureLoader.load('../assets/textures/marble.png');
+var floor = textureLoader.load('../assets/textures/marble.png');
 
 // Apply texture to the 'map' property of the plane
 plane.material.map = floor;
@@ -46,18 +46,19 @@ var wrapModeS  = THREE.RepeatWrapping;
 var wrapModeT  = THREE.RepeatWrapping;
 var minFilter = THREE.LinearFilter;
 var magFilter = THREE.LinearFilter;
-updateTexture();
+updateTexture(true);
 
 buildInterface();
 render();
 
-function updateTexture()
+function updateTexture(firstUse = false)
 {
-  plane.material.map.repeat.set(repeatFactor,repeatFactor);
+  if(!firstUse) plane.material.map.dispose();
   plane.material.map.wrapS = wrapModeS;
   plane.material.map.wrapT = wrapModeT;
   plane.material.map.minFilter = minFilter;
   plane.material.map.magFilter = magFilter;
+  plane.material.map.repeat.set(repeatFactor,repeatFactor); 
 }
 
 function buildInterface()

@@ -2,6 +2,7 @@
 import * as THREE from  'three';
 import { VRButton } from '../build/jsm/webxr/VRButton.js';
 import {onWindowResize} from "../libs/util/util.js";
+import {FontLoader} from '../build/jsm/loaders/FontLoader.js';
 import {setLookNonVRBehavior,
 		updateLookNonVRBehavior} from "../libs/util/utilVR.js";
 
@@ -29,7 +30,7 @@ let scene = new THREE.Scene();
 let camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.1, 20 );
 
 //-- Font loader ---------------------------------------------------------------------------------
-const fontLoader = new THREE.FontLoader();
+const fontLoader = new FontLoader();
 let fontGeometry = null;
 
 //-- Create VR button and settings ---------------------------------------------------------------
