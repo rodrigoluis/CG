@@ -1,6 +1,6 @@
 <html lang="en">
 	<head>
-    		<title>CG</title>
+    	<title>CG</title>
 		<meta charset="utf-8">
 		<script src="resources/page.js"></script>
 		<link type="text/css" rel="stylesheet" href="resources/page.css" />
@@ -20,5 +20,14 @@
 
 		<p>Additionally you will find examples of more advanced techniques such as raytracing, virtual reality and augmented reality.</p>
 		<hr>
+
+		<p style="color:lightgray">
+		Current Three.js revision: <b>r</b><b id="version"></b>
+		</p>
+		
+		<script type="module">
+			import * as THREE from  '../build/three.module.js';
+			document.getElementById("version").innerHTML = THREE.REVISION;
+		</script>
 	</body>
 </html>
