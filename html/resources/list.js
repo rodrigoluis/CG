@@ -77,6 +77,9 @@ var list = {
 				"Fly Controls":"html/exampleFlyControlInfo",		
 				"Joystick Elements":"html/exampleJoystickInfo",						
 			},
+			"Shaders":  {
+				"Water": "html/exampleShaderWaterInfo",				
+			},			
 			"Auxiliary":  {
 				"Loading Screen": "html/exampleLoadingScreenInfo",
 				"Loading Screen with button": "html/exampleLoadingScreenWithButtonInfo",				
