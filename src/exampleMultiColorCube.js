@@ -31,12 +31,12 @@ var material = new THREE.MeshBasicMaterial( { color: 0xffffff, vertexColors: tru
 var cube = new THREE.Mesh(geometry, material);
 const loader = new THREE.TextureLoader();
 const cubeMaterials = [
-    setMaterial('../assets/textures/crate.jpg', 2, 2), //x+
-    setMaterial('../assets/textures/paper.png',2,2), //x-
-    setMaterial('../assets/textures/grass.jpg',2,1), //y+
-    setMaterial('../assets/textures/granite.png',2,1), //y-
-    setMaterial('../assets/textures/stone.jpg',2,1), //z+
-    setMaterial('../assets/textures/marble.png',2,1) //z-
+    setMaterial(null,'../assets/textures/crate.jpg', 2, 2), //x+
+    setMaterial('orange','../assets/textures/paper.png'), //x-
+    setMaterial(null,'../assets/textures/grass.jpg',2,1), //y+
+    setMaterial('rgb(100,100,255)'), //y-
+    setMaterial(null, '../assets/textures/stone.jpg',2,1), //z+
+    setMaterial(null, '../assets/textures/marble.png',2,1) //z-
 ];
 
 //create material, color, or image texture
@@ -47,11 +47,20 @@ scene.add(cube);
 
 render();
 
-function setMaterial(file, repeatU, repeatV){
-  let mat = new THREE.MeshBasicMaterial({ map: loader.load(file)});
-  mat.map.wrapS = mat.map.wrapT = THREE.RepeatWrapping;
-  mat.map.minFilter = mat.map.magFilter = THREE.LinearFilter;
-  mat.map.repeat.set(repeatU,repeatV); 
+// Function to set basic material or textures
+// You can set just a color, just a texture or both
+function setMaterial(color, file = null, repeatU = 1, repeatV = 1){
+  if(!color) color = 'rgb(255,255,255)';
+
+  let mat;
+  if(!file){
+    mat = new THREE.MeshBasicMaterial ({color:color});
+  } else {
+    mat = new THREE.MeshBasicMaterial({ map: loader.load(file),color:color});
+    mat.map.wrapS = mat.map.wrapT = THREE.RepeatWrapping;
+    mat.map.minFilter = mat.map.magFilter = THREE.LinearFilter;
+    mat.map.repeat.set(repeatU,repeatV); 
+  }
   return mat;
 }
 
