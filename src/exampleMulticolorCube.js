@@ -11,7 +11,7 @@ var scene = new THREE.Scene();    // Create main scene
 var stats = new Stats();          // To show FPS information
 
 var renderer = initRenderer();    // View function in util/utils
-var camera = initCamera(new THREE.Vector3(15, 15, 15)); // Init camera in this position
+var camera = initCamera(new THREE.Vector3(10, 10, 10)); // Init camera in this position
 var light = initDefaultSpotlight(scene, new THREE.Vector3(0, 0, 30)); // Use default light
 
 // Listen window size changes
@@ -24,13 +24,10 @@ var trackballControls = new TrackballControls( camera, renderer.domElement );
 var axesHelper = new THREE.AxesHelper( 12 );
 scene.add( axesHelper );
 
-// create the inner cube
-var geometry = new THREE.BoxGeometry(10, 5, 5).toNonIndexed();
-var material = new THREE.MeshBasicMaterial( { color: 0xffffff, vertexColors: true } );
-
-var cube = new THREE.Mesh(geometry, material);
-const loader = new THREE.TextureLoader();
-const cubeMaterials = [
+// Create the cube
+let loader = new THREE.TextureLoader();
+let geometry = new THREE.BoxGeometry(10, 5, 5).toNonIndexed();
+let cubeMaterials = [
     setMaterial(null,'../assets/textures/crate.jpg', 2, 2), //x+
     setMaterial('orange','../assets/textures/paper.png'), //x-
     setMaterial(null,'../assets/textures/grass.jpg',2,1), //y+
@@ -38,11 +35,7 @@ const cubeMaterials = [
     setMaterial(null, '../assets/textures/stone.jpg',2,1), //z+
     setMaterial(null, '../assets/textures/marble.png',2,1) //z-
 ];
-
-//create material, color, or image texture
-cube = new THREE.Mesh(geometry, cubeMaterials);
-
-// add the cube to the scene
+let cube = new THREE.Mesh(geometry, cubeMaterials);
 scene.add(cube);
 
 render();
