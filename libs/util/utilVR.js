@@ -2,7 +2,7 @@ import * as THREE from '../../build/three.module.js';
 import { FlyControls } from '../../build/jsm/controls/FlyControls.js';
 import { InfoBox, } from "../../libs/util/util.js";
 
-let clock = new THREE.Clock();
+//let clock = new THREE.Clock();
 //let flyCamera;
 let lookCamera;
 
@@ -26,11 +26,11 @@ export function setFlyNonVRBehavior(camera, renderer, message1, message2 = null)
     return flyCamera;
 }
 
-export function updateFlyNonVRBehavior(clock)
-{
-    const delta = clock.getDelta();    
-    flyCamera.update(delta);    
-}
+// export function updateFlyNonVRBehavior(clock)
+// {
+//     const delta = clock.getDelta();    
+//     flyCamera.update(delta);    
+// }
 
 export function setLookNonVRBehavior(camera, renderer, message1, message2 = null)
 {
