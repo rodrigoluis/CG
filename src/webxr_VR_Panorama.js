@@ -2,8 +2,7 @@
 import * as THREE from  'three';
 import { VRButton } from '../build/jsm/webxr/VRButton.js';
 import { onWindowResize } from "../libs/util/util.js";
-import {setLookNonVRBehavior,
-		updateLookNonVRBehavior} from "../libs/util/utilVR.js";
+import { setLookNonVRBehavior } from "../libs/util/utilVR.js";
 
 //-- Setting renderer ---------------------------------------------------------------------------
 let renderer = new THREE.WebGLRenderer();
@@ -19,11 +18,12 @@ window.addEventListener( 'resize', onWindowResize );
 
 //-- Setting scene and camera -------------------------------------------------------------------
 let scene = new THREE.Scene();
+let clock = new THREE.Clock();
 let camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 1000 );
 camera.layers.enable( 1 );
 
 // To be used outside a VR environment (Desktop, for example)
-setLookNonVRBehavior(camera, renderer, "On desktop, press 'Q' or 'E' to fix orientation");
+let lookCamera = setLookNonVRBehavior(camera, renderer, "On desktop, press 'Q' or 'E' to fix orientation");
 
 //-- Creating equirectangular Panomara ----------------------------------------------------------
 const geometry = new THREE.SphereGeometry( 1000, 60, 60 );
@@ -38,6 +38,8 @@ scene.add( mesh );
 renderer.setAnimationLoop( render );
 
 function render() {
-	updateLookNonVRBehavior(); 
+   // If VR Mode is OFF (desktop usage)
+   if(!renderer.xr.isPresenting) 
+      lookCamera.update(clock.getDelta()); 
 	renderer.render( scene, camera );
 }

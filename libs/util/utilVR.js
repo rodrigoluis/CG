@@ -2,10 +2,6 @@ import * as THREE from '../../build/three.module.js';
 import { FlyControls } from '../../build/jsm/controls/FlyControls.js';
 import { InfoBox, } from "../../libs/util/util.js";
 
-//let clock = new THREE.Clock();
-//let flyCamera;
-let lookCamera;
-
 function showMessages(message1, message2)
 {
     // Use this to show information onscreen
@@ -26,24 +22,13 @@ export function setFlyNonVRBehavior(camera, renderer, message1, message2 = null)
     return flyCamera;
 }
 
-// export function updateFlyNonVRBehavior(clock)
-// {
-//     const delta = clock.getDelta();    
-//     flyCamera.update(delta);    
-// }
-
 export function setLookNonVRBehavior(camera, renderer, message1, message2 = null)
 {
-    lookCamera = new FlyControls( camera, renderer.domElement );
+    let lookCamera = new FlyControls( camera, renderer.domElement );
     lookCamera.domElement = renderer.domElement;
     lookCamera.movementSpeed = 0; // Avoid moving
     lookCamera.rollSpeed = 0.3;
 
     showMessages(message1, message2);  
-}
-
-export function updateLookNonVRBehavior()
-{
-    const delta = clock.getDelta();    
-    lookCamera.update(delta);    
+    return lookCamera;
 }

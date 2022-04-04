@@ -2,8 +2,7 @@
 import * as THREE from  'three';
 import { VRButton } from '../build/jsm/webxr/VRButton.js';
 import {onWindowResize} from "../libs/util/util.js";
-import {setLookNonVRBehavior,
-		updateLookNonVRBehavior} from "../libs/util/utilVR.js";
+import {setLookNonVRBehavior} from "../libs/util/utilVR.js";
 
 //-----------------------------------------------------------------------------------------------
 //-- MAIN SCRIPT --------------------------------------------------------------------------------
@@ -26,6 +25,7 @@ let renderer = new THREE.WebGLRenderer( { antialias: true } );
 
 //-- Setting scene and camera --------------------------------------------------------------------
 let scene = new THREE.Scene();
+let clock = new THREE.Clock();
 let camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.1, 30 );
 
 //-- Create VR button and settings ---------------------------------------------------------------
@@ -33,7 +33,7 @@ document.body.appendChild( renderer.domElement );
 document.body.appendChild( VRButton.createButton( renderer ) );
 
 // To be used outside a VR environment (Desktop, for example)
-setLookNonVRBehavior(camera, renderer, "On desktop, press 'Q' or 'E' to change orientation","Dragging functions are available only in VR mode.");
+let lookCamera = setLookNonVRBehavior(camera, renderer, "On desktop, press 'Q' or 'E' to change orientation","Dragging functions are available only in VR mode.");
 
 // controllers
 let controller1 = renderer.xr.getController( 0 );
@@ -117,7 +117,8 @@ function animate() {
 }
 
 function render() {
-	updateLookNonVRBehavior(); 	
+   lookCamera.update(clock.getDelta()); 
+
 	cleanIntersected();
 	intersectObjects( controller1 );
 	renderer.render( scene, camera );
