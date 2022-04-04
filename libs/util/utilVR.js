@@ -3,7 +3,7 @@ import { FlyControls } from '../../build/jsm/controls/FlyControls.js';
 import { InfoBox, } from "../../libs/util/util.js";
 
 let clock = new THREE.Clock();
-let flyCamera;
+//let flyCamera;
 let lookCamera;
 
 function showMessages(message1, message2)
@@ -17,15 +17,16 @@ function showMessages(message1, message2)
 
 export function setFlyNonVRBehavior(camera, renderer, message1, message2 = null)
 {
-    flyCamera = new FlyControls( camera, renderer.domElement );
+    let flyCamera = new FlyControls( camera, renderer.domElement );
     flyCamera.movementSpeed = 5;
     flyCamera.domElement = renderer.domElement;
     flyCamera.rollSpeed = 0.2;
 
     showMessages(message1, message2);
+    return flyCamera;
 }
 
-export function updateFlyNonVRBehavior()
+export function updateFlyNonVRBehavior(clock)
 {
     const delta = clock.getDelta();    
     flyCamera.update(delta);    
