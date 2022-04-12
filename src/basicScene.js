@@ -6,7 +6,6 @@ import {initRenderer,
         InfoBox,
         onWindowResize} from "../libs/util/util.js";
 
-var stats = new Stats();          // To show FPS information
 var scene = new THREE.Scene();    // Create main scene
 var renderer = initRenderer();    // View function in util/utils
 var camera = initCamera(new THREE.Vector3(0, -30, 15)); // Init camera in this position
@@ -54,7 +53,6 @@ window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)},
 render();
 function render()
 {
-  stats.update(); // Update FPS
   trackballControls.update(); // Enable mouse movements
   requestAnimationFrame(render);
   renderer.render(scene, camera) // Render scene

@@ -35,9 +35,6 @@ let obj = new THREE.Mesh(geometry, material);
 scene.add(obj);
 
 // Variables that will be used for linear interpolation
-let destination = new THREE.Vector3(0.0, 0.2, 0.0);
-let moveObject = true;
-
 const lerpConfig = {
   destination: new THREE.Vector3(0.0, 0.2, 0.0),
   alpha: 0.01,
