@@ -1,16 +1,17 @@
 import * as THREE from  'three';
-import Stats from       '../build/jsm/libs/stats.module.js';
 import {TrackballControls} from '../build/jsm/controls/TrackballControls.js';
 import KeyboardState from '../libs/util/KeyboardState.js'
 import {initRenderer, 
         initCamera, 
+        initDefaultBasicLight,
         InfoBox,
-        onWindowResize} from "../libs/util/util.js";
+        onWindowResize,
+        createGroundPlaneXZ} from "../libs/util/util.js";
 
 var scene = new THREE.Scene();    // Create main scene
-var stats = new Stats();          // To show FPS information
 var renderer = initRenderer();    // View function in util/utils
-var camera = initCamera(new THREE.Vector3(0, -30, 15)); // Init camera in this position
+var camera = initCamera(new THREE.Vector3(0, 15, 30)); // Init camera in this position
+initDefaultBasicLight(scene);
 var clock = new THREE.Clock();
 
 // Show text information onscreen
@@ -27,14 +28,7 @@ var axesHelper = new THREE.AxesHelper( 12 );
 scene.add( axesHelper );
 
 // create the ground plane
-var planeGeometry = new THREE.PlaneGeometry(20, 20);
-planeGeometry.translate(0.0, 0.0, -0.02); // To avoid conflict with the axeshelper
-var planeMaterial = new THREE.MeshBasicMaterial({
-    color: "rgb(150, 150, 150)",
-    side: THREE.DoubleSide
-});
-var plane = new THREE.Mesh(planeGeometry, planeMaterial);
-// add the plane to the scene
+let plane = createGroundPlaneXZ(20, 20)
 scene.add(plane);
 
 // create a cube
@@ -42,7 +36,7 @@ var cubeGeometry = new THREE.BoxGeometry(4, 4, 4);
 var cubeMaterial = new THREE.MeshNormalMaterial();
 var cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
 // position the cube
-cube.position.set(0.0, 0.0, 2.0);
+cube.position.set(0.0, 2.0, 0.0);
 // add the cube to the scene
 scene.add(cube);
 
@@ -61,16 +55,16 @@ function keyboardUpdate() {
   // Keyboard.down - execute only once per key pressed
   if ( keyboard.down("left") )   cube.translateX( -1 );
   if ( keyboard.down("right") )  cube.translateX(  1 );
-  if ( keyboard.down("up") )     cube.translateY(  1 );
-  if ( keyboard.down("down") )   cube.translateY( -1 );
+  if ( keyboard.down("up") )     cube.translateZ(  1 );
+  if ( keyboard.down("down") )   cube.translateZ( -1 );
 
   // Keyboard.pressed - execute while is pressed
   if ( keyboard.pressed("A") )  cube.translateX( -moveDistance );
   if ( keyboard.pressed("D") )  cube.translateX(  moveDistance );
-  if ( keyboard.pressed("W") )  cube.translateY(  moveDistance );
-  if ( keyboard.pressed("S") )  cube.translateY( -moveDistance );
+  if ( keyboard.pressed("W") )  cube.translateZ(  moveDistance );
+  if ( keyboard.pressed("S") )  cube.translateZ( -moveDistance );
 
-  if ( keyboard.pressed("space") ) cube.position.set(0.0, 0.0, 2.0);
+  if ( keyboard.pressed("space") ) cube.position.set(0.0, 2.0, 0.0);
 }
 
 function showInformation()
@@ -87,7 +81,6 @@ function showInformation()
 
 function render()
 {
-  stats.update(); // Update FPS
   requestAnimationFrame(render); // Show events
   trackballControls.update();
   keyboardUpdate();

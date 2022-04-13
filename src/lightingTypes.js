@@ -1,5 +1,4 @@
 import * as THREE from  'three';
-import Stats from '../build/jsm/libs/stats.module.js';
 import GUI from '../libs/util/dat.gui.module.js'
 import {TrackballControls} from '../build/jsm/controls/TrackballControls.js';
 import KeyboardState from '../libs/util/KeyboardState.js';
@@ -13,8 +12,6 @@ import {initRenderer,
         createLightSphere} from "../libs/util/util.js";
 
 var scene = new THREE.Scene();    // Create main scene
-var stats = new Stats();          // To show FPS information
-
 var renderer = initRenderer();    // View function in util/utils
   renderer.setClearColor("rgb(30, 30, 42)");
 var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -56,15 +53,9 @@ var obj = new THREE.Mesh(geometry, material);
   obj.position.set(0.0, 0.5, 0.0);
 scene.add(obj);
 
-//----------------------------------------------------------------------------
-//----------------------------------------------------------------------------
-// Control available light and set the active light
-var lightArray = new Array();
-var activeLight = 0; // View first Light
-var lightIntensity = 1.0;
-
 //---------------------------------------------------------
-// Default light position, color, ambient color and intensity
+// Default light intensity, position, color, ambient color and intensity
+var lightIntensity = 1.0;
 var lightPosition = new THREE.Vector3(1.7, 0.8, 1.1);
 var lightColor = "rgb(255,255,255)";
 var ambientColor = "rgb(50,50,50)";
@@ -74,6 +65,11 @@ var lightSphere = createLightSphere(scene, 0.05, 10, 10, lightPosition);
 
 //---------------------------------------------------------
 // Create and set all lights. Only Spot and ambient will be visible at first
+
+// More info here: https://threejs.org/docs/#api/en/lights/AmbientLight
+var ambientLight = new THREE.AmbientLight(ambientColor);
+scene.add( ambientLight );
+
 var spotLight = new THREE.SpotLight(lightColor);
 setSpotLight(lightPosition);
 
@@ -83,9 +79,10 @@ setPointLight(lightPosition);
 var dirLight = new THREE.DirectionalLight(lightColor);
 setDirectionalLighting(lightPosition);
 
-// More info here: https://threejs.org/docs/#api/en/lights/AmbientLight
-var ambientLight = new THREE.AmbientLight(ambientColor);
-scene.add( ambientLight );
+// Hide all lights and make only the spotLight visible
+hideAllLights();
+spotLight.visible = true.valueOf;
+let currentLight = spotLight; // current light
 
 buildInterface();
 render();
@@ -97,11 +94,9 @@ function setPointLight(position)
   pointLight.position.copy(position);
   pointLight.name = "Point Light"
   pointLight.castShadow = true;
-  pointLight.visible = false;
   spotLight.penumbra = 0.5;
   
   scene.add( pointLight );
-  lightArray.push( pointLight );
 }
 
 // Set Spotlight
@@ -118,7 +113,6 @@ function setSpotLight(position)
   spotLight.name = "Spot Light"
 
   scene.add(spotLight);
-  lightArray.push( spotLight );
 }
 
 // Set Directional Light
@@ -137,16 +131,19 @@ function setDirectionalLighting(position)
   dirLight.shadow.camera.top = 5;
   dirLight.shadow.camera.bottom = -5;
   dirLight.name = "Direction Light";
-  dirLight.visible = false;
 
   scene.add(dirLight);
-  lightArray.push( dirLight );
+}
+
+function hideAllLights()
+{
+   spotLight.visible = dirLight.visible = pointLight.visible = false;
 }
 
 // Update light position of the current light
 function updateLightPosition()
 {
-  lightArray[activeLight].position.copy(lightPosition);
+  currentLight.position.copy(lightPosition);
   lightSphere.position.copy(lightPosition);
   infoBox.changeMessage("Light Position: " + lightPosition.x.toFixed(2) + ", " +
                           lightPosition.y.toFixed(2) + ", " + lightPosition.z.toFixed(2));
@@ -155,7 +152,7 @@ function updateLightPosition()
 // Update light intensity of the current light
 function updateLightIntensity()
 {
-  lightArray[activeLight].intensity = lightIntensity;
+   currentLight.intensity = lightIntensity;
 }
 
 function buildInterface()
@@ -189,20 +186,20 @@ function buildInterface()
     };
     this.onChangeLight = function()
     {
-      lightArray[activeLight].visible = false;
       switch (this.lightType)
       {
-        case 'Spot':
-            activeLight = 0;
+         case 'Spot':
+            currentLight = spotLight;
             break;
-        case 'Point':
-            activeLight = 1;
+         case 'Point':
+            currentLight = pointLight;
             break;
-        case 'Direction':
-            activeLight = 2;
+         case 'Direction':
+            currentLight = dirLight;
             break;
       }
-      lightArray[activeLight].visible = true;
+      hideAllLights();
+      currentLight.visible = true;
       updateLightPosition();
       updateLightIntensity();
     };
@@ -276,7 +273,6 @@ function showInformation()
 
 function render()
 {
-  stats.update();
   trackballControls.update();
   keyboardUpdate();
   requestAnimationFrame(render);

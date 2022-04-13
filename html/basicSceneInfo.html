@@ -21,35 +21,35 @@
 
 		<p>Basically we have, at the beginning, the definition of the scene, renderer and camera (the last two created through functions as they will be subject in further classes). To create the camera we must define where it will be created. By default the camera will point to the origin of the world. See the code below to understand how these elements are created.</p>
 
-		<code>
-		var stats = Stats();          // To show FPS information
-		var scene = new THREE.Scene();    // Create main scene
-		var renderer = initRenderer();    // View function in util/utils
-		var camera = initCamera(new THREE.Vector3(0, -30, 15)); // Init camera in this position
-		</code>
+<code>
+let scene = new THREE.Scene();    // Create main scene
+let renderer = initRenderer();    // View function in util/utils
+let camera = initCamera(new THREE.Vector3(0, 15, 30)); // Init camera in this position
+</code>
 
-		<p>The interaction is performed by a trackball control as you can see in the next code.</p>
+<p>The interaction is performed by a trackball control as you can see in the next code.</p>
 
-		<code>
-		var trackballControls = new TrackballControls( camera, renderer.domElement );
-		</code>
+<code>
+let trackballControls = new TrackballControls( camera, renderer.domElement );
+</code>
 
-		<p>We will not focus on the creation of  the objects for now, but it's worth noting how the objects are added in the scene. In the example below you can see a cube being added to the scene. </p>
+<p>We will not focus on the creation of  the objects for now, but it's worth noting how the objects are added in the scene. In the example below you can see a cube being added to the scene. </p>
 
-		<code>
-		var cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
-		scene.add(cube);
-		</code>
+<code>
+let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+scene.add(cube);
+</code>
 
-		<p>Finally, we must create a function in which all the elements will be called in a loop. In this example we create a <strong>render</strong> function. Inside this function we use two important function of the API - <strong>requestAnimationFrame</strong> and <strong>renderer.render</strong>. This will create a loop that causes the renderer to draw the scene every time the screen is refreshed (on a typical screen this means 60 times per second). If you have something to be animated, the variables to be used will be placed inside this render function.</p>
+<p>Finally, we must create a function in which all the elements will be called in a loop. In this example we create a <strong>render</strong> function. Inside this function we use two important function of the API - <strong>requestAnimationFrame</strong> and <strong>renderer.render</strong>. This will create a loop that causes the renderer to draw the scene every time the screen is refreshed (on a typical screen this means 60 times per second). If you have something to be animated, the variables to be used will be placed inside this render function.</p>
 
-		<code>
-		render();
-		function render()
-		{
-		  requestAnimationFrame(render);
-		  renderer.render(scene, camera);
-		}
-		</code>
+<code>
+render();
+function render()
+{
+   requestAnimationFrame(render);
+   renderer.render(scene, camera);
+}
+</code>
+
 	</body>
 </html>

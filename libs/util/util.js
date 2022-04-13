@@ -451,6 +451,28 @@ export function addDefaultCubeAndSphere(scene) {
 }
 
 /**
+ * Create a simple XZ plane slightly translated in Y negative.
+ */
+export function createGroundPlaneXZ(width, height, widthSegments = 10, heightSegments = 10, gcolor = null)
+{
+   if(!gcolor) gcolor = "rgb(200,200,200)";
+   let planeGeometry = new THREE.PlaneGeometry(width, height, widthSegments, heightSegments);
+   let planeMaterial = new THREE.MeshLambertMaterial({color: gcolor,side: THREE.DoubleSide});
+   
+   let mat4 = new THREE.Matrix4(); // Aux mat4 matrix   
+   let plane = new THREE.Mesh(planeGeometry, planeMaterial);
+      plane.receiveShadow = true;   
+      // Rotate 90 in X and perform a small translation in Y
+      plane.matrixAutoUpdate = false; 
+      plane.matrix.identity();    // resetting matrices
+      // Will execute R1 and then T1
+      plane.matrix.multiply(mat4.makeTranslation(0.0, -0.1, 0.0)); // T1   
+      plane.matrix.multiply(mat4.makeRotationX(degreesToRadians(-90))); // R1   
+
+   return plane;
+}
+
+/**
  * Create a small and simple ground plane. Width and Height are in X and Y
  */
 export function createGroundPlane(width, height, widthSegments = 10, heightSegments = 10, gcolor = null)

@@ -2,31 +2,23 @@ import * as THREE from  'three';
 import Stats from '../build/jsm/libs/stats.module.js';
 import GUI from '../libs/util/dat.gui.module.js'
 import {TrackballControls} from '../build/jsm/controls/TrackballControls.js';
-import KeyboardState from '../libs/util/KeyboardState.js';
 import {initRenderer, 
-        initDefaultSpotlight,
-        createGroundPlane,
-        onWindowResize, 
-        degreesToRadians} from "../libs/util/util.js";
+        initCamera,
+        initDefaultBasicLight,
+        createGroundPlaneXZ,
+        onWindowResize} from "../libs/util/util.js";
 
 var scene = new THREE.Scene();    // Create main scene
 var stats = new Stats();          // To show FPS information
-
 var renderer = initRenderer();    // View function in util/utils
-renderer.setClearColor("rgb(30, 30, 40)");
-//var camera = initCamera(new THREE.Vector3(15, 0, 0)); // Init camera in this position
-var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-  camera.lookAt(0, 0, 0);
-  camera.position.set(5,15,30);
-  camera.up.set( 0, 1, 0 );
-
-var light = initDefaultSpotlight(scene, new THREE.Vector3(25, 30, 20)); // Use default light
+   renderer.setClearColor("rgb(30, 30, 40)");
+var camera = initCamera(new THREE.Vector3(5, 15, 30)); // Init camera in this position
+initDefaultBasicLight(scene, true, new THREE.Vector3(25, 30, 20))
 
 // Listen window size changes
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
-var groundPlane = createGroundPlane(23, 23); // width and height
-  groundPlane.rotateX(degreesToRadians(-90));
+var groundPlane = createGroundPlaneXZ(23, 23); // width and height
 scene.add(groundPlane);
 
 // Show axes (parameter is size of each axis)
@@ -34,23 +26,27 @@ var axesHelper = new THREE.AxesHelper( 12 );
 axesHelper.visible = false;
 scene.add( axesHelper );
 
-// To use the keyboard
-var keyboard = new KeyboardState();
-
 // Enable mouse rotation, pan, zoom etc.
 var trackballControls = new TrackballControls( camera, renderer.domElement );
 
 // Object Material for all objects
-var objectMaterial = new THREE.MeshPhongMaterial({color:"rgb(255,0,0)"});
+var objectMaterial = new THREE.MeshPhongMaterial({color:"rgb(255,20,20)", shininess:"200"});
 
 // Add objects to scene
-var objectArray = new Array();
-var activeObject = 0; // View first object
-scene.add(createCube(5.0));
-scene.add(createCylinder(2.0, 2.0, 5.0, 20, 4, false));
-scene.add(createSphere(3.0, 20, 20));
-scene.add(createTorus(3.0, 1.0, 20, 20, Math.PI * 2));
-scene.add(createIcosahedron(4.0, 0));
+let cube = createCube(5.0); 
+scene.add(cube);
+let cylinder = createCylinder(2.0, 2.0, 5.0, 20, 4, false);
+scene.add(cylinder);
+let sphere = createSphere(3.0, 20, 20);
+scene.add(sphere);
+let torus = createTorus(3.0, 1.0, 20, 20, Math.PI * 2)
+scene.add(torus);
+let ico = createIcosahedron(4.0, 0);
+scene.add(ico);
+
+hideAllObjects();
+let currentObject = cube;
+currentObject.visible = true;
 
 buildInterface();
 render();
@@ -61,9 +57,6 @@ function createIcosahedron(radius, detail)
   var object = new THREE.Mesh(geometry, objectMaterial);
     object.castShadow = true;
     object.position.set(0.0, radius, 0.0);
-    object.visible = false;
-
-  objectArray.push(object);
   return object;
 }
 
@@ -73,9 +66,6 @@ function createTorus(radius, tube, radialSegments, tubularSegments, arc)
   var object = new THREE.Mesh(geometry, objectMaterial);
     object.castShadow = true;
     object.position.set(0.0, radius+tube, 0.0);
-    object.visible = false;
-
-  objectArray.push(object);
   return object;
 }
 
@@ -85,9 +75,6 @@ function createCylinder(radiusTop, radiusBottom, height, radialSegments, heightS
   var object = new THREE.Mesh(geometry, objectMaterial);
     object.castShadow = true;
     object.position.set(0.0, height/2.0, 0.0);
-    object.visible = false;
-
-  objectArray.push(object);
   return object;
 }
 
@@ -97,9 +84,6 @@ function createSphere(radius, widthSegments, heightSegments)
   var object = new THREE.Mesh(geometry, objectMaterial);
     object.castShadow = true;
     object.position.set(0.0, radius, 0.0);
-    object.visible = false;
-
-  objectArray.push(object);
   return object;
 }
 
@@ -109,10 +93,12 @@ function createCube(s)
   var object = new THREE.Mesh(geometry, objectMaterial);
     object.castShadow = true;
     object.position.set(0.0, s/2.0, 0.0);
-    object.visible = true;
-
-  objectArray.push(object);
   return object;
+}
+
+function hideAllObjects()
+{
+   cube.visible = cylinder.visible = sphere.visible = torus.visible = ico.visible = false;
 }
 
 function buildInterface()
@@ -124,26 +110,26 @@ function buildInterface()
     this.type = 'Cube';
     this.onChooseObject = function()
     {
-      objectArray[activeObject].visible = false;
       switch (this.type)
       {
         case 'Cube':
-            activeObject = 0;
+            currentObject = cube;
             break;
         case 'Cylinder':
-            activeObject = 1;
+            currentObject = cylinder;
             break;
         case 'Sphere':
-            activeObject = 2;
+            currentObject = sphere;
             break;
         case 'Torus':
-            activeObject = 3;
+            currentObject = torus;
             break;
         case 'Icosahedron':
-            activeObject = 4;
+            currentObject = ico;
             break;
       }
-      objectArray[activeObject].visible = true;
+      hideAllObjects();
+      currentObject.visible = true;
     };
     this.onViewAxes = function(){
       axesHelper.visible = this.viewAxes;
