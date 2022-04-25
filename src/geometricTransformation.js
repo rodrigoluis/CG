@@ -52,12 +52,8 @@ window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)},
 render();
 
 function keyboardUpdate() {
-
-  keyboard.update();
-
-  var angle = degreesToRadians(10);
-  var rotAxis = new THREE.Vector3(0,1,0); // Set Z axis
-
+  
+   keyboard.update();
   if ( keyboard.pressed("left") )     cube.translateX( -1 );
   if ( keyboard.pressed("right") )    cube.translateX(  1 );
   if ( keyboard.pressed("up") )       cube.translateY(  1 );
@@ -65,10 +61,9 @@ function keyboardUpdate() {
   if ( keyboard.pressed("pageup") )   cube.translateZ(  1 );
   if ( keyboard.pressed("pagedown") ) cube.translateZ( -1 );
 
-
-
-  if ( keyboard.pressed("A") )  cube.rotateOnAxis(rotAxis,  angle );
-  if ( keyboard.pressed("D") )  cube.rotateOnAxis(rotAxis, -angle );
+  let angle = degreesToRadians(10);
+  if ( keyboard.pressed("A") )  cube.rotateY(  angle );
+  if ( keyboard.pressed("D") )  cube.rotateY( -angle );
 
   if ( keyboard.pressed("W") )
   {

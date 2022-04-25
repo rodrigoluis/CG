@@ -65,12 +65,13 @@ function rotateCylinder()
   s2.matrixAutoUpdate = false;
   c2.matrixAutoUpdate = false;
 
-  var mat4 = new THREE.Matrix4();
-
   // resetting matrices
   c1.matrix.identity();
   s2.matrix.identity();
   c2.matrix.identity();
+
+  // Auxiliar matrix
+  var mat4 = new THREE.Matrix4();
 
   // Will execute T1 and then R1
   c1.matrix.multiply(mat4.makeRotationZ(angle[0])); // R1
