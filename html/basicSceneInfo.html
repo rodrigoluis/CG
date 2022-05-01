@@ -1,46 +1,62 @@
 <!DOCTYPE html>
 <html lang="en">
-	<head>
-    <title></title>
-		<meta charset="utf-8">
-		<script src="resources/list.js"></script>
-		<script src="resources/page.js"></script>
-		<link type="text/css" rel="stylesheet" href="resources/page.css" />
-	</head>
-	<body>
-		<h1>Basic Scene</h1>
-		<br>
-		<hr>
+<head>
+   <title></title>
+   <meta charset="utf-8">
+   <script src="resources/list.js"></script>
+   <script src="resources/page.js"></script>
+   <link type="text/css" rel="stylesheet" href="resources/page.css" />
+</head>
 
-		<p>As we saw in class, we have some basic elements that will appear in almost every project. For example, you will need a <strong>scene</strong> that will receive all the other elements. You will need also a <strong>camera</strong> and a <strong>renderer</strong>. Let's first see our basic project in which we have a cube and interaction through the mouse.</p>
+<body>
+<h1>Basic Scene</h1>
+<br>
+<hr>
 
-		<iframe src="../src/basicScene.html" title="W3Schools Free Online Web Tutorials"></iframe>
-		<a href="../src/basicScene.html" target="_blank">Open in a new tab</a>
+<p>As we saw in class, we have some basic elements that will appear in almost every project. For example, you will need a <strong>scene</strong> that will receive all the other elements. You will need also a <strong>camera</strong> and a <strong>renderer</strong>. Let's first see our basic project in which we have a cube and interaction through the mouse.</p>
 
-		<h2>Under the hood</h2>
+<iframe src="../src/basicScene.html" title="W3Schools Free Online Web Tutorials"></iframe>
+<a href="../src/basicScene.html" target="_blank">Open in a new tab</a>
 
-		<p>Basically we have, at the beginning, the definition of the scene, renderer and camera (the last two created through functions as they will be subject in further classes). To create the camera we must define where it will be created. By default the camera will point to the origin of the world. See the code below to understand how these elements are created.</p>
+<h2>Under the hood</h2>
+
+<p>Basically we have, at the beginning, the definition of the scene, renderer and camera (the last two created through functions as they will be subject in further classes). To create the camera we must define where it will be created. By default the camera will point to the origin of the world. See the code below to understand how these elements are created.</p>
 
 <code>
-let scene = new THREE.Scene();    // Create main scene
-let renderer = initRenderer();    // View function in util/utils
-let camera = initCamera(new THREE.Vector3(0, 15, 30)); // Init camera in this position
+let scene, renderer, camera, material, light, orbit; // Initial variables
+scene = new THREE.Scene();    // Create main scene
+renderer = initRenderer();    // Init a basic renderer
+camera = initCamera(new THREE.Vector3(0, 15, 30)); // Init camera in this position
 </code>
 
-<p>The interaction is performed by a trackball control as you can see in the next code.</p>
+<p>The interaction is performed by a orbit control as you can see in the next code.</p>
 
 <code>
-let trackballControls = new TrackballControls( camera, renderer.domElement );
+orbit = new OrbitControls( camera, renderer.domElement ); // Enable mouse rotation, pan, zoom etc.
 </code>
 
-<p>We will not focus on the creation of  the objects for now, but it's worth noting how the objects are added in the scene. In the example below you can see a cube being added to the scene. </p>
+<p>
+We will not focus on the creation of  the objects for now, 
+but it's worth noting how the objects are added in the scene. 
+In the example below you can see a cube being added to the scene 
+(the material is previously loaded and will be explored in further classes). 
+</p>
 
 <code>
-let cube = new THREE.Mesh(cubeGeometry, cubeMaterial);
+let cube = new THREE.Mesh(cubeGeometry, material);
 scene.add(cube);
 </code>
 
-<p>Finally, we must create a function in which all the elements will be called in a loop. In this example we create a <strong>render</strong> function. Inside this function we use two important function of the API - <strong>requestAnimationFrame</strong> and <strong>renderer.render</strong>. This will create a loop that causes the renderer to draw the scene every time the screen is refreshed (on a typical screen this means 60 times per second). If you have something to be animated, the variables to be used will be placed inside this render function.</p>
+<p>
+Finally, we must create a function in which all the elements will be called in a loop. 
+In this example we create a <strong>render</strong> function. 
+Inside this function we use two important function of the 
+API - <strong>requestAnimationFrame</strong> and <strong>renderer.render</strong>. 
+This will create a loop that causes the renderer to draw the scene every time the 
+screen is refreshed (on a typical screen this means 60 times per second). 
+If you have something to be animated, the variables to be used will be placed 
+inside this render function.
+</p>
 
 <code>
 render();
@@ -51,5 +67,5 @@ function render()
 }
 </code>
 
-	</body>
+</body>
 </html>
