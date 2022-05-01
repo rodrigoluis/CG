@@ -83,8 +83,8 @@ function showInformation()
   var controls = new InfoBox();
     controls.add("Geometric Transformation");
     controls.addParagraph();
-    controls.add("Use keyboard arrows to move the cube in XZ.");
-    controls.add("Press Page Up or Page down to move the cube over the Y axis");
+    controls.add("Use keyboard arrows to move the cube in XY.");
+    controls.add("Press Page Up or Page down to move the cube over the Z axis");
     controls.add("Press 'A' and 'D' to rotate.");
     controls.add("Press 'W' and 'S' to change scale");
     controls.show();
