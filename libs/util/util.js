@@ -2,6 +2,17 @@ import * as THREE from '../../build/three.module.js';
 import {TrackballControls} from '../../build/jsm/controls/TrackballControls.js';
 
 /**
+ * Set a basic material for the initial examples
+ * @param {color} color 
+ * @returns Basic lambert material of a given color
+ */
+export function initBasicMaterial(color = "rgb(255,20,20)")
+{
+   let basicMaterial = new THREE.MeshLambertMaterial({color:color});
+   return basicMaterial;
+}
+
+/**
  * Get ASCII table code of a given character
  * Use character in uppercase
  *
@@ -261,11 +272,9 @@ export function initCamera(initialPosition) {
     return camera;
 }
 
-export function initDefaultBasicLight(scene, castShadow = false, position = new THREE.Vector3(1, 1, 1), 
+export function initDefaultBasicLight(scene, castShadow = false, position = new THREE.Vector3(2, 1, 1), 
                                       shadowSide = 16, shadowMapSize = 512, shadowNear = 0.1, shadowFar = 100 ) 
 {
-  //let position = (initialPosition !== undefined) ? initialPosition : new THREE.Vector3(1, 1, 1);
-
   const ambientLight = new THREE.HemisphereLight(
     'white', // bright sky color
     'darkslategrey', // dim ground color
