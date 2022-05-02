@@ -4,7 +4,7 @@ import {TrackballControls} from '../build/jsm/controls/TrackballControls.js';
 import {TeapotGeometry} from '../build/jsm/geometries/TeapotGeometry.js';
 import {initRenderer, 
         initDefaultSpotlight,
-        createGroundPlane,
+        createGroundPlaneXZ,
         onWindowResize, 
         degreesToRadians} from "../libs/util/util.js";
 
@@ -25,14 +25,14 @@ var trackballControls = new TrackballControls(camera, renderer.domElement );
 // Listen window size changes
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
-var groundPlane = createGroundPlane(10, 10, 40, 40); // width, height, resolutionW, resolutionH
-  groundPlane.rotateX(degreesToRadians(-90));
+var groundPlane = createGroundPlaneXZ(10, 10, 40, 40); // width, height, resolutionW, resolutionH
+  //groundPlane.rotateX(degreesToRadians(-90));
 scene.add(groundPlane);
 
 // Create objects
-createTeapot( 2.0,  0.5,  0.0, Math.random() * 0xffffff);
-createTeapot(0.0,  0.5,  2.0, Math.random() * 0xffffff);  
-createTeapot(0.0,  0.5, -2.0, Math.random() * 0xffffff);    
+createTeapot( 2.0,  0.4,  0.0, Math.random() * 0xffffff);
+createTeapot(0.0,  0.4,  2.0, Math.random() * 0xffffff);  
+createTeapot(0.0,  0.4, -2.0, Math.random() * 0xffffff);    
 
 //-------------------------------------------------------------------------------
 // Setting virtual camera
