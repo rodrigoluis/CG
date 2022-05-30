@@ -8,6 +8,8 @@
 		<link rel="stylesheet" type="text/css" href="html/resources/main.css">
 	</head>
 	<body>
+
+      
 		<div id="panel">
 			<div id="header">
 				<script>
@@ -152,48 +154,55 @@
 
 			function createNavigation() {
 
-				if ( navigation !== undefined ) {
-					content.removeChild( navigation );
-				}
+				// if ( navigation !== undefined ) {
+				// 	content.removeChild( navigation );
+				// }
 
 				// Create the navigation panel using data from list.js
 				navigation = document.createElement( 'div' );
 				content.appendChild( navigation );
 
 				var localList = list[ 'en' ];
-				for ( var section in localList ) {
+            const selectedPage = window.location.hash.substring( 1 ); ////
+
+				for ( const section in localList ) {
 					// Create sections
-					var categories = localList[ section ];
+					const categories = localList[ section ];
 
 					var sectionHead = document.createElement( 'h2' );
 					sectionHead.textContent = section;
 					navigation.appendChild( sectionHead );
 
-					for ( var category in categories ) {
+					for ( const category in categories ) {
 
 						// Create categories
-						var pages = categories[ category ];
+						const pages = categories[ category ];
 
-						var categoryContainer = document.createElement( 'div' );
+						const categoryContainer = document.createElement( 'div' );
 						navigation.appendChild( categoryContainer );
 
-						var categoryHead = document.createElement( 'h3' );
+						const categoryHead = document.createElement( 'h3' );
 						categoryHead.textContent = category;
 						categoryContainer.appendChild( categoryHead );
 
-						var categoryContent = document.createElement( 'ul' );
+						const categoryContent = document.createElement( 'ul' );
 						categoryContainer.appendChild( categoryContent );
 
-						for ( var pageName in pages )
+						for ( const pageName in pages )
 						{
 							// Create page links
 							var pageURL = pages[ pageName ];
 
-							var listElement = document.createElement( 'li' );
+							const listElement = document.createElement( 'li' );
 							categoryContent.appendChild( listElement );
 
-							var linkElement = createLink( pageName, pageURL );
+							const linkElement = createLink( pageName, pageURL );
 							listElement.appendChild( linkElement );
+
+						// select current page
+						if ( pageURL === selectedPage ) {
+                     linkElement.classList.add( 'selected' );
+                   }
 
 							// Gather the main properties for the current subpage
 							pageProperties[ pageName ] = {
