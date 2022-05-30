@@ -1,7 +1,7 @@
 import * as THREE from  'three';
 import Stats from '../build/jsm/libs/stats.module.js';
 import GUI from '../libs/util/dat.gui.module.js'
-import {TrackballControls} from '../build/jsm/controls/TrackballControls.js';
+import { OrbitControls } from '../build/jsm/controls/OrbitControls.js';
 import {TeapotGeometry} from '../build/jsm/geometries/TeapotGeometry.js';
 import KeyboardState from '../libs/util/KeyboardState.js';
 import {initRenderer, 
@@ -13,24 +13,22 @@ import {initRenderer,
         onWindowResize, 
         degreesToRadians} from "../libs/util/util.js";
 
-var scene = new THREE.Scene();    // Create main scene
-var stats = new Stats();          // To show FPS information
-var lightPosition = new THREE.Vector3(1.7, 0.8, 1.1);
-var light = initDefaultSpotlight(scene, lightPosition); // Use default light
-var lightSphere = createLightSphere(scene, 0.1, 10, 10, lightPosition);
-
-var renderer = initRenderer();    // View function in util/utils
-  renderer.setClearColor("rgb(30, 30, 42)");
-var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+let scene, renderer, camera, stats, light, lightSphere, lightPosition, orbit; // Initial variables
+scene = new THREE.Scene();    // Create main scene
+renderer = initRenderer("rgb(30, 30, 42)");    // View function in util/utils
+camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
   camera.lookAt(0, 0, 0);
   camera.position.set(2.18, 1.62, 3.31);
   camera.up.set( 0, 1, 0 );
+orbit = new OrbitControls( camera, renderer.domElement );
+stats = new Stats();          // To show FPS information
+
+lightPosition = new THREE.Vector3(1.7, 0.8, 1.1);
+light = initDefaultSpotlight(scene, lightPosition); // Use default light
+lightSphere = createLightSphere(scene, 0.1, 10, 10, lightPosition);
 
 // To use the keyboard
 var keyboard = new KeyboardState();
-
-// Enable mouse rotation, pan, zoom etc.
-var trackballControls = new TrackballControls( camera, renderer.domElement );
 
 // Listen window size changes
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
@@ -49,103 +47,112 @@ showInformation();
 
 var infoBox = new SecondaryBox("");
 
-// Teapot
-var geometry = new TeapotGeometry(0.5);
-
 //---------------------------------------------------------
 // Build Materials
-var objectArray = new Array();
-var activeObject = 0; // View first object
 
-usePhongMaterial(geometry, true);
-useLambertMaterial(geometry, false);
-useNormalMaterial(geometry, false);
-useNormalMaterialFlat(geometry, false);
-useToonMaterial(geometry, false);
-useBasicMaterial(geometry, false);
-useBasicMaterialWireframe(geometry, false);
+let phongObject, lambertObject, normalObject, normalFlatObject,
+    toonObject, basicObject, wireframeObject;
+
+// Teapot basic geometry
+var geometry = new TeapotGeometry(0.5);
+
+phongObject =      createPhongObject(geometry);
+lambertObject =    createLambertObject(geometry);
+normalObject =     createNormalMaterial(geometry);
+normalFlatObject = createNormalMaterialFlat(geometry);  
+toonObject =       createToonMaterial(geometry);
+basicObject =      createBasicMaterial(geometry);
+wireframeObject =  createBasicMaterialWireframe(geometry);
+
+hideAllObjects();
+phongObject.visible = true; // default
 
 buildInterface();
 render();
 
+
+function hideAllObjects()
+{
+   phongObject.visible = lambertObject.visible = normalObject.visible = 
+   normalFlatObject.visible = toonObject.visible = basicObject.visible =
+   wireframeObject.visible = false;   
+}
+
+function buildObject(geometry, material)
+{
+  let obj = new THREE.Mesh(geometry, material);
+      obj.castShadow = true;
+      obj.position.set(0.0, 0.5, 0.0);
+
+  scene.add( obj );
+  return obj;
+}
+
+//More information here: https://threejs.org/docs/#api/en/materials/MeshPhongMaterial
+function createPhongObject(geometry)
+{
+   let material = new THREE.MeshPhongMaterial({
+     color:"rgb(255,20,20)",     // Main color of the object
+     shininess:"200",            // Shininess of the object
+     specular:"rgb(255,255,255)" // Color of the specular component
+   });
+   return buildObject(geometry, material);
+}
+
+//More information here: https://threejs.org/docs/#api/en/materials/MeshLambertMaterial
+function createLambertObject(geometry)
+{
+   let material = new THREE.MeshLambertMaterial({
+      color:"rgb(255,20,20)"     // Main color of the object
+   });
+   return buildObject(geometry, material);
+}
+
+
 //More information here: https://threejs.org/docs/#api/en/materials/MeshNormalMaterial
-function useNormalMaterial(geometry, visibility)
+function createNormalMaterial(geometry)
 {
   var material = new THREE.MeshNormalMaterial();
 
-  buildObject(geometry, material, visibility, "Normal Material");
+  return buildObject(geometry, material);
 }
 
-function useNormalMaterialFlat(geometry, visibility)
+function createNormalMaterialFlat(geometry)
 {
   var material = new THREE.MeshNormalMaterial({flatShading: true});
 
-  buildObject(geometry, material, visibility, "Normal Material - Flat");
+  return buildObject(geometry, material);
 }
 
 //More information here: https://threejs.org/docs/#api/en/materials/MeshToonMaterial
-function useToonMaterial(geometry, visibility)
+function createToonMaterial(geometry)
 {
   var material = new THREE.MeshToonMaterial({
     color:"rgb(230,120,50)",     // Main color of the object
-    aoMapIntensity:"0.1"
+    //aoMapIntensity:"0.7"
   });
 
-  buildObject(geometry, material, visibility, "Toon Material");
+  return buildObject(geometry, material);  
 }
 
 //More information here: https://threejs.org/docs/#api/en/materials/MeshBasicMaterial
-function useBasicMaterial(geometry, visibility)
+function createBasicMaterial(geometry)
 {
   var material = new THREE.MeshBasicMaterial({
     color:"rgb(255,20,20)"     // Main color of the object
   });
 
-  buildObject(geometry, material, visibility, "Basic Material");
+  return buildObject(geometry, material);  
 }
 
-function useBasicMaterialWireframe(geometry, visibility)
+function createBasicMaterialWireframe(geometry)
 {
   var material = new THREE.MeshBasicMaterial({
     color:"rgb(255,255,255)",     // Main color of the object
     wireframe: true
   });
 
-  buildObject(geometry, material, visibility, "Basic Material - Wireframe");
-}
-
-//More information here: https://threejs.org/docs/#api/en/materials/MeshLambertMaterial
-function useLambertMaterial(geometry, visibility)
-{
-  var material = new THREE.MeshLambertMaterial({
-    color:"rgb(255,20,20)"     // Main color of the object
-  });
-
-  buildObject(geometry, material, visibility, "Lambert Material");
-}
-
-//More information here: https://threejs.org/docs/#api/en/materials/MeshPhongMaterial
-function usePhongMaterial(geometry, visibility)
-{
-  var material = new THREE.MeshPhongMaterial({
-    color:"rgb(255,20,20)",     // Main color of the object
-    shininess:"200",            // Shininess of the object
-    specular:"rgb(255,255,255)" // Color of the specular component
-  });
-
-  buildObject(geometry, material, visibility, "Phong Material");
-}
-
-function buildObject(geometry, material, visibility, name)
-{
-  var obj = new THREE.Mesh(geometry, material);
-    obj.name = name;
-    obj.castShadow = true;
-    obj.visible = visibility;
-    obj.position.set(0.0, 0.5, 0.0);
-
-  scene.add( obj );
-  objectArray.push( obj );
+  return buildObject(geometry, material);
 }
 
 function keyboardUpdate()
@@ -215,39 +222,38 @@ function buildInterface()
 
     this.onChangeMaterial = function()
     {
-      objectArray[activeObject].visible = false;
+      hideAllObjects();
       switch (this.materialType)
       {
-        case 'Phong':
-            activeObject = 0;
+         case 'Phong':
+            phongObject.visible = true;
             break;
-        case 'Gouraud':
-            activeObject = 1;
+         case 'Lambert':
+            lambertObject.visible = true;
             break;
-        case 'Normal':
-            activeObject = 2;
+         case 'Normal':
+            normalObject.visible = true;
             break;
-        case 'NormalFlat':
-            activeObject = 3;
+         case 'NormalFlat':
+            normalFlatObject.visible = true;
             break;
-        case 'Toon':
-            activeObject = 4;
+         case 'Toon':
+            toonObject.visible = true;
             break;
-        case 'Basic':
-            activeObject = 5;
+         case 'Basic':
+            basicObject.visible = true;
             break;
-        case 'BasicWireframe':
-            activeObject = 6;
+         case 'BasicWireframe':
+            wireframeObject.visible = true;
             break;
       }
-      objectArray[activeObject].visible = true;
     };
   };
 
   var gui = new GUI();
 
   gui.add(controls, 'materialType',
-    ['Phong','Gouraud','Normal','NormalFlat','Toon','Basic','BasicWireframe'])
+    ['Phong','Lambert','Normal','NormalFlat','Toon','Basic','BasicWireframe'])
     .name("Material Type")
     .onChange(function(e) { controls.onChangeMaterial(); });
 
@@ -259,9 +265,7 @@ function buildInterface()
 function render()
 {
   stats.update();
-  trackballControls.update();
   keyboardUpdate();
   requestAnimationFrame(render);
   renderer.render(scene, camera)
 }
-

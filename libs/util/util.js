@@ -226,15 +226,15 @@ export function initStats(type) {
  *
  * @param additionalProperties Additional properties to pass into the renderer
  */
-export function initRenderer(additionalProperties) {
+export function initRenderer(color = "rgb(0, 0, 0)") {
 
-    var props = (typeof additionalProperties !== 'undefined' && additionalProperties) ? additionalProperties : {};
-    var renderer = new THREE.WebGLRenderer(props);
+    //var props = (typeof additionalProperties !== 'undefined' && additionalProperties) ? additionalProperties : {};
+    var renderer = new THREE.WebGLRenderer();
     renderer.shadowMap.enabled = true;
     renderer.shadowMapSoft = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
 
-    renderer.setClearColor(new THREE.Color("rgb(0, 0, 0)"));
+    renderer.setClearColor(new THREE.Color(color));
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.shadowMap.enabled = true;
     document.getElementById("webgl-output").appendChild(renderer.domElement);

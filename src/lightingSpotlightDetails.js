@@ -1,6 +1,6 @@
 import * as THREE from  'three';
 import GUI from '../libs/util/dat.gui.module.js'
-import {TrackballControls} from '../build/jsm/controls/TrackballControls.js';
+import { OrbitControls } from '../build/jsm/controls/OrbitControls.js';
 import {TeapotGeometry} from '../build/jsm/geometries/TeapotGeometry.js';
 import {initRenderer, 
         createGroundPlane,
@@ -9,27 +9,24 @@ import {initRenderer,
         degreesToRadians,
         radiansToDegrees} from "../libs/util/util.js";
 
-var scene = new THREE.Scene();    // Create main scene
-  
-var renderer = initRenderer();    // View function in util/utils
-  renderer.setClearColor("rgb(80, 70, 170)");
-var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+let scene, renderer, camera, orbit; // Initial variables   
+scene = new THREE.Scene();    // Create main scene
+renderer = initRenderer("rgb(80, 70, 170)");    // View function in util/utils
+camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
   camera.lookAt(0, 0, 0);
   camera.position.set(3.6, 4.6, 8.2);
   camera.up.set( 0, 1, 0 );
+orbit = new OrbitControls( camera, renderer.domElement );
 
 // More info here: https://threejs.org/docs/#api/en/lights/AmbientLight
 const ambientColor = "rgb(60,60,60)";
-var ambientLight = new THREE.AmbientLight(ambientColor);
+let ambientLight = new THREE.AmbientLight(ambientColor);
 scene.add( ambientLight );
-
-// Enable mouse rotation, pan, zoom etc.
-var trackballControls = new TrackballControls(camera, renderer.domElement );
 
 // Listen window size changes
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
-var groundPlane = createGroundPlane(10, 10, 40, 40); // width, height, resolutionW, resolutionH
+let groundPlane = createGroundPlane(10, 10, 40, 40); // width, height, resolutionW, resolutionH
   groundPlane.rotateX(degreesToRadians(-90));
 scene.add(groundPlane);
 
@@ -40,14 +37,14 @@ createTeapot(0.0,  0.5, -2.0, Math.random() * 0xffffff);
 
 //---------------------------------------------------------
 // Default light position
-var lightPosition = new THREE.Vector3(3.7, 2.2, 1.0);
+let lightPosition = new THREE.Vector3(3.7, 2.2, 1.0);
 
 // Sphere to represent the light
-var lightSphere = createLightSphere(scene, 0.05, 10, 10, lightPosition);
+let lightSphere = createLightSphere(scene, 0.05, 10, 10, lightPosition);
 
 //---------------------------------------------------------
 // Create and set the spotlight
-var spotLight = new THREE.SpotLight("rgb(255,255,255)");
+let spotLight = new THREE.SpotLight("rgb(255,255,255)");
   spotLight.position.copy(lightPosition);
   spotLight.distance = 0;
   spotLight.castShadow = true;
@@ -76,10 +73,10 @@ render();
 
 function createTeapot(x, y, z, color )
 {
-  var geometry = new TeapotGeometry(0.5);
-  var material = new THREE.MeshPhongMaterial({color, shininess:"200"});
+  let geometry = new TeapotGeometry(0.5);
+  let material = new THREE.MeshPhongMaterial({color, shininess:"200"});
     material.side = THREE.DoubleSide;
-  var obj = new THREE.Mesh(geometry, material);
+  let obj = new THREE.Mesh(geometry, material);
     obj.castShadow = true;
     obj.position.set(x, y, z);
   scene.add(obj);
@@ -105,7 +102,7 @@ function buildInterface()
 {
   //------------------------------------------------------------
   // Interface
-  var controls = new function ()
+  let controls = new function ()
   {
     this.angle = radiansToDegrees(spotLight.angle);
     this.shadowMapSize = spotLight.shadow.mapSize.width;
@@ -132,9 +129,9 @@ function buildInterface()
     };     
   };
 
-  var gui = new GUI();
+  let gui = new GUI();
   
-  var spotFolder = gui.addFolder("SpotLight Parameters");
+  let spotFolder = gui.addFolder("SpotLight Parameters");
   spotFolder.open();  
   spotFolder.add(spotHelper, 'visible', true)
     .name("Helper");    
@@ -148,7 +145,7 @@ function buildInterface()
   makeXYZGUI(spotFolder, spotLight.position, 'position', updateLight);
   makeXYZGUI(spotFolder, spotLight.target.position, 'target', updateLight);
   
-  var shadowFolder = gui.addFolder("Shadow");
+  let shadowFolder = gui.addFolder("Shadow");
   shadowFolder.open();    
   shadowFolder.add(shadowHelper, 'visible', true)
     .name("Helper");
@@ -168,7 +165,6 @@ function buildInterface()
 
 function render()
 {
-  trackballControls.update();
   requestAnimationFrame(render);
   renderer.render(scene, camera);
 }
