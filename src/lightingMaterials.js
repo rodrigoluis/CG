@@ -129,7 +129,6 @@ function createToonMaterial(geometry)
 {
   var material = new THREE.MeshToonMaterial({
     color:"rgb(230,120,50)",     // Main color of the object
-    //aoMapIntensity:"0.7"
   });
 
   return buildObject(geometry, material);  
