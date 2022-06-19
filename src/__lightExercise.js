@@ -4,12 +4,14 @@ import GUI from '../libs/util/dat.gui.module.js'
 import {TrackballControls} from '../build/jsm/controls/TrackballControls.js';
 import {GLTFLoader} from '../build/jsm/loaders/GLTFLoader.js';
 import {initRenderer, 
+        setBasicMaterial,
         SecondaryBox,
         initDefaultBasicLight,
         createGroundPlane,
         onWindowResize, 
         degreesToRadians, 
         createLightSphere} from "../libs/util/util.js";
+import {loadLightPostScene} from "../libs/util/utilScenes.js";
 
 var scene = new THREE.Scene();    // Create main scene
 var stats = new Stats();          // To show FPS information
@@ -32,16 +34,12 @@ var trackballControls = new TrackballControls( camera, renderer.domElement );
 // Listen window size changes
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
-var groundPlane = createGroundPlane(20.0, 20.0, 80, 80); // width and height
-  groundPlane.rotateX(degreesToRadians(-90));
-scene.add(groundPlane);
-
 // Show axes (parameter is size of each axis)
 var axesHelper = new THREE.AxesHelper( 3 );
   axesHelper.visible = false;
 scene.add( axesHelper );
 
-let dirPosition = new THREE.Vector3(2, 2, 2)
+let dirPosition = new THREE.Vector3(2, 2, 4)
 const dirLight = new THREE.DirectionalLight('white', 0.2);
 dirLight.position.copy(dirPosition);
  //mainLight.castShadow = true;
@@ -50,7 +48,7 @@ scene.add(dirLight);
 //---------------------------------------------------------
 // Default light intensity, position, color, ambient color and intensity
 let lightPosition = new THREE.Vector3(1.5, 3.0, 0.0);
-let lightTarget = new THREE.Vector3(1.5, 0.0, 0.0);
+let lightTarget = new THREE.Vector3(2.5, 0.0, 0.0);
 let lightColor = "rgb(255,255,255)";
 let ambientColor = "rgb(50,50,50)";
 
@@ -70,43 +68,47 @@ let lightSphere = createLightSphere(scene, 0.05, 10, 10, lightPosition);
 
 //---------------------------------------------------------
 // Load external objects
-loadLightPost()
+loadLightPostScene(scene)
 buildInterface();
 
-var objectMaterial = new THREE.MeshPhongMaterial({color:"rgb(255,20,20)", shininess:"200"});
+let mat1 = setBasicMaterial("rgb(255, 20, 20)");
+let mat2 = setBasicMaterial("rgb( 20,255, 20)");
+let mat3 = setBasicMaterial("rgb(255, 20,255)");
+let mat4 = setBasicMaterial("rgb(255,255, 20)");
+//var objectMaterial = new THREE.MeshPhongMaterial({color:"rgb(255,20,20)", shininess:"200"});
 // Add objects to scene
-let cube = createCube(0.5);
+let cube = createCube(mat1, 0.5);
 cube.position.set(3.0, 0.5, 0.0) 
 scene.add(cube);
 
-let cube2 = createCube(0.5);
-cube2.position.set(3.0, 0.5, 3.0) 
+let cube2 = createCube(mat2, 0.5);
+cube2.position.set(3.0, 0.5, 2.0) 
 scene.add(cube2);
 
-let cylinder = createCylinder(.2, .2, 1.0, 20, 4);
+let cylinder = createCylinder(mat3, .2, .2, 1.0, 20, 4);
 cylinder.position.set(0.0, 0.5, 3.0) 
 scene.add(cylinder);
 
-let cylinder2 = createCylinder(.2, .2, 1.0, 20, 4);
+let cylinder2 = createCylinder(mat4, .2, .2, 1.0, 20, 4);
 cylinder2.position.set(1.5, 0.5, -1.5) 
 scene.add(cylinder2);
 
 render();
 
 
-function createCylinder(radiusTop, radiusBottom, height, radialSegments, heightSegments, openEnded)
+function createCylinder(mat, radiusTop, radiusBottom, height, radialSegments, heightSegments, openEnded)
 {
   var geometry = new THREE.CylinderGeometry(radiusTop, radiusBottom, height, radialSegments, heightSegments, openEnded);
-  var object = new THREE.Mesh(geometry, objectMaterial);
+  var object = new THREE.Mesh(geometry, mat);
     object.castShadow = true;
     object.position.set(0.0, height/2.0, 0.0);
   return object;
 }
 
-function createCube(s)
+function createCube(mat, s)
 {
   var geometry = new THREE.BoxGeometry(s, s*2, s);
-  var object = new THREE.Mesh(geometry, objectMaterial);
+  var object = new THREE.Mesh(geometry, mat);
     object.castShadow = true;
     object.position.set(0.0, s/2.0, 0.0);
   return object;
@@ -137,24 +139,6 @@ function setSpotLight(position, target)
   scene.add(spotLight);
 }
 
-function loadLightPost()
-{
-  var loader = new GLTFLoader( );
-  loader.load( '__post.glb', function ( gltf ) {
-    var obj = gltf.scene;
-    obj.traverse( function ( child ) {
-      if ( child ) {
-          child.castShadow = true;
-      }
-    });
-    obj.traverse( function( node )
-    {
-    if( node.material ) node.material.side = THREE.DoubleSide;
-    });
-    obj.scale.set(1.0, 0.5, 1.0)
-    scene.add ( obj );
-    }, null, null);
-}
 
 function makeXYZGUI(gui, vector3, name, onChangeFn) {
    const folder = gui.addFolder(name);

@@ -4,7 +4,7 @@ import KeyboardState from '../libs/util/KeyboardState.js';
 import {initRenderer, 
         initCamera,
         initDefaultBasicLight,
-        initBasicMaterial,
+        setBasicMaterial,
         InfoBox,
         onWindowResize, 
         degreesToRadians,
@@ -14,7 +14,7 @@ let scene, renderer, camera, material, light, orbit;; // Initial variables
 scene = new THREE.Scene();    // Create main scene
 renderer = initRenderer();    // Init a basic renderer
 camera = initCamera(new THREE.Vector3(0, 15, 30)); // Init camera in this position
-material = initBasicMaterial(); // create a basic material
+material = setBasicMaterial(); // create a basic material
 light = initDefaultBasicLight(scene); // Create a basic light to illuminate the scene
 orbit = new OrbitControls( camera, renderer.domElement ); // Enable mouse rotation, pan, zoom etc.
 
