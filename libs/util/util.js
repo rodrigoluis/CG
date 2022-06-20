@@ -6,7 +6,7 @@ import {TrackballControls} from '../../build/jsm/controls/TrackballControls.js';
  * @param {color} color 
  * @returns Basic lambert material of a given color
  */
-export function setBasicMaterial(color = "rgb(255,20,20)")
+export function setDefaultMaterial(color = "rgb(255,20,20)")
 {
    let basicMaterial = new THREE.MeshLambertMaterial({color:color});
    return basicMaterial;
