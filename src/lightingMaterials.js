@@ -93,7 +93,7 @@ function createPhongObject(geometry)
 {
    let material = new THREE.MeshPhongMaterial({
      color:"rgb(255,20,20)",     // Main color of the object
-     shininess:"200",            // Shininess of the object
+     shininess:"100",            // Shininess of the object
      specular:"rgb(255,255,255)" // Color of the specular component
    });
    return buildObject(geometry, material);
