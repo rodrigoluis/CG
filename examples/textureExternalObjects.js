@@ -1,7 +1,6 @@
 import * as THREE from  'three';
-import Stats from '../build/jsm/libs/stats.module.js';
 import GUI from '../libs/util/dat.gui.module.js'
-import {TrackballControls} from '../build/jsm/controls/TrackballControls.js';
+import { OrbitControls } from '../build/jsm/controls/OrbitControls.js';
 import {GLTFLoader} from '../build/jsm/loaders/GLTFLoader.js';
 import {OBJLoader} from '../build/jsm/loaders/OBJLoader.js';
 import {MTLLoader} from '../build/jsm/loaders/MTLLoader.js';
@@ -11,12 +10,10 @@ import {initRenderer,
         createGroundPlane,
         getMaxSize,        
         onWindowResize, 
-        degreesToRadians, 
-        lightFollowingCamera} from "../libs/util/util.js";
+        degreesToRadians,
+        getFilename} from "../libs/util/util.js";
 
 var scene = new THREE.Scene();    // Create main scene
-var stats = new Stats();          // To show FPS information
-
 var light = initDefaultSpotlight(scene, new THREE.Vector3(2, 3, 2)); // Use default light
 var lightSphere = createSphere(0.1, 10, 10);
   lightSphere.position.copy(light.position);
@@ -29,11 +26,10 @@ var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHei
   camera.position.set(2.18, 1.62, 3.31);
   camera.up.set( 0, 1, 0 );
 
+var orbit = new OrbitControls( camera, renderer.domElement ); // Enable mouse rotation, pan, zoom etc.
+
 // Control the appearence of first object loaded
 var firstRender = false;
-
-// Enable mouse rotation, pan, zoom etc.
-var trackballControls = new TrackballControls( camera, renderer.domElement );
 
 // Listen window size changes
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
@@ -58,16 +54,15 @@ loadOBJFile('../assets/objects/', 'plane', 3.0, 0, true);
 loadOBJFile('../assets/objects/', 'L200', 2.5, 90, false);
 loadOBJFile('../assets/objects/', 'tank', 2.0, 90, false);
 
-loadGLTFFile('../assets/objects/', 'orca', 4.0, 180, false);
-loadGLTFFile('../assets/objects/', 'wooden_goose', 2.0, 90, false);
-loadGLTFFile('../assets/objects/', 'chair', 1.0, 180, false);
+loadGLTFFile('../assets/objects/orca.glb', 4.0, 180, false);
+loadGLTFFile('../assets/objects/woodenGoose.glb', 2.0, 90, false);
+loadGLTFFile('../assets/objects/chair.glb', 1.0, 180, false);
 
 buildInterface();
 render();
 
 function loadOBJFile(modelPath, modelName, desiredScale, angle, visibility)
 {
-  var currentModel = modelName;
   var manager = new THREE.LoadingManager( );
 
   var mtlLoader = new MTLLoader( manager );
@@ -108,13 +103,13 @@ function loadOBJFile(modelPath, modelName, desiredScale, angle, visibility)
   });
 }
 
-function loadGLTFFile(modelPath, modelFolder, desiredScale, angle, visibility)
+function loadGLTFFile(modelName, desiredScale, angle, visibility)
 {
   var loader = new GLTFLoader( );
-  loader.load( modelPath + modelFolder + '/scene.gltf', function ( gltf ) {
+  loader.load( modelName, function ( gltf ) {
     var obj = gltf.scene;
     obj.visible = visibility;
-    obj.name = modelFolder;
+    obj.name = getFilename(modelName);
     obj.traverse( function ( child ) {
       if ( child ) {
           child.castShadow = true;
@@ -165,13 +160,6 @@ function fixPosition(obj)
   return obj;
 }
 
-function renderFirstObjectLoaded()
-{
-  activeObject = 0;
-  objectArray[0].visible = true;
-  if(!firstRender) firstRender = true;
-}
-
 function createSphere(radius, widthSegments, heightSegments)
 {
   var geometry = new THREE.SphereGeometry(radius, widthSegments, heightSegments, 0, Math.PI * 2, 0, Math.PI);
@@ -214,8 +202,6 @@ function buildInterface()
 
 function render()
 {
-  stats.update();
-  trackballControls.update();
   requestAnimationFrame(render);
   renderer.render(scene, camera)
 }

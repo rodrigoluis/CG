@@ -51,6 +51,12 @@ export function formatOutput(num, decimalPlaces)
   return (Math.round(num * 100) / 100).toFixed(decimalPlaces);
 }
 
+/**
+ * Extract filename from a fullpath
+ */
+export function getFilename(fullPath) {
+   return fullPath.replace(/^.*[\\\/]/, '');
+}
 
 /**
  Compute the max size acording to XYZ axes

@@ -54,9 +54,9 @@ var activeObject = 0;
 loadOBJFile('../assets/objects/', 'dolphins', true, 1.5);
 loadOBJFile('../assets/objects/', 'rose+vase', false, 1.5);
 loadOBJFile('../assets/objects/', 'flowers', false, 1.5);
-loadGLTFFile('../assets/objects/', 'TocoToucan', false, 2.0);
+loadGLBFile('../assets/objects/', 'TocoToucan', false, 2.0);
 loadPLYFile('../assets/objects/', 'cow', false, 2.0);
-loadOBJFile('../assets/objects/', 'f-16', false, 2.2);
+loadOBJFile('../assets/objects/', 'f16', false, 2.2);
 loadOBJFile('../assets/objects/', 'soccerball', false, 1.2);
 
 buildInterface();
@@ -85,10 +85,10 @@ function loadPLYFile(modelPath, modelName, visibility, desiredScale)
     }, onProgress, onError);
 }
 
-function loadGLTFFile(modelPath, modelName, visibility, desiredScale)
+function loadGLBFile(modelPath, modelName, visibility, desiredScale)
 {
   var loader = new GLTFLoader( );
-  loader.load( modelPath + modelName + '.gltf', function ( gltf ) {
+  loader.load( modelPath + modelName + '.glb', function ( gltf ) {
     var obj = gltf.scene;
     obj.name = modelName;
     obj.visible = visibility;
@@ -114,8 +114,6 @@ function loadGLTFFile(modelPath, modelName, visibility, desiredScale)
 
 function loadOBJFile(modelPath, modelName, visibility, desiredScale)
 {
-  var currentModel = modelName;
-
   var manager = new THREE.LoadingManager( );
 
   var mtlLoader = new MTLLoader( manager );
@@ -184,22 +182,6 @@ function fixPosition(obj)
   else
     obj.translateY(-1*box.min.y);
   return obj;
-}
-
-function renderFirstObjectLoaded()
-{
-  activeObject = 0;
-  objectArray[0].visible = true;
-  if(!firstRender) firstRender = true;
-}
-
-function createSphere(radius, widthSegments, heightSegments)
-{
-  var geometry = new THREE.SphereGeometry(radius, widthSegments, heightSegments, 0, Math.PI * 2, 0, Math.PI);
-  var material = new THREE.MeshBasicMaterial({color:"rgb(255,255,50)"});
-  var object = new THREE.Mesh(geometry, material);
-    object.castShadow = true;
-  return object;
 }
 
 function buildInterface()

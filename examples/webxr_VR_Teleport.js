@@ -200,10 +200,8 @@ function createWindMill()
 	} ); 
 
 	// Load GLTF windmill
-	var modelPath = '../assets/objects/windmill/';
-	var modelName = 'scene.gltf';
 	var loader = new GLTFLoader( );
-	loader.load( modelPath + modelName, function ( gltf ) {
+	loader.load( '../assets/objects/windmill.glb', function ( gltf ) {
 	var obj = gltf.scene;
 		obj.traverse( function ( child ) {
 			if ( child ) { child.castShadow = true; }

@@ -47,16 +47,16 @@ var time = 0;
 var mixer = new Array();
 
 // Load animated files
-loadGLTFFile('../assets/objects/windmill/','scene.gltf', true);
-loadGLTFFile('../assets/objects/walkingMan/','scene.gltf', false);
+loadGLTFFile('../assets/objects/windmill.glb', true);
+loadGLTFFile('../assets/objects/walkingMan.glb', false);
 
 buildInterface();
 render();
 
-function loadGLTFFile(modelPath, modelName, centerObject)
+function loadGLTFFile(modelName, centerObject)
 {
   var loader = new GLTFLoader( );
-  loader.load( modelPath + modelName, function ( gltf ) {
+  loader.load( modelName, function ( gltf ) {
     var obj = gltf.scene;
     obj.traverse( function ( child ) {
       if ( child ) {

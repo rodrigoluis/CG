@@ -78,16 +78,15 @@ audioLoader.load( '../assets/sounds/sampleSound.ogg', function ( buffer ) {
 //-- END OF AUDIO STUFF -------------------------------------------------------
 
 // Load animated files
-loadGLTFFile('../assets/objects/windmill/','scene.gltf', true, windmillSound);
-loadGLTFFile('../assets/objects/walkingMan/','scene.gltf', false);
+loadGLBFile('../assets/objects/windmill.glb', true, windmillSound);
+loadGLBFile('../assets/objects/walkingMan.glb', false);
 
 buildInterface();
 render();
-
-function loadGLTFFile(modelPath, modelName, centerObject, sound = null)
+function loadGLBFile(modelName, centerObject, sound = null)
 {
   var loader = new GLTFLoader( );
-  loader.load( modelPath + modelName, function ( gltf ) {
+  loader.load( modelName, function ( gltf ) {
     var obj = gltf.scene;
     obj.traverse( function ( child ) {
       if ( child ) {
@@ -104,7 +103,7 @@ function loadGLTFFile(modelPath, modelName, centerObject, sound = null)
     {
         obj = normalizeAndRescale(obj, 2);
         obj = fixPosition(obj);
-        obj.add( sound ); // Add sound to windmill
+        if(sound) obj.add( sound ); // Add sound to windmill
     }
     else {
       man = obj;
@@ -118,15 +117,7 @@ function loadGLTFFile(modelPath, modelName, centerObject, sound = null)
     mixer.push(mixerLocal);
 
     return obj;
-    }, onProgress, onError);
-}
-
-function onError() { };
-
-function onProgress ( xhr, model ) {
-    if ( xhr.lengthComputable ) {
-      var percentComplete = xhr.loaded / xhr.total * 100;
-    }
+    }, null, null);
 }
 
 // Normalize scale and multiple by the newScale
@@ -201,10 +192,10 @@ function buildInterface()
   var gui = new GUI();
   gui.add(controls, 'onPlayAnimation').name("START");  
   gui.add(controls, 'playMusic', true)
-  .name("Play Music")
+  .name("Music")
   .onChange(function(e) { controls.onPlayMusic() });
   gui.add(controls, 'playWindmill', true)
-  .name("Play Windmill Sound")
+  .name("Windmill Sound")
   .onChange(function(e) { controls.onPlayWindmill() });
 
 }
