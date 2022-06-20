@@ -2,6 +2,7 @@ import * as THREE from 'three';
 import { FlyControls } from '../build/jsm/controls/FlyControls.js';
 import {initRenderer, 
         SecondaryBox,
+        degreesToRadians,
         initDefaultBasicLight,
         onWindowResize, 
         InfoBox,

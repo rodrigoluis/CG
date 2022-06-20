@@ -520,9 +520,10 @@ export function createGroundPlaneWired(width, height, widthSegments = 10, height
 
   var plane = new THREE.Mesh(planeGeometry, planeMaterial);
     plane.receiveShadow = true;  
-    plane.add(line);
-    plane.rotateX(-Math.PI/2);
-  
+     plane.add(line);
+     plane.rotateX(-Math.PI/2);
+
+
   return plane;
 }
 

@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Ammo - Raycast vehicle</title>
+    <link rel="shortcut icon" href="../favicon.ico">
+    <link rel="stylesheet" href="../html/resources/default.css">
+    <meta name="viewport" content="width=device-width, initial-scale=1">  
+    <style>
+        body {
+            font-family:Monospace; text-align:center;
+        }
+        #speedometer {
+          color: #ffffff;
+          background-color: #990000;
+          position: absolute; bottom: 0px; padding: 5px;
+        }
+        #info {
+            position: absolute;
+            top: 0px; width: 100%; padding: 5px;
+        }
+    </style>    
+</head>
+
+<body>
+  <div id="speedometer">0.0 km/h</div>
+  <div id="info">Ammo - Raycast vehicle<br>Press arrow keys to move.</div>  
+  <div id="webgl-output">
+    <script src="../libs/other/ammo.wasm.js"></script>      
+    <script type="module" src="ammoVehicle.js"></script>
+  </div>
+</body>
+</html>
