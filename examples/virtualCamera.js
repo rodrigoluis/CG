@@ -126,7 +126,13 @@ function buildInterface()
   var controls = new function ()
   {
     this.upAngle = 0;   
+    this.viewPortTransparency = false;
 
+    this.onChangeVPTransparency = function(){
+      // Control viewport transparency through renderer autoclear property
+      renderer.autoClear = !renderer.autoClear;
+    }
+    
     this.onUpdateNear = function(){
       if(virtualCamera.near >= virtualCamera.far) // set near always smaller than far
         virtualCamera.far = virtualCamera.near+10;
@@ -167,6 +173,9 @@ function buildInterface()
   vcFolder.open();    
   vcFolder.add(cameraHelper, 'visible', true)
     .name("Camera Helper");
+  vcFolder.add(controls, 'viewPortTransparency', false)
+    .onChange(function() { controls.onChangeVPTransparency() })
+    .name("VP Transparency");    
   vcFolder.add(virtualCamera, 'near', .1, 30, 0.1)
     .onChange(function() { controls.onUpdateNear() })
     .name("Near plane");
@@ -201,7 +210,9 @@ function controlledRender()
   renderer.setScissor(offset, height-vcHeidth-offset, vcWidth, vcHeidth); // Set scissor with the same size as the viewport
   renderer.setScissorTest(true); // Enable scissor to paint only the scissor are (i.e., the small viewport)
   renderer.setClearColor("rgb(60, 50, 150)");  // Use a darker clear color in the small viewport 
-  renderer.clear(); // Clean the small viewport
+  
+  // Create viewport transparency if autoclear property is on
+  if(renderer.autoclear) renderer.clear();  // Clean the small viewport
   renderer.render(scene, virtualCamera);  // Render scene of the virtual camera
 }
 
