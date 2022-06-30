@@ -70,6 +70,10 @@ var list = {
 				"Ammo - Vehicle": "html/ammoVehicleInfo",
 				"Ammo - Breakable Objects": "html/ammoBreakableObjectsInfo",
 			},
+			"Utils":  {
+            "GLTF Bounding Box": "html/exampleGLTFBoundingBoxInfo",            
+            "Collision": "html/exampleCollisionInfo",            
+			},
 			"Misc":  {
 				"Multicolor Cube": "html/exampleMulticolorCubeInfo",
 				"Linear Interpolation": "html/exampleLerpInfo",				
