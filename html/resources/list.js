@@ -13,15 +13,13 @@ var list = {
 				"Basic": "html/animationInfo",
 				"Using External Objects": "html/animationExternalObjectsInfo",
 			},
-			"Lighting":  {
+			"Lights & Shadows":  {
 				"Types of lights": "html/lightingTypesInfo",
-				"Types of materials": "html/lightingMaterialsInfo",
 				"Spotlight in Details": "html/lightingSpotlightDetailsInfo",				
-			},
-			"Shadows":  {
 				"Shadow Map Types":"html/shadowMapTypesInfo",			
 				"Shadow Map Viewer":"html/shadowMapViewerInfo",
 				"Shadow Update":"html/shadowUpdateInfo",				
+				"Types of materials": "html/materialsAndShadingInfo",            
 			},			
 			"Geometries":  {
 				"Manual Creation": "html/geometriesManualInfo",				

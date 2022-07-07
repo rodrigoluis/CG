@@ -4,7 +4,8 @@
  */
 
 // TODO: It's not working on newer versions of threejs
-import * as THREE from  './three.module.r82.js'; 
+//import * as THREE from  './three.module.r82.js'; 
+import * as THREE from  'three';
 
 var RaytracingRenderer = function ( width = window.innerWidth, height = window.innerHeight, blockSize = 32, camera )
 {
@@ -430,7 +431,9 @@ var RaytracingRenderer = function ( width = window.innerWidth, height = window.i
 		// update camera matrices
 		if ( camera.parent === undefined ) camera.updateMatrixWorld();
 
-		camera.matrixWorldInverse.getInverse( camera.matrixWorld );
+		//camera.matrixWorldInverse.getInverse( camera.matrixWorld );
+      camera.matrixWorldInverse.copy( camera.matrixWorld ).invert;
+
 		cameraNormalMatrix.getNormalMatrix( camera.matrixWorld );
 		origin.copy( cameraPosition );
 
@@ -464,6 +467,7 @@ var RaytracingRenderer = function ( width = window.innerWidth, height = window.i
 
 			_object.normalMatrix.getNormalMatrix( modelViewMatrix );
 			_object.inverseMatrix.getInverse( object.matrixWorld );
+         //_object.inverseMatrix.copy( object.matrixWorld ).invert;
 
 		} );
 		renderBlock( 0, 0 );
