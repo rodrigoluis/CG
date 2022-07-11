@@ -51,7 +51,7 @@ var list = {
 				"AR - Hit and Build": "html/webxr_AR_HitAndBuildInfo",				
 			},
 			"AR & VR with external libs":  {
-				"AR - Fiducial Marker": "html/AR_BasicInfo",	
+				"AR - Basic": "html/AR_BasicInfo",	
 				"AR - Sources": "html/AR_ChooseSourceInfo",	            
             "VR - Primitives": "html/VR_BasicInfo",
 				"VR - Panorama": "html/VR_PanoramaInfo",
