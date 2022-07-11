@@ -18,36 +18,15 @@ camera = new THREE.Camera();
    scene.add(camera);
 light = initDefaultSpotlight(scene, new THREE.Vector3(25, 30, 20)); // Use default light
 
-// handle resize
+//----------------------------------------------------------------------------
+// Set AR Stuff
+let AR = {
+   source: null,
+   context: null,
+}
+setARStuff();
+
 window.addEventListener('resize', function(){ onResize() })
-
-//----------------------------------------------------------------------------
-// initialize arToolkitContext
-var arToolkitContext = new ARjs.Context({
-	cameraParametersUrl: '../libs/AR/data/camera_para.dat',
-	detectionMode: 'mono',
-})
-
-// initialize it
-arToolkitContext.init(function onCompleted(){
-	camera.projectionMatrix.copy( arToolkitContext.getProjectionMatrix() );
-})
-
-//----------------------------------------------------------------------------
-// Create a ArMarkerControls
-let markerControls;
-markerControls = new ARjs.MarkerControls(arToolkitContext, camera, {	
-	type : 'pattern',
-	patternUrl : '../libs/AR/data/patt.kanji',
-	changeMatrixMode: 'cameraTransformMatrix' // as we controls the camera, set changeMatrixMode: 'cameraTransformMatrix'
-})
-// as we do changeMatrixMode: 'cameraTransformMatrix', start with invisible scene
-scene.visible = false
-
-//----------------------------------------------------------------------------
-// Handle arToolkitSource
-let arToolkitSource = null;
-setSource('image','../assets/AR/kanjiWide.jpg')
 
 //----------------------------------------------------------------------------
 // Adding object to the scene
@@ -66,8 +45,8 @@ function render()
 
 function updateAR()
 {
-	if( arToolkitSource.ready === false )	return
-	arToolkitContext.update( arToolkitSource.domElement )
+	if( AR.source.ready === false )	return
+	AR.context.update( AR.source.domElement )
 	scene.visible = camera.visible   
 }
 
@@ -88,13 +67,13 @@ function createTeapot()
 
 function setSource(type, url)
 {
-   if(arToolkitSource) arToolkitSource = null
+   if(AR.source) AR.source = null
 
-   arToolkitSource = new ARjs.Source({	
+   AR.source = new ARjs.Source({	
 	   sourceType : type,
       sourceUrl : url,
    })
-   arToolkitSource.init(function onReady(){
+   AR.source.init(function onReady(){
       setTimeout(() => {
          onResize()
       }, 100);
@@ -113,12 +92,8 @@ function createInterface()
         switch (this.source)
         {
            case 'Image':
-              setSource('image','../assets/AR/kanjiWide.jpg')
+              setSource('image','../assets/AR/kanjiScene.jpg')
               break;
-              case 'ImageVertical':
-               setSource('image','../assets/AR/kanjiVertical.jpg')
-               break;
- 
            case 'Video':
               setSource('video','../assets/AR/kanjiScene.mp4')         
               break;
@@ -130,15 +105,46 @@ function createInterface()
    };
   
    var gui = new GUI();
-   gui.add(controls, 'source', ['Image', 'ImageVertical','Video', 'Camera'])
+   gui.add(controls, 'source', ['Image', 'Video', 'Camera'])
    .name("Source")
    .onChange(function(e) { controls.onChangeSource(); });
 }
 
 function onResize(){
-	arToolkitSource.onResizeElement()
-	arToolkitSource.copyElementSizeTo(renderer.domElement)
-	if( arToolkitContext.arController !== null ){
-		arToolkitSource.copyElementSizeTo(arToolkitContext.arController.canvas)
+	AR.source.onResizeElement()
+	AR.source.copyElementSizeTo(renderer.domElement)
+	if( AR.context.arController !== null ){
+		AR.source.copyElementSizeTo(AR.context.arController.canvas)
 	}
+}
+
+function setARStuff()
+{
+   //----------------------------------------------------------------------------
+   // initialize arToolkitContext
+   AR.context = new ARjs.Context({
+      cameraParametersUrl: '../libs/AR/data/camera_para.dat',
+      detectionMode: 'mono',
+   })
+
+   // initialize it
+   AR.context.init(function onCompleted(){
+      camera.projectionMatrix.copy( AR.context.getProjectionMatrix() );
+   })
+
+   //----------------------------------------------------------------------------
+   // Create a ArMarkerControls
+   let markerControls;
+   markerControls = new ARjs.MarkerControls(AR.context, camera, {	
+      type : 'pattern',
+      patternUrl : '../libs/AR/data/patt.kanji',
+      changeMatrixMode: 'cameraTransformMatrix' // as we controls the camera, set changeMatrixMode: 'cameraTransformMatrix'
+   })
+   // as we do changeMatrixMode: 'cameraTransformMatrix', start with invisible scene
+   scene.visible = false
+
+   //----------------------------------------------------------------------------
+   // Handle arToolkitSource
+   AR.source = null;
+   setSource('image','../assets/AR/kanjiScene.jpg')   
 }
