@@ -30,11 +30,11 @@ showInformation();
 //var arToolkitSource = new THREEx.ArToolkitSource({
 var arToolkitSource = new ARjs.Source({	
 	// to read from the webcam
-	sourceType : 'webcam',
+	//sourceType : 'webcam',
 
 	// to read from an image
-	//sourceType : 'image',
-	//sourceUrl : '../assets/AR/kanjiScene.jpg',
+	sourceType : 'image',
+	sourceUrl : '../assets/AR/kanjiScene.jpg',
 
 	// to read from a video
 	// sourceType : 'video',
