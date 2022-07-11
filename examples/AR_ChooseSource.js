@@ -22,11 +22,6 @@ light = initDefaultSpotlight(scene, new THREE.Vector3(25, 30, 20)); // Use defau
 window.addEventListener('resize', function(){ onResize() })
 
 //----------------------------------------------------------------------------
-// Handle arToolkitSource
-let arToolkitSource = null;
-setSource('image','../assets/AR/kanjiScene.jpg')
-
-//----------------------------------------------------------------------------
 // initialize arToolkitContext
 var arToolkitContext = new ARjs.Context({
 	cameraParametersUrl: '../libs/AR/data/camera_para.dat',
@@ -48,6 +43,11 @@ markerControls = new ARjs.MarkerControls(arToolkitContext, camera, {
 })
 // as we do changeMatrixMode: 'cameraTransformMatrix', start with invisible scene
 scene.visible = false
+
+//----------------------------------------------------------------------------
+// Handle arToolkitSource
+let arToolkitSource = null;
+setSource('image','../assets/AR/kanjiWide.jpg')
 
 //----------------------------------------------------------------------------
 // Adding object to the scene
@@ -89,6 +89,7 @@ function createTeapot()
 function setSource(type, url)
 {
    if(arToolkitSource) arToolkitSource = null
+
    arToolkitSource = new ARjs.Source({	
 	   sourceType : type,
       sourceUrl : url,
@@ -98,6 +99,7 @@ function setSource(type, url)
          onResize()
       }, 100);
    })
+   onResize()    
 }
 
 function createInterface()
@@ -111,8 +113,12 @@ function createInterface()
         switch (this.source)
         {
            case 'Image':
-              setSource('image','../assets/AR/kanjiScene.jpg')
+              setSource('image','../assets/AR/kanjiWide.jpg')
               break;
+              case 'ImageVertical':
+               setSource('image','../assets/AR/kanjiVertical.jpg')
+               break;
+ 
            case 'Video':
               setSource('video','../assets/AR/kanjiScene.mp4')         
               break;
@@ -124,7 +130,7 @@ function createInterface()
    };
   
    var gui = new GUI();
-   gui.add(controls, 'source', ['Image', 'Video', 'Camera'])
+   gui.add(controls, 'source', ['Image', 'ImageVertical','Video', 'Camera'])
    .name("Source")
    .onChange(function(e) { controls.onChangeSource(); });
 }
