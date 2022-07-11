@@ -42,6 +42,10 @@ var list = {
 			},			
 		},
 		"XR": {
+			"AR with AR.js":  {
+				"AR - Basic": "html/AR_BasicInfo",	
+				"AR - Sources": "html/AR_ChooseSourceInfo",	            
+			},
 			"AR & VR with WebXR":  {
 				"VR - Panorama": "html/webxr_VR_PanoramaInfo",				
 				"VR - Teleport": "html/webxr_VR_TeleportInfo",
@@ -50,9 +54,7 @@ var list = {
 				"VR - Labelling":"html/webxr_VR_LabellingInfo",
 				"AR - Hit and Build": "html/webxr_AR_HitAndBuildInfo",				
 			},
-			"AR & VR with external libs":  {
-				"AR - Basic": "html/AR_BasicInfo",	
-				"AR - Sources": "html/AR_ChooseSourceInfo",	            
+			"VR with A-frame":  {
             "VR - Primitives": "html/VR_BasicInfo",
 				"VR - Panorama": "html/VR_PanoramaInfo",
 				"VR - External Models": "html/VR_ExternalModelInfo",
