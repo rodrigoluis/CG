@@ -2,8 +2,7 @@ import * as THREE from 'three';
 import GUI from '../libs/util/dat.gui.module.js'
 import {ARjs}    from  '../libs/AR/ar.js';
 import {TeapotGeometry} from '../build/jsm/geometries/TeapotGeometry.js';
-import {InfoBox,
-		  initDefaultSpotlight} from "../libs/util/util.js";
+import {initDefaultSpotlight} from "../libs/util/util.js";
 
 // init scene and camera
 let scene, camera, renderer, light;
@@ -17,9 +16,6 @@ scene	= new THREE.Scene();
 camera = new THREE.Camera();
    scene.add(camera);
 light = initDefaultSpotlight(scene, new THREE.Vector3(25, 30, 20)); // Use default light
-
-// Show text information onscreen
-showInformation();
 
 // Set AR Stuff
 let AR = {
@@ -111,16 +107,6 @@ function createCubeKnot()
 	mesh.position.y	= 0.5
    
    sceneObjects.torus = mesh;
-}
-
-function showInformation()
-{
-	// Use this to show information onscreen
-	let controls = new InfoBox();
-		controls.add("Augmented Reality - Basic Example");
-		controls.addParagraph();
-		controls.add("Put the 'KANJI' marker in front of the camera.");
-		controls.show();
 }
 
 function createInterface()
