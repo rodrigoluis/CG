@@ -163,16 +163,17 @@ function setARStuff()
    // Handle arToolkitSource
    // More info: https://ar-js-org.github.io/AR.js-Docs/marker-based/
    AR.source = new ARjs.Source({	
+      // to read from a video
+      sourceType : 'video',
+      sourceUrl : '../assets/AR/kanjiScene.mp4'
+
       // to read from the webcam
       //sourceType : 'webcam',
    
       // to read from an image
-      sourceType : 'image',
-      sourceUrl : '../assets/AR/kanjiScene.jpg',
+      // sourceType : 'image',
+      // sourceUrl : '../assets/AR/kanjiScene.jpg',
    
-      // to read from a video
-      // sourceType : 'video',
-      // sourceUrl : '../assets/AR/kanjiScene.mp4'
    })
    
    AR.source.init(function onReady(){
