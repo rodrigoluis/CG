@@ -8,6 +8,7 @@ import {MTLLoader} from '../build/jsm/loaders/MTLLoader.js';
 import {initRenderer, 
         initDefaultBasicLight,
         createGroundPlane,
+        SecondaryBox,
         onWindowResize, 
         getMaxSize,
         degreesToRadians} from "../libs/util/util.js";
@@ -25,6 +26,8 @@ light = initDefaultBasicLight(scene, true); // Use default light
 
 // Listen window size changes
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
+
+let loadingMessage = new SecondaryBox("Loading...");
 
 var groundPlane = createGroundPlane(5.0, 5.0, 100, 100); // width and height
   groundPlane.rotateX(degreesToRadians(-90));
@@ -44,7 +47,8 @@ let assets = {
    toucan: null,
    cow: null,
    f16: null,
-   ball: null
+   ball: null,
+   allLoaded: false
 }
 
 loadOBJFile('../assets/objects/', 'dolphins', true, 1.5);
@@ -78,7 +82,7 @@ function loadPLYFile(modelPath, modelName, visibility, desiredScale)
     scene.add( obj );
 
     if(modelName == 'cow') assets.cow = obj;            
-    }, onProgress, onError);
+    });
 }
 
 function loadGLBFile(modelPath, modelName, visibility, desiredScale)
@@ -104,20 +108,18 @@ function loadGLBFile(modelPath, modelName, visibility, desiredScale)
     scene.add ( obj );
 
     if(modelName == 'TocoToucan') assets.toucan = obj;            
-    }, onProgress, onError);
+    });
 }
 
 
 function loadOBJFile(modelPath, modelName, visibility, desiredScale)
 {
-  var manager = new THREE.LoadingManager( );
-
-  var mtlLoader = new MTLLoader( manager );
+  var mtlLoader = new MTLLoader( );
   mtlLoader.setPath( modelPath );
   mtlLoader.load( modelName + '.mtl', function ( materials ) {
       materials.preload();
 
-      var objLoader = new OBJLoader( manager );
+      var objLoader = new OBJLoader( );
       objLoader.setMaterials(materials);
       objLoader.setPath(modelPath);
       objLoader.load( modelName + ".obj", function ( obj ) {
@@ -139,20 +141,15 @@ function loadOBJFile(modelPath, modelName, visibility, desiredScale)
 
          scene.add ( obj );
       
-      if(modelName == 'dolphins')   assets.dolphins = obj;         
-      if(modelName == 'rose+vase')  assets.vase = obj;         
-      if(modelName == 'flowers')    assets.flowers = obj;         
-      if(modelName == 'f16')        assets.f16 = obj;                                    
-      if(modelName == 'soccerball') assets.ball = obj;
-
-      }, onProgress, onError );
+         if(modelName == 'dolphins')   assets.dolphins = obj;         
+         if(modelName == 'rose+vase')  assets.vase = obj;         
+         if(modelName == 'flowers')    assets.flowers = obj;         
+         if(modelName == 'f16')        assets.f16 = obj;                                    
+         if(modelName == 'soccerball') assets.ball = obj;
+      });
   });
 
 }
-
-function onError() { };
-
-function onProgress ( xhr, model ) { }
 
 // Normalize scale and multiple by the newScale
 function normalizeAndRescale(obj, newScale)
@@ -175,12 +172,7 @@ function fixPosition(obj)
   return obj;
 }
 
-function hideAllAssets()
-{
-   assets.dolphins.visible = assets.vase.visible = assets.flowers.visible = 
-   assets.f16.visible = assets.ball.visible = 
-   assets.toucan.visible = assets.cow.visible = false;
-}
+
 
 function buildInterface()
 {
@@ -218,8 +210,29 @@ function buildInterface()
     .onChange(function(e) { controls.onViewAxes() });    
 }
 
+function hideAllAssets()
+{
+   assets.dolphins.visible = assets.vase.visible = assets.flowers.visible = 
+   assets.f16.visible = assets.ball.visible = 
+   assets.toucan.visible = assets.cow.visible = false;
+}
+
+function checkLoaded()
+{
+   if(!assets.allLoaded)
+   {
+      if(assets.dolphins && assets.vase && assets.flowers && 
+         assets.f16 && assets.ball && assets.toucan && assets.cow){
+         assets.allLoaded = true;
+         loadingMessage.hide(); 
+      }
+   }
+}
+
+
 function render()
 {
-  requestAnimationFrame(render);
-  renderer.render(scene, camera)
+   checkLoaded();
+   requestAnimationFrame(render);
+   renderer.render(scene, camera)
 }

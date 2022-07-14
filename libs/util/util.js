@@ -146,6 +146,10 @@ export class SecondaryBox
   changeMessage(newText) {
     this.textnode.nodeValue = newText;
   }
+  hide(){
+    this.textnode.nodeValue = "";
+    this.box.style.backgroundColor = "rgba(0,0,0,0)";
+  }
 }
 
 /**

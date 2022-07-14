@@ -7,6 +7,7 @@ import {MTLLoader} from '../build/jsm/loaders/MTLLoader.js';
 import {initRenderer, 
         initDefaultSpotlight,
         createGroundPlane,
+        SecondaryBox,
         getMaxSize,        
         onWindowResize, 
         degreesToRadians,
@@ -30,6 +31,8 @@ scene.add(lightSphere);
 // Listen window size changes
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
+let loadingMessage = new SecondaryBox("Loading...");
+
 var groundPlane = createGroundPlane(6.0, 6.0, 80, 80); // width and height
   groundPlane.rotateX(degreesToRadians(-90));
 scene.add(groundPlane);
@@ -48,6 +51,7 @@ let assets = {
    orca: null,
    woodenGoose: null,
    chair: null,
+   allLoaded: false
 }
 
 loadOBJFile('../assets/objects/', 'plane', 3.0, 0, true);
@@ -63,14 +67,12 @@ render();
 
 function loadOBJFile(modelPath, modelName, desiredScale, angle, visibility)
 {
-  var manager = new THREE.LoadingManager( );
-
-  var mtlLoader = new MTLLoader( manager );
+  var mtlLoader = new MTLLoader( );
   mtlLoader.setPath( modelPath );
   mtlLoader.load( modelName + '.mtl', function ( materials ) {
       materials.preload();
 
-      var objLoader = new OBJLoader( manager );
+      var objLoader = new OBJLoader( );
       objLoader.setMaterials(materials);
       objLoader.setPath(modelPath);
       objLoader.load( modelName + ".obj", function ( obj ) {
@@ -95,7 +97,7 @@ function loadOBJFile(modelPath, modelName, desiredScale, angle, visibility)
         if(modelName == 'plane') assets.plane = obj;         
         if(modelName == 'L200')  assets.L200 = obj;         
         if(modelName == 'tank')  assets.tank = obj;         
-      }, onProgress, onError );
+      });
   });
 }
 
@@ -125,16 +127,7 @@ function loadGLTFFile(modelName, desiredScale, angle, visibility)
     if(obj.name == 'woodenGoose.glb') assets.woodenGoose = obj;         
     if(obj.name == 'chair.glb')       assets.chair = obj; 
 
-    }, onProgress, onError);
-}
-
-function onError() { };
-
-function onProgress ( xhr, model ) {
-    if ( xhr.lengthComputable ) {
-      var percentComplete = xhr.loaded / xhr.total * 100;
-      console.log("Loading... " + Math.round( percentComplete, 2 ) + '% processed' );
-    }
+    });
 }
 
 // Normalize scale and multiple by the newScale
@@ -206,8 +199,21 @@ function buildInterface()
     .onChange(function(e) { controls.onViewAxes() });
 }
 
+function checkLoaded()
+{
+   if(!assets.allLoaded)
+   {
+      if(assets.L200 && assets.chair && assets.orca &&
+         assets.plane && assets.tank && assets.woodenGoose){
+         assets.allLoaded = true;
+         loadingMessage.hide(); 
+      }
+   }
+}
+
 function render()
 {
-  requestAnimationFrame(render);
-  renderer.render(scene, camera)
+   checkLoaded();
+   requestAnimationFrame(render);
+   renderer.render(scene, camera)
 }
