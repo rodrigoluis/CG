@@ -47,7 +47,7 @@ scene.add( axesHelper );
 // Load external objects
 
 // Assets manager --------------------------------
-let assets = {
+let assetManager = {
    // Properties ---------------------------------
    plane: null,
    L200: null,
@@ -115,7 +115,7 @@ function loadOBJFile(modelPath, modelName, desiredScale, angle, visibility)
         obj.rotateY(degreesToRadians(angle));
 
         scene.add ( obj );
-        assets[modelName] = obj;        
+        assetManager[modelName] = obj;        
       });
   });
 }
@@ -142,7 +142,7 @@ function loadGLTFFile(modelPath, modelName, desiredScale, angle, visibility)
       obj.rotateY(degreesToRadians(angle));
 
       scene.add ( obj );
-      assets[modelName] = obj;
+      assetManager[modelName] = obj;
    });
 }
 
@@ -185,8 +185,8 @@ function buildInterface()
     this.type = "plane";
     this.onChooseObject = function()
     {
-      assets.hideAll();
-      assets[this.type].visible = true;   
+      assetManager.hideAll();
+      assetManager[this.type].visible = true;   
     };
     this.onViewAxes = function(){
       axesHelper.visible = this.viewAxes;
@@ -196,7 +196,7 @@ function buildInterface()
   // GUI interface
   var gui = new GUI();
   gui.add(controls, 'type',
-  ['orca', 'woodenGoose', 'chair', 'plane', 'L200', 'tank'])
+  ['plane', 'orca', 'woodenGoose', 'chair', 'L200', 'tank'])
      .name("Change Object")
      .onChange(function(e) { controls.onChooseObject(); });
   gui.add(controls, 'viewAxes', false)
@@ -206,7 +206,7 @@ function buildInterface()
 
 function render()
 {
-   assets.checkLoaded();
+   assetManager.checkLoaded();
    requestAnimationFrame(render);
    renderer.render(scene, camera)
 }

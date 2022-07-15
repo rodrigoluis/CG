@@ -43,7 +43,7 @@ scene.add( axesHelper );
 // Load external objects
 
 // Assets manager --------------------------------
-let assets = {
+let assetManager = {
    // Properties ---------------------------------
    dolphins: null,
    vase: null,
@@ -102,8 +102,8 @@ function loadPLYFile(modelPath, modelName, visibility, desiredScale)
       var obj = fixPosition(obj);
 
       scene.add( obj );
-      assets[modelName] = obj;     
-    });
+      assetManager[modelName] = obj;
+   });
 }
 
 function loadGLBFile(modelPath, modelName, visibility, desiredScale)
@@ -127,7 +127,7 @@ function loadGLBFile(modelPath, modelName, visibility, desiredScale)
       var obj = fixPosition(obj);
 
       scene.add ( obj );
-      assets[modelName] = obj;        
+      assetManager[modelName] = obj;        
     });
 }
 
@@ -159,7 +159,7 @@ function loadOBJFile(modelPath, modelName, visibility, desiredScale)
          var obj = fixPosition(obj);
 
          scene.add ( obj );
-         assets[modelName] = obj;
+         assetManager[modelName] = obj;
       });
   });
 
@@ -195,8 +195,8 @@ function buildInterface()
     this.type = "dolphins";
     this.onChooseObject = function()
     {
-      assets.hideAll();
-      assets[this.type].visible = true; 
+      assetManager.hideAll();
+      assetManager[this.type].visible = true; 
     };
     this.onViewAxes = function(){
        axesHelper.visible = this.viewAxes;
@@ -216,7 +216,7 @@ function buildInterface()
 
 function render()
 {
-   assets.checkLoaded();
+   assetManager.checkLoaded();
    requestAnimationFrame(render);
    renderer.render(scene, camera)
 }
