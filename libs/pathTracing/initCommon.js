@@ -463,7 +463,7 @@ function initTHREEjs()
 	screenCopyRenderTarget.texture.generateMipmaps = false;
 
 	// blueNoise texture used in all demos
-	blueNoiseTexture = new THREE.TextureLoader().load('../../assets/textures/BlueNoise_RGBA256.png');
+	blueNoiseTexture = new THREE.TextureLoader().load('../assets/textures/BlueNoise_RGBA256.png');
 	blueNoiseTexture.wrapS = THREE.RepeatWrapping;
 	blueNoiseTexture.wrapT = THREE.RepeatWrapping;
 	blueNoiseTexture.flipY = false;
