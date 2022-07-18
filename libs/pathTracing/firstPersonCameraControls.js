@@ -1,5 +1,5 @@
 import * as THREE from  'three';
-import { isPaused } from './initCommon.js';
+import { isPaused } from './pathTracingConfig.js';
 /**
  * originally from https://github.com/mrdoob/three.js/blob/dev/examples/js/controls/PointerLockControls.js
  * @author mrdoob / http://mrdoob.com/

@@ -1,4 +1,4 @@
-import { renderer } from './initCommon.js'
+import { renderer } from './pathTracingConfig.js'
 
 // exposed global variables/elements that your program can access
 let joystickDeltaX = 0;

@@ -1,7 +1,7 @@
 import * as THREE from  'three';
 import { FirstPersonCameraControls } from './firstPersonCameraControls.js';
 import KeyboardState from '../util/KeyboardState.js'
-
+import {SecondaryBox} from "../util/util.js";
 import { MobileJoystickControls,
          _Base_ctx, 
          joystickDeltaX, joystickDeltaY,
@@ -103,61 +103,19 @@ let cameraControlsPitchObject; //allows access to control camera's up/down movem
 
 let PI_2 = Math.PI / 2; //used by controls below
 
-/*
-let infoElement = document.getElementById('info');
-infoElement.style.cursor = "default";
-infoElement.style.userSelect = "none";
-infoElement.style.MozUserSelect = "none";
-
-
-let cameraInfoElement = document.getElementById('cameraInfo');
-cameraInfoElement.style.cursor = "default";
-cameraInfoElement.style.userSelect = "none";
-cameraInfoElement.style.MozUserSelect = "none";
-*/
-
 let mouseControl = true;
 let pointerlockChange;
 let fileLoader = new THREE.FileLoader();
 
 var keyboard = new KeyboardState();
+window.addEventListener('resize', onWindowResize, false);
 
-/*
-const KEYCODE_NAMES = {
-	65: 'a', 66: 'b', 67: 'c', 68: 'd', 69: 'e', 70: 'f', 71: 'g', 72: 'h', 73: 'i', 74: 'j', 75: 'k', 76: 'l', 77: 'm',
-	78: 'n', 79: 'o', 80: 'p', 81: 'q', 82: 'r', 83: 's', 84: 't', 85: 'u', 86: 'v', 87: 'w', 88: 'x', 89: 'y', 90: 'z',
-	37: 'left', 38: 'up', 39: 'right', 40: 'down', 32: 'space', 33: 'pageup', 34: 'pagedown', 9: 'tab',
-	189: 'dash', 187: 'equals', 188: 'comma', 190: 'period', 27: 'escape', 13: 'enter'
-}
-let KeyboardState = {
-	a: false, b: false, c: false, d: false, e: false, f: false, g: false, h: false, i: false, j: false, k: false, l: false, m: false,
-	n: false, o: false, p: false, q: false, r: false, s: false, t: false, u: false, v: false, w: false, x: false, y: false, z: false,
-	left: false, up: false, right: false, down: false, space: false, pageup: false, pagedown: false, tab: false,
-	dash: false, equals: false, comma: false, period: false, escape: false, enter: false
-}
+let message = new SecondaryBox("");
+    message.changeStyle("rgba(0,0,0,0)", "white", "20px", "Arial")
 
-function onKeyDown(event)
-{
-	event.preventDefault();
-	
-	KeyboardState[KEYCODE_NAMES[event.keyCode]] = true;
-}
+// scene/demo-specific variables go here
+let torusObject;
 
-function onKeyUp(event)
-{
-	event.preventDefault();
-	
-	KeyboardState[KEYCODE_NAMES[event.keyCode]] = false;
-}
-
-function keyPressed(keyName)
-{
-	if (!mouseControl)
-		return;
-
-	return KeyboardState[keyName];
-}
-*/
 
 function onMouseWheel(event)
 {
@@ -262,9 +220,8 @@ function onWindowResize(event)
 
 
 
-export function init()
+function initGeneral()
 {
-
 	window.addEventListener('resize', onWindowResize, false);
 
 	if ('ontouchstart' in window) 
@@ -303,31 +260,8 @@ export function init()
 		currentlyUsingOrthographicCamera = !currentlyUsingOrthographicCamera;
 	}
 
-	// since I use the lil-gui.min.js minified version of lil-gui without modern exports, 
-	//'g()' is 'GUI()' ('g' is the shortened version of 'GUI' inside the lil-gui.min.js file)
-	//gui = new g(); // same as gui = new GUI();
-   // gui = new GUI();
-
-	// pixel_ResolutionController = gui.add(pixel_ResolutionObject, 'pixel_Resolution', 0.5, 1.0, 0.05).onChange(handlePixelResolutionChange);
-	// if (!mouseControl)
-	// 	orthographicCamera_ToggleController = gui.add(orthographicCamera_ToggleObject, 'Orthographic_Camera', false).onChange(handleCameraProjectionChange);
-
-	// gui.domElement.style.userSelect = "none";
-	// gui.domElement.style.MozUserSelect = "none";
-
-	
 	if (mouseControl) 
 	{
-
-		// gui.domElement.addEventListener("mouseenter", function (event) 
-		// {
-		// 	ableToEngagePointerLock = false;
-		// }, false);
-		// gui.domElement.addEventListener("mouseleave", function (event) 
-		// {
-		// 	ableToEngagePointerLock = true;
-		// }, false);
-
 		window.addEventListener('wheel', onMouseWheel, false);
 
 		// window.addEventListener("click", function(event) 
@@ -351,18 +285,11 @@ export function init()
 		pointerlockChange = function (event)
 		{
 			if (document.pointerLockElement === document.body ||
-				document.mozPointerLockElement === document.body || document.webkitPointerLockElement === document.body)
-			{
-				//document.addEventListener('keydown', onKeyDown, false);
-				//document.addEventListener('key', onKeyUp, false);
+				 document.mozPointerLockElement === document.body || 
+             document.webkitPointerLockElement === document.body)
 				isPaused = false;
-			}
 			else
-			{
-				//document.removeEventListener('keydown', onKeyDown, false);
-				//document.removeEventListener('keyup', onKeyUp, false);
 				isPaused = true;
-			}
 		};
 
 		// Hook pointer lock state change events
@@ -371,25 +298,6 @@ export function init()
 		document.addEventListener('webkitpointerlockchange', pointerlockChange, false);
 
 	} // end if (mouseControl)
-
-
-	/* // Fullscreen API (optional)
-	document.addEventListener("click", function() 
-	{
-		if ( !document.fullscreenElement && !document.mozFullScreenElement && !document.webkitFullscreenElement ) 
-		{
-			if (document.documentElement.requestFullscreen) 
-				document.documentElement.requestFullscreen();	
-			else if (document.documentElement.mozRequestFullScreen) 
-				document.documentElement.mozRequestFullScreen();
-			else if (document.documentElement.webkitRequestFullscreen) 
-				document.documentElement.webkitRequestFullscreen();
-		}
-	}); */
-	
-
-	initTHREEjs(); // boilerplate: init necessary three.js items and scene/demo-specific objects
-
 } // end function init()
 
 
@@ -414,14 +322,6 @@ function initTHREEjs()
 //	container.appendChild(renderer.domElement);
    
    document.getElementById("webgl-output").appendChild(renderer.domElement);
-	// stats = new Stats();
-	// stats.domElement.style.position = 'absolute';
-	// stats.domElement.style.top = '0px';
-	// stats.domElement.style.cursor = "default";
-	// stats.domElement.style.userSelect = "none";
-	// stats.domElement.style.MozUserSelect = "none";
-	// container.appendChild(stats.domElement);
-
 
 	clock = new THREE.Clock();
 
@@ -450,6 +350,23 @@ function initTHREEjs()
 
 	pathTracingScene.add(cameraControlsObject);
 
+
+
+	// Torus Object
+	torusObject = new THREE.Object3D();
+	pathTracingScene.add(torusObject);
+
+	torusObject.rotation.set((Math.PI * 0.5) - 0.05, -0.05, 0);
+	torusObject.position.set(-60, 6, 50);
+	torusObject.scale.set(11.5, 11.5, 11.5);
+
+	// position and orient camera
+	cameraControlsObject.position.set(0, 20, 120);
+	///cameraControlsYawObject.rotation.y = 0.0;
+	///cameraControlsPitchObject.rotation.x = -0.4;
+
+	// scene/demo-specific uniforms go here
+	pathTracingUniforms.uTorusInvMatrix = { value: new THREE.Matrix4() };
 
 	// setup render targets...
 	pathTracingRenderTarget = new THREE.WebGLRenderTarget(context.drawingBufferWidth, context.drawingBufferHeight, {
@@ -481,10 +398,6 @@ function initTHREEjs()
 	blueNoiseTexture.magFilter = THREE.NearestFilter;
 	blueNoiseTexture.generateMipmaps = false;
 
-
-	// setup scene/demo-specific objects, variables, GUI elements, and data
-	//initSceneData();
-
 	// pixel_ResolutionController.setValue(pixelRatio);
 	if (!allowOrthographicCamera && !mouseControl)
 	{
@@ -515,7 +428,6 @@ function initTHREEjs()
 
 	pathTracingUniforms.uCameraIsMoving = { type: "b1", value: false };
 	pathTracingUniforms.uUseOrthographicCamera = { type: "b1", value: false };
-
 
 	pathTracingDefines = {
 		//NUMBER_OF_TRIANGLES: total_number_of_triangles
@@ -554,13 +466,11 @@ function initTHREEjs()
 
 	// this full-screen quad mesh copies the image output of the pathtracing shader and feeds it back in to that shader as a 'previousTexture'
 	screenCopyGeometry = new THREE.PlaneBufferGeometry(2, 2);
-
 	screenCopyUniforms = {
 		tPathTracedImageTexture: { type: "t", value: pathTracingRenderTarget.texture }
 	};
 
 	fileLoader.load(screenCopyFragFileName, function (shaderText) {
-		
 		screenCopyFragmentShader = shaderText;
 
 		screenCopyMaterial = new THREE.ShaderMaterial({
@@ -574,7 +484,6 @@ function initTHREEjs()
 		screenCopyMesh = new THREE.Mesh(screenCopyGeometry, screenCopyMaterial);
 		screenCopyScene.add(screenCopyMesh);
 	});
-
 
 	// this full-screen quad mesh takes the image output of the path tracing shader (which is a continuous blend of the previous frame and current frame),
 	// and applies gamma correction (which brightens the entire image), and then displays the final accumulated rendering to the screen
@@ -607,7 +516,6 @@ function initTHREEjs()
 		screenOutputScene.add(screenOutputMesh);
 	});
 
-
 	// this 'jumpstarts' the initial dimensions and parameters for the window and renderer
 	onWindowResize();
 
@@ -616,11 +524,20 @@ function initTHREEjs()
 
 } // end function initTHREEjs()
 
-
-
-
 function animate()
 {
+
+   	// TORUS
+	torusObject.updateMatrixWorld(true); // 'true' forces immediate matrix update
+	pathTracingUniforms.uTorusInvMatrix.value.copy(torusObject.matrixWorld).invert();
+
+   if(worldCamera)
+   {
+      let output = "FOV: " + worldCamera.fov + " / Aperture: " + apertureSize.toFixed(2) + " / FocusDistance: " + focusDistance + " / Samples: " + sampleCounter;
+      message.changeMessage(output);
+   }
+
+
    keyboard.update();
 	frameTime = clock.getDelta();
 
@@ -809,79 +726,7 @@ function animate()
 		} // end if (!isPaused)
 
 	} // end if (useGenericInput)		
-	// 	if (!isPaused)
-	// 	{
-	// 		if ( (keyPressed('w') || button3Pressed) && !(keyPressed('s') || button4Pressed) )
-	// 		{
-	// 			cameraControlsObject.position.add(cameraDirectionVector.multiplyScalar(cameraFlightSpeed * frameTime));
-	// 			cameraIsMoving = true;
-	// 		}
-	// 		if ( (keyPressed('s') || button4Pressed) && !(keyPressed('w') || button3Pressed) )
-	// 		{
-	// 			cameraControlsObject.position.sub(cameraDirectionVector.multiplyScalar(cameraFlightSpeed * frameTime));
-	// 			cameraIsMoving = true;
-	// 		}
-	// 		if ( (keyPressed('a') || button1Pressed) && !(keyPressed('d') || button2Pressed) )
-	// 		{
-	// 			cameraControlsObject.position.sub(cameraRightVector.multiplyScalar(cameraFlightSpeed * frameTime));
-	// 			cameraIsMoving = true;
-	// 		}
-	// 		if ( (keyPressed('d') || button2Pressed) && !(keyPressed('a') || button1Pressed) )
-	// 		{
-	// 			cameraControlsObject.position.add(cameraRightVector.multiplyScalar(cameraFlightSpeed * frameTime));
-	// 			cameraIsMoving = true;
-	// 		}
-	// 		if (keyPressed('q') && !keyPressed('z'))
-	// 		{
-	// 			cameraControlsObject.position.add(cameraUpVector.multiplyScalar(cameraFlightSpeed * frameTime));
-	// 			cameraIsMoving = true;
-	// 		}
-	// 		if (keyPressed('z') && !keyPressed('q'))
-	// 		{
-	// 			cameraControlsObject.position.sub(cameraUpVector.multiplyScalar(cameraFlightSpeed * frameTime));
-	// 			cameraIsMoving = true;
-	// 		}
-	// 		if ( (keyPressed('up') || button5Pressed) && !(keyPressed('down') || button6Pressed) )
-	// 		{
-	// 			increaseFocusDist = true;
-	// 		}
-	// 		if ( (keyPressed('down') || button6Pressed) && !(keyPressed('up') || button5Pressed) )
-	// 		{
-	// 			decreaseFocusDist = true;
-	// 		}
-	// 		if (keyPressed('right') && !keyPressed('left'))
-	// 		{
-	// 			increaseAperture = true;
-	// 		}
-	// 		if (keyPressed('left') && !keyPressed('right'))
-	// 		{
-	// 			decreaseAperture = true;
-	// 		}
-	// 		if (keyPressed('o') && canPress_O)
-	// 		{
-	// 			changeToOrthographicCamera = true;
-	// 			canPress_O = false;
-	// 		}
-	// 		if (!keyPressed('o'))
-	// 			canPress_O = true;
-
-	// 		if (keyPressed('p') && canPress_P)
-	// 		{
-	// 			changeToPerspectiveCamera = true;
-	// 			canPress_P = false;
-	// 		}
-	// 		if (!keyPressed('p'))
-	// 			canPress_P = true;
-	// 	} // end if (!isPaused)
-
-	// } // end if (useGenericInput)
-
 	
-		
-	// update scene/demo-specific input(if custom), variables and uniforms every animation frame
-	//updateVariablesAndUniforms();
-
-
 	if (increaseFOV)
 	{
 		worldCamera.fov++;
@@ -1009,7 +854,6 @@ function animate()
 	// PROGRESSIVE SAMPLE WEIGHT (reduces intensity of each successive animation frame's image)
 	screenOutputUniforms.uOneOverSampleCounter.value = 1.0 / sampleCounter;
 	
-
 	// RENDERING in 3 steps
 
 	// STEP 1
@@ -1029,11 +873,6 @@ function animate()
 	// After applying tonemapping and gamma-correction to the image, it will be shown on the screen as the final accumulated output
 	renderer.setRenderTarget(null);
 	renderer.render(screenOutputScene, quadCamera);
-
-	//stats.update();
-
-	//requestAnimationFrame(animate);
-
 } // end function animate()
 
 function setMainValues(dynamic, speed, ratio, eps, focus, noiseFile,
@@ -1051,6 +890,7 @@ function setMainValues(dynamic, speed, ratio, eps, focus, noiseFile,
    screenOutFragFileName = screenOutGLSLFile;
 }
 
-export { demoFragmentShaderFileName, setMainValues, sampleCounter, worldCamera, renderer,
-         apertureSize, animate, focusDistance, sceneIsDynamic, mouseControl, 
+export { initGeneral, initTHREEjs, setMainValues, animate, 
+         demoFragmentShaderFileName, sampleCounter, worldCamera, renderer,
+         apertureSize, focusDistance, sceneIsDynamic, mouseControl, 
          cameraControlsObject, isPaused, pathTracingScene, pathTracingUniforms }
