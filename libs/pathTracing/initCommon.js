@@ -516,7 +516,7 @@ function initTHREEjs()
 	};
 
 	// load vertex and fragment shader files that are used in the pathTracing material, mesh and scene
-	fileLoader.load('../libs/shaders/common_PathTracing_Vertex.glsl', function (vertexShaderText)
+	fileLoader.load('../shaders/common_PathTracing_Vertex.glsl', function (vertexShaderText)
 	{
 		pathTracingVertexShader = vertexShaderText;
 
@@ -554,7 +554,7 @@ function initTHREEjs()
 		tPathTracedImageTexture: { type: "t", value: pathTracingRenderTarget.texture }
 	};
 
-	fileLoader.load('../libs/shaders/ScreenCopy_Fragment.glsl', function (shaderText) {
+	fileLoader.load('../shaders/ScreenCopy_Fragment.glsl', function (shaderText) {
 		
 		screenCopyFragmentShader = shaderText;
 
@@ -586,7 +586,7 @@ function initTHREEjs()
 		uUseToneMapping: { type: "b1", value: useToneMapping }
 	};
 
-	fileLoader.load('../libs/shaders/ScreenOutput_Fragment.glsl', function (shaderText) {
+	fileLoader.load('../shaders/ScreenOutput_Fragment.glsl', function (shaderText) {
 
 		screenOutputFragmentShader = shaderText;
 
