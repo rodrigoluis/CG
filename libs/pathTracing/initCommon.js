@@ -2,12 +2,14 @@ import * as THREE from  'three';
 import { FirstPersonCameraControls } from './firstPersonCameraControls.js';
 import KeyboardState from '../util/KeyboardState.js'
 
-import { button1Pressed, 
-         button2Pressed, 
-         button3Pressed,
-         button4Pressed, 
-         button5Pressed, 
-         button6Pressed} from './mobileJoystickControls.js'
+import { MobileJoystickControls,
+         _Base_ctx, 
+         joystickDeltaX, joystickDeltaY,
+         pinchWidthX, pinchWidthY,         
+         button1Element, button2Element, button3Element,
+         button4Element, button5Element, button6Element,         
+         button1Pressed, button2Pressed, button3Pressed,
+         button4Pressed, button5Pressed, button6Pressed} from './mobileJoystickControls.js'
 
 let SCREEN_WIDTH;
 let SCREEN_HEIGHT;
@@ -213,7 +215,7 @@ function onWindowResize(event)
 	pathTracingUniforms.uVLen.value = Math.tan(fovScale);
 	pathTracingUniforms.uULen.value = pathTracingUniforms.uVLen.value * worldCamera.aspect;
 
-	if (!mouseControl)
+	if (!mouseControl && button1Element && button2Element)
 	{
 		button1Element.style.display = "";
 		button2Element.style.display = "";
@@ -689,8 +691,8 @@ function animate()
 		oldDeltaX = newDeltaX;
 		oldDeltaY = newDeltaY;
 
-		newPinchWidthX = pinchWidthX;
-		newPinchWidthY = pinchWidthY;
+		let newPinchWidthX = pinchWidthX;
+		let newPinchWidthY = pinchWidthY;
 		pinchDeltaX = newPinchWidthX - oldPinchWidthX;
 		pinchDeltaY = newPinchWidthY - oldPinchWidthY;
 
@@ -1049,6 +1051,6 @@ function setMainValues(dynamic, speed, ratio, eps, focus, noiseFile,
    screenOutFragFileName = screenOutGLSLFile;
 }
 
-export { demoFragmentShaderFileName, setMainValues, sampleCounter, worldCamera,
+export { demoFragmentShaderFileName, setMainValues, sampleCounter, worldCamera, renderer,
          apertureSize, animate, focusDistance, sceneIsDynamic, mouseControl, 
          cameraControlsObject, isPaused, pathTracingScene, pathTracingUniforms }

@@ -1,3 +1,5 @@
+import { renderer } from './initCommon.js'
+
 // exposed global variables/elements that your program can access
 let joystickDeltaX = 0;
 let joystickDeltaY = 0;
@@ -41,7 +43,7 @@ let _stickX;
 let _stickY;
 let _container;
 let _pinchWasActive = false;
-
+let _Base_ctx
 
 
 let MobileJoystickControls = function (opts)
@@ -72,7 +74,7 @@ let MobileJoystickControls = function (opts)
 	stickElement.style.position = "absolute";
 	stickElement.style.display = "none";
 
-	_Stick_ctx = stickElement.getContext('2d');
+	let _Stick_ctx = stickElement.getContext('2d');
 	_Stick_ctx.strokeStyle = 'rgba(255,255,255,0.2)';
 	_Stick_ctx.lineWidth = 3;
 	_Stick_ctx.beginPath();
@@ -91,7 +93,7 @@ let MobileJoystickControls = function (opts)
 	button1Element.style.zIndex = "10";
 	button1Pressed = false;
 
-	_Button1_ctx = button1Element.getContext('2d');
+	let _Button1_ctx = button1Element.getContext('2d');
 	_Button1_ctx.strokeStyle = 'rgba(255,255,255,0.2)';
 	_Button1_ctx.lineWidth = 3;
 
@@ -115,7 +117,7 @@ let MobileJoystickControls = function (opts)
 	*/
 
 	//create button2
-	button2Element = document.createElement('canvas');
+	let button2Element = document.createElement('canvas');
 	button2Element.width = _buttonCanvasReducedWidth; // for Triangle Button
 	//button2Element.width = _buttonCanvasWidth; // for Circle Button
 	button2Element.height = _buttonCanvasWidth;
@@ -126,7 +128,7 @@ let MobileJoystickControls = function (opts)
 	button2Element.style.zIndex = "10";
 	button2Pressed = false;
 
-	_Button2_ctx = button2Element.getContext('2d');
+	let _Button2_ctx = button2Element.getContext('2d');
 	_Button2_ctx.strokeStyle = 'rgba(255,255,255,0.2)';
 	_Button2_ctx.lineWidth = 3;
 
@@ -150,7 +152,7 @@ let MobileJoystickControls = function (opts)
 	*/
 
 	//create button3
-	button3Element = document.createElement('canvas');
+	let button3Element = document.createElement('canvas');
 	button3Element.width = _buttonCanvasWidth;
 	button3Element.height = _buttonCanvasReducedWidth; // for Triangle Button
 	//button3Element.height = _buttonCanvasWidth; // for Circle Button
@@ -161,7 +163,7 @@ let MobileJoystickControls = function (opts)
 	button3Element.style.zIndex = "10";
 	button3Pressed = false;
 
-	_Button3_ctx = button3Element.getContext('2d');
+	let _Button3_ctx = button3Element.getContext('2d');
 	_Button3_ctx.strokeStyle = 'rgba(255,255,255,0.2)';
 	_Button3_ctx.lineWidth = 3;
 
@@ -185,7 +187,7 @@ let MobileJoystickControls = function (opts)
 	*/
 
 	//create button4
-	button4Element = document.createElement('canvas');
+	let button4Element = document.createElement('canvas');
 	button4Element.width = _buttonCanvasWidth;
 	button4Element.height = _buttonCanvasReducedWidth; // for Triangle Button
 	//button4Element.height = _buttonCanvasWidth; // for Circle Button
@@ -196,7 +198,7 @@ let MobileJoystickControls = function (opts)
 	button4Element.style.zIndex = "10";
 	button4Pressed = false;
 
-	_Button4_ctx = button4Element.getContext('2d');
+	let _Button4_ctx = button4Element.getContext('2d');
 	_Button4_ctx.strokeStyle = 'rgba(255,255,255,0.2)';
 	_Button4_ctx.lineWidth = 3;
 
@@ -220,7 +222,7 @@ let MobileJoystickControls = function (opts)
 	*/
 
 	//create button5
-	button5Element = document.createElement('canvas');
+	let button5Element = document.createElement('canvas');
 	button5Element.width = _smallButtonCanvasWidth;
 	button5Element.height = _smallButtonCanvasReducedWidth; // for Triangle Button
 	//button5Element.height = _smallButtonCanvasWidth; // for Circle Button
@@ -231,7 +233,7 @@ let MobileJoystickControls = function (opts)
 	button5Element.style.zIndex = "10";
 	button5Pressed = false;
 
-	_Button5_ctx = button5Element.getContext('2d');
+	let _Button5_ctx = button5Element.getContext('2d');
 	_Button5_ctx.strokeStyle = 'rgba(255,255,255,0.2)';
 	_Button5_ctx.lineWidth = 3;
 
@@ -266,7 +268,7 @@ let MobileJoystickControls = function (opts)
 	button6Element.style.zIndex = "10";
 	button6Pressed = false;
 
-	_Button6_ctx = button6Element.getContext('2d');
+	let _Button6_ctx = button6Element.getContext('2d');
 	_Button6_ctx.strokeStyle = 'rgba(255,255,255,0.2)';
 	_Button6_ctx.lineWidth = 3;
 
@@ -800,4 +802,9 @@ function _onTouchMove(event)
 } // end function _onTouchMove(event)
 
 export { button1Pressed, button2Pressed, button3Pressed,
-         button4Pressed, button5Pressed, button6Pressed, }
+         button4Pressed, button5Pressed, button6Pressed, 
+         button1Element, button2Element, button3Element,
+         button4Element, button5Element, button6Element,  
+         joystickDeltaX, joystickDeltaY,
+         pinchWidthX, pinchWidthY,
+         MobileJoystickControls, _Base_ctx}
