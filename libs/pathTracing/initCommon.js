@@ -78,7 +78,7 @@ let edgeSharpenSpeed = 0.05;
 let filterDecaySpeed = 0.0002;
 
 let noiseFileName;
-let demoFragmentShaderFileName; // = 'Geometry_Showcase_Fragment.glsl'
+let demoFragmentShaderFileName; 
 let commonPathTracingFileName;
 let screenCopyFragFileName;
 let screenOutFragFileName;
@@ -101,15 +101,18 @@ let cameraControlsPitchObject; //allows access to control camera's up/down movem
 
 let PI_2 = Math.PI / 2; //used by controls below
 
+/*
 let infoElement = document.getElementById('info');
 infoElement.style.cursor = "default";
 infoElement.style.userSelect = "none";
 infoElement.style.MozUserSelect = "none";
 
+
 let cameraInfoElement = document.getElementById('cameraInfo');
 cameraInfoElement.style.cursor = "default";
 cameraInfoElement.style.userSelect = "none";
 cameraInfoElement.style.MozUserSelect = "none";
+*/
 
 let mouseControl = true;
 let pointerlockChange;
@@ -405,10 +408,10 @@ function initTHREEjs()
 	//required by WebGL 2.0 for rendering to FLOAT textures
 	context = renderer.getContext();
 	context.getExtension('EXT_color_buffer_float');
-
-	container = document.getElementById('container');
-	container.appendChild(renderer.domElement);
-
+//	container = document.getElementById('container');
+//	container.appendChild(renderer.domElement);
+   
+   document.getElementById("webgl-output").appendChild(renderer.domElement);
 	// stats = new Stats();
 	// stats.domElement.style.position = 'absolute';
 	// stats.domElement.style.top = '0px';
@@ -1049,4 +1052,4 @@ function setMainValues(dynamic, speed, ratio, eps, focus, noiseFile,
 export { demoFragmentShaderFileName, setMainValues, sampleCounter, worldCamera,
    apertureSize, animate,
          sceneIsDynamic, mouseControl, cameraControlsObject, isPaused,
-         pathTracingScene, pathTracingUniforms, cameraInfoElement }
+         pathTracingScene, pathTracingUniforms }

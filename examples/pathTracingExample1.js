@@ -1,11 +1,13 @@
 import * as THREE from  'three';
+
+import {SecondaryBox} from "../libs/util/util.js";
+
 import { init,
          animate,
          pathTracingScene,
          worldCamera,
          apertureSize,
          sampleCounter,
-         cameraInfoElement,
          cameraControlsObject,
          pathTracingUniforms,
          setMainValues} from '../libs/pathTracing/initCommon.js';
@@ -27,6 +29,10 @@ let screenOutGLSL = '../libs/pathTracing/shaders/ScreenOutput_Fragment.glsl';
 
 setMainValues(dynamic, cameraFlightSpeed,pixelRatio, EPS_intersect, focusDistance, noiseFile,
               pathTracingGLSL, commonGLSL, screenCpyGLSL, screenOutGLSL)
+
+let message = new SecondaryBox("");
+   message.changeStyle("rgba(0,0,0,0)", "white", "20px", "Arial")
+
 
 // called automatically from within initTHREEjs() function (located in InitCommon.js file)
 export function initSceneData()
@@ -59,13 +65,11 @@ export function updateVariablesAndUniforms()
 	torusObject.updateMatrixWorld(true); // 'true' forces immediate matrix update
 	pathTracingUniforms.uTorusInvMatrix.value.copy(torusObject.matrixWorld).invert();
 
-
-	// INFO
    if(worldCamera)
-   cameraInfoElement.innerHTML = "FOV: " + worldCamera.fov + " / Aperture: " + apertureSize.toFixed(2) + " / FocusDistance: " + focusDistance + "<br>" + "Samples: " + sampleCounter;   
-	//cameraInfoElement.innerHTML = "Samples: " + sampleCounter;
-   // cameraInfoElement.innerHTML = "FOV: " + worldCamera.fov + " / Aperture: " + apertureSize.toFixed(2) + " / FocusDistance: " + focusDistance + "<br>" + "Samples: " + sampleCounter;
-
+   {
+      let output = "FOV: " + worldCamera.fov + " / Aperture: " + apertureSize.toFixed(2) + " / FocusDistance: " + focusDistance + " / Samples: " + sampleCounter;
+      message.changeMessage(output);
+   }
 } // end function updateVariablesAndUniforms()
 
 init(); // init app and start animating
@@ -77,5 +81,4 @@ function render()
    animate();
    updateVariablesAndUniforms();
    requestAnimationFrame(render);
-  //renderer.render(scene, camera) // Render scene
 }

@@ -36,9 +36,10 @@ var list = {
 				"Textured External Objects": "html/textureExternalObjectsInfo",
 				"UV Mapping":"html/textureUVMappingInfo",
 			},
-			"Raytracing":  {
-				"Example 1": "html/raytracingExample1Info",
-				"Example 2": "html/raytracingExample2Info",
+			"Realism":  {
+				"Ray Tracing 1": "html/raytracingExample1Info",
+				"Ray Tracing 2": "html/raytracingExample2Info",
+				"Path Tracing": "html/pathTracingExample1Info",            
 			},			
 		},
 		"XR": {
