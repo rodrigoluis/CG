@@ -13,16 +13,20 @@ import { init,
 // scene/demo-specific variables go here
 let torusObject;
 
-let demoFragmentFileName = '../libs/shaders/pathTracingExample1.glsl';
 let dynamic = false;
 let cameraFlightSpeed = 60;
 let pixelRatio = 0.8;
 let EPS_intersect = 0.01;
 let focusDistance = 130.0;
 
-setMainValues(demoFragmentFileName, dynamic, 
-              cameraFlightSpeed,pixelRatio, 
-              EPS_intersect, focusDistance)
+let noiseFile = '../libs/pathTracing/noise/blueNoise_RGBA256.png'
+let pathTracingGLSL = '../libs/pathTracing/shaders/pathTracingExample1.glsl';
+let commonGLSL = '../libs/pathTracing/shaders/common_PathTracing_Vertex.glsl';
+let screenCpyGLSL = '../libs/pathTracing/shaders/ScreenCopy_Fragment.glsl';
+let screenOutGLSL = '../libs/pathTracing/shaders/ScreenOutput_Fragment.glsl';
+
+setMainValues(dynamic, cameraFlightSpeed,pixelRatio, EPS_intersect, focusDistance, noiseFile,
+              pathTracingGLSL, commonGLSL, screenCpyGLSL, screenOutGLSL)
 
 // called automatically from within initTHREEjs() function (located in InitCommon.js file)
 export function initSceneData()

@@ -19,7 +19,6 @@ let pathTracingUniforms = {};
 let screenCopyUniforms, screenOutputUniforms;
 let pathTracingDefines;
 let pathTracingVertexShader, pathTracingFragmentShader;
-let demoFragmentShaderFileName = 'Geometry_Showcase_Fragment.glsl'
 let screenCopyVertexShader, screenCopyFragmentShader;
 let screenOutputVertexShader, screenOutputFragmentShader;
 let pathTracingGeometry, pathTracingMaterial, pathTracingMesh;
@@ -77,6 +76,12 @@ let changeToPerspectiveCamera = false;
 let pixelEdgeSharpness = 1.0;
 let edgeSharpenSpeed = 0.05;
 let filterDecaySpeed = 0.0002;
+
+let noiseFileName;
+let demoFragmentShaderFileName; // = 'Geometry_Showcase_Fragment.glsl'
+let commonPathTracingFileName;
+let screenCopyFragFileName;
+let screenOutFragFileName;
 
 let gui;
 let ableToEngagePointerLock = true;
@@ -463,7 +468,7 @@ function initTHREEjs()
 	screenCopyRenderTarget.texture.generateMipmaps = false;
 
 	// blueNoise texture used in all demos
-	blueNoiseTexture = new THREE.TextureLoader().load('../assets/textures/BlueNoise_RGBA256.png');
+	blueNoiseTexture = new THREE.TextureLoader().load(noiseFileName);
 	blueNoiseTexture.wrapS = THREE.RepeatWrapping;
 	blueNoiseTexture.wrapT = THREE.RepeatWrapping;
 	blueNoiseTexture.flipY = false;
@@ -482,10 +487,6 @@ function initTHREEjs()
 		orthographicCamera_ToggleController.domElement.remove();
 	}
 		
-
-
-	// setup screen-size quad geometry and shaders....
-
 	// this full-screen quad mesh performs the path tracing operations and produces a screen-sized image
 	pathTracingGeometry = new THREE.PlaneBufferGeometry(2, 2);
 
@@ -516,11 +517,10 @@ function initTHREEjs()
 	};
 
 	// load vertex and fragment shader files that are used in the pathTracing material, mesh and scene
-	fileLoader.load('../shaders/common_PathTracing_Vertex.glsl', function (vertexShaderText)
+	fileLoader.load(commonPathTracingFileName, function (vertexShaderText)
 	{
 		pathTracingVertexShader = vertexShaderText;
 
-		//fileLoader.load('shaders/' + demoFragmentShaderFileName, function (fragmentShaderText)
       fileLoader.load(demoFragmentShaderFileName, function (fragmentShaderText)
 		{
 
@@ -554,7 +554,7 @@ function initTHREEjs()
 		tPathTracedImageTexture: { type: "t", value: pathTracingRenderTarget.texture }
 	};
 
-	fileLoader.load('../shaders/ScreenCopy_Fragment.glsl', function (shaderText) {
+	fileLoader.load(screenCopyFragFileName, function (shaderText) {
 		
 		screenCopyFragmentShader = shaderText;
 
@@ -586,7 +586,7 @@ function initTHREEjs()
 		uUseToneMapping: { type: "b1", value: useToneMapping }
 	};
 
-	fileLoader.load('../shaders/ScreenOutput_Fragment.glsl', function (shaderText) {
+	fileLoader.load(screenOutFragFileName, function (shaderText) {
 
 		screenOutputFragmentShader = shaderText;
 
@@ -1031,14 +1031,19 @@ function animate()
 
 } // end function animate()
 
-function setMainValues(file, dynamic, speed, ratio, eps, focus)
+function setMainValues(dynamic, speed, ratio, eps, focus, noiseFile,
+                       mainGLSLFile, commonGLSLFile, screencpyGLSLFile, screenOutGLSLFile)
 {
-	demoFragmentShaderFileName = file;
    sceneIsDynamic = dynamic;
 	cameraFlightSpeed = speed;
 	pixelRatio = ratio;
 	EPS_intersect = eps;   
    focusDistance = focus;
+   noiseFileName = noiseFile;   
+	demoFragmentShaderFileName = mainGLSLFile;  
+   commonPathTracingFileName = commonGLSLFile;
+   screenCopyFragFileName = screencpyGLSLFile;
+   screenOutFragFileName = screenOutGLSLFile;
 }
 
 export { demoFragmentShaderFileName, setMainValues, sampleCounter, worldCamera,
