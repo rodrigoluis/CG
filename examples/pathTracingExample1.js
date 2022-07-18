@@ -8,6 +8,7 @@ import { init,
          worldCamera,
          apertureSize,
          sampleCounter,
+         focusDistance,
          cameraControlsObject,
          pathTracingUniforms,
          setMainValues} from '../libs/pathTracing/initCommon.js';
@@ -19,7 +20,7 @@ let dynamic = false;
 let cameraFlightSpeed = 60;
 let pixelRatio = 0.8;
 let EPS_intersect = 0.01;
-let focusDistance = 130.0;
+let focusDist = 130.0;
 
 let noiseFile = '../libs/pathTracing/noise/blueNoise_RGBA256.png'
 let pathTracingGLSL = '../libs/pathTracing/shaders/pathTracingExample1.glsl';
@@ -27,8 +28,8 @@ let commonGLSL = '../libs/pathTracing/shaders/common_PathTracing_Vertex.glsl';
 let screenCpyGLSL = '../libs/pathTracing/shaders/ScreenCopy_Fragment.glsl';
 let screenOutGLSL = '../libs/pathTracing/shaders/ScreenOutput_Fragment.glsl';
 
-setMainValues(dynamic, cameraFlightSpeed,pixelRatio, EPS_intersect, focusDistance, noiseFile,
-              pathTracingGLSL, commonGLSL, screenCpyGLSL, screenOutGLSL)
+setMainValues(dynamic, cameraFlightSpeed,pixelRatio, EPS_intersect, focusDist, 
+              noiseFile, pathTracingGLSL, commonGLSL, screenCpyGLSL, screenOutGLSL)
 
 let message = new SecondaryBox("");
    message.changeStyle("rgba(0,0,0,0)", "white", "20px", "Arial")
@@ -72,7 +73,7 @@ export function updateVariablesAndUniforms()
    }
 } // end function updateVariablesAndUniforms()
 
-init(); // init app and start animating
+init(); 
 initSceneData();
 
 render();

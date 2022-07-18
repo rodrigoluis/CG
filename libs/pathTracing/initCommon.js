@@ -37,7 +37,7 @@ let increaseFOV = false;
 let decreaseFOV = false;
 let dollyCameraIn = false;
 let dollyCameraOut = false;
-let apertureSize = 0.0;
+let apertureSize = 0.6;
 let increaseAperture = false;
 let decreaseAperture = false;
 let focusDistance = 132.0;
@@ -352,7 +352,7 @@ export function init()
 				document.mozPointerLockElement === document.body || document.webkitPointerLockElement === document.body)
 			{
 				//document.addEventListener('keydown', onKeyDown, false);
-				//document.addEventListener('keyup', onKeyUp, false);
+				//document.addEventListener('key', onKeyUp, false);
 				isPaused = false;
 			}
 			else
@@ -1050,6 +1050,5 @@ function setMainValues(dynamic, speed, ratio, eps, focus, noiseFile,
 }
 
 export { demoFragmentShaderFileName, setMainValues, sampleCounter, worldCamera,
-   apertureSize, animate,
-         sceneIsDynamic, mouseControl, cameraControlsObject, isPaused,
-         pathTracingScene, pathTracingUniforms }
+         apertureSize, animate, focusDistance, sceneIsDynamic, mouseControl, 
+         cameraControlsObject, isPaused, pathTracingScene, pathTracingUniforms }
