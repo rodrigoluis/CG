@@ -13,13 +13,19 @@
 		<hr>
 
 		<p>
-         This example is based on the GPU based Path Tracing implementation of Erichlof available 
+         This example is based on the GPU-based Path Tracing implementation of Erichlof available 
          <a href="https://github.com/erichlof/THREE.js-PathTracing-Renderer" target="_blank">here</a>.
       </p>
       <p>
-         Click on the scene to start interacting (ESC to return). When interacting, use mouse movements 
-         to rotate camera, scroll to zoom (change fov), keyboard left and right arrow keys to change 
-         aperture, up and down arrows keys to change focus.
+         Click on the scene to start interacting (ESC to return). When interacting:
+         <ul>
+            <li>WASD/QZ + mouse movements to control 1st person camera;</li>
+            <li>Mousewheel to zoom in and out;</li>
+            <li>O and P keys toggle Orthographic and Perspective camera modes</li>
+            <li>Left/Right arrow keys control camera's aperture size (depth of field blur effect);</li>
+            <li>Up/Down arrow keys control the Focal point distance from the camera</li>
+            <li>ESC key to exit and return the mouse pointer</li>
+         </ul>
       </p>
 
 		<iframe src="../examples/pathTracingExample1.html" onload="this.contentWindow.focus()" onmouseover="this.contentWindow.focus()"></iframe>

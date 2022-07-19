@@ -662,32 +662,32 @@ function animate()
 	{
 		if (!isPaused)
 		{
-			if ( (keyboard.pressed('w') || button3Pressed) && !(keyboard.pressed('s') || button4Pressed) )
+			if ( (keyboard.pressed('W') || button3Pressed) && !(keyboard.pressed('S') || button4Pressed) )
 			{
 				cameraControlsObject.position.add(cameraDirectionVector.multiplyScalar(cameraFlightSpeed * frameTime));
 				cameraIsMoving = true;
 			}
-			if ( (keyboard.pressed('s') || button4Pressed) && !(keyboard.pressed('w') || button3Pressed) )
+			if ( (keyboard.pressed('S') || button4Pressed) && !(keyboard.pressed('W') || button3Pressed) )
 			{
 				cameraControlsObject.position.sub(cameraDirectionVector.multiplyScalar(cameraFlightSpeed * frameTime));
 				cameraIsMoving = true;
 			}
-			if ( (keyboard.pressed('a') || button1Pressed) && !(keyboard.pressed('d') || button2Pressed) )
+			if ( (keyboard.pressed('A') || button1Pressed) && !(keyboard.pressed('D') || button2Pressed) )
 			{
 				cameraControlsObject.position.sub(cameraRightVector.multiplyScalar(cameraFlightSpeed * frameTime));
 				cameraIsMoving = true;
 			}
-			if ( (keyboard.pressed('d') || button2Pressed) && !(keyboard.pressed('a') || button1Pressed) )
+			if ( (keyboard.pressed('D') || button2Pressed) && !(keyboard.pressed('A') || button1Pressed) )
 			{
 				cameraControlsObject.position.add(cameraRightVector.multiplyScalar(cameraFlightSpeed * frameTime));
 				cameraIsMoving = true;
 			}
-			if (keyboard.pressed('q') && !keyboard.pressed('z'))
+			if (keyboard.pressed('Q') && !keyboard.pressed('Z'))
 			{
 				cameraControlsObject.position.add(cameraUpVector.multiplyScalar(cameraFlightSpeed * frameTime));
 				cameraIsMoving = true;
 			}
-			if (keyboard.pressed('z') && !keyboard.pressed('q'))
+			if (keyboard.pressed('Z') && !keyboard.pressed('Q'))
 			{
 				cameraControlsObject.position.sub(cameraUpVector.multiplyScalar(cameraFlightSpeed * frameTime));
 				cameraIsMoving = true;
@@ -708,20 +708,20 @@ function animate()
 			{
 				decreaseAperture = true;
 			}
-			if (keyboard.pressed('o') && canPress_O)
+			if (keyboard.pressed('O') && canPress_O)
 			{
 				changeToOrthographicCamera = true;
 				canPress_O = false;
 			}
-			if (!keyboard.pressed('o'))
+			if (!keyboard.pressed('O'))
 				canPress_O = true;
 
-			if (keyboard.pressed('p') && canPress_P)
+			if (keyboard.pressed('P') && canPress_P)
 			{
 				changeToPerspectiveCamera = true;
 				canPress_P = false;
 			}
-			if (!keyboard.pressed('p'))
+			if (!keyboard.pressed('P'))
 				canPress_P = true;
 		} // end if (!isPaused)
 
