@@ -39,7 +39,8 @@ var list = {
 			"Realism":  {
 				"Ray Tracing 1": "html/raytracingExample1Info",
 				"Ray Tracing 2": "html/raytracingExample2Info",
-				"Path Tracing": "html/pathTracingExample1Info",            
+				"Path Tracing 1": "html/pathTracingExample1Info",            
+				"Path Tracing 2": "html/pathTracingExample2Info",                        
 			},			
 		},
 		"XR": {

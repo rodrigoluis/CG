@@ -304,3 +304,7 @@ a.param:hover {
 		line-height: 28px;
 	}
 }
+
+p + ul {
+   margin-top: -16px;
+}
