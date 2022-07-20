@@ -1,23 +1,29 @@
 <!DOCTYPE html>
 <html lang="en">
 	<head>
-		<title>PathTracing Renderer</title>
-
-      <link rel="shortcut icon" href="../favicon.ico">
-      <link rel="stylesheet" href="../html/resources/default.css">      
-      <meta name="viewport" content="width=device-width, initial-scale=1"-->
+		<title>three.js PathTracing Renderer - Geometry Showcase</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1">
+		<link href="../libs/pathTracing/css/default.css" rel="stylesheet"/>
 	</head>
-
+	
 	<body>
-      <!-- Import maps polyfill -- Remove this when import maps will be widely supported-->
-      <script async src="https://unpkg.com/es-module-shims@1.3.6/dist/es-module-shims.js"></script>  
-      <script type="importmap"> 
-        {"imports": {"three": "../build/three.module.js"}} 
-      </script>  
 		
-      <script type="module" src="../libs/pathTracing/pathTracingCommon.js"> </script>		
-      <div id="webgl-output">  
-         <script type="module" src="pathTracingExample1.js"> </script>           
-      </div>
+		<div id="container"> </div>
+		<div id="info">three.js PathTracing Renderer - Geometry Showcase</div>
+		
+		<div id="cameraInfo" style="position:fixed; left:3%; bottom:2%; font-family:arial; color:rgb(255,255,255);"></div>
+		
+		<script src="../libs/pathTracing/three.min.js"> </script>
+		<script src="../libs/pathTracing/FirstPersonCameraControls.js"> </script>
+		<script src="../libs/pathTracing/MobileJoystickControls.js"> </script>
+		<script src="../libs/pathTracing/stats.min.js"> </script>
+		<script src='../libs/pathTracing/lil-gui.min.js'></script>
+		<script src="../libs/pathTracing/PathTracingCommon.js"> </script>
+		<script src="../libs/pathTracing/InitCommon.js"> </script>
+		
+
+		<script src="./pathTracingExample1.js"> </script>
+
 	</body>
 </html>
