@@ -100,16 +100,45 @@ function MaterialObject()
 	this.refractiveIndex = 1.0; // 1.0=air, 1.33=water, 1.4=clearCoat, 1.5=glass, etc.
 }
 
+// let model = {
+//    path: "../assets/objects/dragon.glb",
+// 	scale: 3.0,
+//    offsetx: 0,
+//    offsety: 33,
+//    offsetz: -40,
+//    rotateX: 0,
+//    rotateY: 0,
+//    rotateZ: 0,      
+// };
+
+let model = {
+   path: "../assets/objects/bunny.glb",
+	scale: 0.06,
+   offsetx: 0,
+   offsety: 32.5,
+   offsetz: -40,
+   rotateX: 0,
+   rotateY: 0,
+   rotateZ: 0,      
+};
+
+// let model = {
+//    path: "../assets/objects/woodenGoose.glb",
+// 	scale: 80,
+//    offsetx: 0,
+//    offsety: 30,
+//    offsetz: -40,
+//    rotateX: -Math.PI/2,
+//    rotateY: -Math.PI/2,
+//    rotateZ: 0,      
+// };
 
 function load_GLTF_Model() 
 {
 
 	let gltfLoader = new THREE.GLTFLoader();
 
-	gltfLoader.load("../assets/objects/dragon.glb", function( meshGroup ) // Triangles: 100,000
-	// if you choose to load in the different models below, scroll down and change the *GLTF model settings* for this particular model
-	//gltfLoader.load("models/TronTank.gltf", function( meshGroup ) // Triangles: 17,533
-	//gltfLoader.load("models/StanfordBunny.glb", function( meshGroup ) // Triangles: 30,338
+	gltfLoader.load(model.path, function( meshGroup ) // Triangles: 100,000
 	{
 	
 		if (meshGroup.scene) 
@@ -188,17 +217,11 @@ function load_GLTF_Model()
 		// ********* different GLTF Model Settings **********
 
 		// settings for StanfordDragon model
-		modelScale = 2.0;
-		modelPositionOffset.set(0, 28, -40);
-		
-		// settings for TronTank model
-		// modelScale = 3.0;
-		// modelMesh.geometry.rotateX(-Math.PI * 0.5);
-		// modelPositionOffset.set(-60, 20, -30);
-
-		// settings for StanfordBunny model
-		//modelScale = 0.04;
-		//modelPositionOffset.set(0, 28, -40);
+		modelScale = model.scale;
+		modelPositionOffset.set(model.offsetx, model.offsety, model.offsetz);
+		modelMesh.geometry.rotateX(model.rotateX);
+		modelMesh.geometry.rotateY(model.rotateY);
+		modelMesh.geometry.rotateZ(model.rotateZ);            
 
 		// now that the model has loaded, we can init the app
 		init();
@@ -228,7 +251,7 @@ function initSceneData()
 	focusDistance = 80.0;
 
 	// position and orient camera
-	cameraControlsObject.position.set(0, 30, 40);
+	cameraControlsObject.position.set(0, 30, 10);
 	// look slightly downward
 	//cameraControlsPitchObject.rotation.x = -0.2;
 
@@ -424,16 +447,21 @@ function initSceneData()
 	aabbDataTexture.generateMipmaps = false;
 	aabbDataTexture.needsUpdate = true;
 
+   // textureLoader = new THREE.TextureLoader();
+   // let hdrTexture = textureLoader.load( '../assets/textures/panorama5.jpg' );
+   //    hdrTexture.mapping = THREE.EquirectangularReflectionMapping; // Reflection as default
+   //    hdrTexture.encoding = THREE.sRGBEncoding;
+   //    hdrTexture.flipY = false;
+   // Set scene's background as a equirectangular map
+  // scene.background = textureEquirec;
 
 	hdrLoader = new THREE.RGBELoader();
 	// override THREE's default of HalfFloatType (full float precision needed in brightest pixel calculations below)
 	hdrLoader.type = THREE.FloatType;
 
-	hdrPath = '../libs/pathTracing/symmetrical_garden_2k.hdr';
-	//hdrPath = 'textures/cloud_layers_2k.hdr';
-	//hdrPath = 'textures/delta_2_2k.hdr';
-	//hdrPath = 'textures/kiara_5_noon_2k.hdr';
-	//hdrPath = 'textures/noon_grass_2k.hdr';
+	hdrPath = '../assets/textures/hdr/symmetrical_garden_2k.hdr';
+	//hdrPath = '../assets/textures/hdr/cloud_layers_2k.hdr';
+	//hdrPath = '../assets/textures/hdr/noon_grass_2k.hdr';
 
 	hdrTexture = hdrLoader.load( hdrPath, function ( texture, textureData ) 
 	{
@@ -485,19 +513,19 @@ function initSceneData()
 
 		console.log("brightestPixelX: " + brightestPixelX + " brightestPixelY: " + brightestPixelY); // for debug
 
-		/*  
-		HDRI image dimensions: (hdrImgWidth x hdrImgHeight)
-		center of brightest pixel location: (brightestPixelX, brightestPixelY) 
-		now normalize into float (u,v) texture coords, range: (0.0-1.0, 0.0-1.0)
-		HDRI_bright_u = brightestPixelX / hdrImgWidth
-		HDRI_bright_v = brightestPixelY / hdrImgHeight
 		
-		Must map these brightest-light texture location(u, v) coordinates to Spherical coordinates(phi, theta):
-		phi   = HDRI_bright_v * PI   note: V is used for phi
-		theta = HDRI_bright_u * 2PI  note: U is used for theta
-		lastly, convert Spherical coordinates into 3D Cartesian coordinates(x, y, z):
-		sunDirectionVector.setFromSphericalCoords(1, phi, theta);
-		*/
+		// HDRI image dimensions: (hdrImgWidth x hdrImgHeight)
+		// center of brightest pixel location: (brightestPixelX, brightestPixelY) 
+		// now normalize into float (u,v) texture coords, range: (0.0-1.0, 0.0-1.0)
+		// HDRI_bright_u = brightestPixelX / hdrImgWidth
+		// HDRI_bright_v = brightestPixelY / hdrImgHeight
+		
+		// Must map these brightest-light texture location(u, v) coordinates to Spherical coordinates(phi, theta):
+		// phi   = HDRI_bright_v * PI   note: V is used for phi
+		// theta = HDRI_bright_u * 2PI  note: U is used for theta
+		// lastly, convert Spherical coordinates into 3D Cartesian coordinates(x, y, z):
+		// sunDirectionVector.setFromSphericalCoords(1, phi, theta);
+		
 
 		HDRI_bright_u = brightestPixelX / hdrImgWidth;
 		HDRI_bright_v = brightestPixelY / hdrImgHeight;
