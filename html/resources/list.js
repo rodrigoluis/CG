@@ -64,6 +64,7 @@ var list = {
 		},
 		"Additional Examples":{
 			"Textures - Advanced":  {
+				"Texture Transition": "html/textureAdvancedTransitionInfo",            
 				"Environment mapping 1": "html/textureAdvancedCubeMapInfo",
 				"Environment mapping 2": "html/textureAdvancedEquirectangularMapInfo",				
 				"Normal mapping": "html/textureAdvancedNormalMappingInfo",								
