@@ -6,6 +6,7 @@ import {initRenderer,
         initDefaultBasicLight,
         setDefaultMaterial,
         InfoBox,
+        SecondaryBox,        
         onWindowResize, 
         degreesToRadians,
         createGroundPlaneXZ} from "../libs/util/util.js";
@@ -49,33 +50,46 @@ scene.add(cube);
 var cubeAxesHelper = new THREE.AxesHelper(9);
 cube.add(cubeAxesHelper);
 
+var positionMessage = new SecondaryBox("");
+positionMessage.changeStyle("rgba(0,0,0,0)", "lightgray", "16px", "ubuntu")
+
 render();
 
-function keyboardUpdate() {
-  
+function keyboardUpdate() 
+{
    keyboard.update();
-  if ( keyboard.pressed("left") )     cube.translateX( -1 );
-  if ( keyboard.pressed("right") )    cube.translateX(  1 );
-  if ( keyboard.pressed("up") )       cube.translateY(  1 );
-  if ( keyboard.pressed("down") )     cube.translateY( -1 );
-  if ( keyboard.pressed("pageup") )   cube.translateZ(  1 );
-  if ( keyboard.pressed("pagedown") ) cube.translateZ( -1 );
+   if ( keyboard.pressed("left") )     cube.translateX( -1 );
+   if ( keyboard.pressed("right") )    cube.translateX(  1 );
+   if ( keyboard.pressed("up") )       cube.translateY(  1 );
+   if ( keyboard.pressed("down") )     cube.translateY( -1 );
+   if ( keyboard.pressed("pageup") )   cube.translateZ(  1 );
+   if ( keyboard.pressed("pagedown") ) cube.translateZ( -1 );
 
-  let angle = degreesToRadians(10);
-  if ( keyboard.pressed("A") )  cube.rotateY(  angle );
-  if ( keyboard.pressed("D") )  cube.rotateY( -angle );
+   let angle = THREE.MathUtils.degToRad(10); 
+   if ( keyboard.pressed("A") )  cube.rotateY(  angle );
+   if ( keyboard.pressed("D") )  cube.rotateY( -angle );
 
-  if ( keyboard.pressed("W") )
-  {
-    scale+=.1;
-    cube.scale.set(scale, scale, scale);
-  }
-  if ( keyboard.pressed("S") )
-  {
-    scale-=.1;
-    cube.scale.set(scale, scale, scale);
-  }
+   if ( keyboard.pressed("W") )
+   {
+      scale+=.1;
+      cube.scale.set(scale, scale, scale);
+   }
+   if ( keyboard.pressed("S") )
+   {
+      scale-=.1;
+      cube.scale.set(scale, scale, scale);
+   }   
+   updatePositionMessage();
 }
+
+function updatePositionMessage()
+{
+   var str =  "POS {" + cube.position.x.toFixed(1) + ", " + cube.position.y.toFixed(1) + ", " + cube.position.z.toFixed(1) + "} " + 
+             "| SCL {" + cube.scale.x.toFixed(1) + ", " + cube.scale.y.toFixed(1) + ", " + cube.scale.z.toFixed(1) + "} " + 
+             "| ROT {" + cube.rotation.x.toFixed(1) +  ", " + cube.rotation.y.toFixed(1) + ", " + cube.rotation.z.toFixed(1) + "}";              
+   positionMessage.changeMessage(str);
+}
+
 
 function showInformation()
 {

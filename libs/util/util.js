@@ -143,6 +143,7 @@ export class SecondaryBox
       this.box.appendChild(this.textnode);
       document.body.appendChild(this.box);
    }
+  
    changeMessage(newText) {
       this.textnode.nodeValue = newText;
    }
