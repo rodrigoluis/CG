@@ -5,8 +5,7 @@ import {TeapotGeometry} from '../build/jsm/geometries/TeapotGeometry.js';
 import {initRenderer, 
         initDefaultSpotlight,
         createGroundPlaneXZ,
-        onWindowResize, 
-        degreesToRadians} from "../libs/util/util.js";
+        onWindowResize} from "../libs/util/util.js";
 
 var scene = new THREE.Scene();    // Create main scene
 var renderer = initRenderer();    // View function in util/utils
@@ -26,7 +25,6 @@ var trackballControls = new TrackballControls(camera, renderer.domElement );
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
 var groundPlane = createGroundPlaneXZ(10, 10, 40, 40); // width, height, resolutionW, resolutionH
-  //groundPlane.rotateX(degreesToRadians(-90));
 scene.add(groundPlane);
 
 // Create objects
@@ -69,7 +67,7 @@ function createCameraObject()
 
   var cLens = new THREE.ConeGeometry(0.1, 0.2, 20);
   var lens = new THREE.Mesh(cLens, matLens);
-    lens.rotateX(degreesToRadians(90));
+    lens.rotateX(THREE.MathUtils.degToRad(90));
     lens.position.set(0.0, 0.0, -0.1);
   body.add(lens); // Add lens to the body of the camera
 
@@ -153,8 +151,8 @@ function buildInterface()
     };   
 
     this.onUpdateUpAngle = function(){
-      upVec.x = Math.sin(degreesToRadians(this.upAngle));
-      upVec.y = Math.cos(degreesToRadians(this.upAngle));             
+      upVec.x = Math.sin(THREE.MathUtils.degToRad(this.upAngle));
+      upVec.y = Math.cos(THREE.MathUtils.degToRad(this.upAngle));             
       updateCamera(); 
     };        
   }

@@ -5,8 +5,7 @@ import {TeapotGeometry} from '../build/jsm/geometries/TeapotGeometry.js';
 import {InfoBox,
         createGroundPlane,
         createLightSphere,        
-        onWindowResize, 
-        degreesToRadians} from "../libs/util/util.js";
+        onWindowResize} from "../libs/util/util.js";
 
 var scene = new THREE.Scene();    // Create main scene
 
@@ -79,7 +78,7 @@ render();
 function createScene()
 {
   var groundPlane = createGroundPlane(5, 5); 
-    groundPlane.rotateX(degreesToRadians(-90));
+    groundPlane.rotateX(THREE.MathUtils.degToRad(-90));
   scene.add(groundPlane);
 
   // Create object

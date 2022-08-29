@@ -6,8 +6,7 @@ import {TeapotGeometry} from '../build/jsm/geometries/TeapotGeometry.js';
 import {initRenderer, 
         createGroundPlane,
         createLightSphere,        
-        onWindowResize, 
-        degreesToRadians} from "../libs/util/util.js";
+        onWindowResize} from "../libs/util/util.js";
 
 var scene = new THREE.Scene();    // Create main scene
 var stats = new Stats();          // To show FPS information  var renderer = initRenderer();    // View function in util/utils
@@ -50,7 +49,7 @@ scene.add( axesHelper );
 //-- Scene Objects -----------------------------------------------------------
 // Ground
 var groundPlane = createGroundPlane(5.0, 5.0, 100, 100); // width and height
-  groundPlane.rotateX(degreesToRadians(-90));
+  groundPlane.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlane);
 
 // Teapot

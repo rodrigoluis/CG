@@ -2,7 +2,6 @@ import * as THREE from 'three';
 import { FlyControls } from '../build/jsm/controls/FlyControls.js';
 import {initRenderer, 
         SecondaryBox,
-        degreesToRadians,
         initDefaultBasicLight,
         onWindowResize, 
         InfoBox,
@@ -31,7 +30,7 @@ var flyCamera = new FlyControls( camera, renderer.domElement );
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
 var groundPlane = createGroundPlaneWired(400, 400, 80, 80); // width and height
-  //groundPlane.rotateX(degreesToRadians(-90));
+  //groundPlane.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlane);
 
 var infoBox = new SecondaryBox("");

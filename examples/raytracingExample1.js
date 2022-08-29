@@ -1,6 +1,5 @@
 import * as THREE 			from  'three';
 import {RaytracingRenderer} from '../libs/other/raytracingRenderer.js';
-import {degreesToRadians} 	from '../libs/util/util.js';
 
 var scene = new THREE.Scene();    // Create main scene
 
@@ -86,13 +85,13 @@ mirrorMaterial.mirror = true;
 mirrorMaterial.reflectivity = 0.8;
 
 var torus = new THREE.Mesh( torusGeometry, phongMaterialAzulado );
-torus.rotation.y = degreesToRadians(40);
+torus.rotation.y = 0.69; // 40 graus
 torus.position.set( -3, -1.3, -3 );
 scene.add( torus );
 
 var box = new THREE.Mesh( boxGeometry, mirrorMaterial );
 box.position.set(0, -1.0, -5);
-box.rotation.y = degreesToRadians(39);
+box.rotation.y = 0.68; // 39 graus
 scene.add( box );
 
 var sphere = new THREE.Mesh( sphereGeometry, phongMaterialAmarelo );

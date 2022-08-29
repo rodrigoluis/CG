@@ -4,7 +4,6 @@ import GUI from '../libs/util/dat.gui.module.js'
 import {TrackballControls} from '../build/jsm/controls/TrackballControls.js';
 import {initRenderer, 
         initCamera, 
-        degreesToRadians, 
         onWindowResize,
         initDefaultBasicLight} from "../libs/util/util.js";
 
@@ -75,7 +74,7 @@ function rotateCylinder()
     // Will execute R2, T1 and R1 in this order
     cylinder2.matrix.multiply(mat4.makeRotationY(angle2)); // R1
     cylinder2.matrix.multiply(mat4.makeTranslation(0.0, 1.0, 0.0)); // T1
-    cylinder2.matrix.multiply(mat4.makeRotationX(degreesToRadians(90))); // R2
+    cylinder2.matrix.multiply(mat4.makeRotationX(THREE.MathUtils.degToRad(90))); // R2
   }
 }
 

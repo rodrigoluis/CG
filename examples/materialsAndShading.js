@@ -10,8 +10,7 @@ import {initRenderer,
         initDefaultSpotlight,
         createGroundPlane,
         createLightSphere,        
-        onWindowResize, 
-        degreesToRadians} from "../libs/util/util.js";
+        onWindowResize} from "../libs/util/util.js";
 
 let scene, renderer, camera, stats, light, lightSphere, lightPosition, orbit; // Initial variables
 scene = new THREE.Scene();    // Create main scene
@@ -34,7 +33,7 @@ var keyboard = new KeyboardState();
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
 var groundPlane = createGroundPlane(4.0, 2.5, 50, 50); // width and height
-  groundPlane.rotateX(degreesToRadians(-90));
+  groundPlane.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlane);
 
 // Show axes (parameter is size of each axis)

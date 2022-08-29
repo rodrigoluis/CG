@@ -5,8 +5,7 @@ import {TrackballControls} from '../build/jsm/controls/TrackballControls.js';
 import {initRenderer, 
         initDefaultSpotlight,
         createGroundPlane,
-        onWindowResize, 
-        degreesToRadians} from "../libs/util/util.js";
+        onWindowResize} from "../libs/util/util.js";
 
 var scene = new THREE.Scene();    // Create main scene
 var stats = new Stats();          // To show FPS information
@@ -27,7 +26,7 @@ var trackballControls = new TrackballControls( camera, renderer.domElement );
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
 var groundPlane = createGroundPlane(30, 30); // width and height
-  groundPlane.rotateX(degreesToRadians(-90));
+  groundPlane.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlane);
 
 // Show axes (parameter is size of each axis)
@@ -54,7 +53,7 @@ var object = new THREE.Mesh(extrudeGeometry, objectMaterial);
 scene.add(object);
 
 object.translateY(4.0);
-object.rotateZ(degreesToRadians(180));
+object.rotateZ(THREE.MathUtils.degToRad(180));
 
 buildInterface();
 render();

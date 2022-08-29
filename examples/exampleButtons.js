@@ -4,8 +4,7 @@ import {TrackballControls} from '../build/jsm/controls/TrackballControls.js';
 import {initRenderer, 
         initCamera,
         onWindowResize,
-        onOrientationChange,
-        degreesToRadians} from "../libs/util/util.js";
+        onOrientationChange} from "../libs/util/util.js";
 
 import { Buttons } from "../libs/other/buttons.js";
 var buttons = new Buttons(onButtonDown, onButtonUp);
@@ -86,13 +85,13 @@ function executeIfKeyPressed()
 {
   if(pressedA)
   {
-    var angle = degreesToRadians(1);
+    var angle = THREE.MathUtils.degToRad(1);
     var rotAxis = new THREE.Vector3(0,0,1); // Set Z axis
     cube.rotateOnAxis(rotAxis,  angle );    
   }
   if(pressedB)
   {
-    var angle = degreesToRadians(-1);
+    var angle = THREE.MathUtils.degToRad(-1);
     var rotAxis = new THREE.Vector3(0,0,1); // Set Z axis
     cube.rotateOnAxis(rotAxis,  angle );    
   }

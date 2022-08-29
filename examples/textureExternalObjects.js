@@ -10,7 +10,6 @@ import {initRenderer,
         SecondaryBox,
         getMaxSize,        
         onWindowResize, 
-        degreesToRadians,
         getFilename} from "../libs/util/util.js";
 
 let scene, renderer, camera, orbit, light;
@@ -35,7 +34,7 @@ window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)},
 let loadingMessage = new SecondaryBox("Loading...");
 
 var groundPlane = createGroundPlane(6.0, 6.0, 80, 80); // width and height
-  groundPlane.rotateX(degreesToRadians(-90));
+  groundPlane.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlane);
 
 // Show axes (parameter is size of each axis)
@@ -112,7 +111,7 @@ function loadOBJFile(modelPath, modelName, desiredScale, angle, visibility)
 
         var obj = normalizeAndRescale(obj, desiredScale);
         var obj = fixPosition(obj);
-        obj.rotateY(degreesToRadians(angle));
+        obj.rotateY(THREE.MathUtils.degToRad(angle));
 
         scene.add ( obj );
         assetManager[modelName] = obj;        
@@ -139,7 +138,7 @@ function loadGLTFFile(modelPath, modelName, desiredScale, angle, visibility)
 
       var obj = normalizeAndRescale(obj, desiredScale);
       var obj = fixPosition(obj);
-      obj.rotateY(degreesToRadians(angle));
+      obj.rotateY(THREE.MathUtils.degToRad(angle));
 
       scene.add ( obj );
       assetManager[modelName] = obj;

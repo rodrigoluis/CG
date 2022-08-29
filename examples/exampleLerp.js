@@ -5,8 +5,7 @@ import {initRenderer,
         initDefaultSpotlight,
         initCamera,
         createGroundPlane,
-        onWindowResize, 
-        degreesToRadians} from "../libs/util/util.js";
+        onWindowResize} from "../libs/util/util.js";
 
 let scene    = new THREE.Scene();    // Create main scene
 let renderer = initRenderer();    // View function in util/utils
@@ -23,7 +22,7 @@ scene.add( axesHelper );
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
 let groundPlane = createGroundPlane(10, 10, 40, 40); // width, height, resolutionW, resolutionH
-  groundPlane.rotateX(degreesToRadians(-90));
+  groundPlane.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlane);
 
 // Create sphere

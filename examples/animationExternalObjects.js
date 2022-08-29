@@ -6,7 +6,6 @@ import {GLTFLoader} from '../build/jsm/loaders/GLTFLoader.js'
 import {initRenderer, 
         initDefaultSpotlight, 
         createGroundPlane,
-        degreesToRadians,
         getMaxSize,
         onWindowResize} from "../libs/util/util.js";
 
@@ -32,7 +31,7 @@ var trackballControls = new TrackballControls( camera, renderer.domElement );
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
 var groundPlane = createGroundPlane(5.0, 5.0, 60, 60, "rgb(100,140,90)");
-  groundPlane.rotateX(degreesToRadians(-90));
+  groundPlane.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlane);
 
 // Show axes (parameter is size of each axis)
@@ -127,7 +126,7 @@ function rotateMan(delta)
     var scale = 0.4;
     man.matrixAutoUpdate = false;
     man.matrix.identity();  // reset matrix
-    man.matrix.multiply(mat4.makeRotationY(degreesToRadians(-time)));
+    man.matrix.multiply(mat4.makeRotationY(THREE.MathUtils.degToRad(-time)));
     man.matrix.multiply(mat4.makeTranslation(2.0, 0.0, 0.0));
     man.matrix.multiply(mat4.makeScale(scale, scale, scale));
   }

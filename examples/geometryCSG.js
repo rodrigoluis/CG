@@ -50,8 +50,7 @@ import {initRenderer,
         initCamera, 
         initDefaultBasicLight,
         createGroundPlane,
-        onWindowResize,
-        degreesToRadians} from "../libs/util/util.js";
+        onWindowResize} from "../libs/util/util.js";
 
 import { CSG } from '../libs/other/CSGMesh.js'        
 
@@ -118,7 +117,7 @@ function buildObjects()
    scene.add(mesh2)
 
    // Object 3 - Cube UNION torus
-   torusMesh.rotateX(degreesToRadians(90))
+   torusMesh.rotateX(THREE.MathUtils.degToRad(90))
    torusMesh.position.set(0.0, 0.0, 1.0) // reset position
    updateObject(torusMesh) 
    torusCSG = CSG.fromMesh(torusMesh)

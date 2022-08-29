@@ -3,12 +3,11 @@
 import * as THREE from 'three';
 import Stats from       '../build/jsm/libs/stats.module.js';
 import { OrbitControls } from '../build/jsm/controls/OrbitControls.js';
-import {initRenderer, 
-        initCamera, 
-        initDefaultBasicLight,
-		onWindowResize,
-		onOrientationChange,
-		degreesToRadians} from "../libs/util/util.js";
+import { initRenderer, 
+         initCamera, 
+         initDefaultBasicLight,
+		   onWindowResize,
+		   onOrientationChange} from "../libs/util/util.js";
 
 import { Buttons } from "../libs/other/buttons.js";
 var buttons = new Buttons(onButtonDown, onButtonUp);
@@ -129,13 +128,13 @@ function createObjects() {
 	// Ramps
 	var quaternion = new THREE.Quaternion(0, 0, 0, 1);
 	var ramp;
-	quaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), degreesToRadians(-15));
+	quaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), THREE.MathUtils.degToRad(-15));
 	ramp = createBox(new THREE.Vector3(0, -1.5, 0), quaternion, 8, 4, 10, 0, 0, materialRamp);
 	createWireFrame(ramp);
-	quaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), degreesToRadians(30));	
+	quaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), THREE.MathUtils.degToRad(30));	
 	ramp = createBox(new THREE.Vector3(25, -3.0, 0), quaternion, 8, 8, 15, 0, 0, materialRamp);	
 	createWireFrame(ramp);	
-	quaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), degreesToRadians(-5));	
+	quaternion.setFromAxisAngle(new THREE.Vector3(1, 0, 0), THREE.MathUtils.degToRad(-5));	
 	ramp = createBox(new THREE.Vector3(-25, -1.5, 0), quaternion, 8, 4, 15, 0, 0, materialRamp);	
 	createWireFrame(ramp);
 

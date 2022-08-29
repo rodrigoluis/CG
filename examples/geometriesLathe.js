@@ -6,8 +6,7 @@ import KeyboardState from '../libs/util/KeyboardState.js';
 import {initRenderer, 
         initDefaultSpotlight,
         createGroundPlane,
-        onWindowResize, 
-        degreesToRadians} from "../libs/util/util.js";
+        onWindowResize} from "../libs/util/util.js";
 
 var scene = new THREE.Scene();    // Create main scene
 var stats = new Stats();          // To show FPS information
@@ -31,7 +30,7 @@ var trackballControls = new TrackballControls( camera, renderer.domElement );
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
 var groundPlane = createGroundPlane(40, 35); // width and height
-  groundPlane.rotateX(degreesToRadians(-90));
+  groundPlane.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlane);
 
 // Show axes (parameter is size of each axis)

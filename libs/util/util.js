@@ -26,13 +26,16 @@ export function getCode(ch)
 }
 
 /**
+ * >>> REPLACED BY THREE.MathUtils.degToRad(degrees)
  * Convert degrees to radians
- */
+ * !!! 
+*/
 export function degreesToRadians(degrees)
 {
   var pi = Math.PI;
   return degrees * (pi/180);
 }
+
 
 /**
  * Convert radians to degrees

@@ -1,6 +1,5 @@
 import * as THREE 			from  'three';
 import {RaytracingRenderer} from  '../libs/other/raytracingRenderer.js';
-import {degreesToRadians}   from "../libs/util/util.js";
 
 var scene, renderer;
 
@@ -117,7 +116,7 @@ scene.add( glass );
 // Box
 var box = new THREE.Mesh( boxGeometry, mirrorMaterial );
 box.position.set( -1.75, 0, -1.90 );
-box.rotation.y = degreesToRadians(37);
+box.rotation.y = 0.64; // 37 graus
 scene.add( box );
 
 // Back Mirror

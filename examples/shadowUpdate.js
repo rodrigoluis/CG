@@ -3,7 +3,6 @@ import Stats from '../build/jsm/libs/stats.module.js';
 import GUI from '../libs/util/dat.gui.module.js'
 import { FlyControls } from '../build/jsm/controls/FlyControls.js';
 import {initRenderer,
-        degreesToRadians,
         onWindowResize, 
         InfoBox,
         createGroundPlane} from "../libs/util/util.js";
@@ -106,7 +105,7 @@ function setEnvironment()
 {
   // Ground plane
   const groundPlane = createGroundPlane(400, 400, 80, 80, "rgb(60, 30, 150)"); 
-    groundPlane.rotateX(degreesToRadians(-90));
+    groundPlane.rotateX(THREE.MathUtils.degToRad(-90));
   scene.add(groundPlane);
 
   // Objects grid
@@ -160,7 +159,7 @@ function rotateCenterTorus()
   time+=delta/20;  
   if(centerTorusAngle == 360) centerTorusAngle = 0;
    centerTorusAngle += .1;
-   centerTorus.rotateX(degreesToRadians(time));
+   centerTorus.rotateX(THREE.MathUtils.degToRad(time));
 }
 
 function moveLightAndTarget() 

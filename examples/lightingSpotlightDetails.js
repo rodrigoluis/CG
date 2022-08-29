@@ -6,7 +6,6 @@ import {initRenderer,
         createGroundPlane,
         createLightSphere,        
         onWindowResize, 
-        degreesToRadians,
         radiansToDegrees} from "../libs/util/util.js";
 
 let scene, renderer, camera, orbit; // Initial variables   
@@ -27,7 +26,7 @@ scene.add( ambientLight );
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
 let groundPlane = createGroundPlane(10, 10, 40, 40); // width, height, resolutionW, resolutionH
-  groundPlane.rotateX(degreesToRadians(-90));
+  groundPlane.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlane);
 
 // Create objects
@@ -50,7 +49,7 @@ let spotLight = new THREE.SpotLight("rgb(255,255,255)");
   spotLight.castShadow = true;
   spotLight.decay = 2;
   spotLight.penumbra = 0.5;
-  spotLight.angle= degreesToRadians(40);
+  spotLight.angle= THREE.MathUtils.degToRad(40);
   // Shadow Parameters
   spotLight.shadow.mapSize.width = 512;
   spotLight.shadow.mapSize.height = 512;
@@ -108,7 +107,7 @@ function buildInterface()
     this.shadowMapSize = spotLight.shadow.mapSize.width;
   
     this.onUpdateLightAngle = function(){
-      spotLight.angle = degreesToRadians(this.angle);
+      spotLight.angle = THREE.MathUtils.degToRad(this.angle);
       updateLight();      
     };   
     this.onUpdateShadowFar = function(){

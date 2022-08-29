@@ -5,7 +5,6 @@ import {TrackballControls} from '../build/jsm/controls/TrackballControls.js';
 import {initRenderer, 
         initCamera, 
         onWindowResize, 
-        degreesToRadians, 
         initDefaultBasicLight} from "../libs/util/util.js";
 
         
@@ -17,7 +16,7 @@ var trackballControls = new TrackballControls( camera, renderer.domElement );
 initDefaultBasicLight(scene);
 
 // Set angles of rotation
-var angle = [-1.57, 0]; // In degreesToRadians
+var angle = [-1.57, 0];
 
 // Show world axes
 var axesHelper = new THREE.AxesHelper( 12 );
@@ -94,8 +93,8 @@ function buildInterface()
     this.joint2 = 0;
 
     this.rotate = function(){
-      angle[0] = degreesToRadians(this.joint1);
-      angle[1] = degreesToRadians(this.joint2);
+      angle[0] = THREE.MathUtils.degToRad(this.joint1);
+      angle[1] = THREE.MathUtils.degToRad(this.joint2);
       rotateCylinder();
     };
   };

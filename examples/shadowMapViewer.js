@@ -8,7 +8,6 @@ import {initRenderer,
         SecondaryBox,        
         createGroundPlane,
         onWindowResize, 
-        degreesToRadians, 
         createLightSphere} from "../libs/util/util.js";
 
 var scene = new THREE.Scene();    // Create main scene
@@ -45,7 +44,7 @@ window.addEventListener( 'resize', function(){
 }, false );
 
 var groundPlane = createGroundPlane(10, 10, 40, 40); // width, height, resolutionW, resolutionH
-  groundPlane.rotateX(degreesToRadians(-90));
+  groundPlane.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlane);
 
 // Create objects

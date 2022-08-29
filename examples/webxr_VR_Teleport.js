@@ -3,9 +3,8 @@ import * as THREE from '../build/three.module.js';
 import { VRButton } from '../build/jsm/webxr/VRButton.js';
 import {GLTFLoader} from '../build/jsm/loaders/GLTFLoader.js'
 import {onWindowResize,
-		degreesToRadians,
-		createGroundPlane,
-		getMaxSize} from "../libs/util/util.js";
+		  createGroundPlane,
+		  getMaxSize} from "../libs/util/util.js";
 
 import {setFlyNonVRBehavior} from "../libs/util/utilVR.js";
 	
@@ -155,7 +154,7 @@ function createScene()
 
 	// Create Ground Plane
 	var groundPlane = createGroundPlane(60.0, 60.0, 100, 100, "rgb(200,200,150)");
-		groundPlane.rotateX(degreesToRadians(-90));
+		groundPlane.rotateX(THREE.MathUtils.degToRad(-90));
 		groundPlane.material.map = floor;		
 		groundPlane.material.map.wrapS = THREE.RepeatWrapping;
 		groundPlane.material.map.wrapT = THREE.RepeatWrapping;
@@ -207,7 +206,7 @@ function createWindMill()
 			if ( child ) { child.castShadow = true; }
 		});
 		obj = normalizeAndRescale(obj, 8);
-		obj.rotateY(degreesToRadians(-90));				
+		obj.rotateY(THREE.MathUtils.degToRad(-90));				
 		obj.add( windmillSound ); // Add sound to windmill
 	scene.add ( obj );
 

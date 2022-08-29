@@ -5,7 +5,6 @@ import {initRenderer,
         setDefaultMaterial,
         initDefaultBasicLight,        
         onWindowResize, 
-        degreesToRadians, 
         createLightSphere} from "../libs/util/util.js";
 import {loadLightPostScene} from "../libs/util/utilScenes.js";
 

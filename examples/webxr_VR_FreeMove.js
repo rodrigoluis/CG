@@ -1,10 +1,9 @@
 //-- Imports -------------------------------------------------------------------------------------
 import * as THREE from  'three';
 import { VRButton } from '../build/jsm/webxr/VRButton.js';
-import {onWindowResize,
-		degreesToRadians,
-		createGroundPlane} from "../libs/util/util.js";
-import {setFlyNonVRBehavior} from "../libs/util/utilVR.js";
+import { onWindowResize,
+		   createGroundPlane } from "../libs/util/util.js";
+import { setFlyNonVRBehavior } from "../libs/util/utilVR.js";
 //-----------------------------------------------------------------------------------------------
 //-- MAIN SCRIPT --------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------
@@ -127,7 +126,7 @@ function createScene()
 
 	// Create Ground Plane
 	var groundPlane = createGroundPlane(80.0, 80.0, 100, 100, "rgb(200,200,150)");
-		groundPlane.rotateX(degreesToRadians(-90));
+		groundPlane.rotateX(THREE.MathUtils.degToRad(-90));
 		groundPlane.material.map = floor;		
 		groundPlane.material.map.wrapS = THREE.RepeatWrapping;
 		groundPlane.material.map.wrapT = THREE.RepeatWrapping;

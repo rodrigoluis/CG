@@ -6,8 +6,7 @@ import {initRenderer,
         InfoBox,
         initDefaultSpotlight,
         createGroundPlane,
-        onWindowResize, 
-        degreesToRadians} from "../libs/util/util.js";
+        onWindowResize} from "../libs/util/util.js";
 
 
 var scene = new THREE.Scene();    // Create main scene
@@ -29,7 +28,7 @@ scene.add(lightSphere);
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
 var groundPlane = createGroundPlane(60, 60, 50, 50); // width and height
-  groundPlane.rotateX(degreesToRadians(-90));
+  groundPlane.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlane);
 
 // Show text information onscreen
@@ -51,15 +50,15 @@ var axesHelper = new THREE.AxesHelper( 12 );
 
 // Set the parts of the pseudo-car
 var body = createCylinder(2.0, 2.7, 10.0, 20, 20, false, 1);
-  body.rotateX(degreesToRadians(90));
+  body.rotateX(THREE.MathUtils.degToRad(90));
   body.position.set(0.0, 0.5, 0.0)
 
 var axis1 = createCylinder(0.3, 0.3, 7.0, 10, 10, false);
-  axis1.rotateZ(degreesToRadians(90));
+  axis1.rotateZ(THREE.MathUtils.degToRad(90));
   axis1.position.set(0.0, -1.0, 4.0);
 
 var axis2 = createCylinder(0.3, 0.3, 7.0, 10, 10, false);
-  axis2.rotateZ(degreesToRadians(90));
+  axis2.rotateZ(THREE.MathUtils.degToRad(90));
   axis2.position.set(0.0, -1.0, -4.0);
 
 var roda1 = createTorus(1.0, 0.3, 20, 20, Math.PI * 2);
@@ -89,7 +88,7 @@ scene.add(group);
 
 // Move all to the start position
 group.translateY(2.3);
-group.rotateY(degreesToRadians(-90));
+group.rotateY(THREE.MathUtils.degToRad(-90));
 
 render();
 
@@ -113,7 +112,7 @@ function createTorus(radius, tube, radialSegments, tubularSegments, arc)
   var material = new THREE.MeshPhongMaterial({color:"rgb(125,125,125)"});
   var object = new THREE.Mesh(geometry, material);
     object.castShadow = true;
-    object.rotateY(degreesToRadians(90));
+    object.rotateY(THREE.MathUtils.degToRad(90));
   return object;
 }
 
@@ -135,7 +134,7 @@ function keyboardUpdate() {
   if ( keyboard.pressed("up") )    group.translateZ(  1 );
   if ( keyboard.pressed("down") )  group.translateZ( -1 );
 
-  var angle = degreesToRadians(10);
+  var angle = THREE.MathUtils.degToRad(10);
   if ( keyboard.pressed("left") )  group.rotateY(  angle );
   if ( keyboard.pressed("right") ) group.rotateY( -angle );
 

@@ -6,7 +6,6 @@ import {initRenderer,
         initCamera,
         initDefaultBasicLight,
         onWindowResize,
-        degreesToRadians,
         lightFollowingCamera} from "../libs/util/util.js";
 
 //----------------------------------------------------------------------        
@@ -103,7 +102,7 @@ function rotateR2D2(delta) {
     var mat4 = new THREE.Matrix4();
     r2d2.matrixAutoUpdate = false;
     r2d2.matrix.identity();  // reset matrix
-    r2d2.matrix.multiply(mat4.makeRotationY(degreesToRadians(-time)));
+    r2d2.matrix.multiply(mat4.makeRotationY(THREE.MathUtils.degToRad(-time)));
     r2d2.matrix.multiply(mat4.makeTranslation(radius, 0.0, 0.0));
     r2d2.matrix.multiply(mat4.makeScale(scale,scale,scale));
   }

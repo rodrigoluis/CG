@@ -8,7 +8,6 @@ import {initRenderer,
         SecondaryBox,
         createGroundPlane,
         onWindowResize, 
-        degreesToRadians, 
         createLightSphere} from "../libs/util/util.js";
 
 let scene, renderer, camera, orbit; // Initial variables
@@ -27,7 +26,7 @@ let keyboard = new KeyboardState();
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
 let groundPlane = createGroundPlane(4.0, 2.5, 50, 50); // width and height
-  groundPlane.rotateX(degreesToRadians(-90));
+  groundPlane.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlane);
 
 // Show axes (parameter is size of each axis)
@@ -100,7 +99,7 @@ function setPointLight(position)
 function setSpotLight(position)
 {
   spotLight.position.copy(position);
-  spotLight.angle = degreesToRadians(40);    
+  spotLight.angle = THREE.MathUtils.degToRad(40);    
   spotLight.decay = 2; // The amount the light dims along the distance of the light.
   spotLight.penumbra = 1; // Percent of the spotlight cone that is attenuated due to penumbra. 
 

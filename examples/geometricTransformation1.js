@@ -8,7 +8,6 @@ import {initRenderer,
         InfoBox,
         SecondaryBox,        
         onWindowResize, 
-        degreesToRadians,
         createGroundPlaneXZ} from "../libs/util/util.js";
 
 let scene, renderer, camera, material, light, orbit;; // Initial variables

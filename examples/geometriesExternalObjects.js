@@ -10,8 +10,7 @@ import {initRenderer,
         createGroundPlane,
         SecondaryBox,
         onWindowResize, 
-        getMaxSize,
-        degreesToRadians} from "../libs/util/util.js";
+        getMaxSize} from "../libs/util/util.js";
 
 let scene, renderer, camera, orbit, light;
 scene = new THREE.Scene();    // Create main scene
@@ -31,7 +30,7 @@ window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)},
 let loadingMessage = new SecondaryBox("Loading...");
 
 var groundPlane = createGroundPlane(5.0, 5.0, 100, 100); // width and height
-  groundPlane.rotateX(degreesToRadians(-90));
+  groundPlane.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlane);
 
 // Show axes (parameter is size of each axis)

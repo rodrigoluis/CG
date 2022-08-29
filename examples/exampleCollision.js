@@ -7,8 +7,7 @@ import {initRenderer,
         initDefaultBasicLight,
         createGroundPlane,
         onWindowResize, 
-        getMaxSize,
-        degreesToRadians} from "../libs/util/util.js";
+        getMaxSize} from "../libs/util/util.js";
 
 let scene, renderer, camera, light, orbit;        
 scene = new THREE.Scene();    // Create main scene
@@ -23,7 +22,7 @@ orbit = new OrbitControls( camera, renderer.domElement ); // Enable mouse rotati
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
 var groundPlane = createGroundPlane(4.0, 4.0, 80, 80); // width and height
-  groundPlane.rotateX(degreesToRadians(-90));
+  groundPlane.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlane);
 
 // Show axes (parameter is size of each axis)
