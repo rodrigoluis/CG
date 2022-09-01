@@ -1,7 +1,6 @@
+import { Vector3 } from 'three';
 import Node from '../core/Node.js';
-import Matrix4Node from '../inputs/Matrix4Node.js';
-import Matrix3Node from '../inputs/Matrix3Node.js';
-import Vector3Node from '../inputs/Vector3Node.js';
+import UniformNode from '../core/UniformNode.js';
 import { NodeUpdateType } from '../core/constants.js';
 
 class Object3DNode extends Node {
@@ -21,7 +20,7 @@ class Object3DNode extends Node {
 
 		this.updateType = NodeUpdateType.Object;
 
-		this._inputNode = null;
+		this._uniformNode = new UniformNode( null );
 
 	}
 
@@ -47,32 +46,34 @@ class Object3DNode extends Node {
 
 	update( frame ) {
 
-		const object = this.object3d !== null ? this.object3d : frame.object;
-		const inputNode = this._inputNode;
-		const camera = frame.camera;
+		const object = this.object3d;
+		const uniformNode = this._uniformNode;
 		const scope = this.scope;
 
 		if ( scope === Object3DNode.VIEW_MATRIX ) {
 
-			inputNode.value = object.modelViewMatrix;
+			uniformNode.value = object.modelViewMatrix;
 
 		} else if ( scope === Object3DNode.NORMAL_MATRIX ) {
 
-			inputNode.value = object.normalMatrix;
+			uniformNode.value = object.normalMatrix;
 
 		} else if ( scope === Object3DNode.WORLD_MATRIX ) {
 
-			inputNode.value = object.matrixWorld;
+			uniformNode.value = object.matrixWorld;
 
 		} else if ( scope === Object3DNode.POSITION ) {
 
-			inputNode.value.setFromMatrixPosition( object.matrixWorld );
+			uniformNode.value.setFromMatrixPosition( object.matrixWorld );
 
 		} else if ( scope === Object3DNode.VIEW_POSITION ) {
 
-			inputNode.value.setFromMatrixPosition( object.matrixWorld );
+			const camera = frame.camera;
 
-			inputNode.value.applyMatrix4( camera.matrixWorldInverse );
+			uniformNode.value = uniformNode.value || new Vector3();
+			uniformNode.value.setFromMatrixPosition( object.matrixWorld );
+
+			uniformNode.value.applyMatrix4( camera.matrixWorldInverse );
 
 		}
 
@@ -84,19 +85,19 @@ class Object3DNode extends Node {
 
 		if ( scope === Object3DNode.WORLD_MATRIX || scope === Object3DNode.VIEW_MATRIX ) {
 
-			this._inputNode = new Matrix4Node( /*null*/ );
+			this._uniformNode.nodeType = 'mat4';
 
 		} else if ( scope === Object3DNode.NORMAL_MATRIX ) {
 
-			this._inputNode = new Matrix3Node( /*null*/ );
+			this._uniformNode.nodeType = 'mat3';
 
 		} else if ( scope === Object3DNode.POSITION || scope === Object3DNode.VIEW_POSITION ) {
 
-			this._inputNode = new Vector3Node();
+			this._uniformNode.nodeType = 'vec3';
 
 		}
 
-		return this._inputNode.build( builder );
+		return this._uniformNode.build( builder );
 
 	}
 

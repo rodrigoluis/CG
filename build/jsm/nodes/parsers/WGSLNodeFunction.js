@@ -1,8 +1,12 @@
 import NodeFunction from '../core/NodeFunction.js';
 import NodeFunctionInput from '../core/NodeFunctionInput.js';
 
-const declarationRegexp = /^fn\s*([a-z_0-9]+)?\s*\(([\s\S]*?)\)\s*\-\>\s*([a-z_0-9]+)?/i;
+const declarationRegexp = /^[fn]*\s*([a-z_0-9]+)?\s*\(([\s\S]*?)\)\s*[\-\>]*\s*([a-z_0-9]+)?/i;
 const propertiesRegexp = /[a-z_0-9]+/ig;
+
+const wgslTypeLib = {
+	f32: 'float'
+};
 
 const parse = ( source ) => {
 
@@ -33,10 +37,19 @@ const parse = ( source ) => {
 
 		while ( i < propsMatches.length ) {
 
-			const name = propsMatches[ i ++ ][ 0 ];
-			const type = propsMatches[ i ++ ][ 0 ];
+			// default
 
-			propsMatches[ i ++ ][ 0 ]; // precision
+			const name = propsMatches[ i ++ ][ 0 ];
+			let type = propsMatches[ i ++ ][ 0 ];
+
+			type = wgslTypeLib[ type ] || type;
+
+			// precision
+
+			if ( i < propsMatches.length && /^[fui]\d{2}$/.test( propsMatches[ i ][ 0 ] ) === true )
+				i ++;
+
+			// add input
 
 			inputs.push( new NodeFunctionInput( type, name ) );
 
@@ -47,7 +60,7 @@ const parse = ( source ) => {
 		const blockCode = source.substring( declaration[ 0 ].length );
 
 		const name = declaration[ 1 ] !== undefined ? declaration[ 1 ] : '';
-		const type = declaration[ 3 ];
+		const type = declaration[ 3 ] || 'void';
 
 		return {
 			type,
@@ -80,7 +93,9 @@ class WGSLNodeFunction extends NodeFunction {
 
 	getCode( name = this.name ) {
 
-		return `fn ${ name } ( ${ this.inputsCode.trim() } ) -> ${ this.type }` + this.blockCode;
+		const type = this.type !== 'void' ? '-> ' + this.type : '';
+
+		return `fn ${ name } ( ${ this.inputsCode.trim() } ) ${ type }` + this.blockCode;
 
 	}
 

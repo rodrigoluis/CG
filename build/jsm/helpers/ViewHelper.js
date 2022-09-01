@@ -8,6 +8,8 @@ class ViewHelper extends THREE.Object3D {
 
 		super();
 
+		this.isViewHelper = true;
+
 		this.animating = false;
 		this.controls = null;
 
@@ -148,8 +150,8 @@ class ViewHelper extends THREE.Object3D {
 			if ( this.animating === true ) return false;
 
 			const rect = dom.getBoundingClientRect();
-			const offsetX = rect.left + ( container.dom.offsetWidth - dim );
-			const offsetY = rect.top + ( container.dom.offsetHeight - dim );
+			const offsetX = rect.left + ( dom.offsetWidth - dim );
+			const offsetY = rect.top + ( dom.offsetHeight - dim );
 			mouse.x = ( ( event.clientX - offsetX ) / ( rect.width - offsetX ) ) * 2 - 1;
 			mouse.y = - ( ( event.clientY - offsetY ) / ( rect.bottom - offsetY ) ) * 2 + 1;
 
@@ -289,7 +291,5 @@ class ViewHelper extends THREE.Object3D {
 	}
 
 }
-
-ViewHelper.prototype.isViewHelper = true;
 
 export { ViewHelper };

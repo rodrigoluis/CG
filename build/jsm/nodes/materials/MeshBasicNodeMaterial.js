@@ -9,6 +9,10 @@ class MeshBasicNodeMaterial extends NodeMaterial {
 
 		super();
 
+		this.isMeshBasicNodeMaterial = true;
+
+		this.lights = true;
+
 		this.colorNode = null;
 		this.opacityNode = null;
 
@@ -40,7 +44,5 @@ class MeshBasicNodeMaterial extends NodeMaterial {
 	}
 
 }
-
-MeshBasicNodeMaterial.prototype.isNodeMaterial = true;
 
 export default MeshBasicNodeMaterial;

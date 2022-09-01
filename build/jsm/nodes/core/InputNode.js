@@ -1,66 +1,62 @@
 import Node from './Node.js';
+import { getValueType, getValueFromType } from './NodeUtils.js';
 
 class InputNode extends Node {
 
-	constructor( inputType ) {
+	constructor( value, nodeType = null ) {
 
-		super( inputType );
+		super( nodeType );
 
-		this.inputType = inputType;
+		this.isInputNode = true;
 
-		this.constant = false;
-
-	}
-
-	setConst( value ) {
-
-		this.constant = value;
-
-		return this;
+		this.value = value;
 
 	}
 
-	getConst() {
+	getNodeType( /*builder*/ ) {
 
-		return this.constant;
+		if ( this.nodeType === null ) {
 
-	}
-
-	getInputType( /* builder */ ) {
-
-		return this.inputType;
-
-	}
-
-	generateConst( builder ) {
-
-		return builder.getConst( this.getNodeType( builder ), this.value );
-
-	}
-
-	generate( builder, output ) {
-
-		const type = this.getNodeType( builder );
-
-		if ( this.constant === true ) {
-
-			return builder.format( this.generateConst( builder ), type, output );
-
-		} else {
-
-			const inputType = this.getInputType( builder );
-
-			const nodeUniform = builder.getUniformFromNode( this, builder.shaderStage, inputType );
-			const propertyName = builder.getPropertyName( nodeUniform );
-
-			return builder.format( propertyName, type, output );
+			return getValueType( this.value );
 
 		}
+
+		return this.nodeType;
+
+	}
+
+	getInputType( builder ) {
+
+		return this.getNodeType( builder );
+
+	}
+
+	serialize( data ) {
+
+		super.serialize( data );
+
+		data.value = this.value?.toArray?.() || this.value;
+		data.valueType = getValueType( this.value );
+		data.nodeType = this.nodeType;
+
+	}
+
+	deserialize( data ) {
+
+		super.deserialize( data );
+
+		this.nodeType = data.nodeType;
+		this.value = getValueFromType( data.valueType );
+		this.value = this.value?.fromArray?.( data.value ) || data.value;
+
+	}
+
+	generate( /*builder, output*/ ) {
+
+		console.warn( 'Abstract function.' );
 
 	}
 
 }
-
-InputNode.prototype.isInputNode = true;
 
 export default InputNode;
