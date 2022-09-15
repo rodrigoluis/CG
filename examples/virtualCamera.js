@@ -38,10 +38,9 @@ createTeapot(0.0,  0.4, -2.0, Math.random() * 0xffffff);
 var lookAtVec   = new THREE.Vector3( 0.0, 0.0, 0.0 );
 var camPosition = new THREE.Vector3( 3.7, 2.2, 1.0 );
 var upVec       = new THREE.Vector3( 0.0, 1.0, 0.0 );
-var vcWidth = 400; 
-var vcHeidth = 300; 
+
 var projectionChanged = false; 
-var virtualCamera = new THREE.PerspectiveCamera(45, vcWidth/vcHeidth, 1.0, 20.0);
+var virtualCamera = new THREE.PerspectiveCamera(45, 1.3, 1.0, 20.0);
   virtualCamera.position.copy(camPosition);
   virtualCamera.up.copy(upVec);
   virtualCamera.lookAt(lookAtVec);
@@ -203,7 +202,9 @@ function controlledRender()
   renderer.render(scene, camera);   
 
   // Set virtual camera viewport 
-  var offset = 30; 
+  var offset = 10; 
+  var vcWidth = (width/3.0 > 400) ? 400 : width/3.0; 
+  var vcHeidth = vcWidth*0.75;  
   renderer.setViewport(offset, height-vcHeidth-offset, vcWidth, vcHeidth);  // Set virtual camera viewport  
   renderer.setScissor(offset, height-vcHeidth-offset, vcWidth, vcHeidth); // Set scissor with the same size as the viewport
   renderer.setScissorTest(true); // Enable scissor to paint only the scissor are (i.e., the small viewport)
