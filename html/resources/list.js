@@ -13,6 +13,7 @@ var list = {
 			"Animations":  {
 				"Basic": "html/animationInfo",
 				"Using External Objects": "html/animationExternalObjectsInfo",
+				"Linear Interpolation": "html/animationLerpInfo",				            
 			},
 			"Lights & Shadows":  {
 				"Types of lights": "html/lightingTypesInfo",
@@ -81,7 +82,6 @@ var list = {
 			},
 			"Misc":  {
 				"Multicolor Cube": "html/exampleMulticolorCubeInfo",
-				"Linear Interpolation": "html/exampleLerpInfo",				
 				"Group Geometry": "html/exampleGroupInfo",
 				"First Person": "html/exampleFirstPersonInfo",
 				"Drag Control": "html/exampleDragControlInfo",
