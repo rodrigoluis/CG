@@ -13,7 +13,8 @@ var list = {
 			"Animations":  {
 				"Basic": "html/animationInfo",
 				"Using External Objects": "html/animationExternalObjectsInfo",
-				"Linear Interpolation": "html/animationLerpInfo",				            
+				"Linear Interpolation": "html/animationLerpInfo",
+				"Spherical Interpolation": "html/animationQuaternionLerpInfo",          
 			},
 			"Lights & Shadows":  {
 				"Types of lights": "html/lightingTypesInfo",
