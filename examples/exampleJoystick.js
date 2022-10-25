@@ -28,12 +28,8 @@ window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)},
 // Add OrbitControls so that we can pan around with the mouse.
 var controls = new OrbitControls(camera, renderer.domElement);
 
-// Add axes
-var axes = new THREE.AxesHelper(50);
-scene.add( axes );
-
 // Add grid
-var groundPlane = createGroundPlaneWired(200, 200, 40, 40); // width and height
+var groundPlane = createGroundPlaneWired(200, 200, 40, 40, 2, "dimgray", "gainsboro"); // width and height
 scene.add(groundPlane);
 
 // create the inner cube

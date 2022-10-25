@@ -29,7 +29,7 @@ var flyCamera = new FlyControls( camera, renderer.domElement );
 // Listen window size changes
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
-var groundPlane = createGroundPlaneWired(400, 400, 80, 80); // width and height
+var groundPlane = createGroundPlaneWired(400, 400, 80, 80, 2, "dimgray", "gainsboro"); 
   //groundPlane.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlane);
 

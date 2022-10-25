@@ -1,5 +1,6 @@
 import * as THREE from '../../build/three.module.js';
 import {TrackballControls} from '../../build/jsm/controls/TrackballControls.js';
+import Grid from "./grid.js";
 
 /**
  * Set a basic material for the initial examples
@@ -517,14 +518,15 @@ export function createGroundPlane(width, height, widthSegments = 10, heightSegme
 }
 
 /**
- * Create a ground plane that has a wireframe over it
+ * Create a ground plane that has a grid over it
  */
-export function createGroundPlaneWired(width, height, widthSegments = 10, heightSegments = 10, gcolor = null)
+export function createGroundPlaneWired(width, height, widthSegments = 10, heightSegments = 10, lineWidth = 3, gcolor = null, wcolor = null)
 {
-  if(!gcolor) gcolor = "rgb(60, 30, 150)";  
+  if(!gcolor) gcolor = "rgb(60, 30, 150)";
+  if(!wcolor) wcolor = "rgb(150, 150, 150)"
   
   //---------------------------------------------------------------------------------------
-  // create the ground plane with wireframe
+  // create the ground plane with a grid
   var planeGeometry = new THREE.PlaneGeometry(width, height, widthSegments, heightSegments);
     planeGeometry.translate(0.0, 0.0, -0.02); // To avoid conflict with the axeshelper
   var planeMaterial = new THREE.MeshPhongMaterial({
@@ -533,16 +535,15 @@ export function createGroundPlaneWired(width, height, widthSegments = 10, height
     polygonOffsetFactor: 1, // positive value pushes polygon further away
     polygonOffsetUnits: 1
   });
-  
-  var wireframe = new THREE.WireframeGeometry( planeGeometry );
-    var line = new THREE.LineSegments( wireframe );
-    line.material.color.setStyle( "rgb(150, 150, 150)" );  
 
-  var plane = new THREE.Mesh(planeGeometry, planeMaterial);
+  // Create the grid object
+  let grid = new Grid(width, height, widthSegments, heightSegments, wcolor, lineWidth);
+
+  let plane = new THREE.Mesh(planeGeometry, planeMaterial);
      plane.receiveShadow = true;  
-     plane.add(line);
-     plane.rotateX(-Math.PI/2);
+     plane.rotateX(-Math.PI/2);  
 
+  plane.add(grid); // Add the grid to the plane
   return plane;
 }
 
