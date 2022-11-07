@@ -91,6 +91,7 @@ var list = {
 			},
 			"Shaders":  {
 				"Water": "html/exampleShaderWaterInfo",				
+				"Fire": "html/exampleShaderFireInfo",				            
 			},			
 			"Auxiliary":  {
 				"Loading Screen": "html/exampleLoadingScreenInfo",
