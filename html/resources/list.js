@@ -50,6 +50,7 @@ var list = {
 			"AR with AR.js":  {
 				"AR - Basic": "html/AR_BasicInfo",	
 				"AR - Sources": "html/AR_ChooseSourceInfo",	            
+				"AR - Multi": "html/AR_MultiInfo",	                        
 			},
 			"AR & VR with WebXR":  {
 				"VR - Panorama": "html/webxr_VR_PanoramaInfo",				
