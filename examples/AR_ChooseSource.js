@@ -1,10 +1,11 @@
 import * as THREE from 'three';
-import GUI from '../libs/util/dat.gui.module.js'
-import {ARjs}    from  '../libs/AR/ar.js';
 import {TeapotGeometry} from '../build/jsm/geometries/TeapotGeometry.js';
 import {initDefaultSpotlight} from "../libs/util/util.js";
+import {ARjs}    from  '../libs/AR/ar.js';
+import { initAR,
+         createSourceChangerInterface,
+         loadDefaultARSource} from "../libs/util/utilAR.js"
 
-// init scene and camera
 let scene, camera, renderer, light;
 renderer	= new THREE.WebGLRenderer({antialias: true, alpha: true});
 	renderer.shadowMap.type = THREE.VSMShadowMap;
@@ -12,7 +13,6 @@ renderer	= new THREE.WebGLRenderer({antialias: true, alpha: true});
 	renderer.setClearColor(new THREE.Color('lightgrey'), 0)
 	renderer.setSize( 1280, 960 ); // Change here to render in low resolution (for example 640 x 480)
 	document.body.appendChild( renderer.domElement );
-
 scene	= new THREE.Scene();
 camera = new THREE.Camera();
    scene.add(camera);
@@ -24,16 +24,16 @@ let AR = {
    source: null,
    context: null,
 }
+initAR(AR, renderer);
 setARStuff();
-
-window.addEventListener('resize', function(){ onResize() })
+createSourceChangerInterface('../assets/AR/kanjiScene.jpg', '../assets/AR/kanjiScene.mp4')
 
 //----------------------------------------------------------------------------
 // Adding object to the scene
 createTeapot();
-createInterface();
 
-// Render the whole thing on the page
+
+loadDefaultARSource(); // load the default AR source set on the createSourceChangerInterface
 render();
 
 function render()
@@ -65,59 +65,6 @@ function createTeapot()
    scene.add(obj);
 }
 
-function setSource(type, url)
-{
-   if(AR.source) AR.source = null
-
-   AR.source = new ARjs.Source({	
-	   sourceType : type,
-      sourceUrl : url,
-   })
-   AR.source.init(function onReady(){
-      setTimeout(() => {
-         onResize()
-      }, 100);
-   })
-   onResize()    
-}
-
-function createInterface()
-{
-   var controls = new function ()
-   {
-      this.source = "Image";
-      this.onChangeSource = function()
-      {
-        //deletePreviousSource()
-        switch (this.source)
-        {
-           case 'Image':
-              setSource('image','../assets/AR/kanjiScene.jpg')
-              break;
-           case 'Video':
-              setSource('video','../assets/AR/kanjiScene.mp4')         
-              break;
-           case 'Camera':
-              setSource('webcam',null)                     
-              break;
-        }
-      };
-   };
-  
-   var gui = new GUI();
-   gui.add(controls, 'source', ['Image', 'Video', 'Camera'])
-   .name("Source")
-   .onChange(function(e) { controls.onChangeSource(); });
-}
-
-function onResize(){
-	AR.source.onResizeElement()
-	AR.source.copyElementSizeTo(renderer.domElement)
-	if( AR.context.arController !== null ){
-		AR.source.copyElementSizeTo(AR.context.arController.canvas)
-	}
-}
-
 function setARStuff()
 {
    //----------------------------------------------------------------------------
@@ -146,5 +93,4 @@ function setARStuff()
    //----------------------------------------------------------------------------
    // Handle arToolkitSource
    AR.source = null;
-   setSource('image','../assets/AR/kanjiScene.jpg')   
 }
