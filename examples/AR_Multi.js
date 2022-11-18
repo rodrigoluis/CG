@@ -2,8 +2,7 @@ import * as THREE from 'three';
 import {initDefaultBasicLight} from "../libs/util/util.js";
 import {ARjs}    from  '../libs/AR/ar.js';
 import { initAR,
-         createSourceChangerInterface,
-         loadDefaultARSource} from "../libs/util/utilAR.js"
+         createSourceChangerInterface} from "../libs/util/utilAR.js"
 
 let scene, camera, renderer, light;
 renderer	= new THREE.WebGLRenderer({antialias: true, alpha: true});
@@ -25,9 +24,6 @@ let AR = {
 initAR(AR, renderer);
 setARStuff();
 createSourceChangerInterface('../assets/AR/multiScene.jpg','../assets/AR/multiScene.webm', 'webcam')
-
-
-loadDefaultARSource(); // load the default AR source set on the createSourceChangerInterface
 render();
 
 function render()

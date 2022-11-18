@@ -2952,13 +2952,14 @@ ARjs.Source.prototype.init = function (onReady, onError) {
 ARjs.Source.prototype._initSourceImage = function (onReady) {
     // TODO make it static
     var domElement = document.createElement('img');
-    domElement.src = this.parameters.sourceUrl;
 
+    domElement.src = this.parameters.sourceUrl;
     domElement.width = this.parameters.sourceWidth;
     domElement.height = this.parameters.sourceHeight;
+
     domElement.style.width = this.parameters.displayWidth + 'px';
     domElement.style.height = this.parameters.displayHeight + 'px';
-
+    
     domElement.onload = onReady;
     return domElement
 }

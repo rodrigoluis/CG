@@ -3,6 +3,7 @@ import {ARjs} from  '../AR/ar.js';
 
 let AR = null;
 let renderer = null;
+let camera = null;
 let imageURL = null;
 let videoURL = null;
 let defaultSource = null;
@@ -13,10 +14,11 @@ function checkAR()
    throw new Error("Error: No AR context was set. Use 'initAR' function to initialize AR content!")
 }
 
-export function initAR(inputAR, inputRenderer)
+export function initAR(inputAR, inputRenderer, _camera)
 {
    renderer = inputRenderer;
    AR = inputAR;
+   camera = _camera;
    window.addEventListener('resize', function(){ onResize() })
 }
 
@@ -46,15 +48,21 @@ export function onResize(){
 	}
 }
 
-export function loadDefaultARSource()
+// TODO: As vezes ao mudar do modo 'webcam' para 'imagem' perde-se a referência.
+function setARSource(source)
 {
-   console.log(defaultSource)
-   if(defaultSource === 'video')
-      setSource('video', videoURL );
-   else if(defaultSource === 'image')
-      setSource('image', imageURL);   
-   else 
-      setSource('webcam', null);
+   switch (source)
+   {
+      case 'image':
+         setSource('image', imageURL)
+         break;
+      case 'video':
+         setSource('video', videoURL)                       
+         break;
+      case 'webcam':
+         setSource('webcam', null)                     
+         break;
+   }
 }
 
 export function createSourceChangerInterface(_imageURL, _videoURL, _defaultSource = 'webcam')
@@ -69,18 +77,7 @@ export function createSourceChangerInterface(_imageURL, _videoURL, _defaultSourc
       this.source = defaultSource;
       this.onChangeSource = function()
       {
-        switch (this.source)
-        {
-           case 'image':
-              setSource('image', imageURL)
-              break;
-           case 'video':
-              setSource('video', videoURL)                       
-              break;
-           case 'webcam':
-              setSource('webcam', null)                     
-              break;
-        }
+         setARSource(this.source)
       };
    };
   
@@ -88,4 +85,6 @@ export function createSourceChangerInterface(_imageURL, _videoURL, _defaultSourc
    gui.add(controls, 'source', ['image', 'video', 'webcam'])
    .name("Source")
    .onChange(function(e) { controls.onChangeSource(); });
+   
+   setARSource(_defaultSource);
 }

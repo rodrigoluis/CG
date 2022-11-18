@@ -3,8 +3,7 @@ import {TeapotGeometry} from '../build/jsm/geometries/TeapotGeometry.js';
 import {initDefaultSpotlight} from "../libs/util/util.js";
 import {ARjs}    from  '../libs/AR/ar.js';
 import { initAR,
-         createSourceChangerInterface,
-         loadDefaultARSource} from "../libs/util/utilAR.js"
+         createSourceChangerInterface} from "../libs/util/utilAR.js"
 
 let scene, camera, renderer, light;
 renderer	= new THREE.WebGLRenderer({antialias: true, alpha: true});
@@ -24,7 +23,7 @@ let AR = {
    source: null,
    context: null,
 }
-initAR(AR, renderer);
+initAR(AR, renderer, camera);
 setARStuff();
 createSourceChangerInterface('../assets/AR/kanjiScene.jpg', '../assets/AR/kanjiScene.mp4')
 
@@ -32,8 +31,6 @@ createSourceChangerInterface('../assets/AR/kanjiScene.jpg', '../assets/AR/kanjiS
 // Adding object to the scene
 createTeapot();
 
-
-loadDefaultARSource(); // load the default AR source set on the createSourceChangerInterface
 render();
 
 function render()
