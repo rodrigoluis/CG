@@ -1,118 +1,119 @@
-import * as THREE from  'three';
-import Stats from '../build/jsm/libs/stats.module.js';
+import * as THREE from 'three';
 import GUI from '../libs/util/dat.gui.module.js';
-import {TrackballControls} from '../build/jsm/controls/TrackballControls.js';
-import {initRenderer, 
-        initCamera, 
-        initTrackballControls,
-        SecondaryBox,
-        initDefaultSpotlight,
-        onWindowResize, 
-        lightFollowingCamera} from "../libs/util/util.js";
+import { OrbitControls } from '../build/jsm/controls/OrbitControls.js';
+import { initRenderer,
+         setDefaultMaterial,
+         SecondaryBox,
+         initDefaultBasicLight,
+         onWindowResize,
+         lightFollowingCamera
+} from "../libs/util/util.js";
 
-var scene = new THREE.Scene();    // Create main scene
-var stats = new Stats();          // To show FPS information
+let scene, renderer, light; // Initial variables
+scene = new THREE.Scene();    // Create main scene
+renderer = initRenderer();    // View function in util/utils
+light = initDefaultBasicLight(scene); // Create a basic light to illuminate the scene
 
-var renderer = initRenderer();    // View function in util/utils
-var camera = initCamera(new THREE.Vector3(0, 0, 30)); // Init camera in this position
-var light = initDefaultSpotlight(scene, new THREE.Vector3(0, 0, 30)); // Use default light
+createSceneObjects();
 
-// Enable mouse rotation, pan, zoom etc.
-var trackballControls = new TrackballControls( camera, renderer.domElement );
+//-----------------------------------------------------------
+//-- Create cameras -----------------------------------------
+//-----------------------------------------------------------
+let orthoSize = 20; // Estimated size for orthographic projection
+let w = window.innerWidth;
+let h = window.innerHeight
+let aspect = w / h;
+let near = 0.1;
+let far = 1000;
+let fov = 40;
+let position = new THREE.Vector3(0,  0, 30);
+let lookat   = new THREE.Vector3(0,  0,  0);
+let up       = new THREE.Vector3(0,  1,  0);
 
-// Show axes (parameter is size of each axis)
-var axesHelper = new THREE.AxesHelper( 12 );
-scene.add( axesHelper );
+// Create perspective camera
+let cameraPerspective = new THREE.PerspectiveCamera(fov, aspect, near, far); // fov, aspect, near, far
 
-// create a wireframe cube
-var cubeGeometry = new THREE.BoxGeometry(10, 10, 10);
-var cubeMaterial = new THREE.MeshBasicMaterial({wireframe: true});
-var cube1 = new THREE.Mesh(cubeGeometry, cubeMaterial);
-// add the cube to the scene
-scene.add(cube1);
+// Create orthographic camera
+let cameraOrtho = new THREE.OrthographicCamera(-orthoSize * aspect / 2, orthoSize * aspect / 2, // left, right
+                                                orthoSize / 2, -orthoSize / 2,                  // top, bottom
+                                                near, far);                                     // near, far
 
-// create the inner cube
-var cube2Geometry = new THREE.BoxGeometry(5, 5, 5);
-var cube2Material = new THREE.MeshLambertMaterial({color:"rgb(70,110,130)"});
-var cube2 = new THREE.Mesh(cube2Geometry, cube2Material);
-// add the cube to the scene
-scene.add(cube2);
+// Set perspective camera as default, and sets its position and lookat
+let camera = cameraPerspective;
+camera.position.copy(position);
+camera.up.copy(up);
+camera.lookAt(lookat); // or camera.lookAt(0, 0, 0);
+let projectionMessage = new SecondaryBox("Perspective Projection");
+window.addEventListener('resize', function () { onWindowResize(camera, renderer, orthoSize) }, false);
 
-var sphereGeometry = new THREE.SphereGeometry(2, 50, 50);
-var sphereMaterial = new THREE.MeshLambertMaterial({color:"rgb(255,255,255)"});
-var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
-// position the sphere
-sphere.position.x = 0;
-sphere.position.y = 0;
-sphere.position.z = 5;
-// add the sphere to the scene
-scene.add(sphere);
-
-// Listen window size changes
-window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
-
-var projectionMessage = new SecondaryBox("Perspective Projection");
+// Set one orbit control per camera
+let orbitP, orbitO;
+orbitP = new OrbitControls( cameraPerspective, renderer.domElement ); // Enable mouse rotation, pan, zoom etc.
+orbitO = new OrbitControls( cameraOrtho, renderer.domElement ); // Enable mouse rotation, pan, zoom etc.
 
 buildInterface();
 render();
 
-function restartCamera()
-{
-  camera.position.x = 0;
-  camera.position.y = 0;
-  camera.position.z = 30;
+function changeProjection() {
+   // Store the previous position of the camera
+   let pos = new THREE.Vector3().copy(camera.position);
+   let up = new THREE.Vector3().copy(camera.up);
 
-  camera.up.x = 0;
-  camera.up.y = 1;
-  camera.up.z = 0;
+   if (camera instanceof THREE.PerspectiveCamera) {
+      camera = cameraOrtho;
+      projectionMessage.changeMessage("Orthographic");
+   } else {
+      camera = cameraPerspective;
+   
+      projectionMessage.changeMessage("Perspective");
+   }
+   
+   onWindowResize(camera, renderer, orthoSize)  
+   camera.position.copy(pos);
+   camera.up.copy(up);
+   camera.lookAt(scene.position);
 }
 
-function changeProjection()
-{
-  // Store the previous position of the camera
-  var pos = new THREE.Vector3().copy(camera.position);
+function buildInterface() {
+   var controls = new function () {
+      this.onChangeProjection = function () {
+         changeProjection();
+      };
+   };
 
-  if (camera instanceof THREE.PerspectiveCamera)
-  {
-    var s = 72; // Estimated size for orthographic projection
-    // OrthographicCamera( left, right, top, bottom, near, far )
-    camera = new THREE.OrthographicCamera(-window.innerWidth / s, window.innerWidth / s,
-                                            window.innerHeight / s, window.innerHeight / -s, -s, s);
-    projectionMessage.changeMessage("Orthographic");
-  } else {
-   // PerspectiveCamera( fov, aspect, near, far)
-    camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-    projectionMessage.changeMessage("Perspective");
-  }
-  camera.position.copy(pos);
-  camera.lookAt(scene.position);
-  trackballControls = initTrackballControls(camera, renderer);
-  lightFollowingCamera(light, camera) // Makes light follow the camera
+   // GUI interface
+   var gui = new GUI();
+   gui.add(controls, 'onChangeProjection').name("Change Projection");
 }
 
-function buildInterface()
-{
-  var controls = new function ()
-  {
-    this.onChangeProjection = function(){
-      changeProjection();
-    };
-    this.onRestartCamera = function(){
-      restartCamera();
-    };
-  };
-
-  // GUI interface
-  var gui = new GUI();
-  gui.add(controls, 'onChangeProjection').name("Change Projection");
-  gui.add(controls, 'onRestartCamera').name("Restart Camera");
+function render() {
+   lightFollowingCamera(light, camera) // Makes light follow the camera
+   requestAnimationFrame(render); // Show events
+   renderer.render(scene, camera) // Render scene
 }
 
-function render()
-{
-  stats.update(); // Update FPS
-  trackballControls.update();
-  lightFollowingCamera(light, camera) // Makes light follow the camera
-  requestAnimationFrame(render); // Show events
-  renderer.render(scene, camera) // Render scene
+//-----------------------------------------------------------
+//-- Auxiliary functions ------------------------------------
+//-----------------------------------------------------------
+function createSceneObjects() {
+   let sphere = new THREE.Mesh(
+      new THREE.SphereGeometry(2, 50, 50),
+      setDefaultMaterial("rgb(255,255,255)")
+   );
+   sphere.position.set(0, 0, 5);
+   scene.add(sphere);
+
+   // create a wireframe cube
+   scene.add(new THREE.Mesh(
+      new THREE.BoxGeometry(10, 10, 10),
+      new THREE.MeshBasicMaterial({ wireframe: true })
+   ));
+
+   // create the inner cube
+   scene.add(new THREE.Mesh(
+      new THREE.BoxGeometry(5, 5, 5),
+      setDefaultMaterial("rgb(70,110,130)")
+   ));
+
+   scene.add(new THREE.AxesHelper(12));  
 }
