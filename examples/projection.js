@@ -50,6 +50,10 @@ window.addEventListener('resize', function () { onWindowResize(camera, renderer,
 let orbitP, orbitO;
 orbitP = new OrbitControls( cameraPerspective, renderer.domElement ); // Enable mouse rotation, pan, zoom etc.
 orbitO = new OrbitControls( cameraOrtho, renderer.domElement ); // Enable mouse rotation, pan, zoom etc.
+// Zoom and pan are disabled because each camera type works differently
+orbitP.enableZoom = orbitO.enableZoom = false;
+orbitP.enablePan = orbitO.enablePan = false; 
+
 
 buildInterface();
 render();

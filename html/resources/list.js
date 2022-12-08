@@ -88,6 +88,7 @@ var list = {
 				"Group Geometry": "html/exampleGroupInfo",
 				"First Person": "html/exampleFirstPersonInfo",
 				"Drag Control": "html/exampleDragControlInfo",
+				"Selection": "html/exampleSelectionInfo",            
 				"Fly Controls":"html/exampleFlyControlInfo",		
 				"Joystick Elements":"html/exampleJoystickInfo",						
 			},
