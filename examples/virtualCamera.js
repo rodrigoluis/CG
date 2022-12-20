@@ -190,7 +190,7 @@ function controlledRender() {
    renderer.clear();   // Clean the window
    renderer.render(scene, camera);
 
-   // If autoClear if off, clear depth buffer to avoid unwanted overlays
+   // If autoClear if false, clear depth buffer to avoid unwanted overlays
    if (!renderer.autoClear) renderer.clearDepth()  // Clean the small viewport   
 
    // Set virtual camera viewport 
