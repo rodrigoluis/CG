@@ -198,7 +198,7 @@ function controlledRender() {
    let vcWidth = (width / 3.0 > 400) ? 400 : width / 3.0;
    let vcHeidth = vcWidth * 0.75;
    renderer.setViewport(offset, height - vcHeidth - offset, vcWidth, vcHeidth);  // Set virtual camera viewport  
-   renderer.setScissor(offset, height - vcHeidth - offset, vcWidth, vcHeidth); // Set scissor with the same size as the viewport
+   renderer.setScissor(offset, height - vcHeidth - offset, vcWidth-1 , vcHeidth-1); // Set scissor with the same size as the viewport - 1 
    renderer.setScissorTest(true); // Enable scissor to paint only the scissor are (i.e., the small viewport)
    renderer.setClearColor("rgb(60, 50, 150)");  // Use a darker clear color in the small viewport 
    renderer.render(scene, virtualCamera);  // Render scene of the virtual camera
