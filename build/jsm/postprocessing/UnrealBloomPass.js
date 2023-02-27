@@ -70,9 +70,6 @@ class UnrealBloomPass extends Pass {
 
 		// luminosity high pass material
 
-		if ( LuminosityHighPassShader === undefined )
-			console.error( 'THREE.UnrealBloomPass relies on LuminosityHighPassShader' );
-
 		const highPassShader = LuminosityHighPassShader;
 		this.highPassUniforms = UniformsUtils.clone( highPassShader.uniforms );
 
@@ -121,11 +118,6 @@ class UnrealBloomPass extends Pass {
 		this.compositeMaterial.uniforms[ 'bloomTintColors' ].value = this.bloomTintColors;
 
 		// copy material
-		if ( CopyShader === undefined ) {
-
-			console.error( 'THREE.UnrealBloomPass relies on CopyShader' );
-
-		}
 
 		const copyShader = CopyShader;
 
@@ -169,6 +161,22 @@ class UnrealBloomPass extends Pass {
 		}
 
 		this.renderTargetBright.dispose();
+
+		//
+
+		for ( let i = 0; i < this.separableBlurMaterials.length; i ++ ) {
+
+			this.separableBlurMaterials[ i ].dispose();
+
+		}
+
+		this.compositeMaterial.dispose();
+		this.materialCopy.dispose();
+		this.basic.dispose();
+
+		//
+
+		this.fsQuad.dispose();
 
 	}
 

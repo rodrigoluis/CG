@@ -41,14 +41,6 @@ class VRMLLoader extends Loader {
 
 		super( manager );
 
-		// dependency check
-
-		if ( typeof chevrotain === 'undefined' ) { // eslint-disable-line no-undef
-
-			throw Error( 'THREE.VRMLLoader: External library chevrotain.min.js required.' );
-
-		}
-
 	}
 
 	load( url, onLoad, onProgress, onError ) {
@@ -128,7 +120,7 @@ class VRMLLoader extends Loader {
 
 		function createTokens() {
 
-			const createToken = chevrotain.createToken; // eslint-disable-line no-undef
+			const createToken = chevrotain.createToken;
 
 			// from http://gun.teipir.gr/VRML-amgem/spec/part1/concepts.html#SyntaxBasics
 
@@ -203,7 +195,7 @@ class VRMLLoader extends Loader {
 			const Comment = createToken( {
 				name: 'Comment',
 				pattern: /#.*/,
-				group: chevrotain.Lexer.SKIPPED // eslint-disable-line no-undef
+				group: chevrotain.Lexer.SKIPPED
 			} );
 
 			// commas, blanks, tabs, newlines and carriage returns are whitespace characters wherever they appear outside of string fields
@@ -211,7 +203,7 @@ class VRMLLoader extends Loader {
 			const WhiteSpace = createToken( {
 				name: 'WhiteSpace',
 				pattern: /[ ,\s]/,
-				group: chevrotain.Lexer.SKIPPED // eslint-disable-line no-undef
+				group: chevrotain.Lexer.SKIPPED
 			} );
 
 			const tokens = [
@@ -625,6 +617,7 @@ class VRMLLoader extends Loader {
 
 			switch ( nodeName ) {
 
+				case 'Anchor':
 				case 'Group':
 				case 'Transform':
 				case 'Collision':
@@ -706,7 +699,6 @@ class VRMLLoader extends Loader {
 					build = buildWorldInfoNode( node );
 					break;
 
-				case 'Anchor':
 				case 'Billboard':
 
 				case 'Inline':
@@ -794,7 +786,15 @@ class VRMLLoader extends Loader {
 						parseFieldChildren( fieldValues, object );
 						break;
 
+					case 'description':
+						// field not supported
+						break;
+
 					case 'collide':
+						// field not supported
+						break;
+
+					case 'parameter':
 						// field not supported
 						break;
 
@@ -817,6 +817,10 @@ class VRMLLoader extends Loader {
 						break;
 
 					case 'proxy':
+						// field not supported
+						break;
+
+					case 'url':
 						// field not supported
 						break;
 
@@ -3201,7 +3205,7 @@ class VRMLLexer {
 
 	constructor( tokens ) {
 
-		this.lexer = new chevrotain.Lexer( tokens ); // eslint-disable-line no-undef
+		this.lexer = new chevrotain.Lexer( tokens );
 
 	}
 
@@ -3223,7 +3227,7 @@ class VRMLLexer {
 
 }
 
-const CstParser = chevrotain.CstParser;// eslint-disable-line no-undef
+const CstParser = chevrotain.CstParser;
 
 class VRMLParser extends CstParser {
 

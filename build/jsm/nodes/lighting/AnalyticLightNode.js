@@ -1,6 +1,7 @@
 import LightingNode from './LightingNode.js';
 import { NodeUpdateType } from '../core/constants.js';
-import { uniform } from '../shadernode/ShaderNodeElements.js';
+import { uniform } from '../core/UniformNode.js';
+import { addNodeClass } from '../core/Node.js';
 
 import { Color } from 'three';
 
@@ -10,7 +11,7 @@ class AnalyticLightNode extends LightingNode {
 
 		super();
 
-		this.updateType = NodeUpdateType.Object;
+		this.updateType = NodeUpdateType.OBJECT;
 
 		this.light = light;
 
@@ -35,3 +36,5 @@ class AnalyticLightNode extends LightingNode {
 }
 
 export default AnalyticLightNode;
+
+addNodeClass( AnalyticLightNode );

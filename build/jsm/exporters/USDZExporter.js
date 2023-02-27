@@ -6,7 +6,14 @@ import * as fflate from '../libs/fflate.module.js';
 
 class USDZExporter {
 
-	async parse( scene ) {
+	async parse( scene, options = {} ) {
+
+		options = Object.assign( {
+			ar: {
+				anchoring: { type: 'plane' },
+				planeAnchoring: { alignment: 'horizontal' }
+			}
+		}, options );
 
 		const files = {};
 		const modelFileName = 'model.usda';
@@ -15,6 +22,8 @@ class USDZExporter {
 		files[ modelFileName ] = null;
 
 		let output = buildHeader();
+
+		output += buildSceneStart( options );
 
 		const materials = {};
 		const textures = {};
@@ -51,9 +60,16 @@ class USDZExporter {
 
 				}
 
+			} else if ( object.isCamera ) {
+
+				output += buildCamera( object );
+
 			}
 
 		} );
+
+
+		output += buildSceneEnd();
 
 		output += buildMaterials( materials, textures );
 
@@ -147,6 +163,10 @@ function imageToCanvas( image, color ) {
 
 		return canvas;
 
+	} else {
+
+		throw new Error( 'THREE.USDZExporter: No valid image data found. Unable to process texture.' );
+
 	}
 
 }
@@ -165,6 +185,40 @@ function buildHeader() {
     metersPerUnit = 1
     upAxis = "Y"
 )
+
+`;
+
+}
+
+function buildSceneStart( options ) {
+
+	return `def Xform "Root"
+{
+    def Scope "Scenes" (
+        kind = "sceneLibrary"
+    )
+    {
+        def Xform "Scene" (
+            customData = {
+                bool preliminary_collidesWithEnvironment = 0
+                string sceneName = "Scene"
+            }
+            sceneName = "Scene"
+        )
+        {
+        token preliminary:anchoring:type = "${options.ar.anchoring.type}"
+        token preliminary:planeAnchoring:alignment = "${options.ar.planeAnchoring.alignment}"
+
+`;
+
+}
+
+function buildSceneEnd() {
+
+	return `
+        }
+    }
+}
 
 `;
 
@@ -552,6 +606,55 @@ function buildColor( color ) {
 function buildVector2( vector ) {
 
 	return `(${ vector.x }, ${ vector.y })`;
+
+}
+
+
+function buildCamera( camera ) {
+
+	const name = camera.name ? camera.name : 'Camera_' + camera.id;
+
+	const transform = buildMatrix( camera.matrixWorld );
+
+	if ( camera.matrixWorld.determinant() < 0 ) {
+
+		console.warn( 'THREE.USDZExporter: USDZ does not support negative scales', camera );
+
+	}
+
+	if ( camera.isOrthographicCamera ) {
+
+		return `def Camera "${name}"
+		{
+			matrix4d xformOp:transform = ${ transform }
+			uniform token[] xformOpOrder = ["xformOp:transform"]
+	
+			float2 clippingRange = (${ camera.near.toPrecision( PRECISION ) }, ${ camera.far.toPrecision( PRECISION ) })
+			float horizontalAperture = ${ ( ( Math.abs( camera.left ) + Math.abs( camera.right ) ) * 10 ).toPrecision( PRECISION ) }
+			float verticalAperture = ${ ( ( Math.abs( camera.top ) + Math.abs( camera.bottom ) ) * 10 ).toPrecision( PRECISION ) }
+			token projection = "orthographic"
+		}
+	
+	`;
+
+	} else {
+
+		return `def Camera "${name}"
+		{
+			matrix4d xformOp:transform = ${ transform }
+			uniform token[] xformOpOrder = ["xformOp:transform"]
+	
+			float2 clippingRange = (${ camera.near.toPrecision( PRECISION ) }, ${ camera.far.toPrecision( PRECISION ) })
+			float focalLength = ${ camera.getFocalLength().toPrecision( PRECISION ) }
+			float focusDistance = ${ camera.focus.toPrecision( PRECISION ) }
+			float horizontalAperture = ${ camera.getFilmWidth().toPrecision( PRECISION ) }
+			token projection = "perspective"
+			float verticalAperture = ${ camera.getFilmHeight().toPrecision( PRECISION ) }
+		}
+	
+	`;
+
+	}
 
 }
 
