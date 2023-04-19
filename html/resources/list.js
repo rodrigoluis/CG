@@ -83,12 +83,15 @@ var list = {
             "GLTF Bounding Box": "html/exampleGLTFBoundingBoxInfo",            
             "Collision": "html/exampleCollisionInfo",            
 			},
+			"Raycaster":  {
+				"Drag Control": "html/raycasterDragControlInfo",
+				"Selection": "html/raycasterSelectionInfo",
+            "Layers": "html/raycasterLayersInfo",
+			},         
 			"Misc":  {
 				"Multicolor Cube": "html/exampleMulticolorCubeInfo",
 				"Group Geometry": "html/exampleGroupInfo",
 				"First Person": "html/exampleFirstPersonInfo",
-				"Drag Control": "html/exampleDragControlInfo",
-				"Selection": "html/exampleSelectionInfo",            
 				"Fly Controls":"html/exampleFlyControlInfo",		
 				"Joystick Elements":"html/exampleJoystickInfo",						
 			},
