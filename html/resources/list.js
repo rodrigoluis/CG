@@ -91,6 +91,7 @@ var list = {
 			"Misc":  {
 				"Multicolor Cube": "html/exampleMulticolorCubeInfo",
 				"Group Geometry": "html/exampleGroupInfo",
+				"Traverse": "html/exampleTraverseInfo",            
 				"First Person": "html/exampleFirstPersonInfo",
 				"Fly Controls":"html/exampleFlyControlInfo",		
 				"Joystick Elements":"html/exampleJoystickInfo",						
