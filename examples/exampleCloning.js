@@ -1,6 +1,5 @@
 import * as THREE from 'three';
 import { OrbitControls } from '../build/jsm/controls/OrbitControls.js';
-import GUI from '../libs/util/dat.gui.module.js';
 
 import {
    initRenderer,
@@ -16,7 +15,7 @@ renderer = initRenderer();
 renderer.setClearColor("rgb(30, 30, 40)");
 camera = initCamera(new THREE.Vector3(17, 10, 17));
 orbit = new OrbitControls(camera, renderer.domElement);
-light = initDefaultBasicLight(scene, true, new THREE.Vector3(3, 2, 5) );
+light = initDefaultBasicLight(scene, true, new THREE.Vector3(15, 12, 10) );
 
 // Show axes (parameter is size of each axis)
 let axesHelper = new THREE.AxesHelper( 12 );
@@ -30,12 +29,19 @@ scene.add(groundPlane);
 
 //-------------------------------------------------------------------
 // Start setting the group
-let car = buildCar();
-    car.rotateZ(THREE.MathUtils.degToRad(-90));
-    car.position.y = 3.3;
-scene.add(car);
+let car1 = buildCar();
+    car1.rotateZ(THREE.MathUtils.degToRad(-90));
+    car1.scale.set(0.5, 0.5, 0.5)
 
-buildInterface();
+let car2 = car1.clone(); // Cloning the entire car
+
+// Positioning the cars
+car1.position.set(0.0, 1.6,  4.0);
+car2.position.set(0.0, 1.6, -4.0);
+
+scene.add(car1);
+scene.add(car2);
+
 render();
 
 //-- Functions -----------------------------------------------------------------------------------
@@ -69,13 +75,13 @@ function buildCar() {
    eixo = criaCilindro(0.3, 0.3, 7.0, "rgb(255,0,0)");
       roda1 = criaRoda(1.0, 0.3, 20, 20, Math.PI * 2);
       roda1.rotateX(THREE.MathUtils.degToRad(90));
-      roda2 = roda1.clone(); // Clona roda já criada rotacionada
+      roda2 = roda1.clone(); // Clona roda já criada e rotacionada
       roda1.position.set(0.0, 3.5, 0.0);
       roda2.position.set(0.0, -3.5, 0.0);
    eixo.add(roda1);
    eixo.add(roda2);
    eixo.rotateX(THREE.MathUtils.degToRad(90));
-   eixo2 = eixo.clone(); // Clona o eixo inteiro, já rotacionado
+   eixo2 = eixo.clone(); // Clona o eixo já rotacionado
    
    eixo.position.set(2.1, 4.0, 0.0);
    eixo2.position.set(2.1, -4.2, 0.0);
@@ -84,37 +90,6 @@ function buildCar() {
    body.add(eixo2);
 
    return body;
-}
-
-function buildInterface() {
-   let controls = new function () {
-      this.opacity = 1.0;
-      this.traverse = true;
-
-      this.setOpacity = function () {
-         let opacity = this.opacity;
-         let traverseOn = this.traverse;
-
-         if(traverseOn)
-         {
-            car.traverse(function (child) {
-               if (child.type == 'Mesh')
-                  if (child.material)
-                     child.material.opacity = opacity;
-            });
-         }
-         else
-            car.material.opacity = opacity;
-      };
-   };
-
-   // GUI interface
-   let gui = new GUI();
-   gui.add(controls, 'opacity', 0.0, 1.0)
-      .onChange(function () { controls.setOpacity() })
-      .name("Opacity")
-   gui.add(controls, 'traverse', false)
-      .name("Traverse");
 }
 
 function render() {
