@@ -113,13 +113,8 @@ function loadGLBFile(modelPath, modelName, visibility, desiredScale)
       obj.name = modelName;
       obj.visible = visibility;
       obj.traverse( function ( child ) {
-         if ( child ) {
-            child.castShadow = true;
-         }
-      });
-      obj.traverse( function( node )
-      {
-         if( node.material ) node.material.side = THREE.DoubleSide;
+         if( child.isMesh ) child.castShadow = true;
+         if( child.material ) child.material.side = THREE.DoubleSide;         
       });
 
       var obj = normalizeAndRescale(obj, desiredScale);
@@ -146,12 +141,8 @@ function loadOBJFile(modelPath, modelName, visibility, desiredScale)
          obj.visible = visibility;
          obj.traverse( function (child)
          {
-            child.castShadow = true;
-         });
-
-         obj.traverse( function( node )
-         {
-            if( node.material ) node.material.side = THREE.DoubleSide;
+            if( child.isMesh ) child.castShadow = true;
+            if( child.material ) child.material.side = THREE.DoubleSide; 
          });
 
          var obj = normalizeAndRescale(obj, desiredScale);

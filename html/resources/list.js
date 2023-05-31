@@ -69,6 +69,7 @@ var list = {
 		},
 		"Additional Examples":{
 			"Textures - Advanced":  {
+            "Traverse Textured Object": "html/textureExternalObjectsTraverseInfo",
 				"Texture Transition": "html/textureAdvancedTransitionInfo",            
 				"Environment mapping 1": "html/textureAdvancedCubeMapInfo",
 				"Environment mapping 2": "html/textureAdvancedEquirectangularMapInfo",				

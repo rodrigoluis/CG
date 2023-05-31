@@ -101,12 +101,8 @@ function loadOBJFile(modelPath, modelName, desiredScale, angle, visibility)
         // Set 'castShadow' property for each children of the group
         obj.traverse( function (child)
         {
-          child.castShadow = true;
-        });
-
-        obj.traverse( function( node )
-        {
-          if( node.material ) node.material.side = THREE.DoubleSide;
+           if( child.isMesh ) child.castShadow = true;
+           if( child.material ) child.material.side = THREE.DoubleSide; 
         });
 
         var obj = normalizeAndRescale(obj, desiredScale);
@@ -126,14 +122,10 @@ function loadGLTFFile(modelPath, modelName, desiredScale, angle, visibility)
       var obj = gltf.scene;
       obj.visible = visibility;
       obj.name = getFilename(modelName);
-      obj.traverse( function ( child ) {
-      if ( child ) {
-         child.castShadow = true;
-      }
-      });
-      obj.traverse( function( node )
+      obj.traverse( function (child)
       {
-         if( node.material ) node.material.side = THREE.DoubleSide;
+         if( child.isMesh ) child.castShadow = true;
+         if( child.material ) child.material.side = THREE.DoubleSide; 
       });
 
       var obj = normalizeAndRescale(obj, desiredScale);

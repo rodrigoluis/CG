@@ -88,13 +88,8 @@ function loadGLBFile(modelName, centerObject, sound = null)
   loader.load( modelName, function ( gltf ) {
     var obj = gltf.scene;
     obj.traverse( function ( child ) {
-      if ( child ) {
-          child.castShadow = true;
-      }
-    });
-    obj.traverse( function( node )
-    {
-      if( node.material ) node.material.side = THREE.DoubleSide;
+      if ( child.isMesh ) child.castShadow = true;
+      if ( child.material ) child.material.side = THREE.DoubleSide;
     });
 
     // Only fix the position of the windmill
