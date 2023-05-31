@@ -74,7 +74,8 @@ var list = {
 				"Environment mapping 1": "html/textureAdvancedCubeMapInfo",
 				"Environment mapping 2": "html/textureAdvancedEquirectangularMapInfo",				
 				"Normal mapping": "html/textureAdvancedNormalMappingInfo",								
-				"Displacement mapping": "html/textureAdvancedDisplacementMappingInfo",												
+				"Displacement mapping": "html/textureAdvancedDisplacementMappingInfo",		
+            "MultiTextured Cube": "html/exampleMultiTexturedCubeInfo",											
 			},
 			"Physics":  {
 				"Ammo - Vehicle": "html/ammoVehicleInfo",
@@ -88,11 +89,13 @@ var list = {
 				"Drag Control": "html/raycasterDragControlInfo",
 				"Selection": "html/raycasterSelectionInfo",
             "Layers": "html/raycasterLayersInfo",
-			},         
-			"Misc":  {
-				"Multicolor Cube": "html/exampleMulticolorCubeInfo",
-				"Group Geometry": "html/exampleGroupInfo",
-				"Traverse": "html/exampleTraverseInfo",            
+			},   
+			"Geometries - Misc":  {
+				"Cloning": "html/exampleCloningInfo",	
+				"Traverse": "html/exampleTraverseInfo",			
+			},               
+			"Interaction":  { 
+            "Camera Follow Object": "html/exampleCamFollowObjInfo",        
 				"First Person": "html/exampleFirstPersonInfo",
 				"Fly Controls":"html/exampleFlyControlInfo",		
 				"Joystick Elements":"html/exampleJoystickInfo",						
