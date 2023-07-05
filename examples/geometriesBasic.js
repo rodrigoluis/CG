@@ -75,6 +75,8 @@ function createCylinder(radiusTop, radiusBottom, height, radialSegments, heightS
   var object = new THREE.Mesh(geometry, objectMaterial);
     object.castShadow = true;
     object.position.set(0.0, height/2.0, 0.0);
+   
+console.log(object)
   return object;
 }
 

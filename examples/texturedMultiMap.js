@@ -26,7 +26,7 @@ scene.add( axesHelper );
 
 // Create the cube
 let loader = new THREE.TextureLoader();
-let geometry = new THREE.BoxGeometry(10, 5, 5).toNonIndexed();
+let geometry = new THREE.BoxGeometry(10, 5, 5);
 let cubeMaterials = [
     setMaterial(null,'../assets/textures/crate.jpg', 2, 2), //x+
     setMaterial('orange','../assets/textures/paper.png'), //x-
@@ -37,6 +37,9 @@ let cubeMaterials = [
 ];
 let cube = new THREE.Mesh(geometry, cubeMaterials);
 scene.add(cube);
+
+// To access textures individually, you should use their indexes
+console.log(cube.material[0].map)
 
 render();
 

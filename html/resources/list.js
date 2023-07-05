@@ -37,7 +37,7 @@ var list = {
 				"Basic": "html/textureBasicInfo",
 				"Main Options": "html/textureOptionsInfo",
 				"Textured External Objects": "html/textureExternalObjectsInfo",
-				"UV Mapping":"html/textureUVMappingInfo",
+            "MultiTextured Cube": "html/texturedMultiMapInfo",
 			},
 			"Realism":  {
 				"Ray Tracing 1": "html/raytracingExample1Info",
@@ -74,8 +74,8 @@ var list = {
 				"Environment mapping 1": "html/textureAdvancedCubeMapInfo",
 				"Environment mapping 2": "html/textureAdvancedEquirectangularMapInfo",				
 				"Normal mapping": "html/textureAdvancedNormalMappingInfo",								
-				"Displacement mapping": "html/textureAdvancedDisplacementMappingInfo",		
-            "MultiTextured Cube": "html/exampleMultiTexturedCubeInfo",											
+				"Displacement mapping": "html/textureAdvancedDisplacementMappingInfo",
+				"UV Mapping":"html/textureUVMappingInfo",            		
 			},
 			"Physics":  {
 				"Ammo - Vehicle": "html/ammoVehicleInfo",
