@@ -37,7 +37,7 @@ scene.background = cubeMapTexture;
 
 // Create the main object (teapot)
 let geometry = new TeapotGeometry(1);
-let teapotMaterial = new THREE.MeshLambertMaterial( { color: 0xffffff, envMap: cubeMapTexture, refractionRatio: 0.95 } );
+let teapotMaterial = new THREE.MeshLambertMaterial( { color: 0xffffff, envMap: cubeMapTexture, refractionRatio: 0.9 } );
 let teapot = new THREE.Mesh(geometry, teapotMaterial);
 scene.add(teapot);	
 

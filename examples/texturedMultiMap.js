@@ -28,12 +28,12 @@ scene.add( axesHelper );
 let loader = new THREE.TextureLoader();
 let geometry = new THREE.BoxGeometry(10, 5, 5);
 let cubeMaterials = [
-    setMaterial(null,'../assets/textures/crate.jpg', 2, 2), //x+
-    setMaterial('orange','../assets/textures/paper.png'), //x-
-    setMaterial(null,'../assets/textures/grass.jpg',2,1), //y+
-    setMaterial('rgb(100,100,255)'), //y-
-    setMaterial(null, '../assets/textures/stone.jpg',2,1), //z+
-    setMaterial(null, '../assets/textures/marble.png',2,1) //z-
+    setMaterial('../assets/textures/crate.jpg', 2, 2), //x+
+    setMaterial('../assets/textures/paper.png', 1, 1, 'orange'), //x-   Texture + color
+    setMaterial('../assets/textures/grass.jpg', 2, 1), //y+
+    new THREE.MeshBasicMaterial ({color:'rgb(0,200,100)'}), //y-  Just a color
+    setMaterial('../assets/textures/stone.jpg', 2, 1), //z+
+    setMaterial('../assets/textures/marble.png', 2, 1) //z-
 ];
 let cube = new THREE.Mesh(geometry, cubeMaterials);
 scene.add(cube);
@@ -43,21 +43,13 @@ console.log(cube.material[0].map)
 
 render();
 
-// Function to set basic material or textures
-// You can set just a color, just a texture or both
-function setMaterial(color, file = null, repeatU = 1, repeatV = 1){
-  if(!color) color = 'rgb(255,255,255)';
-
-  let mat;
-  if(!file){
-    mat = new THREE.MeshBasicMaterial ({color:color});
-  } else {
-    mat = new THREE.MeshBasicMaterial({ map: loader.load(file),color:color});
-    mat.map.wrapS = mat.map.wrapT = THREE.RepeatWrapping;
-    mat.map.minFilter = mat.map.magFilter = THREE.LinearFilter;
-    mat.map.repeat.set(repeatU,repeatV); 
-  }
-  return mat;
+// Function to set a texture
+function setMaterial(file, repeatU = 1, repeatV = 1, color = 'rgb(255,255,255)'){
+   let mat = new THREE.MeshBasicMaterial({ map: loader.load(file), color:color});
+   mat.map.wrapS = mat.map.wrapT = THREE.RepeatWrapping;
+   mat.map.minFilter = mat.map.magFilter = THREE.LinearFilter;
+   mat.map.repeat.set(repeatU,repeatV); 
+   return mat;
 }
 
 function render()
