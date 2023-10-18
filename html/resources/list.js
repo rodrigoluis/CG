@@ -39,17 +39,18 @@ var list = {
 				"Textured External Objects": "html/textureExternalObjectsInfo",
             "MultiTextured Cube": "html/texturedMultiMapInfo",
 				"UV Mapping":"html/textureUVMappingInfo",            
-            "Traverse Textured Object": "html/textureExternalObjectsTraverseInfo",            
 			},
 			"Textures - Advanced":  {
-				"Texture Transition": "html/textureAdvancedTransitionInfo",            
 				"Skybox 1": "html/textureAdvancedSkyboxCubeInfo",
 				"Skybox 2": "html/textureAdvancedSkyboxEquirectangularInfo",            
-				"Environment mapping 2": "html/textureAdvancedEnvMapEquirectangularInfo",				
 				"Environment mapping 1": "html/textureAdvancedEnvMapCubeInfo",
 				"Environment mapping 2": "html/textureAdvancedEnvMapEquirectangularInfo",				
 				"Normal mapping": "html/textureAdvancedNormalMappingInfo",								
 				"Displacement mapping": "html/textureAdvancedDisplacementMappingInfo",            		
+			},         
+			"Textures - Extras":  {
+				"Transition": "html/textureExtraTransitionInfo",            
+            "Traversing": "html/textureExtraTraversingInfo",            
 			},         
 			"Realism":  {
 				"Ray Tracing 1": "html/raytracingExample1Info",
