@@ -39,7 +39,7 @@ let water = new Water(
   {
     textureWidth: 512,
     textureHeight: 512,
-    waterNormals: new THREE.TextureLoader().load( '../assets/textures/waternormals.jpg', function ( texture ) {
+    waterNormals: new THREE.TextureLoader().load( '../assets/textures/NormalMapping/waternormals.jpg', function ( texture ) {
       texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
     } ),
     sunDirection: new THREE.Vector3(),

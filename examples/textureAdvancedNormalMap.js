@@ -26,8 +26,8 @@ let invert = 1;
 let phase = 0;
 let lightAnimation = true;
 
-let textureFile = "../assets/textures/plaster.jpg"
-let normalMapFile = "../assets/textures/plaster_normal.jpg"
+let textureFile = "../assets/textures/NormalMapping/plaster.jpg"
+let normalMapFile = "../assets/textures/NormalMapping/plaster_normal.jpg"
 let floorFile = "../assets/textures/floor-wood.jpg";
 
 // Create boxes with and without normal map
