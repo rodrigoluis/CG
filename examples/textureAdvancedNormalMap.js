@@ -28,7 +28,7 @@ let lightAnimation = true;
 
 let textureFile = "../assets/textures/NormalMapping/plaster.jpg"
 let normalMapFile = "../assets/textures/NormalMapping/plaster_normal.jpg"
-let floorFile = "../assets/textures/floor-wood.jpg";
+let floorFile = "../assets/textures/floorWood.jpg";
 
 // Create boxes with and without normal map
 var box = createMesh(new THREE.BoxGeometry(15, 15, 15), textureFile);
@@ -67,7 +67,7 @@ render();
 
 function buildInterface() {
 	let controls = new function () {
-		this.normalScale = 1;
+		this.normalScale = 2.5;
 		this.light = true;
 		this.updateBump = function (e) {
 			boxNormal.material.normalScale.set(e, e);
@@ -77,7 +77,7 @@ function buildInterface() {
 		}		
 	};	
 	let gui = new GUI();
-	gui.add(controls, "normalScale", 0,1)
+	gui.add(controls, "normalScale", 0, 5)
 		.onChange(controls.updateBump)
 		.name("Normal Scale");
 	gui.add(controls, "light", true)
@@ -91,7 +91,11 @@ function createMesh(geom, imageFile, normal) {
 	var mat = new THREE.MeshPhongMaterial({
 		map: tex,
 		normalMap: nmap,
+      normalScale: new THREE.Vector2(2.5, 2.5),
 	});
+
+   console.log(mat)
+
 	var mesh = new THREE.Mesh(geom, mat);
 	return mesh;
 }

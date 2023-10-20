@@ -26,12 +26,12 @@ scene.add(ambientLight);
 // Loading all textures
 const loader = new THREE.TextureLoader();
 
-const groundTexture = loader.load('../assets/textures/floor-wood.jpg');
+const groundTexture = loader.load('../assets/textures/floorWood.jpg');
 groundTexture.wrapS = THREE.MirroredRepeatWrapping;
 groundTexture.wrapT = THREE.RepeatWrapping;
 groundTexture.repeat.set(20, 20);
 
-const rampTexture = loader.load('../assets/textures/floor-wood.jpg');
+const rampTexture = loader.load('../assets/textures/floorWood.jpg');
 rampTexture.wrapS = THREE.MirroredRepeatWrapping;
 rampTexture.repeat.set(3, 1);
 
@@ -117,7 +117,7 @@ const paintingGeometry = new THREE.PlaneGeometry(4, 3);
 const paintings = [
     new THREE.Mesh(paintingGeometry, new THREE.MeshBasicMaterial({ map: loader.load('../assets/textures/fishermen.png') })),
     new THREE.Mesh(paintingGeometry, new THREE.MeshBasicMaterial({ map: loader.load('../assets/textures/fishermen.png') })),
-    new THREE.Mesh(paintingGeometry, new THREE.MeshBasicMaterial({ map: loader.load('../assets/textures/floor-wood.jpg') })),
+    new THREE.Mesh(paintingGeometry, new THREE.MeshBasicMaterial({ map: loader.load('../assets/textures/floorWood.jpg') })),
     new THREE.Mesh(paintingGeometry, new THREE.MeshBasicMaterial({ map: loader.load('../assets/textures/glass.png') })),
     new THREE.Mesh(paintingGeometry, new THREE.MeshBasicMaterial({ map: loader.load('../assets/textures/granite.png') })),
     new THREE.Mesh(paintingGeometry, new THREE.MeshBasicMaterial({ map: loader.load('../assets/textures/marble.png') })),

@@ -73,7 +73,7 @@ scene.add(cube);
 //----------------------------------------------------------------------------
 //-- Use TextureLoader to load texture files
 var textureLoader = new THREE.TextureLoader();
-var floor  = textureLoader.load('../assets/textures/floor-wood.jpg');
+var floor  = textureLoader.load('../assets/textures/floorWood.jpg');
 var glass  = textureLoader.load('../assets/textures/glass.png');
 var stone = textureLoader.load('../assets/textures/stone.jpg');
 var sun = textureLoader.load('../assets/textures/sun.jpg');
