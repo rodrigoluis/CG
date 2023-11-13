@@ -26,13 +26,19 @@ camera.layers.enable( 1 );
 let lookCamera = setLookNonVRBehavior(camera, renderer, "On desktop, press 'Q' or 'E' to fix orientation");
 
 //-- Creating equirectangular Panomara ----------------------------------------------------------
-const geometry = new THREE.SphereGeometry( 1000, 60, 60 );
-	geometry.scale( - 1, 1, 1 ); // invert the geometry on the x-axis (faces will point inward)
+const textureLoader = new THREE.TextureLoader();
+let textureEquirec = textureLoader.load( '../assets/textures/panorama.jpg' );
+   textureEquirec.mapping = THREE.EquirectangularReflectionMapping; 
+scene.background = textureEquirec;
 
-const texture = new THREE.TextureLoader().load( '../assets/textures/panorama.jpg' );
-const material = new THREE.MeshBasicMaterial( { map: texture } )
-const mesh = new THREE.Mesh( geometry, material );
-scene.add( mesh );
+//-- Forma alternativa de aplicar ----------------------------------------------------------
+// const geometry = new THREE.SphereGeometry( 1000, 60, 60 );
+// 	geometry.scale( - 1, 1, 1 ); // invert the geometry on the x-axis (faces will point inward)
+
+// const texture = new THREE.TextureLoader().load( '../assets/textures/panorama.jpg' );
+// const material = new THREE.MeshBasicMaterial( { map: texture } )
+// const mesh = new THREE.Mesh( geometry, material );
+// scene.add( mesh );
 
 //-- Start main loop
 renderer.setAnimationLoop( render );
