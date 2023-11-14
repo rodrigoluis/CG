@@ -2,16 +2,13 @@ import * as THREE from 'three';
 import GUI from '../libs/util/dat.gui.module.js'
 import {ARjs}    from  '../libs/AR/ar.js';
 import {TeapotGeometry} from '../build/jsm/geometries/TeapotGeometry.js';
-import {initDefaultSpotlight} from "../libs/util/util.js";
+import { initDefaultSpotlight,
+         initRenderer} from "../libs/util/util.js";
 
 // init scene and camera
 let scene, camera, renderer, light;
-renderer	= new THREE.WebGLRenderer({antialias: true, alpha: true});
-	renderer.shadowMap.type = THREE.VSMShadowMap;
-	renderer.shadowMap.enabled = true;
-	renderer.setClearColor(new THREE.Color('lightgrey'), 0)
-	renderer.setSize( 1280, 960 ); // Change here to render in low resolution (for example 640 x 480)
-	document.body.appendChild( renderer.domElement );
+renderer = initRenderer();
+   renderer.setClearColor(new THREE.Color('lightgrey'), 0)   
 scene	= new THREE.Scene();
 camera = new THREE.Camera();
    scene.add(camera);
@@ -177,13 +174,13 @@ function setARStuff()
    
    // initialize it
    AR.context.init(function onCompleted(){
-      // copy projection matrix to camera
       camera.projectionMatrix.copy( AR.context.getProjectionMatrix() );
    })
    
    //----------------------------------------------------------------------------
    // Create a ArMarkerControls
-   var markerControls = new ARjs.MarkerControls(AR.context, camera, {	
+   let markerControls;
+   markerControls = new ARjs.MarkerControls(AR.context, camera, {	
       type : 'pattern',
       patternUrl : '../libs/AR/data/patt.kanji',
       changeMatrixMode: 'cameraTransformMatrix' // as we controls the camera, set changeMatrixMode: 'cameraTransformMatrix'

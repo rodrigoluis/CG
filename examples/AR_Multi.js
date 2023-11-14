@@ -1,16 +1,13 @@
 import * as THREE from 'three';
-import {initDefaultBasicLight} from "../libs/util/util.js";
 import {ARjs}    from  '../libs/AR/ar.js';
-import { initAR,
+import { initAR,  
          createSourceChangerInterface} from "../libs/util/utilAR.js"
-
+import { initDefaultBasicLight,
+         initRenderer} from "../libs/util/util.js";
+   
 let scene, camera, renderer, light;
-renderer	= new THREE.WebGLRenderer({antialias: true, alpha: true});
-	renderer.shadowMap.type = THREE.VSMShadowMap;
-	renderer.shadowMap.enabled = true;
-	renderer.setClearColor(new THREE.Color('lightgrey'), 0)
-	renderer.setSize( 1280, 960 ); // Change here to render in low resolution (for example 640 x 480)
-	document.body.appendChild( renderer.domElement );
+renderer = initRenderer();
+   renderer.setClearColor(new THREE.Color('lightgrey'), 0)   
 scene	= new THREE.Scene();
 camera = new THREE.Camera();
    scene.add(camera);

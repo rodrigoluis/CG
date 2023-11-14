@@ -1,22 +1,23 @@
 import * as THREE from 'three';
-import { initDefaultBasicLight,
-         SecondaryBox} from "../libs/util/util.js";
 import { ARjs } from '../libs/AR/ar.js';
 import { TeapotGeometry } from '../build/jsm/geometries/TeapotGeometry.js';
-import {
-   initAR,
-   createSourceChangerInterface
-} from "../libs/util/utilAR.js"
+import { createSourceChangerInterface,
+         initAR} from "../libs/util/utilAR.js"
 import ARMultimarkerManager from "../libs/util/ARMultimarkerManager.js"
-
+import { initDefaultBasicLight,
+         SecondaryBox,
+         initRenderer} from "../libs/util/util.js";
 
 let scene, camera, renderer, light;
-renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-renderer.shadowMap.type = THREE.VSMShadowMap;
-renderer.shadowMap.enabled = true;
-renderer.setClearColor(new THREE.Color('lightgrey'), 0)
-renderer.setSize(1280, 960); // Change here to render in low resolution (for example 640 x 480)
-document.body.appendChild(renderer.domElement);
+renderer = initRenderer();
+renderer.setClearColor(new THREE.Color('lightgrey'), 0)   
+// let scene, camera, renderer, light;
+// renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+// renderer.shadowMap.type = THREE.VSMShadowMap;
+// renderer.shadowMap.enabled = true;
+// renderer.setClearColor(new THREE.Color('lightgrey'), 0)
+// renderer.setSize(1280, 960); // Change here to render in low resolution (for example 640 x 480)
+// document.body.appendChild(renderer.domElement);
 scene = new THREE.Scene();
 camera = new THREE.Camera();
 scene.add(camera);
