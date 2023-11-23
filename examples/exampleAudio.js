@@ -15,9 +15,8 @@ scene = new THREE.Scene();    // Create main scene
 clock = new THREE.Clock();
 stats = new Stats();          // To show FPS information
 initDefaultSpotlight(scene, new THREE.Vector3(2, 4, 2)); // Use default light
-renderer = initRenderer();    // View function in util/utils
-   renderer.setClearColor("rgb(30, 30, 42)");
-camera = initCamera(new THREE.Vector3(2.8, 1.8, 4.0)); // Init camera in this position
+renderer = initRenderer("rgb(30, 30, 42)");
+camera   = initCamera(new THREE.Vector3(2.8, 1.8, 4.0)); // Init camera in this position
 orbit = new OrbitControls( camera, renderer.domElement ); // Enable mouse rotation, pan, zoom etc.
 
 //-- Globals ------------------------------------------------------------------------
@@ -54,8 +53,7 @@ const sound = new THREE.Audio(listener);
 audioLoader.load('../assets/sounds/sampleMusic.mp3', function (buffer) {
    sound.setBuffer(buffer);
    sound.setLoop(true);
-   sound.setVolume(0.5);
-   //sound.play(); // Will play when start button is pressed
+   sound.setVolume(0.3);
 });
 
 //-- Create windmill sound ---------------------------------------------------       
@@ -63,7 +61,6 @@ const windmillSound = new THREE.PositionalAudio(listener);
 audioLoader.load('../assets/sounds/sampleSound.ogg', function (buffer) {
    windmillSound.setBuffer(buffer);
    windmillSound.setLoop(true);
-   //windmillSound.play(); // Will play when start button is pressed
 }); // Will be added to the target object
 
 //-- Create ball sound ---------------------------------------------------       
@@ -79,6 +76,7 @@ audioLoader.load('../assets/sounds/bounce.mp3', function (buffer) {
 loadGLBFile('../assets/objects/windmill.glb', true, windmillSound);
 loadGLBFile('../assets/objects/walkingMan.glb', false);
 
+// Load ball
 const speed = 2.5, height = 0.8, offset = 0.5;
 let basketSoundOn = true;
 let ball = new THREE.Mesh(new THREE.SphereGeometry(0.1, 32, 16),
@@ -90,6 +88,9 @@ scene.add(ball);
 
 buildInterface();
 render();
+
+//-- Functions -------------------------------------------------------
+
 function loadGLBFile(modelName, centerObject, sound = null) {
    var loader = new GLTFLoader();
    loader.load(modelName, function (gltf) {
@@ -143,7 +144,6 @@ function fixPosition(obj) {
 function rotateMan(delta) {
    if (man) {
       time += delta * 25;
-
       var mat4 = new THREE.Matrix4();
       var scale = 0.4;
       man.matrixAutoUpdate = false;
@@ -170,32 +170,19 @@ function buildInterface() {
       this.playMusic = true;
       this.playWindmill = true;
       this.playBasket = true;
-      this.onPlayAnimation = function () {
-         playSoundsFirstTime();
-      };
       this.onPlayMusic = function () {
-         if (this.playMusic)
-            sound.play();
-         else
-            sound.pause();
+         if (this.playMusic) sound.play();
+         else                sound.pause();
       };
       this.onPlayWindmill = function () {
-         if (this.playWindmill)
-            windmillSound.play();
-         else
-            windmillSound.pause();
+         if (this.playWindmill) windmillSound.play();
+         else                   windmillSound.pause();
       };
       this.onPlayBasket = function () {
-         if (this.playBasket)
-            basketSoundOn = true;
-         else
-            basketSoundOn = false;
+         basketSoundOn = this.playBasket ? true : false;
       };
    };
-
-   // GUI interface
-   var gui = new GUI();
-   gui.add(controls, 'onPlayAnimation').name("START");
+   let gui = new GUI();
    gui.add(controls, 'playMusic', true)
       .name("Music")
       .onChange(function (e) { controls.onPlayMusic() });
