@@ -1,51 +1,41 @@
 import * as THREE from 'three';
 import GUI from '../libs/util/dat.gui.module.js'
 import Stats from '../build/jsm/libs/stats.module.js';
-import { TrackballControls } from '../build/jsm/controls/TrackballControls.js';
+import { OrbitControls } from '../build/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from '../build/jsm/loaders/GLTFLoader.js'
-import {
-   initRenderer,
-   initDefaultSpotlight,
-   createGroundPlane,
-   getMaxSize,
-   onWindowResize
-} from "../libs/util/util.js";
+import { initCamera,
+         initRenderer,
+         initDefaultSpotlight,
+         createGroundPlane,
+         getMaxSize,
+         onWindowResize} from "../libs/util/util.js";
 
-var scene = new THREE.Scene();    // Create main scene
-var clock = new THREE.Clock();
-var stats = new Stats();          // To show FPS information
-var light = initDefaultSpotlight(scene, new THREE.Vector3(2, 4, 2)); // Use default light
+let scene, renderer, camera, orbit, clock, stats; // Initial variables
+scene = new THREE.Scene();    // Create main scene
+clock = new THREE.Clock();
+stats = new Stats();          // To show FPS information
+initDefaultSpotlight(scene, new THREE.Vector3(2, 4, 2)); // Use default light
+renderer = initRenderer();    // View function in util/utils
+   renderer.setClearColor("rgb(30, 30, 42)");
+camera = initCamera(new THREE.Vector3(2.8, 1.8, 4.0)); // Init camera in this position
+orbit = new OrbitControls( camera, renderer.domElement ); // Enable mouse rotation, pan, zoom etc.
 
-var renderer = initRenderer();    // View function in util/utils
-renderer.setClearColor("rgb(30, 30, 42)");
-var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(2.8, 1.8, 4.0);
-camera.up.set(0, 1, 0);
-
-// Control the appearence of first object loaded
-var firstRender = false;
-
-// Enable mouse rotation, pan, zoom etc.
-var trackballControls = new TrackballControls(camera, renderer.domElement);
-trackballControls.target = new THREE.Vector3(0, 1.0, 0);
-
-// Listen window size changes
-window.addEventListener('resize', function () { onWindowResize(camera, renderer) }, false);
-
-var groundPlane = createGroundPlane(5.0, 5.0, 60, 60, "rgb(100,140,90)");
-groundPlane.rotateX(THREE.MathUtils.degToRad(-90));
-scene.add(groundPlane);
-
-// Show axes (parameter is size of each axis)
-var axesHelper = new THREE.AxesHelper(2);
-axesHelper.visible = false;
-scene.add(axesHelper);
-
-//----------------------------------------------------------------------------
+//-- Globals ------------------------------------------------------------------------
 var man = null;
 var playAction = false;
 var time = 0;
 var mixer = new Array();
+
+//-- Events --------------------------------------------------------------------------
+window.addEventListener('resize', function () { onWindowResize(camera, renderer) }, false);
+window.addEventListener('click', function () {  
+   let startMessage = document.getElementById('start-message');
+   if (startMessage) startMessage.style.display = 'none';
+   playSoundsFirstTime();
+});
+var groundPlane = createGroundPlane(5.0, 5.0, 60, 60, "rgb(100,140,90)");
+groundPlane.rotateX(THREE.MathUtils.degToRad(-90));
+scene.add(groundPlane);
 
 //----------------------------------------------------------------------------
 //-- AUDIO STUFF -------------------------------------------------------------
@@ -91,8 +81,8 @@ loadGLBFile('../assets/objects/walkingMan.glb', false);
 
 const speed = 2.5, height = 0.8, offset = 0.5;
 let basketSoundOn = true;
-let ball =  new THREE.Mesh(new THREE.SphereGeometry(0.1, 32, 16),
-            new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load('../assets/textures/basket.png')}));
+let ball = new THREE.Mesh(new THREE.SphereGeometry(0.1, 32, 16),
+   new THREE.MeshLambertMaterial({ map: new THREE.TextureLoader().load('../assets/textures/basket.png') }));
 ball.castShadow = true;
 ball.translateX(0.5);
 ball.translateY(1.5);
@@ -164,6 +154,16 @@ function rotateMan(delta) {
    }
 }
 
+function playSoundsFirstTime()
+{
+   if (firstPlay) { // Execute only once
+      playAction = true;
+      sound.play();
+      windmillSound.play();
+      firstPlay = false;
+   }   
+}
+
 function buildInterface() {
    // Interface
    var controls = new function () {
@@ -171,12 +171,7 @@ function buildInterface() {
       this.playWindmill = true;
       this.playBasket = true;
       this.onPlayAnimation = function () {
-         if (firstPlay) { // Execute only once
-            playAction = !playAction;
-            sound.play();
-            windmillSound.play();
-            firstPlay = false;
-         }
+         playSoundsFirstTime();
       };
       this.onPlayMusic = function () {
          if (this.playMusic)
@@ -195,7 +190,7 @@ function buildInterface() {
             basketSoundOn = true;
          else
             basketSoundOn = false;
-      };      
+      };
    };
 
    // GUI interface
@@ -216,7 +211,6 @@ function render() {
    stats.update();
    let delta = clock.getDelta();
    let time = clock.getElapsedTime();
-   trackballControls.update();
    requestAnimationFrame(render);
    renderer.render(scene, camera);
 
@@ -227,8 +221,8 @@ function render() {
       rotateMan(delta);
       let oldpos = ball.position.y;
       ball.position.y = 0.1 + Math.abs(Math.sin(i * offset + (time * speed)) * height);
-      
-      if(basketSoundOn && ball.position.y < 0.15 && ball.position.y > oldpos)
+
+      if (basketSoundOn && ball.position.y < 0.15 && ball.position.y > oldpos)
          ballSound.play();
    }
 }
