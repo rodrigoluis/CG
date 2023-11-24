@@ -1,5 +1,31 @@
 /* W3.CSS 4.13 June 2019 by Jan Egil and Borge Refsnes */
 
+html,
+body {
+    margin: 0;
+    height: 100%;
+}
+
+#webgl-output {
+    width: 100%;
+    height: 100%;
+    display: block;
+}
+
+#blocker {
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(7, 7, 9, 0.5);
+}
+
+#instructions {
+    color: #ffffff;
+    font-size: 1.8em;
+    width: 30%;
+}
+
+
 html {
     box-sizing: border-box
 }
