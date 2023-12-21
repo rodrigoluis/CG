@@ -24,7 +24,7 @@ controls.update();
 
 //-- Create background ----------------------------------------------------------------------------
 const textureLoader = new THREE.TextureLoader();
-let textureEquirec = textureLoader.load( '../assets/textures/panorama5.jpg' );
+let textureEquirec = textureLoader.load( '../assets/textures/skybox/panorama5.jpg' );
 	textureEquirec.mapping = THREE.EquirectangularReflectionMapping; 
 	textureEquirec.encoding = THREE.sRGBEncoding;
 scene.background = textureEquirec

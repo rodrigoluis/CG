@@ -22,7 +22,7 @@ window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)},
 
 //-- CREATING THE EQUIRECTANGULAR MAP ---------------------------------------------------------------------
 const textureLoader = new THREE.TextureLoader();
-let textureEquirec = textureLoader.load( '../assets/textures/panorama4.jpg' );
+let textureEquirec = textureLoader.load( '../assets/textures/skybox/panorama4.jpg' );
 	textureEquirec.mapping = THREE.EquirectangularReflectionMapping; // Reflection as default
 // Set scene's background as a equirectangular map
 scene.background = textureEquirec;
