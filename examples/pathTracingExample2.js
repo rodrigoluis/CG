@@ -448,7 +448,7 @@ function initSceneData()
 	aabbDataTexture.needsUpdate = true;
 
    // textureLoader = new THREE.TextureLoader();
-   // let hdrTexture = textureLoader.load( '../assets/textures/panorama5.jpg' );
+   // let hdrTexture = textureLoader.load( '../assets/textures/skybox/panorama5.jpg' );
    //    hdrTexture.mapping = THREE.EquirectangularReflectionMapping; // Reflection as default
    //    hdrTexture.encoding = THREE.sRGBEncoding;
    //    hdrTexture.flipY = false;
