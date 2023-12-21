@@ -41,8 +41,10 @@ var list = {
 				"UV Mapping":"html/textureUVMappingInfo",            
 			},
 			"Textures - Advanced":  {
-				"Skybox 1": "html/textureAdvancedSkyboxCubeInfo",
-				"Skybox 2": "html/textureAdvancedSkyboxEquirectangularInfo",            
+				"Skybox (Cube)": "html/textureAdvancedSkyboxCubeInfo",
+				"Skybox (Equirectangular)": "html/textureAdvancedSkyboxEquirectangularInfo",            
+				"Skybox (Stripe)": "html/textureAdvancedSkyboxCubeStripeInfo",
+				"Skybox (Cross)": "html/textureAdvancedSkyboxCubeCrossInfo",            
 				"Environment mapping 1": "html/textureAdvancedEnvMapCubeInfo",
 				"Environment mapping 2": "html/textureAdvancedEnvMapEquirectangularInfo",				
 				"Normal mapping": "html/textureAdvancedNormalMappingInfo",								
