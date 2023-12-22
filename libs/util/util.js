@@ -247,6 +247,7 @@ export function initRenderer(color = "rgb(0, 0, 0)") {
 
    //var props = (typeof additionalProperties !== 'undefined' && additionalProperties) ? additionalProperties : {};
    var renderer = new THREE.WebGLRenderer();
+   //renderer.useLegacyLights = true;
    renderer.shadowMap.enabled = true;
    renderer.shadowMapSoft = true;
    renderer.shadowMap.type = THREE.PCFSoftShadowMap;
@@ -291,15 +292,18 @@ export function initCamera(initialPosition) {
 
 export function initDefaultBasicLight(scene, castShadow = false, position = new THREE.Vector3(2, 1, 1),
    shadowSide = 16, shadowMapSize = 512, shadowNear = 0.1, shadowFar = 100) {
+   let power = 2.5;
    const ambientLight = new THREE.HemisphereLight(
       'white', // bright sky color
       'darkslategrey', // dim ground color
-      0.5, // intensity
+      0.5 * power, // intensity
    );
-
-   const mainLight = new THREE.DirectionalLight('white', 0.7);
+   scene.add(ambientLight);
+   
+   const mainLight = new THREE.DirectionalLight('white', 0.7 * power);
    mainLight.position.copy(position);
    mainLight.castShadow = castShadow;
+   scene.add(mainLight);
 
    // Directional ligth's shadow uses an OrthographicCamera to set shadow parameteres
    // and its left, right, bottom, top, near and far parameters are, respectively,
@@ -314,23 +318,22 @@ export function initDefaultBasicLight(scene, castShadow = false, position = new 
    shadow.camera.bottom = -shadowSide / 2;
    shadow.camera.top = shadowSide / 2;
 
-   scene.add(ambientLight);
-   scene.add(mainLight);
 
    return mainLight;
 }
 
-export function initDefaultSpotlight(scene, initialPosition) {
+export function initDefaultSpotlight(scene, initialPosition, power = 50) {
    var position = (initialPosition !== undefined) ? initialPosition : new THREE.Vector3(-10, 30, 40);
-
+   
    var spotLight = new THREE.SpotLight(0xffffff);
    spotLight.name = "spotLight"
    spotLight.position.copy(position);
    spotLight.castShadow = true;
+   spotLight.intensity = power;
    spotLight.distance = 0;
    spotLight.decay = 2;
    spotLight.penumbra = 0.5;
-   spotLight.angle = degreesToRadians(40);
+   spotLight.angle = degreesToRadians(60);
    spotLight.shadow.mapSize.width = 512;
    spotLight.shadow.mapSize.height = 512;
    scene.add(spotLight);
