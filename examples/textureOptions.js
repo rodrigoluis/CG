@@ -19,7 +19,7 @@ camera.position.set(0.0, 0.0, 5.0);
 camera.up.set(0, 1, 0);
 
 var lightPosition = new THREE.Vector3(0.0, 0.0, 5.0);
-var light = initDefaultSpotlight(scene, lightPosition); // Use default light
+var light = initDefaultSpotlight(scene, lightPosition, 100); // Use default light
 
 // Enable mouse rotation, pan, zoom etc.
 var trackballControls = new TrackballControls(camera, renderer.domElement);
@@ -38,6 +38,7 @@ scene.add(plane);
 //-- Use TextureLoader to load texture files
 var textureLoader = new THREE.TextureLoader();
 var floor = textureLoader.load('../assets/textures/marble.png');
+    floor.colorSpace = THREE.SRGBColorSpace;
 
 // Apply texture to the 'map' property of the plane
 plane.material.map = floor;

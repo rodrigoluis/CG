@@ -5,14 +5,14 @@ import {TrackballControls} from '../build/jsm/controls/TrackballControls.js';
 import {initRenderer, 
         initCamera, 
         onWindowResize,
-        initDefaultBasicLight} from "../libs/util/util.js";
+        initDefaultSpotlight} from "../libs/util/util.js";
 
 var stats = new Stats();          // To show FPS information
 var scene = new THREE.Scene();    // Create main scene
 var renderer = initRenderer();    // View function in util/utils
 var camera = initCamera(new THREE.Vector3(5, 5, 7)); // Init camera in this position
 var trackballControls = new TrackballControls( camera, renderer.domElement );
-initDefaultBasicLight(scene);
+initDefaultSpotlight(scene, new THREE.Vector3(2, 4, 2)); // Use default light
 
 // Set angles of rotation
 var angle = 0;
@@ -26,7 +26,8 @@ scene.add( axesHelper );
 
 // Base sphere
 var sphereGeometry = new THREE.SphereGeometry(0.2, 32, 32);
-var sphereMaterial = new THREE.MeshPhongMaterial( {color:'rgb(180,180,255)'} );
+var sphereMaterial = new THREE.MeshPhongMaterial(
+    {color:'rgb(180,180,255)', shininess:"40", specular:'rgb(255,255,255'} );
 var sphere = new THREE.Mesh( sphereGeometry, sphereMaterial );
 scene.add(sphere);
 // Set initial position of the sphere
@@ -34,13 +35,13 @@ sphere.translateX(1.0).translateY(1.0).translateZ(1.0);
 
 // More information about cylinderGeometry here ---> https://threejs.org/docs/#api/en/geometries/CylinderGeometry
 var cylinderGeometry = new THREE.CylinderGeometry(0.1, 0.1, 2.0, 25);
-var cylinderMaterial = new THREE.MeshPhongMaterial( {color:'rgb(100,255,100)'} );
+var cylinderMaterial = new THREE.MeshPhongMaterial( {color:'rgb(100,255,100)'});
 var cylinder = new THREE.Mesh( cylinderGeometry, cylinderMaterial );
 sphere.add(cylinder);
 
 // Rede cylinder
 var cylinderGeometry2 = new THREE.CylinderGeometry(0.07, 0.07, 1.0, 25);
-var cylinderMaterial2 = new THREE.MeshPhongMaterial( {color:'rgb(255,100,100)'} );
+var cylinderMaterial2 = new THREE.MeshLambertMaterial( {color:'rgb(255,100,100)'} );
 var cylinder2 = new THREE.Mesh( cylinderGeometry2, cylinderMaterial2 );
 cylinder.add(cylinder2);
 

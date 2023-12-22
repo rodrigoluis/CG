@@ -1,7 +1,8 @@
 //-- Imports -------------------------------------------------------------------------------------
 import * as THREE from  'three';
 import { VRButton } from '../build/jsm/webxr/VRButton.js';
-import { onWindowResize,
+import { initDefaultBasicLight,
+         onWindowResize,
 		   createGroundPlane } from "../libs/util/util.js";
 import { setFlyNonVRBehavior } from "../libs/util/utilVR.js";
 //-----------------------------------------------------------------------------------------------
@@ -9,7 +10,7 @@ import { setFlyNonVRBehavior } from "../libs/util/utilVR.js";
 //-----------------------------------------------------------------------------------------------
 
 //--  General globals ---------------------------------------------------------------------------
-window.addEventListener( 'resize', onWindowResize );
+window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
 //-- Renderer settings ---------------------------------------------------------------------------
 let renderer = new THREE.WebGLRenderer();
@@ -17,7 +18,6 @@ let renderer = new THREE.WebGLRenderer();
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	renderer.xr.enabled = true;
-	renderer.outputEncoding = THREE.sRGBEncoding;
 	renderer.shadowMap.enabled = true;
 
 //-- Setting scene and camera -------------------------------------------------------------------
@@ -107,18 +107,7 @@ function render()
 //-- Create Scene --------------------------------------------------------------------------------
 function createScene()
 {
-	// Light stuff 
-	const light = new THREE.PointLight(0xaaaaaa);
-		light.position.set(30,30,20);
-		light.castShadow = true;
-		light.distance = 0;
-		light.shadow.mapSize.width = 1024;
-		light.shadow.mapSize.height = 1024;	
-	scene.add(light);
-
-	var ambientLight = new THREE.AmbientLight(0x121212);
-		scene.add(ambientLight);
-
+   let light = initDefaultBasicLight(scene, true, new THREE.Vector3(-100, 200, 1), 200, 2014, 0.1, 400); // 
 	// Load all textures 
 	var textureLoader = new THREE.TextureLoader();
 		var floor 	= textureLoader.load('../assets/textures/sand.jpg');	

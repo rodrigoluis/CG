@@ -119,6 +119,7 @@ export function initLight(position)
 
   const mainLight = new THREE.DirectionalLight('white', 0.7);
     mainLight.position.copy(position);
+    mainLight.intensity = 3.0;
     mainLight.castShadow = true;
    
   const shadow = mainLight.shadow;

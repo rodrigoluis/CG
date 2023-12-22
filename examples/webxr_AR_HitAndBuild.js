@@ -14,11 +14,11 @@ let hitTestSourceRequested = false;
 
 container = document.createElement( 'div' );
 document.body.appendChild( container );
-window.addEventListener( 'resize', onWindowResize );
 
 scene = new THREE.Scene();
 initDefaultSpotlight(scene, new THREE.Vector3(2, 4, 2));
 camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 0.01, 20 );
+window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
 //
 renderer = new THREE.WebGLRenderer( { antialias: true, alpha: true } );

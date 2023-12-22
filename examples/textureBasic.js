@@ -19,6 +19,7 @@ var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHei
   camera.up.set( 0, 1, 0 );
 
 var ambientLight = new THREE.AmbientLight("rgb(100, 100, 100)");
+   ambientLight.intensity = 1;
 scene.add(ambientLight);
 
 var lightPosition = new THREE.Vector3(2.5, 1.8, 0.0);
@@ -26,6 +27,7 @@ var lightPosition = new THREE.Vector3(2.5, 1.8, 0.0);
   light.position.copy(lightPosition);
   light.castShadow = true;
   light.penumbra = 0.5;    
+  light.intensity = 30;
 scene.add(light);
 
 var lightSphere = createLightSphere(scene, 0.1, 10, 10, lightPosition);  
@@ -74,9 +76,13 @@ scene.add(cube);
 //-- Use TextureLoader to load texture files
 var textureLoader = new THREE.TextureLoader();
 var floor  = textureLoader.load('../assets/textures/floorWood.jpg');
+    floor.colorSpace = THREE.SRGBColorSpace;
 var glass  = textureLoader.load('../assets/textures/glass.png');
+    glass.colorSpace = THREE.SRGBColorSpace;
 var stone = textureLoader.load('../assets/textures/stone.jpg');
+    stone.colorSpace = THREE.SRGBColorSpace;
 var sun = textureLoader.load('../assets/textures/sun.jpg');
+
 
 // Apply texture to the 'map' property of the respective materials' objects
 groundPlane.material.map = floor;

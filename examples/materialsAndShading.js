@@ -23,7 +23,7 @@ orbit = new OrbitControls( camera, renderer.domElement );
 stats = new Stats();          // To show FPS information
 
 lightPosition = new THREE.Vector3(1.7, 0.8, 1.1);
-light = initDefaultSpotlight(scene, lightPosition); // Use default light
+light = initDefaultSpotlight(scene, lightPosition, 5); // Use default light
 lightSphere = createLightSphere(scene, 0.1, 10, 10, lightPosition);
 
 // To use the keyboard

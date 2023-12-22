@@ -40,10 +40,10 @@ let infoBox = new SecondaryBox("");
 
 // Teapot
 let objColor = "rgb(255,20,20)"; // Define the color of the object
-let objShininess = 200;          // Define the shininess of the object
+let objShininess = 100;          // Define the shininess of the object
 
 let geometry = new TeapotGeometry(0.5);
-let material = new THREE.MeshPhongMaterial({color: objColor, shininess: objShininess});
+let material = new THREE.MeshPhongMaterial({color: objColor, specular: "rgb(255,255,255)", shininess: objShininess});
   material.side = THREE.DoubleSide;
 let obj = new THREE.Mesh(geometry, material);
   obj.castShadow = true;
@@ -52,7 +52,7 @@ scene.add(obj);
 
 //---------------------------------------------------------
 // Default light intensity, position, color, ambient color and intensity
-let lightIntensity = 1.0;
+let lightIntensity = 5;
 let lightPosition = new THREE.Vector3(1.7, 0.8, 1.1);
 let lightColor = "rgb(255,255,255)";
 let ambientColor = "rgb(50,50,50)";
@@ -82,6 +82,7 @@ spotLight.visible = true;
 let currentLight = spotLight; // current light
 
 buildInterface();
+updateLightIntensity();
 render();
 
 // Set Point Light
@@ -216,7 +217,7 @@ function buildInterface()
   gui.add(controls, 'lightType', ['Spot', 'Point', 'Direction'])
     .name("Light Type")
     .onChange(function(e) { controls.onChangeLight(); });
-  gui.add(controls, 'lightIntensity', 0, 5)
+  gui.add(controls, 'lightIntensity', 0, 20)
     .name("Light Intensity")
     .onChange(function(e) { controls.onUpdateLightIntensity() });
   gui.add(controls, 'ambientLight', true)

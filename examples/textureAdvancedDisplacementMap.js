@@ -11,13 +11,14 @@ let scene = new THREE.Scene();
 let camera = initCamera(new THREE.Vector3(0, 0, 45)); // Init camera in this position
 let renderer = initRenderer(); 
 	renderer.setClearColor(new THREE.Color("lightslategray"));
-let light = initDefaultSpotlight(scene, camera.position);
+let light = initDefaultSpotlight(scene, camera.position, 5000);
 let orbitcontrols = new OrbitControls (camera, renderer.domElement);
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
 // Create main object
 let geom = new THREE.CylinderGeometry(10, 10, 20, 200, 200, true);
 let colormap = 	new THREE.TextureLoader().load("../assets/textures/displacement/Stylized_blocks_001_basecolor.jpg");
+    colormap.colorSpace = THREE.SRGBColorSpace;
 let normalmap = new THREE.TextureLoader().load("../assets/textures/displacement/Stylized_blocks_001_normal.jpg");
 let dispmap = 	new THREE.TextureLoader().load("../assets/textures/displacement/Stylized_blocks_001_height.png");
 

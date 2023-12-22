@@ -3,16 +3,16 @@ import {TrackballControls} from '../build/jsm/controls/TrackballControls.js';
 import KeyboardState from '../libs/util/KeyboardState.js';
 import {initRenderer, 
         InfoBox,
-        initDefaultSpotlight,
+        initDefaultBasicLight,
         initCamera,
         createGroundPlaneXZ,
         onWindowResize} from "../libs/util/util.js";
 
-let scene, renderer, camera; 
+let scene, renderer, camera, light; 
 scene = new THREE.Scene();    // Create main scene
 renderer = initRenderer();    // View function in util/utils
 camera = initCamera(new THREE.Vector3(5,15,50));
-initDefaultSpotlight(scene, new THREE.Vector3(35, 20, 30)); // Use default light
+light = initDefaultBasicLight(scene, true, new THREE.Vector3(5,15,50), 80, 1024); 
 
 // Listen window size changes
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );

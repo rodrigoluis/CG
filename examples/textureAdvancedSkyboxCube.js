@@ -28,6 +28,7 @@ const urls = [
 ];
 // Setting the two cube maps, one for refraction and one for reflection
 let cubeMapTexture = new THREE.CubeTextureLoader().load( urls );
+    cubeMapTexture.colorSpace = THREE.SRGBColorSpace;
 
 // Create the main scene and Set its background as a cubemap (using a CubeTexture)
 scene.background = cubeMapTexture;

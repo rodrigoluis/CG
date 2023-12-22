@@ -76,12 +76,6 @@ class NRRDLoader extends Loader {
 
 		function scan( type, chunks ) {
 
-			if ( chunks === undefined || chunks === null ) {
-
-				chunks = 1;
-
-			}
-
 			let _chunkSize = 1;
 			let _array_type = Uint8Array;
 
@@ -135,13 +129,6 @@ class NRRDLoader extends Loader {
 
 				// we need to flip here since the format doesn't match the native endianness
 				_bytes = flipEndianness( _bytes, _chunkSize );
-
-			}
-
-			if ( chunks == 1 ) {
-
-				// if only one chunk was requested, just return one value
-				return _bytes[ 0 ];
 
 			}
 
@@ -363,6 +350,7 @@ class NRRDLoader extends Loader {
 
 		const volume = new Volume();
 		volume.header = headerObject;
+		volume.segmentation = this.segmentation;
 		//
 		// parse the (unzipped) data to a datastream of the correct type
 		//
@@ -388,7 +376,7 @@ class NRRDLoader extends Loader {
 			const yIndex = headerObject.vectors.findIndex( vector => vector[ 1 ] !== 0 );
 			const zIndex = headerObject.vectors.findIndex( vector => vector[ 2 ] !== 0 );
 
-			let axisOrder = [];
+			const axisOrder = [];
 
 			if ( xIndex !== yIndex && xIndex !== zIndex && yIndex !== zIndex ) {
 
@@ -445,7 +433,7 @@ class NRRDLoader extends Loader {
 		}
 
 
-		if ( ! headerObject.vectors || this.segmentation ) {
+		if ( ! headerObject.vectors ) {
 
 			volume.matrix.set(
 				1, 0, 0, 0,
@@ -472,7 +460,12 @@ class NRRDLoader extends Loader {
 
 		volume.inverseMatrix = new Matrix4();
 		volume.inverseMatrix.copy( volume.matrix ).invert();
-		volume.RASDimensions = new Vector3( volume.xLength, volume.yLength, volume.zLength ).applyMatrix4( volume.matrix ).round().toArray().map( Math.abs );
+
+		volume.RASDimensions = [
+			Math.floor( volume.xLength * spacingX ),
+			Math.floor( volume.yLength * spacingY ),
+			Math.floor( volume.zLength * spacingZ )
+		];
 
 		// .. and set the default threshold
 		// only if the threshold was not already set

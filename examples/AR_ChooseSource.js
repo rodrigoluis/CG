@@ -13,7 +13,7 @@ renderer = initRenderer();
 scene	= new THREE.Scene();
 camera = new THREE.Camera();
    scene.add(camera);
-initDefaultSpotlight(scene, new THREE.Vector3(25, 30, 20)); // Use default light
+initDefaultSpotlight(scene, new THREE.Vector3(25, 30, 20), 4000); // Use default light
 
 //----------------------------------------------------------------------------
 // Set AR Stuff
@@ -46,6 +46,7 @@ function createTeapot()
 	var textureLoader = new THREE.TextureLoader();
 	var glass  = textureLoader.load('../assets/textures/glass.png');
 	   glass.mapping = THREE.EquirectangularReflectionMapping; // Reflection as default
+      glass.colorSpace = THREE.SRGBColorSpace;
 	var geometry = new TeapotGeometry(0.5);
 	var material = new THREE.MeshPhongMaterial({
       color:"rgb(255,255,255)", 

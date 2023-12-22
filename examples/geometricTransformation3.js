@@ -43,7 +43,9 @@ render();
 function createSphere()
 {
   var sphereGeometry = new THREE.SphereGeometry(0.2, 32, 32);
-  var sphereMaterial = new THREE.MeshPhongMaterial( {color:'rgb(180,180,255)'} );
+  var sphereMaterial = new THREE.MeshPhongMaterial( {color:'rgb(180,180,255)',     shininess:"15",            // Shininess of the object
+  specular:"rgb(180,180,255)"
+} );
   var sphere = new THREE.Mesh( sphereGeometry, sphereMaterial );
   return sphere;
 }
@@ -51,7 +53,8 @@ function createSphere()
 function createCylinder()
 {
   var cylinderGeometry = new THREE.CylinderGeometry(0.1, 0.1, 2.0, 25);
-  var cylinderMaterial = new THREE.MeshPhongMaterial( {color:'rgb(100,255,100)'} );
+  var cylinderMaterial = new THREE.MeshLambertMaterial({color:'rgb(100,255,100)'});            
+    //specular:"rgb(100,255,100)"} );
   var cylinder = new THREE.Mesh( cylinderGeometry, cylinderMaterial );
   return cylinder;
 }

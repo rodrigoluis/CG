@@ -10,13 +10,16 @@ import {initRenderer,
 		initCamera,
 		onWindowResize,
 		lightFollowingCamera,
-		initDefaultSpotlight} from "../libs/util/util.js";
+      initDefaultBasicLight,      
+		initDefaultSpotlight,
+      createGroundPlane} from "../libs/util/util.js";
 
 let scene = new THREE.Scene();
 let camera = initCamera(new THREE.Vector3(0, 12, 45)); // Init camera in this position
 let renderer = initRenderer(); 
 	renderer.setClearColor(new THREE.Color("rgb(200, 200, 240)"));
-let light = initDefaultSpotlight(scene, camera.position);
+let light = initDefaultBasicLight(scene); // Create a basic light to illuminate the scene
+
 let orbitcontrols = new OrbitControls (camera, renderer.domElement);
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
@@ -43,20 +46,23 @@ boxNormal.position.x = -14;
 boxNormal.castShadow = true;
 scene.add(boxNormal);
 
-var floorTex = new THREE.TextureLoader().load(floorFile)
-var plane = new THREE.Mesh(new THREE.BoxGeometry(200, 100, 0.1, 30), new THREE.MeshPhongMaterial({color: 0x3c3c3c, map: floorTex}));
-	plane.receiveShadow = true;
-plane.position.y = -7.5;
-plane.rotation.x = -0.5 * Math.PI;
-scene.add(plane);
+var textureLoader = new THREE.TextureLoader();
+let floor  = textureLoader.load('../assets/textures/floorWood.jpg');
+var groundPlane = createGroundPlane(100.0, 100.0, 100, 100); // width and height
+   groundPlane.rotateX(THREE.MathUtils.degToRad(-90));
+   groundPlane.material.map = floor;
+   groundPlane.position.y = -7.6;
+   groundPlane.rotation.x = -0.5 * Math.PI;
+scene.add(groundPlane);
 
-pointLight = new THREE.PointLight("#ff5808");
+pointLight = new THREE.PointLight("white");//#ff5808");
 pointLight.castShadow = true;
+pointLight.intensity = 300;
 scene.add(pointLight);
 
 // add a small sphere simulating the pointlight
 var sphereLight = new THREE.SphereGeometry(0.2);
-var sphereLightMaterial = new THREE.MeshBasicMaterial({color: 0xac6c25});
+var sphereLightMaterial = new THREE.MeshBasicMaterial({color: "white"});
 sphereLightMesh = new THREE.Mesh(sphereLight, sphereLightMaterial);
 	sphereLightMesh.castShadow = true;
 scene.add(sphereLightMesh);
@@ -88,6 +94,7 @@ function buildInterface() {
 function createMesh(geom, imageFile, normal) {
 	let nmap = (normal ? new THREE.TextureLoader().load(normal) : null);
 	var tex = new THREE.TextureLoader().load(imageFile);
+	    tex.colorSpace = THREE.SRGBColorSpace;   
 	var mat = new THREE.MeshPhongMaterial({
 		map: tex,
 		normalMap: nmap,

@@ -12,14 +12,12 @@ import {setLookNonVRBehavior} from "../libs/util/utilVR.js";
 let raycaster = new THREE.Raycaster();	// Raycaster to enable selection and dragging
 let group = new THREE.Group(); 			// Objects of the scene will be added in this group
 const intersected = [];					// will be used to help controlling the intersected objects
-window.addEventListener( 'resize', onWindowResize );
 
 //-- Renderer and html settings ------------------------------------------------------------------
 let renderer = new THREE.WebGLRenderer( { antialias: true } );
 	renderer.setClearColor(new THREE.Color("rgb(70, 150, 240)"));
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setSize( window.innerWidth, window.innerHeight );
-	renderer.outputEncoding = THREE.sRGBEncoding;
 	renderer.shadowMap.enabled = true;
 	renderer.xr.enabled = true;
 
@@ -27,6 +25,7 @@ let renderer = new THREE.WebGLRenderer( { antialias: true } );
 let scene = new THREE.Scene();
 let clock = new THREE.Clock();
 let camera = new THREE.PerspectiveCamera( 50, window.innerWidth / window.innerHeight, 0.1, 30 );
+window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
 //-- Create VR button and settings ---------------------------------------------------------------
 document.body.appendChild( renderer.domElement );
@@ -129,6 +128,7 @@ function createScene()
 {
 	const light = new THREE.DirectionalLight( 0xffffff );
 	light.position.set( 0, 6, 0 );
+   light.intensity = 5;
 	light.castShadow = true;
 	light.shadow.mapSize.set( 4096, 4096 );
 	scene.add( light );

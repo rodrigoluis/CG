@@ -9,7 +9,7 @@ import {initRenderer,
 
 let scene    = new THREE.Scene();    // Create main scene
 let renderer = initRenderer();    // View function in util/utils
-let light    = initDefaultSpotlight(scene, new THREE.Vector3(7.0, 7.0, 7.0)); 
+let light    = initDefaultSpotlight(scene, new THREE.Vector3(7.0, 7.0, 7.0), 300); 
 let camera   = initCamera(new THREE.Vector3(3.6, 4.6, 8.2)); // Init camera in this position
 let trackballControls = new TrackballControls(camera, renderer.domElement );
 

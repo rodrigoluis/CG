@@ -21,6 +21,7 @@ window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)},
 
 let cubeMapTexture = new CubeTextureLoaderSingleFile().loadSingle( 
    '../assets/textures/skybox/templeStripe.jpg', 2);
+	cubeMapTexture.colorSpace = THREE.SRGBColorSpace;
 
    // Create the main scene and Set its background as a cubemap (using a CubeTexture)
 scene.background = cubeMapTexture;

@@ -14,13 +14,13 @@ let renderer = new THREE.WebGLRenderer();
 //-- Append renderer and create VR button -------------------------------------------------------
 document.body.appendChild( renderer.domElement );
 document.body.appendChild( VRButton.createButton( renderer ) );
-window.addEventListener( 'resize', onWindowResize );
 
 //-- Setting scene and camera -------------------------------------------------------------------
 let scene = new THREE.Scene();
 let clock = new THREE.Clock();
 let camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, 1, 1000 );
 camera.layers.enable( 1 );
+window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
 // To be used outside a VR environment (Desktop, for example)
 let lookCamera = setLookNonVRBehavior(camera, renderer, "On desktop, press 'Q' or 'E' to fix orientation");

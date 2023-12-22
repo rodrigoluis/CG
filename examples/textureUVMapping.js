@@ -101,6 +101,7 @@ function setTexture(mesh) {
 
   // Load the texture and set to the material of the mesh
   let texture = new THREE.TextureLoader().load('../assets/textures/art.jpg');
+      texture.colorSpace = THREE.SRGBColorSpace;
   material.map =  texture;
 }
 

@@ -49,6 +49,7 @@ let spotLight = new THREE.SpotLight("rgb(255,255,255)");
   spotLight.castShadow = true;
   spotLight.decay = 2;
   spotLight.penumbra = 0.5;
+  spotLight.intensity = 20;
   spotLight.angle= THREE.MathUtils.degToRad(40);
   // Shadow Parameters
   spotLight.shadow.mapSize.width = 512;
@@ -73,7 +74,7 @@ render();
 function createTeapot(x, y, z, color )
 {
   let geometry = new TeapotGeometry(0.5);
-  let material = new THREE.MeshPhongMaterial({color, shininess:"200"});
+  let material = new THREE.MeshPhongMaterial({ color, shininess: "100", specular: 'white' });
     material.side = THREE.DoubleSide;
   let obj = new THREE.Mesh(geometry, material);
     obj.castShadow = true;
@@ -134,7 +135,7 @@ function buildInterface()
   spotFolder.open();  
   spotFolder.add(spotHelper, 'visible', true)
     .name("Helper");    
-  spotFolder.add(spotLight, 'intensity', 0, 5);
+  spotFolder.add(spotLight, 'intensity', 0, 50);
   spotFolder.add(spotLight, 'penumbra', 0, 1);    
   spotFolder.add(spotLight, 'distance', 0, 40, 0.5)
     .onChange(function(){updateLight()});        

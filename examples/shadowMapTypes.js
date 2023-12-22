@@ -44,6 +44,7 @@ scene.add( ambientLight );
 var dirLight = new THREE.DirectionalLight("rgb(255,255,255)");
   dirLight.position.copy(lightPosition);
   dirLight.castShadow = true;
+  dirLight.intensity = 3;
   // Shadow Parameters
   dirLight.shadow.mapSize.width = 256;
   dirLight.shadow.mapSize.height = 256;

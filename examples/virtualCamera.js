@@ -15,7 +15,7 @@ scene = new THREE.Scene();    // Create main scene
 renderer = initRenderer();    // Init a basic renderer
 camera = initCamera(new THREE.Vector3(3.6, 4.6, 8.2)); // Init camera in this position
 //material = setDefaultMaterial(); // create a basic material
-light = initDefaultSpotlight(scene, new THREE.Vector3(5.0, 5.0, 5.0)); // Use default light    
+light = initDefaultSpotlight(scene, new THREE.Vector3(5.0, 5.0, 5.0), 100); // Use default light    
 orbit = new OrbitControls( camera, renderer.domElement ); // Enable mouse rotation, pan, zoom etc.
 
 // Listen window size changes
@@ -72,7 +72,7 @@ function createCameraObject() {
 
 function createTeapot(x, y, z, color) {
    let geometry = new TeapotGeometry(0.5);
-   let material = new THREE.MeshPhongMaterial({ color, shininess: "200" });
+   let material = new THREE.MeshPhongMaterial({ color, shininess: "200", specular: color });
    material.side = THREE.DoubleSide;
    let obj = new THREE.Mesh(geometry, material);
    obj.castShadow = true;

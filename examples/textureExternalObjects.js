@@ -101,7 +101,7 @@ function loadOBJFile(modelPath, modelName, desiredScale, angle, visibility)
         // Set 'castShadow' property for each children of the group
         obj.traverse( function (child)
         {
-           if( child.isMesh ) child.castShadow = true;
+           if( child.isMesh )   child.castShadow = true;
            if( child.material ) child.material.side = THREE.DoubleSide; 
         });
 

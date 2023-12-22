@@ -21,6 +21,8 @@ window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)},
 const textureLoader = new THREE.TextureLoader();
 let textureEquirec = textureLoader.load( '../assets/textures/skybox/panorama4.jpg' );
 	textureEquirec.mapping = THREE.EquirectangularReflectionMapping; // Reflection as default
+	textureEquirec.colorSpace = THREE.SRGBColorSpace;
+
 // Set scene's background as a equirectangular map
 scene.background = textureEquirec;
 

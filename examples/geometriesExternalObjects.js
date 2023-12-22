@@ -29,7 +29,7 @@ window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)},
 
 let loadingMessage = new SecondaryBox("Loading...");
 
-var groundPlane = createGroundPlane(5.0, 5.0, 100, 100); // width and height
+var groundPlane = createGroundPlane(7.0, 7.0, 100, 100); // width and height
   groundPlane.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlane);
 

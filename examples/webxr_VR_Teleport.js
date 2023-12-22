@@ -3,6 +3,7 @@ import * as THREE from '../build/three.module.js';
 import { VRButton } from '../build/jsm/webxr/VRButton.js';
 import {GLTFLoader} from '../build/jsm/loaders/GLTFLoader.js'
 import {onWindowResize,
+        initDefaultBasicLight,
 		  createGroundPlane,
 		  getMaxSize} from "../libs/util/util.js";
 
@@ -18,7 +19,6 @@ let intersections;
 var mixer = new Array();
 var clock = new THREE.Clock();
 var raycaster = new THREE.Raycaster();
-window.addEventListener( 'resize', onWindowResize );
 
 //-- Renderer settings ---------------------------------------------------------------------------
 let renderer = new THREE.WebGLRenderer();
@@ -26,12 +26,12 @@ let renderer = new THREE.WebGLRenderer();
 	renderer.setPixelRatio( window.devicePixelRatio );
 	renderer.setSize( window.innerWidth, window.innerHeight );
 	renderer.xr.enabled = true;
-	renderer.outputEncoding = THREE.sRGBEncoding;
 	renderer.shadowMap.enabled = true;
 
 //-- Setting scene and camera -------------------------------------------------------------------
 let scene = new THREE.Scene();
 let camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, .1, 1000 );
+window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
 // To be used outside a VR environment (Desktop, for example)
 let flyCamera = setFlyNonVRBehavior(camera, renderer, "On desktop, use mouse and WASD-QE to navigate.","Teleport available only in VR mode!");
@@ -135,17 +135,7 @@ function render() {
 //-- Create Scene --------------------------------------------------------------------------------
 function createScene()
 {
-	// Light stuff 
-	const light = new THREE.PointLight(0xaaaaaa);
-		light.position.set(30,30,20);
-		light.castShadow = true;
-		light.distance = 0;
-		light.shadow.mapSize.width = 1024;
-		light.shadow.mapSize.height = 1024;	
-	scene.add(light);
-
-	var ambientLight = new THREE.AmbientLight(0x121212);
-		scene.add(ambientLight);
+   let light = initDefaultBasicLight(scene, true, new THREE.Vector3(-100, 200, 1), 200, 2014, 0.1, 400); // 
 
 	// Load all textures 
 	var textureLoader = new THREE.TextureLoader();

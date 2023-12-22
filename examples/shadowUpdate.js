@@ -58,7 +58,7 @@ function setLights()
   	As we create two lights, the intensity of each light is cut by half (i.e., 0.5 for each light).
   */
   staticLight = new THREE.DirectionalLight(0xffffff);
-    staticLight.intensity = 0.5; // Intensity cut by half because we will create a second light in the same direction
+    staticLight.intensity = 2; // Intensity cut by half because we will create a second light in the same direction
     // Despite being only one direction (could be a unit vector), the shadow projection depends on 
     // the position of the orthographic camera used to control the extent of its projection
     staticLight.position.copy(new THREE.Vector3(100, 200, 100)); // 
