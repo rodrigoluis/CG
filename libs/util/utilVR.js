@@ -38,6 +38,7 @@ export function setLookNonVRBehavior(camera, renderer, message1, message2 = null
 }
 
 //-- Create Scene --------------------------------------------------------------------------------
+//-- Assets loaded with only with '../' because the source is on a different folder level --------
 export function createVRBasicScene(scene, camera, mixer)
 {
    let light = initDefaultBasicLight(scene, true, new THREE.Vector3(-100, 200, 1), 200, 2014, 0.1, 400); // 
@@ -87,7 +88,7 @@ function createWindMill(scene, camera, mixer)
 	camera.add( listener );
 	const windmillSound = new THREE.PositionalAudio( listener );
 	var audioLoader = new THREE.AudioLoader();
-		audioLoader.load( '../../assets/sounds/sampleSound.ogg', function ( buffer ) {
+		audioLoader.load( '../assets/sounds/sampleSound.ogg', function ( buffer ) {
 		windmillSound.setBuffer( buffer );
 		windmillSound.setLoop(true);
 		windmillSound.play(); 
@@ -95,7 +96,7 @@ function createWindMill(scene, camera, mixer)
 
 	// Load GLTF windmill
 	var loader = new GLTFLoader( );
-	loader.load( '../../assets/objects/windmill.glb', function ( gltf ) {
+	loader.load( '../assets/objects/windmill.glb', function ( gltf ) {
 	var obj = gltf.scene;
 		obj.traverse( function ( child ) {
 			if ( child ) { child.castShadow = true; }
