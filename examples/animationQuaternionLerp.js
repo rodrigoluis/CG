@@ -3,7 +3,7 @@ import GUI from '../libs/util/dat.gui.module.js'
 import { OrbitControls } from '../build/jsm/controls/OrbitControls.js';
 import {
    initRenderer,
-   initDefaultBasicLight,
+   initDefaultSpotlight,
    initCamera,
    createGroundPlane,
    SecondaryBox,        
@@ -13,7 +13,7 @@ import {
 let scene, renderer, camera, light, orbit;
 scene = new THREE.Scene();    
 renderer = initRenderer();    
-light = initDefaultBasicLight(scene, true, new THREE.Vector3(7, 7, 2));
+light    = initDefaultSpotlight(scene, new THREE.Vector3(7.0, 7.0, 7.0), 300); 
 camera = initCamera(new THREE.Vector3(3.6, 4.6, 8.2));
 orbit = new OrbitControls( camera, renderer.domElement );
 

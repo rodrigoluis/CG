@@ -68,18 +68,12 @@ var list = {
 				"AR - Multi": "html/AR_MultiInfo",	                        
 				"AR - Multi as One": "html/AR_MultiAsOneInfo",	                                    
 			},
-			"AR & VR with WebXR":  {
+			"VR with WebXR":  {
 				"VR - Panorama": "html/webxr_VR_PanoramaInfo",				
 				"VR - Teleport": "html/webxr_VR_TeleportInfo",
 				"VR - Free Move": "html/webxr_VR_FreeMoveInfo",				
 				"VR - Dragging": "html/webxr_VR_DraggingInfo",				
 				"VR - Labelling":"html/webxr_VR_LabellingInfo",
-				"AR - Hit and Build": "html/webxr_AR_HitAndBuildInfo",				
-			},
-			"VR with A-frame":  {
-            "VR - Primitives": "html/VR_BasicInfo",
-				"VR - Panorama": "html/VR_PanoramaInfo",
-				"VR - External Models": "html/VR_ExternalModelInfo",
 			},
 		},
 		"Additional Examples":{

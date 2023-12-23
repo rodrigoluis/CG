@@ -135,7 +135,7 @@ function buildInterface()
   spotFolder.open();  
   spotFolder.add(spotHelper, 'visible', true)
     .name("Helper");    
-  spotFolder.add(spotLight, 'intensity', 0, 50);
+  spotFolder.add(spotLight, 'intensity', 0, 200);
   spotFolder.add(spotLight, 'penumbra', 0, 1);    
   spotFolder.add(spotLight, 'distance', 0, 40, 0.5)
     .onChange(function(){updateLight()});        

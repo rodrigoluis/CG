@@ -25,8 +25,11 @@ scene.add(plane);
 
 // Building the scene
 // create a cube
+var textureLoader = new THREE.TextureLoader();
+var cubeTex = textureLoader.load('../assets/textures/crate.jpg');	
+    cubeTex.colorSpace = THREE.SRGBColorSpace;
 let cubeGeometry = new THREE.BoxGeometry(1, 1, 1);
-let cube = new THREE.Mesh(cubeGeometry, setDefaultMaterial("darkgreen")); 
+let cube = new THREE.Mesh(cubeGeometry, setDefaultMaterial(null, cubeTex)); 
    cube.position.set(0.0, 0.5, 0.0);
    cube.castShadow = true;
 scene.add(cube);

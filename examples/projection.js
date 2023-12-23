@@ -12,7 +12,7 @@ import { initRenderer,
 let scene, renderer, light; // Initial variables
 scene = new THREE.Scene();    // Create main scene
 renderer = initRenderer();    // View function in util/utils
-light = initDefaultBasicLight(scene); // Create a basic light to illuminate the scene
+light = initDefaultBasicLight(scene, false, new THREE.Vector3(4, 3, 1)); // Create a basic light to illuminate the scene
 
 createSceneObjects();
 

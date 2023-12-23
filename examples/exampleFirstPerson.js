@@ -2,11 +2,11 @@ import * as THREE from 'three';
 import Stats from '../build/jsm/libs/stats.module.js';
 import {PointerLockControls} from '../build/jsm/controls/PointerLockControls.js';
 import {initRenderer,
+        initDefaultBasicLight,
         onWindowResize} from "../libs/util/util.js";
 
 var stats = new Stats();          // To show FPS information
-var renderer = initRenderer();    // View function in util/utils
-    renderer.setClearColor(new THREE.Color(0xeeeeee));
+var renderer = initRenderer("rgb(70, 150, 240)");    // View function in util/utils
 
 const scene = new THREE.Scene();
 const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -15,31 +15,32 @@ camera.lookAt(new THREE.Vector3(0, 2, 0));
 scene.add(camera);
 
 const raycaster = new THREE.Raycaster(new THREE.Vector3(), new THREE.Vector3(0, -1, 0).normalize(), 0, 2);
-
-const light = new THREE.DirectionalLight(0xfefefe);
-light.position.set(100, 90, 100);
-scene.add(light);
-
-const ambientLight = new THREE.AmbientLight(0x442222);
-scene.add(ambientLight);
+initDefaultBasicLight(scene); // Create a basic light to illuminate the scene
 
 // Loading all textures
 const loader = new THREE.TextureLoader();
 
-const groundTexture = loader.load('../assets/textures/floorWood.jpg');
+const groundTexture = loader.load('../assets/textures/wood.png');
+groundTexture.colorSpace = THREE.SRGBColorSpace;
 groundTexture.wrapS = THREE.MirroredRepeatWrapping;
 groundTexture.wrapT = THREE.RepeatWrapping;
-groundTexture.repeat.set(20, 20);
+groundTexture.repeat.set(8, 8);
 
-const rampTexture = loader.load('../assets/textures/floorWood.jpg');
+const rampTexture = loader.load('../assets/textures/wood.png');
 rampTexture.wrapS = THREE.MirroredRepeatWrapping;
-rampTexture.repeat.set(3, 1);
+rampTexture.repeat.set(2, 1);
 
-const whiteWallTexture = loader.load('../assets/textures/granite.png');
+const whiteWallTexture = loader.load('../assets/textures/stonewall.jpg');
+whiteWallTexture.colorSpace = THREE.SRGBColorSpace;
 whiteWallTexture.wrapS = THREE.MirroredRepeatWrapping;
 whiteWallTexture.repeat.set(10, 1);
 
-const brickWallTexture = loader.load('../assets/textures/stone.jpg');
+const whiteWallTexture2 = loader.load('../assets/textures/stonewall.jpg');
+whiteWallTexture2.colorSpace = THREE.SRGBColorSpace;
+whiteWallTexture2.wrapS = THREE.MirroredRepeatWrapping;
+whiteWallTexture2.repeat.set(5, 1);
+
+const brickWallTexture = loader.load('../assets/textures/stonewall.jpg');
 
 // End loading textures
 
@@ -73,14 +74,18 @@ const smallWallGeometry = new THREE.PlaneGeometry(20, 5);
 const wallMaterial = new THREE.MeshBasicMaterial({
     map: whiteWallTexture
 });
+const wallMaterial2 = new THREE.MeshBasicMaterial({
+   map: whiteWallTexture2
+});
+
 const walls = [];
 
 for (let i = 0; i < 3; i++) {
     walls.push(new THREE.Mesh(WallGeometry, wallMaterial));
 }
 
-walls.push(new THREE.Mesh(smallWallGeometry, wallMaterial));
-walls.push(new THREE.Mesh(smallWallGeometry, wallMaterial));
+walls.push(new THREE.Mesh(smallWallGeometry, wallMaterial2));
+walls.push(new THREE.Mesh(smallWallGeometry, wallMaterial2));
 
 walls[0].position.set(0, 2.5, -25);
 
@@ -97,53 +102,6 @@ walls[4].position.set(25, 2.5, -15);
 walls[4].rotation.y = Math.PI / -2;
 
 walls.forEach(wall => scene.add(wall));
-
-const brickWallGeometry = new THREE.PlaneGeometry(8.5, 5);
-const brickWallMaterial = new THREE.MeshBasicMaterial({
-    map: brickWallTexture
-});
-const brickWalls = [];
-
-brickWalls.push(new THREE.Mesh(brickWallGeometry, brickWallMaterial));
-brickWalls.push(new THREE.Mesh(brickWallGeometry, brickWallMaterial));
-
-brickWalls[0].position.set(29, 2.5, -5);
-brickWalls[1].position.set(29, 2.5, 5);
-brickWalls[1].rotation.y = Math.PI;
-
-brickWalls.forEach(brickWall => scene.add(brickWall));
-
-const paintingGeometry = new THREE.PlaneGeometry(4, 3);
-const paintings = [
-    new THREE.Mesh(paintingGeometry, new THREE.MeshBasicMaterial({ map: loader.load('../assets/textures/fishermen.png') })),
-    new THREE.Mesh(paintingGeometry, new THREE.MeshBasicMaterial({ map: loader.load('../assets/textures/fishermen.png') })),
-    new THREE.Mesh(paintingGeometry, new THREE.MeshBasicMaterial({ map: loader.load('../assets/textures/floorWood.jpg') })),
-    new THREE.Mesh(paintingGeometry, new THREE.MeshBasicMaterial({ map: loader.load('../assets/textures/glass.png') })),
-    new THREE.Mesh(paintingGeometry, new THREE.MeshBasicMaterial({ map: loader.load('../assets/textures/granite.png') })),
-    new THREE.Mesh(paintingGeometry, new THREE.MeshBasicMaterial({ map: loader.load('../assets/textures/marble.png') })),
-    new THREE.Mesh(paintingGeometry, new THREE.MeshBasicMaterial({ map: loader.load('../assets/textures/paper.png') })),
-    new THREE.Mesh(paintingGeometry, new THREE.MeshBasicMaterial({ map: loader.load('../assets/textures/sand.jpg') })),
-];
-
-paintings[0].position.set(-12.5, 2.5, -24.9);
-paintings[1].position.set(12.5, 2.5, -24.9);
-
-paintings[2].position.set(-12.5, 2.5, 24.9);
-paintings[3].position.set(12.5, 2.5, 24.9);
-paintings[2].rotation.y = Math.PI;
-paintings[3].rotation.y = Math.PI;
-
-paintings[4].position.set(-24.9, 2.5, -12.5);
-paintings[5].position.set(-24.9, 2.5, 12.5);
-paintings[4].rotation.y = Math.PI / 2;
-paintings[5].rotation.y = Math.PI / 2;
-
-paintings[6].position.set(24.9, 2.5, -12.5);
-paintings[7].position.set(24.9, 2.5, 12.5);
-paintings[6].rotation.y = Math.PI / -2;
-paintings[7].rotation.y = Math.PI / -2;
-
-paintings.forEach(p => scene.add(p));
 
 const controls = new PointerLockControls(camera, renderer.domElement);
 

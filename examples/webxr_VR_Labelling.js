@@ -143,17 +143,16 @@ function render() {
 //-- Auxiliary Scene Creation function
 function createScene()
 {
-	const light = new THREE.PointLight( "rgb(255, 255, 255)" );
-		light.position.set( 0, 10, 3 );
-		light.castShadow = true;
-      light.intensity = 15;      
-		light.shadow.mapSize.width = 1024; // default
-		light.shadow.mapSize.height = 1024; // default
+	const light = new THREE.DirectionalLight( 0xffffff );
+	light.position.set( 0, 3, 6 );
+   light.intensity = 3;
+	light.castShadow = true;
+	light.shadow.mapSize.set( 4096, 4096 );
 	scene.add( light );
 
-	scene.add( new THREE.HemisphereLight( "rgb(80, 80, 80)" ) );
+	scene.add( new THREE.HemisphereLight( 'white', 'white'));//0x808080, 0x606060 ) );
 
-	const floorGeometry = new THREE.PlaneGeometry( 20, 20 );
+	const floorGeometry = new THREE.PlaneGeometry( 30, 30 );
 	const floorMaterial = new THREE.MeshLambertMaterial( {color: "rgb(80, 80, 80)"} );
 	const floor = new THREE.Mesh( floorGeometry, floorMaterial );
 	floor.rotation.x = -Math.PI / 2;

@@ -7,8 +7,12 @@ import Grid from "./grid.js";
  * @param {color} color 
  * @returns Basic lambert material of a given color
  */
-export function setDefaultMaterial(color = "rgb(255,20,20)") {
-   let basicMaterial = new THREE.MeshLambertMaterial({ color: color });
+export function setDefaultMaterial(color = "rgb(255,20,20)", tex = null) {
+   let basicMaterial; //= new THREE.MeshLambertMaterial({ color: color });
+   if(!tex)
+      basicMaterial = new THREE.MeshLambertMaterial({ color: color });
+   else
+      basicMaterial = new THREE.MeshLambertMaterial({ map: tex });
    return basicMaterial;
 }
 
@@ -292,7 +296,7 @@ export function initCamera(initialPosition) {
 
 export function initDefaultBasicLight(scene, castShadow = false, position = new THREE.Vector3(2, 1, 1),
    shadowSide = 16, shadowMapSize = 512, shadowNear = 0.1, shadowFar = 100) {
-   let power = 2.5;
+   let power = Math.PI;
    const ambientLight = new THREE.HemisphereLight(
       'white', // bright sky color
       'darkslategrey', // dim ground color
@@ -334,8 +338,8 @@ export function initDefaultSpotlight(scene, initialPosition, power = 50) {
    spotLight.decay = 2;
    spotLight.penumbra = 0.5;
    spotLight.angle = degreesToRadians(60);
-   spotLight.shadow.mapSize.width = 512;
-   spotLight.shadow.mapSize.height = 512;
+   spotLight.shadow.mapSize.width = 1024;
+   spotLight.shadow.mapSize.height = 1024;
    scene.add(spotLight);
 
    var ambientLight = new THREE.AmbientLight(0x343434);

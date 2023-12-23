@@ -4,23 +4,19 @@ import {DragControls} from '../build/jsm/controls/DragControls.js'
 import KeyboardState from '../libs/util/KeyboardState.js';
 import {initRenderer, 
         initCamera,        
-        initDefaultSpotlight,
+        initDefaultBasicLight,
         SecondaryBox,        
-        createGroundPlane, 
+        createGroundPlaneXZ, 
         InfoBox,
         onWindowResize} from "../libs/util/util.js";
 
 var scene = new THREE.Scene();    // Create main scene
 scene.background = new THREE.Color(0xf0f0f0);
-
-var renderer = initRenderer();
-renderer.setClearColor("rgb(30, 30, 42)");
-
-var camera = initCamera(new THREE.Vector3(0, -33, 15)); // Init camera in this position
-
-initDefaultSpotlight(scene, new THREE.Vector3(30, -30, 30), 2000); // Use default light
-
-var groundPlane = createGroundPlane(40, 40, 100, 100);
+var renderer = initRenderer("rgb(30, 30, 42)");
+let camera = initCamera(new THREE.Vector3(0, 15, 30)); // Init camera in this position
+let light = initDefaultBasicLight(scene, true, new THREE.Vector3(20, 20, 15), 50, 1024, 0.1, 400);
+    light.intensity = 0.8;
+var groundPlane = createGroundPlaneXZ(40, 40, 100, 100);
 scene.add(groundPlane);
 
 // To use the keyboard
@@ -46,7 +42,7 @@ for (let i = 0; i < 3; i++) {
     object.castShadow = true;
     object.receiveShadow = true;
 
-    object.position.set(8 * i - 8, 2 * i - 2, 2.0);
+    object.position.set(8 * i - 8, 2.0, 2 * i - 2);
 
     scene.add(object);
     objects.push(object);

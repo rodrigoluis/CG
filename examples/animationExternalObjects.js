@@ -4,7 +4,7 @@ import GUI from '../libs/util/dat.gui.module.js'
 import {TrackballControls} from '../build/jsm/controls/TrackballControls.js';
 import {GLTFLoader} from '../build/jsm/loaders/GLTFLoader.js'
 import {initRenderer, 
-        initDefaultSpotlight, 
+        initDefaultBasicLight,
         createGroundPlane,
         getMaxSize,
         onWindowResize} from "../libs/util/util.js";
@@ -12,7 +12,7 @@ import {initRenderer,
 var scene = new THREE.Scene();    // Create main scene
 var clock = new THREE.Clock();
 var stats = new Stats();          // To show FPS information
-initDefaultSpotlight(scene, new THREE.Vector3(2, 4, 2)); // Use default light
+initDefaultBasicLight(scene, true, new THREE.Vector3(2, 2, 1), 10, 1024); // Create a 
 
 var renderer = initRenderer();    // View function in util/utils
   renderer.setClearColor("rgb(30, 30, 42)");
@@ -21,16 +21,13 @@ var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHei
   camera.position.set(2.8, 1.8, 4.0);
   camera.up.set( 0, 1, 0 );
 
-// Control the appearence of first object loaded
-var firstRender = false;
-
 // Enable mouse rotation, pan, zoom etc.
 var trackballControls = new TrackballControls( camera, renderer.domElement );
 
 // Listen window size changes
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
-var groundPlane = createGroundPlane(5.0, 5.0, 60, 60, "rgb(100,140,90)");
+var groundPlane = createGroundPlane(6.5, 6.5, 60, 60, "rgb(100,140,90)");
   groundPlane.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlane);
 

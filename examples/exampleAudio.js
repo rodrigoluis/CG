@@ -5,7 +5,7 @@ import { OrbitControls } from '../build/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from '../build/jsm/loaders/GLTFLoader.js'
 import { initCamera,
          initRenderer,
-         initDefaultSpotlight,
+         initDefaultBasicLight,
          createGroundPlane,
          getMaxSize,
          onWindowResize} from "../libs/util/util.js";
@@ -14,7 +14,8 @@ let scene, renderer, camera, orbit, clock, stats; // Initial variables
 scene = new THREE.Scene();    // Create main scene
 clock = new THREE.Clock();
 stats = new Stats();          // To show FPS information
-initDefaultSpotlight(scene, new THREE.Vector3(2, 4, 2)); // Use default light
+initDefaultBasicLight(scene, true, new THREE.Vector3(2, 2, 1), 10, 1024); // Create a 
+
 renderer = initRenderer("rgb(30, 30, 42)");
 camera   = initCamera(new THREE.Vector3(2.8, 1.8, 4.0)); // Init camera in this position
 orbit = new OrbitControls( camera, renderer.domElement ); // Enable mouse rotation, pan, zoom etc.
@@ -32,7 +33,7 @@ window.addEventListener('click', function () {
    if (startMessage) startMessage.style.display = 'none';
    playSoundsFirstTime();
 });
-var groundPlane = createGroundPlane(5.0, 5.0, 60, 60, "rgb(100,140,90)");
+var groundPlane = createGroundPlane(6.5, 6.5, 60, 60, "rgb(100,140,90)");
 groundPlane.rotateX(THREE.MathUtils.degToRad(-90));
 scene.add(groundPlane);
 

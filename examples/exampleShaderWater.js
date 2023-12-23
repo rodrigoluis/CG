@@ -26,7 +26,7 @@ controls.update();
 const textureLoader = new THREE.TextureLoader();
 let textureEquirec = textureLoader.load( '../assets/textures/skybox/panorama5.jpg' );
 	textureEquirec.mapping = THREE.EquirectangularReflectionMapping; 
-	textureEquirec.encoding = THREE.sRGBEncoding;
+	textureEquirec.colorSpace = THREE.SRGBColorSpace;
 scene.background = textureEquirec
 
 
@@ -52,9 +52,11 @@ water.rotation.x = - Math.PI / 2;
 scene.add( water );
 
 //-- Cube -----------------------------------------------------------------------------------------
+let cubeTex = textureLoader.load('../assets/textures/crate.jpg');	
+    cubeTex.colorSpace = THREE.SRGBColorSpace;
 let cube = new THREE.Mesh( 
   new THREE.BoxGeometry( 3, 3, 3 ), // geometry
-  new THREE.MeshStandardMaterial( { color:"lightsalmon" } ) ); // material
+  new THREE.MeshStandardMaterial( { map:cubeTex } ) ); // material
 scene.add( cube );
 
 buildInterface();

@@ -69,7 +69,8 @@ function initGraphics() {
 		scene.background = new THREE.Color( 0xbfd1e5 );
 	renderer = initRenderer();
 	camera = initCamera(new THREE.Vector3(-16, 8, 24)); // Init camera in this position
-	light = initDefaultBasicLight(scene, true, new THREE.Vector3(-12, 15, 10), 28, 1024) ;	
+	light = initDefaultBasicLight(scene, true, new THREE.Vector3(-12, 30, 30), 28, 1024);	
+      light.intensity = 1.5;
 	controls = new OrbitControls( camera, renderer.domElement );
 	textureLoader = new THREE.TextureLoader();
 	stats = new Stats();

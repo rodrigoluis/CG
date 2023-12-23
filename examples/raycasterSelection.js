@@ -14,7 +14,7 @@ scene = new THREE.Scene();
 scene.background = new THREE.Color(0xf0f0f0);
 renderer = initRenderer();
 camera = initCamera(new THREE.Vector3(0, 5, 15)); 
-light = initDefaultBasicLight(scene, true, new THREE.Vector3(25, 20, 15))
+light = initDefaultBasicLight(scene, true, new THREE.Vector3(25, 20, 15));
 orbit = new OrbitControls( camera, renderer.domElement );
 
 // Create auxiliary info box

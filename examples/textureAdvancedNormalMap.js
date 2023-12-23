@@ -48,6 +48,7 @@ scene.add(boxNormal);
 
 var textureLoader = new THREE.TextureLoader();
 let floor  = textureLoader.load('../assets/textures/floorWood.jpg');
+   floor.colorSpace = THREE.SRGBColorSpace;
 var groundPlane = createGroundPlane(100.0, 100.0, 100, 100); // width and height
    groundPlane.rotateX(THREE.MathUtils.degToRad(-90));
    groundPlane.material.map = floor;
