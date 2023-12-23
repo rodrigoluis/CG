@@ -1,16 +1,19 @@
 //-- Imports -------------------------------------------------------------------------------------
 import * as THREE from  'three';
 import { VRButton } from '../build/jsm/webxr/VRButton.js';
-import { initDefaultBasicLight,
-         onWindowResize,
-		   createGroundPlane } from "../libs/util/util.js";
-import { setFlyNonVRBehavior } from "../libs/util/utilVR.js";
+import { onWindowResize } from "../libs/util/util.js";
+import { setFlyNonVRBehavior,
+         createVRBasicScene } from "../libs/util/utilVR.js";
+
 //-----------------------------------------------------------------------------------------------
 //-- MAIN SCRIPT --------------------------------------------------------------------------------
 //-----------------------------------------------------------------------------------------------
 
 //--  General globals ---------------------------------------------------------------------------
-window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
+var mixer = new Array();
+var clock = new THREE.Clock();
+let moveCamera; // Move when a button is pressed 
+
 
 //-- Renderer settings ---------------------------------------------------------------------------
 let renderer = new THREE.WebGLRenderer();
@@ -22,19 +25,18 @@ let renderer = new THREE.WebGLRenderer();
 
 //-- Setting scene and camera -------------------------------------------------------------------
 let scene = new THREE.Scene();
-let clock = new THREE.Clock();
-
 let camera = new THREE.PerspectiveCamera( 70, window.innerWidth / window.innerHeight, .1, 1000 );
-let moveCamera; // Move when a button is pressed 
+window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
 // To be used outside a VR environment (Desktop, for example)
 let flyCamera = setFlyNonVRBehavior(camera, renderer, "On desktop, use mouse and WASD-QE to navigate");
 
 //-- 'Camera Holder' to help moving the camera
 let cameraHolder = new THREE.Object3D();
-	cameraHolder.position.set(0.0, 1.0, 0.0);
-cameraHolder.add(camera);
+  	 cameraHolder.position.set(0.0, 1.0, 10.0);
+    cameraHolder.add(camera);
 scene.add( cameraHolder );
+
 //-- Create VR button and settings ---------------------------------------------------------------
 document.body.appendChild( renderer.domElement );
 document.body.appendChild( VRButton.createButton( renderer ) );
@@ -46,7 +48,7 @@ var controller1 = renderer.xr.getController( 0 );
 camera.add( controller1 );
 
 //-- Creating Scene and calling the main loop ----------------------------------------------------
-createScene();
+createVRBasicScene(scene, camera, mixer);
 animate();
 
 //------------------------------------------------------------------------------------------------
@@ -90,16 +92,19 @@ function animate()
 
 function render() 
 {
+   let delta = clock.getDelta();
+   for(var i = 0; i<mixer.length; i++) 
+      mixer[i].update( delta );   
+
    // Controls if VR Mode is ON
-   if(renderer.xr.isPresenting)   {
+   if(renderer.xr.isPresenting)
       move();
-   }
-   else {
-      flyCamera.update(clock.getDelta());  
-   }
+   else
+      flyCamera.update(delta);  
 	renderer.render( scene, camera );
 }
 
+/*
 //------------------------------------------------------------------------------------------------
 //-- Scene and auxiliary functions ---------------------------------------------------------------
 //------------------------------------------------------------------------------------------------
@@ -144,3 +149,4 @@ function createCube(cubeSize, xPos, zPos, texture)
 		cube.material.map = texture;
 	scene.add(cube);	
 }
+*/
