@@ -84,6 +84,7 @@ var list = {
 			"Utils":  {
             "GLTF Bounding Box": "html/exampleGLTFBoundingBoxInfo",            
             "Collision": "html/exampleCollisionInfo",            
+            "Vector Reflection": "html/exampleReflectionInfo",                        
 			},
 			"Raycaster":  {
 				"Drag Control": "html/raycasterDragControlInfo",
