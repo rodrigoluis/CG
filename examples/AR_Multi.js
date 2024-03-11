@@ -58,7 +58,7 @@ function setARStuff()
    
    //----------------------------------------------------------------------------
    // Create a ArMarkerControls
-	let patternArray = ["a", "b", "c", "d", "f", "g"];
+	let patternArray = ["A", "B", "C", "D", "F", "G"];
 	let colorArray   = [0xff0000, 0xff8800, 0xffff00, 0x00cc00, 0x0000ff, 0xcc00ff];
    let markerControls;
 	for (let i = 0; i < 6; i++)
@@ -67,7 +67,7 @@ function setARStuff()
 		scene.add(markerObject);
 		markerControls = new ARjs.MarkerControls(AR.context, markerObject, {
 			type : 'pattern', 
-         patternUrl : "../libs/AR/data/multi/patt." + patternArray[i],
+         patternUrl : "../libs/AR/data/multi/patt" + patternArray[i],
 		});
 	
       let side = 1.25;

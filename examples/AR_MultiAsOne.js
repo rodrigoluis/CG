@@ -89,12 +89,12 @@ function setARStuff() {
 
    //----------------------------------------------------------------------------
    // Create a ArMarkerControls
-   let patternArray = ["a", "b", "c", "d", "g", "f"];
+	let patternArray = ["A", "B", "C", "D", "F", "G"];
    for (let i = 0; i < 6; i++) {
       let markerObject = buildObject(i)      
       new ARjs.MarkerControls(AR.context, markerObject, {
          type: 'pattern',
-         patternUrl: "../libs/AR/data/multi/patt." + patternArray[i],
+         patternUrl: "../libs/AR/data/multi/patt" + patternArray[i],
       });
    }
 }
