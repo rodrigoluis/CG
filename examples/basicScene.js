@@ -28,13 +28,23 @@ scene.add( axesHelper );
 let plane = createGroundPlaneXZ(20, 20)
 scene.add(plane);
 
-// create a cube
-let cubeGeometry = new THREE.BoxGeometry(4, 4, 4);
-let cube = new THREE.Mesh(cubeGeometry, material);
-// position the cube
-cube.position.set(0.0, 2.0, 0.0);
-// add the cube to the scene
-scene.add(cube);
+//Controles basicos para teste
+var keyboard = new KeyboardState();
+function keyboardUpdate() {
+  keyboard.update();
+  if (keyboard.pressed("left")) corpo.translateX(-1);
+  if (keyboard.pressed("right")) corpo.translateX(1);
+  if (keyboard.pressed("up")) corpo.translateY(1);
+  if (keyboard.pressed("down")) corpo.translateY(-1);
+  if (keyboard.pressed("pageup")) corpo.translateZ(1);
+  if (keyboard.pressed("pagedown")) corpo.translateZ(-1);
+
+  let angle = THREE.MathUtils.degToRad(10);
+  if (keyboard.pressed("A")) corpo.rotateY(angle);
+  if (keyboard.pressed("D")) corpo.rotateY(-angle);
+}
+
+
 
 // Use this to show information onscreen
 let controls = new InfoBox();
@@ -49,6 +59,7 @@ let controls = new InfoBox();
 render();
 function render()
 {
+  keyboardUpdate();
   requestAnimationFrame(render);
   renderer.render(scene, camera) // Render scene
 }
