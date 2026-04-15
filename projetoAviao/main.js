@@ -2,6 +2,8 @@ import * as THREE from "three";
 import { OrbitControls } from "../build/jsm/controls/OrbitControls.js";
 import KeyboardState from "../../libs/util/KeyboardState.js";
 import { Aviao } from "./aviao.js";
+import GUI from "../../libs/util/dat.gui.module.js";
+import { FlyControls } from "../../build/jsm/controls/FlyControls.js";
 import {
   initRenderer,
   initCamera,
@@ -9,11 +11,13 @@ import {
   setDefaultMaterial,
   InfoBox,
   onWindowResize,
-  createGroundPlaneXZ,
+  createGroundPlaneWired,
 } from "../libs/util/util.js";
 
 let scene, renderer, camera, material, light, orbit; // Initial variables
+let baseColor = "rgb(175, 200, 220)";
 scene = new THREE.Scene(); // Create main scene
+  scene.fog = new THREE.Fog(baseColor, 1, 100); // ADD FOG TO THE SCENE
 renderer = initRenderer(); // Init a basic renderer
 material = setDefaultMaterial(); // create a basic material
 light = initDefaultBasicLight(scene); // Create a basic light to illuminate the scene
@@ -38,8 +42,11 @@ let axesHelper = new THREE.AxesHelper(12);
 scene.add(axesHelper);
 
 // create the ground plane
-let plane = createGroundPlaneXZ(20, 20);
-scene.add(plane);
+window.addEventListener('resize', function () { onWindowResize(camera, renderer) }, false);
+
+let groundPlane = createGroundPlaneWired(400, 400, 80, 80, 2, "dimgray", "gainsboro");
+scene.add(groundPlane);
+
 
 //Controles basicos para teste
 var keyboard = new KeyboardState();
