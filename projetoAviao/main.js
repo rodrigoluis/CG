@@ -4,6 +4,7 @@ import KeyboardState from "../../libs/util/KeyboardState.js";
 import { Aviao } from "./aviao.js";
 import GUI from "../../libs/util/dat.gui.module.js";
 import { FlyControls } from "../../build/jsm/controls/FlyControls.js";
+import { Arvores } from "./arvore.js";
 import {
   initRenderer,
   initCamera,
@@ -25,8 +26,25 @@ camera = initCamera(new THREE.Vector3(0, 15, 30)); // Init camera in this positi
 scene.add(camera); // Add camera to the scene
 orbit = new OrbitControls(camera, renderer.domElement); // Enable mouse rotation, pan, zoom etc.
 
+//Criando aviao 
 const aviaoController = new Aviao(scene);
 let aviaoMesh = aviaoController.object;
+
+
+for (let i = 0; i < 50; i++) {
+  // Aumentei para 50 árvores
+  let tipo = Math.random() > 0.5 ? 1 : 2;
+  let arvore = new Arvores(scene, tipo);
+
+  // Espalha as árvores em um range de -180 a 180 (dentro dos 400 do plano)
+  let x = Math.random() * 360 - 180;
+  let z = Math.random() * 360 - 180;
+
+  // Altura baseada no tronco para ficarem sobre o plano
+  let y = tipo === 1 ? 3 : 2.5;
+
+  arvore.object.position.set(x, y, z);
+}
 
 // Listen window size changes
 window.addEventListener(
