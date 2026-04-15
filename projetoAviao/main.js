@@ -72,12 +72,17 @@ function keyboardUpdate() {
   keyboard.update();
 
   // Exemplo de movimento mais suave (0.1 em vez de 1)
-  if (keyboard.pressed("left")) aviaoMesh.translateX(-0.1);
-  if (keyboard.pressed("right")) aviaoMesh.translateX(0.1);
+  if (keyboard.pressed("left")) aviaoMesh.translateX(-1);
+  if (keyboard.pressed("right")) aviaoMesh.translateX(1);
+  if (keyboard.pressed("up")) aviaoMesh.translateY(-1);
+  if (keyboard.pressed("down")) aviaoMesh.translateY(1);
+  
 
   let angle = THREE.MathUtils.degToRad(1); // 1 grau por frame é melhor que 10
   if (keyboard.pressed("A")) aviaoMesh.rotateY(angle);
   if (keyboard.pressed("D")) aviaoMesh.rotateY(-angle);
+  if (keyboard.pressed("W")) aviaoMesh.rotateX(angle);
+  if (keyboard.pressed("S")) aviaoMesh.rotateX(-angle);
 }
 
 // Use this to show information onscreen
