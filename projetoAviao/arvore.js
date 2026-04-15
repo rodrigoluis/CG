@@ -12,7 +12,9 @@ import {initRenderer,
 export class Arvores {
   constructor(scene, tipo) {
     let madeira, folha;
-    folha = setDefaultMaterial("green"); // create a basic material
+    let cor = ["#738417", "#2e6f40", "#388347", "#BF5B05", "#92780A"];
+    let corAleatorio = cor[Math.floor(Math.random() * cor.length)];
+    folha = setDefaultMaterial(corAleatorio); // create a basic material
     madeira = setDefaultMaterial("brown"); // create a basic materialn, zoom etc.
 
     // cria um tronco
@@ -95,15 +97,5 @@ export class Arvores {
 
     // Adiciona o objeto escolhido na cena
     scene.add(this.object);
-
-    // let guiParams = { scale: 1.0 };
-    // let gui = new GUI();
-    // gui
-    //   .add(guiParams, "scale", 0.2, 3.0, 0.1)
-    //   .name("Escala Arvore")
-    //   .onChange(function (value) {
-    //     objetoTipo1.scale.set(value, value, value);
-    //     objetoTipo12.scale.set(value, value, value);
-    //   });
   }
 }
