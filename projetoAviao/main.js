@@ -1,12 +1,9 @@
 import * as THREE from "three";
 import KeyboardState from "../../libs/util/KeyboardState.js";
 import { Aviao } from "./aviao.js";
-import GUI from "../../libs/util/dat.gui.module.js";
-import { FlyControls } from "../../build/jsm/controls/FlyControls.js";
 import { Arvores } from "./arvore.js";
 import {
   initRenderer,
-  initCamera,
   initDefaultBasicLight,
   setDefaultMaterial,
   InfoBox,
@@ -21,12 +18,14 @@ scene = new THREE.Scene(); // Create main scene
 renderer = initRenderer(); // Init a basic renderer
 material = setDefaultMaterial(); // create a basic material
 light = initDefaultBasicLight(scene); // Create a basic light to illuminate the scene
-camera = initCamera(new THREE.Vector3(0, 10, -50)); // Camera on +Z axis looking at XY plane
-camera.lookAt(0, 0, 0);
+camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.position.set(0, 25, -50);
+const airplaneInitialYPosition = 15;
+camera.lookAt(0, airplaneInitialYPosition, 0); // Look at airplane initial position
 scene.add(camera); // Add camera to the scene
 // Mouse tracking
 const mouse = new THREE.Vector2();
-window.addEventListener("mousemove", (e) => {
+globalThis.addEventListener("mousemove", (e) => {
   mouse.x = (e.clientX / window.innerWidth)  *  2 - 1;
   mouse.y = (e.clientY / window.innerHeight) * -2 + 1;
 });
@@ -34,7 +33,7 @@ window.addEventListener("mousemove", (e) => {
 //Criando aviao
 const aviaoController = new Aviao(scene);
 let aviaoMesh = aviaoController.object;
-aviaoMesh.position.set(0, 10, 0); // above ground plane
+aviaoMesh.position.set(0, 25, 0);
 
 for (let i = 0; i < 50; i++) {
   // Aumentei para 50 árvores
@@ -61,7 +60,7 @@ window.addEventListener(
 );
 
 // Show axes (parameter is size of each axis)
-let axesHelper = new THREE.AxesHelper(12);
+let axesHelper = new THREE.AxesHelper(30);
 scene.add(axesHelper);
 
 // create the ground plane
@@ -116,7 +115,7 @@ function getWorldPositionAtZ(ndcX, ndcY, targetZ) {
 const clock = new THREE.Clock();
 const FOLLOW_DELAY = 0.5; // seconds (exponential smoothing time constant)
 
-var keyboard = new KeyboardState();
+let keyboard = new KeyboardState();
 function keyboardUpdate() {
   keyboard.update();
   const delta = clock.getDelta();
