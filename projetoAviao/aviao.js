@@ -1,12 +1,7 @@
-import * as THREE from  'three';
-import { OrbitControls } from '../../build/jsm/controls/OrbitControls.js';
-import {initRenderer, 
-        initCamera,
-        initDefaultBasicLight,
-        setDefaultMaterial,
-        InfoBox,
-        onWindowResize,
-        createGroundPlaneXZ} from "../../libs/util/util.js";
+import * as THREE from 'three';
+import {
+  setDefaultMaterial
+} from "../../libs/util/util.js";
 
 //Scene tem que ser atributo da classe 
 export class Aviao {
@@ -54,7 +49,7 @@ export class Aviao {
     rabo.position.set(0, -5.5, 0);
     roda1.scale.set(1, 1, 0.5);
     roda1.position.set(0, 2, 2.6);
-    kitty.rotateX(0.5*angle);
+    kitty.rotateX(0.5 * angle);
     kitty.position.set(2.5, 7, -1);
     kitty2.rotateX(0.5 * angle);
     kitty2.position.set(-2.5, 7, -1);
