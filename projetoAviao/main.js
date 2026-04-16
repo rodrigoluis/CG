@@ -149,8 +149,8 @@ function keyboardUpdate(delta) {
 
   //Rotação em Z automatica
   const dx = clampedX - aviaoMesh.position.x;
-  const MAX_BANK = THREE.MathUtils.degToRad(45);
-  let targetRotationZ = -dx * 0.1;
+  const MAX_BANK = THREE.MathUtils.degToRad(30);
+  let targetRotationZ = -dx * -0.1;
   targetRotationZ = THREE.MathUtils.clamp(targetRotationZ, -MAX_BANK, MAX_BANK);
   aviaoMesh.rotation.z += (targetRotationZ - aviaoMesh.rotation.z) * alpha;
   aviaoMesh.position.x += dx * alpha;
