@@ -1,4 +1,5 @@
 import * as THREE from "three";
+import Stats from "../../build/jsm/libs/stats.module.js";
 import KeyboardState from "../../libs/util/KeyboardState.js";
 import { Aviao } from "./aviao.js";
 import { Arvores } from "./arvore.js";
@@ -17,6 +18,9 @@ let baseColor = "rgb(175, 200, 220)";
 scene = new THREE.Scene(); // Create main scene
 scene.fog = new THREE.Fog(baseColor, 1, 400); // ADD FOG TO THE SCENE
 renderer = initRenderer(); // Init a basic renderer
+
+const stats = new Stats();
+document.getElementById("webgl-output").appendChild(stats.domElement);
 
 // Fog slider
 let fogParams = {
@@ -161,6 +165,7 @@ function render() {
   const delta = clock.getDelta();
   keyboardUpdate(delta);
   updateTiles(delta);
+  stats.update();
   requestAnimationFrame(render);
   renderer.render(scene, camera); // Render scene
 }
