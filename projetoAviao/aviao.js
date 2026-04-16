@@ -22,7 +22,7 @@ export class Aviao {
     const cilindroKitty = new THREE.CylinderGeometry(0.1, 2, 1, 3);
     const sphereFofo = new THREE.CapsuleGeometry(0.3, 0.5, 0.3, 80);
 
-    this.object = new THREE.Mesh(cilindroCorpo, materialRosa);
+    const corpo = new THREE.Mesh(cilindroCorpo, materialRosa);
     const nariz = new THREE.Mesh(sphereoNariz, materialBranco);
     const rabo = new THREE.Mesh(sphereoRabo, materialBranco);
     const empenagem = new THREE.Mesh(cilindroRabo, materialRosa);
@@ -33,12 +33,12 @@ export class Aviao {
     const roda2 = new THREE.Mesh(cilindroRabo, materialDetalhe);
     const kitty = new THREE.Mesh(cilindroKitty, materialDetalhe);
     const kitty2 = new THREE.Mesh(cilindroKitty, materialDetalhe);
-    const fofo = new THREE.Mesh(sphereFofo, materialDetalhe);
+    this.object = new THREE.Mesh(sphereFofo, materialDetalhe);
 
     let angle = THREE.MathUtils.degToRad(90);
 
-    this.object.position.set(0, 5, 0);
-    this.object.add(nariz, basa1, basa2, rabo, leme, roda1, kitty, kitty2, fofo);
+    corpo.position.set(0, 5, 0);
+    corpo.add(nariz, basa1, basa2, rabo, leme, roda1, kitty, kitty2);
     leme.add(empenagem);
 
     basa2.rotateZ(-1.5 * angle);
@@ -53,14 +53,16 @@ export class Aviao {
     kitty.position.set(2.5, 7, -1);
     kitty2.rotateX(0.5 * angle);
     kitty2.position.set(-2.5, 7, -1);
-    fofo.position.set(0, 8.8, 0);
+    this.object.position.set(0, 8.8, 0);
 
     leme.position.set(0, -7.2, -1.2);
     leme.rotateX(0.5 * angle);
     empenagem.rotateZ(angle);
     empenagem.translateX(-2);
 
-    this.object.rotateX(angle);
+    corpo.rotateX(angle);
+    this.object.add(corpo);
+    corpo.position.set(0, 0, -8.8);
     scene.add(this.object);
   }
 }
