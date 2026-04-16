@@ -15,15 +15,15 @@ import {
 let scene, renderer, camera, material, light; // Initial variables
 let baseColor = "rgb(175, 200, 220)";
 scene = new THREE.Scene(); // Create main scene
-scene.fog = new THREE.Fog(baseColor, 1, 100); // ADD FOG TO THE SCENE
+scene.fog = new THREE.Fog(baseColor, 1, 400); // ADD FOG TO THE SCENE
 renderer = initRenderer(); // Init a basic renderer
 
 // Fog slider
-const fogParams = {
-  fogFar: 100,
+let fogParams = {
+  fogFar: scene.fog.far,
 };
-const gui = new GUI();
-gui.add(fogParams, "fogFar", 1, 500, 1).onChange((value) => {
+let gui = new GUI();
+gui.add(fogParams, "fogFar", 50, 800, 1).onChange((value) => {
   scene.fog.far = value;
 });
 
@@ -46,21 +46,6 @@ const aviaoController = new Aviao(scene);
 let aviaoMesh = aviaoController.object;
 aviaoMesh.position.set(0, 25, 0);
 
-for (let i = 0; i < 50; i++) {
-  // Aumentei para 50 árvores
-  let tipo = Math.random() > 0.5 ? 1 : 2;
-  let arvore = new Arvores(scene, tipo);
-
-  // Espalha as árvores em um range de -180 a 180 (dentro dos 400 do plano)
-  let x = Math.random() * 360 - 180;
-  let z = Math.random() * 360 - 180;
-
-  // Altura baseada no tronco para ficarem sobre o plano
-  let y = tipo === 1 ? 3 : 2.5;
-
-  arvore.object.position.set(x, y, z);
-}
-
 // Listen window size changes
 window.addEventListener(
   "resize",
@@ -77,8 +62,19 @@ scene.add(axesHelper);
 // create the ground plane
 window.addEventListener('resize', function () { onWindowResize(camera, renderer) }, false);
 
-let groundPlane = createGroundPlaneWired(400, 400, 80, 80, 2, "dimgray", "gainsboro");
-scene.add(groundPlane);
+
+let tileSize = 200; // Size of each tile
+let tileSegments = 40; // Number of segments for the plane geometry (higher = more detailed)
+let tileRadius = 2; // Radius of each tile: 1 -> 3x3, 2 -> 5x5, etc.
+let tiles = [];
+let tileScrollSpeed = 50; // Units per second (positive moves tiles to -z)
+const tileGridSize = tileRadius * 2 + 1;
+
+createWorldTiles();
+
+
+// let groundPlane = createGroundPlaneWired(400, 400, 80, 80, 2, "dimgray", "gainsboro");
+// scene.add(groundPlane);
 
 
 // Computes the visible world-space rectangle at a given Z depth
@@ -127,9 +123,8 @@ const clock = new THREE.Clock();
 const FOLLOW_DELAY = 0.5; // seconds (exponential smoothing time constant)
 
 let keyboard = new KeyboardState();
-function keyboardUpdate() {
+function keyboardUpdate(delta) {
   keyboard.update();
-  const delta = clock.getDelta();
 
   // Compute clamped target position from cursor
   const target = getWorldPositionAtZ(mouse.x, mouse.y, aviaoMesh.position.z);
@@ -163,7 +158,91 @@ let controls = new InfoBox();
 
 render();
 function render() {
-    keyboardUpdate();
-    requestAnimationFrame(render);
-    renderer.render(scene, camera); // Render scene
+  const delta = clock.getDelta();
+  keyboardUpdate(delta);
+  updateTiles(delta);
+  requestAnimationFrame(render);
+  renderer.render(scene, camera); // Render scene
 }
+
+function createWorldTiles() {                             // Cria os tiles iniciais para preencher a área visível
+  for (let x = -tileRadius; x <= tileRadius; x++) {       // Loop que cria os tiles em um grid centrado na origem, com base no tileRadius
+    for (let z = -tileRadius; z <= tileRadius; z++) {
+      let tile = createTile(x, z);                        // Cria um tile com base nas coordenadas do grid
+      tile.position.set(x * tileSize, 0, z * tileSize);   // Posiciona o tile no mundo, espaçando-os de acordo com tileSize
+      tile.userData.tileX = x;
+      tile.userData.tileZ = z;                            // Armazena as coordenadas do tile para referência futura
+      rebuildTreesForTile(tile, x, z);                    // Popula o tile com árvores usando as coordenadas do tile para gerar uma semente de aleatoriedade consistente
+      tiles.push(tile);
+      scene.add(tile);
+    }
+  }
+}
+
+function createTile(offsetX, offsetZ) {                   // Cria um tile individual, que consiste em um plano de chão e um grupo para as árvores
+  let tile = new THREE.Group();
+  let plane = createGroundPlaneWired(tileSize, tileSize, tileSegments, tileSegments, 2, "dimgray", "gainsboro");
+  let treesGroup = new THREE.Group();                     // Grupo para conter as árvores do tile, facilitando a manipulação (remoção, adição, etc.)
+  tile.add(plane);
+  tile.add(treesGroup);
+  tile.userData = { offsetX: offsetX, offsetZ: offsetZ, tileX: null, tileZ: null, treesGroup: treesGroup };
+
+  return tile;
+}
+
+function updateTiles(delta) {                             // Atualiza a posição dos tiles na cena, movendo-os para criar a ilusão de movimento do avião sobre o terreno
+  const move = tileScrollSpeed * delta;                   
+  const wrapDistance = tileSize * tileGridSize;       
+  const wrapThreshold = -tileSize * (tileRadius + 0.5);   // Quando um tile cruza esse limite, ele é reposicionado para o outro lado do grid, criando um loop infinito de tiles
+
+  tiles.forEach(function (tile) {
+    tile.position.z -= move;
+    if (tile.position.z < wrapThreshold) {
+      tile.userData.tileZ += tileGridSize;
+      tile.position.z += wrapDistance;
+      rebuildTreesForTile(tile, tile.userData.tileX, tile.userData.tileZ, delta);
+      // Reconstrói as árvores do tile com base nas novas coordenadas do tile e no delta de tempo
+    }
+  });
+}
+
+function rebuildTreesForTile(tile, tileX, tileZ, delta = 0) {                 
+
+  let treesGroup = tile.userData.treesGroup;
+  while (treesGroup.children.length > 0) {
+    treesGroup.remove(treesGroup.children[0]);
+  }
+
+  let seed = ((tileX * 73856093) ^ (tileZ * 19349663) ^ 0x9e3779b9)* delta;
+  let rng = createSeededRandom(seed);
+  let minTrees = 20;
+  let maxTrees = 50;
+  let count = Math.floor(rng() * (maxTrees - minTrees + 1)) + minTrees;
+  let margin = 8;
+
+  for (let i = 0; i < count; i++) {
+    let tipo = rng() < 0.5 ? 1 : 2;
+    let treeWrapper = new Arvores(scene, tipo);
+    let tree = treeWrapper.object;
+    let scale = THREE.MathUtils.lerp(0.6, 1.6, rng());
+    let x = (rng() - 0.5) * (tileSize - margin * 2);
+    let z = (rng() - 0.5) * (tileSize - margin * 2);
+    let y = tipo === 1 ? 3 : 2.5;
+
+    scene.remove(tree);
+    tree.position.set(x, y, z);
+    tree.rotation.y = rng() * Math.PI * 2;
+    tree.scale.set(scale, scale, scale);
+    treesGroup.add(tree);
+  }
+
+  function createSeededRandom(seed) {
+    let state = seed >>> 0;
+    return function () {
+      state = (state * 1664525 + 1013904223) >>> 0;
+      return state / 4294967296;
+    };
+  }
+
+}
+
