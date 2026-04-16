@@ -73,6 +73,8 @@ let tileRadius = 2; // Radius of each tile: 1 -> 3x3, 2 -> 5x5, etc.
 let tiles = [];
 let tileScrollSpeed = 50; // Units per second (positive moves tiles to -z)
 const tileGridSize = tileRadius * 2 + 1;
+const minTrees = 20;
+const maxTrees = 50;
 
 createWorldTiles();
 
@@ -188,9 +190,29 @@ function createTile(offsetX, offsetZ) {                   // Cria um tile indivi
   let tile = new THREE.Group();
   let plane = createGroundPlaneWired(tileSize, tileSize, tileSegments, tileSegments, 2, "dimgray", "gainsboro");
   let treesGroup = new THREE.Group();                     // Grupo para conter as árvores do tile, facilitando a manipulação (remoção, adição, etc.)
+  let treePool = [];
+
+  for (let i = 0; i < maxTrees; i++) {
+    let tipo = i % 2 === 0 ? 1 : 2;
+    let treeWrapper = new Arvores(scene, tipo);
+    let tree = treeWrapper.object;
+    scene.remove(tree);
+    tree.visible = false;
+    tree.userData.tipo = tipo;
+    treesGroup.add(tree);
+    treePool.push(tree);
+  }
+
   tile.add(plane);
   tile.add(treesGroup);
-  tile.userData = { offsetX: offsetX, offsetZ: offsetZ, tileX: null, tileZ: null, treesGroup: treesGroup };
+  tile.userData = {
+    offsetX: offsetX,
+    offsetZ: offsetZ,
+    tileX: null,
+    tileZ: null,
+    treesGroup: treesGroup,
+    treePool: treePool,
+  };
 
   return tile;
 }
@@ -205,40 +227,43 @@ function updateTiles(delta) {                             // Atualiza a posiçã
     if (tile.position.z < wrapThreshold) {
       tile.userData.tileZ += tileGridSize;
       tile.position.z += wrapDistance;
-      rebuildTreesForTile(tile, tile.userData.tileX, tile.userData.tileZ, delta);
+      rebuildTreesForTile(tile, tile.userData.tileX, tile.userData.tileZ);
       // Reconstrói as árvores do tile com base nas novas coordenadas do tile e no delta de tempo
     }
   });
 }
 
-function rebuildTreesForTile(tile, tileX, tileZ, delta = 0) {                 
-
-  let treesGroup = tile.userData.treesGroup;
-  while (treesGroup.children.length > 0) {
-    treesGroup.remove(treesGroup.children[0]);
-  }
-
-  let seed = ((tileX * 73856093) ^ (tileZ * 19349663) ^ 0x9e3779b9)* delta;
+function rebuildTreesForTile(tile, tileX, tileZ) {
+  let treePool = tile.userData.treePool;
+  let seed = (tileX * 73856093) ^ (tileZ * 19349663) ^ 0x9e3779b9;
   let rng = createSeededRandom(seed);
-  let minTrees = 20;
-  let maxTrees = 50;
   let count = Math.floor(rng() * (maxTrees - minTrees + 1)) + minTrees;
   let margin = 8;
 
-  for (let i = 0; i < count; i++) {
-    let tipo = rng() < 0.5 ? 1 : 2;
-    let treeWrapper = new Arvores(scene, tipo);
-    let tree = treeWrapper.object;
+  let indices = Array.from({ length: treePool.length }, (_, i) => i);
+  for (let i = indices.length - 1; i > 0; i--) {
+    const j = Math.floor(rng() * (i + 1));
+    const temp = indices[i];
+    indices[i] = indices[j];
+    indices[j] = temp;
+  }
+
+  for (let i = 0; i < treePool.length; i++) {
+    let tree = treePool[indices[i]];
+    if (i >= count) {
+      tree.visible = false;
+      continue;
+    }
+    let tipo = tree.userData.tipo || 1;
     let scale = THREE.MathUtils.lerp(0.6, 1.6, rng());
     let x = (rng() - 0.5) * (tileSize - margin * 2);
     let z = (rng() - 0.5) * (tileSize - margin * 2);
     let y = tipo === 1 ? 3 : 2.5;
 
-    scene.remove(tree);
+    tree.visible = true;
     tree.position.set(x, y, z);
     tree.rotation.y = rng() * Math.PI * 2;
     tree.scale.set(scale, scale, scale);
-    treesGroup.add(tree);
   }
 
   function createSeededRandom(seed) {
