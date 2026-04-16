@@ -2,6 +2,7 @@ import * as THREE from "three";
 import KeyboardState from "../../libs/util/KeyboardState.js";
 import { Aviao } from "./aviao.js";
 import { Arvores } from "./arvore.js";
+import GUI from "../../libs/util/dat.gui.module.js";
 import {
   initRenderer,
   initDefaultBasicLight,
@@ -14,8 +15,18 @@ import {
 let scene, renderer, camera, material, light; // Initial variables
 let baseColor = "rgb(175, 200, 220)";
 scene = new THREE.Scene(); // Create main scene
-  scene.fog = new THREE.Fog(baseColor, 1, 100); // ADD FOG TO THE SCENE
+scene.fog = new THREE.Fog(baseColor, 1, 100); // ADD FOG TO THE SCENE
 renderer = initRenderer(); // Init a basic renderer
+
+// Fog slider
+const fogParams = {
+  fogFar: 100,
+};
+const gui = new GUI();
+gui.add(fogParams, "fogFar", 1, 500, 1).onChange((value) => {
+  scene.fog.far = value;
+});
+
 material = setDefaultMaterial(); // create a basic material
 light = initDefaultBasicLight(scene); // Create a basic light to illuminate the scene
 camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
@@ -138,6 +149,7 @@ function keyboardUpdate() {
   if (keyboard.pressed("S")) aviaoMesh.rotateX(-angle);
 }
 
+
 // Use this to show information onscreen
 let controls = new InfoBox();
   controls.add("Basic Scene");
@@ -147,6 +159,7 @@ let controls = new InfoBox();
   controls.add("* Right button to translate (pan)");
   controls.add("* Scroll to zoom in/out.");
   controls.show();
+
 
 render();
 function render() {
