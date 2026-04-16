@@ -13,8 +13,9 @@ import {
   createGroundPlaneWired,
 } from "../libs/util/util.js";
 
-let scene, renderer, camera, material, light; // Initial variables
+let scene, renderer, camera, material, light, materialWire; // Initial variables
 let baseColor = "rgb(175, 200, 220)";
+materialWire = "rgb(179, 149, 149)";
 scene = new THREE.Scene(); // Create main scene
 scene.fog = new THREE.Fog(baseColor, 1, 400); // ADD FOG TO THE SCENE
 renderer = initRenderer(); // Init a basic renderer
@@ -131,19 +132,36 @@ function keyboardUpdate(delta) {
   // Compute clamped target position from cursor
   const target = getWorldPositionAtZ(mouse.x, mouse.y, aviaoMesh.position.z);
   const bounds = getFrustumBoundsAtZ(camera, aviaoMesh.position.z);
-  const clampedX = THREE.MathUtils.clamp(target.x, bounds.minX + PLANE_MARGIN, bounds.maxX - PLANE_MARGIN);
-  const clampedY = THREE.MathUtils.clamp(target.y, Math.max(bounds.minY + PLANE_MARGIN, PLANE_MARGIN), bounds.maxY - PLANE_MARGIN);
+  const clampedX = THREE.MathUtils.clamp(
+    target.x,
+    bounds.minX + PLANE_MARGIN,
+    bounds.maxX - PLANE_MARGIN,
+  );
+  const clampedY = THREE.MathUtils.clamp(
+    target.y,
+    Math.max(bounds.minY + PLANE_MARGIN, PLANE_MARGIN),
+    bounds.maxY - PLANE_MARGIN,
+  );
 
   // Lerp toward target with 0.8s time constant
   const alpha = 1 - Math.exp(-delta / FOLLOW_DELAY);
-  aviaoMesh.position.x += (clampedX - aviaoMesh.position.x) * alpha;
+  // aviaoMesh.position.x += (clampedX - aviaoMesh.position.x) * alpha;
+
+  //Rotação em Z automatica
+  const dx = clampedX - aviaoMesh.position.x;
+  const MAX_BANK = THREE.MathUtils.degToRad(45);
+  let targetRotationZ = -dx * 0.1;
+  targetRotationZ = THREE.MathUtils.clamp(targetRotationZ, -MAX_BANK, MAX_BANK);
+  aviaoMesh.rotation.z += (targetRotationZ - aviaoMesh.rotation.z) * alpha;
+  aviaoMesh.position.x += dx * alpha;
   aviaoMesh.position.y += (clampedY - aviaoMesh.position.y) * alpha;
 
-  let angle = THREE.MathUtils.degToRad(1);
-  if (keyboard.pressed("A")) aviaoMesh.rotateY(angle);
-  if (keyboard.pressed("D")) aviaoMesh.rotateY(-angle);
-  if (keyboard.pressed("W")) aviaoMesh.rotateX(angle);
-  if (keyboard.pressed("S")) aviaoMesh.rotateX(-angle);
+  //Rotação maunal 
+  // let angle = THREE.MathUtils.degToRad(1);
+  // if (keyboard.pressed("A")) aviaoMesh.rotateZ(-angle);
+  // if (keyboard.pressed("D")) aviaoMesh.rotateZ(angle);
+  // if (keyboard.pressed("W")) aviaoMesh.rotateY(-angle);
+  // if (keyboard.pressed("S")) aviaoMesh.rotateY(angle);
 }
 
 
@@ -184,7 +202,7 @@ function createWorldTiles() {                             // Cria os tiles inici
 
 function createTile(offsetX, offsetZ) {                   // Cria um tile individual, que consiste em um plano de chão e um grupo para as árvores
   let tile = new THREE.Group();
-  let plane = createGroundPlaneWired(tileSize, tileSize, tileSegments, tileSegments, 2, "dimgray", "gainsboro");
+  let plane = createGroundPlaneWired(tileSize, tileSize, tileSegments, tileSegments, 2, "rgb(121, 105, 105)", "rgb(45, 38, 35)");
   let treesGroup = new THREE.Group();                     // Grupo para conter as árvores do tile, facilitando a manipulação (remoção, adição, etc.)
   let treePool = [];
 

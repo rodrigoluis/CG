@@ -78,7 +78,7 @@ export class Arvores {
     folhas7.position.set(0.0, 1.7, 3);
 
     //Tamanhos aleatorios
-    const escalasPossiveis = [1.2, 2, 2.5, 3];
+    const escalasPossiveis = [2, 3, 2.5, 4];
     const escalaSorteada =
       escalasPossiveis[Math.floor(Math.random() * escalasPossiveis.length)];
     
