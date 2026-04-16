@@ -79,10 +79,6 @@ const maxTrees = 50;
 createWorldTiles();
 
 
-// let groundPlane = createGroundPlaneWired(400, 400, 80, 80, 2, "dimgray", "gainsboro");
-// scene.add(groundPlane);
-
-
 // Computes the visible world-space rectangle at a given Z depth
 function getFrustumBoundsAtZ(camera, targetZ) {
   const ndcCorners = [
