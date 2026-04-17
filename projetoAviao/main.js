@@ -150,7 +150,7 @@ function keyboardUpdate(delta) {
   //Rotação em Z automatica
   const dx = clampedX - aviaoMesh.position.x;
   const MAX_BANK = THREE.MathUtils.degToRad(30);
-  let targetRotationZ = -dx * -0.1;
+  let targetRotationZ = -dx * 0.1;
   targetRotationZ = THREE.MathUtils.clamp(targetRotationZ, -MAX_BANK, MAX_BANK);
   aviaoMesh.rotation.z += (targetRotationZ - aviaoMesh.rotation.z) * alpha;
   aviaoMesh.position.x += dx * alpha;
@@ -166,14 +166,14 @@ function keyboardUpdate(delta) {
 
 
 // Use this to show information onscreen
-let controls = new InfoBox();
-  controls.add("Basic Scene");
-  controls.addParagraph();
-  controls.add("Use mouse to interact:");
-  controls.add("* Left button to rotate");
-  controls.add("* Right button to translate (pan)");
-  controls.add("* Scroll to zoom in/out.");
-  controls.show();
+// let controls = new InfoBox();
+//   controls.add("Basic Scene");
+//   controls.addParagraph();
+//   controls.add("Use mouse to interact:");
+//   controls.add("* Left button to rotate");
+//   controls.add("* Right button to translate (pan)");
+//   controls.add("* Scroll to zoom in/out.");
+//   controls.show();
 
 
 render();
