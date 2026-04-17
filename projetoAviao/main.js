@@ -14,11 +14,12 @@ import {
 } from "../libs/util/util.js";
 
 let scene, renderer, camera, material, light, materialWire; // Initial variables
-let baseColor = "rgb(175, 200, 220)";
+let baseColor = "rgb(148, 181, 224)";
 materialWire = "rgb(179, 149, 149)";
 scene = new THREE.Scene(); // Create main scene
 scene.fog = new THREE.Fog(baseColor, 1, 400); // ADD FOG TO THE SCENE
 renderer = initRenderer(); // Init a basic renderer
+renderer.setClearColor(baseColor); // Set background to match fog color
 
 const stats = new Stats();
 document.getElementById("webgl-output").appendChild(stats.domElement);
@@ -31,6 +32,8 @@ let gui = new GUI();
 gui.add(fogParams, "fogFar", 50, 800, 1).onChange((value) => {
   scene.fog.far = value;
 });
+
+
 
 material = setDefaultMaterial(); // create a basic material
 light = initDefaultBasicLight(scene); // Create a basic light to illuminate the scene
@@ -150,7 +153,7 @@ function keyboardUpdate(delta) {
   //Rotação em Z automatica
   const dx = clampedX - aviaoMesh.position.x;
   const MAX_BANK = THREE.MathUtils.degToRad(30);
-  let targetRotationZ = -dx * -0.1;
+  let targetRotationZ = -dx * 0.1;
   targetRotationZ = THREE.MathUtils.clamp(targetRotationZ, -MAX_BANK, MAX_BANK);
   aviaoMesh.rotation.z += (targetRotationZ - aviaoMesh.rotation.z) * alpha;
   aviaoMesh.position.x += dx * alpha;
@@ -202,7 +205,7 @@ function createWorldTiles() {                             // Cria os tiles inici
 
 function createTile(offsetX, offsetZ) {                   // Cria um tile individual, que consiste em um plano de chão e um grupo para as árvores
   let tile = new THREE.Group();
-  let plane = createGroundPlaneWired(tileSize, tileSize, tileSegments, tileSegments, 2, "rgb(121, 105, 105)", "rgb(45, 38, 35)");
+  let plane = createGroundPlaneWired(tileSize, tileSize, tileSegments, tileSegments, 2, "rgb(44, 57, 42)", "rgb(2, 60, 4)");
   let treesGroup = new THREE.Group();                     // Grupo para conter as árvores do tile, facilitando a manipulação (remoção, adição, etc.)
   let treePool = [];
 
