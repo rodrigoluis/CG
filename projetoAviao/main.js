@@ -169,14 +169,14 @@ function keyboardUpdate(delta) {
 
 
 // Use this to show information onscreen
-let controls = new InfoBox();
-  controls.add("Basic Scene");
-  controls.addParagraph();
-  controls.add("Use mouse to interact:");
-  controls.add("* Left button to rotate");
-  controls.add("* Right button to translate (pan)");
-  controls.add("* Scroll to zoom in/out.");
-  controls.show();
+// let controls = new InfoBox();
+//   controls.add("Basic Scene");
+//   controls.addParagraph();
+//   controls.add("Use mouse to interact:");
+//   controls.add("* Left button to rotate");
+//   controls.add("* Right button to translate (pan)");
+//   controls.add("* Scroll to zoom in/out.");
+//   controls.show();
 
 
 render();
