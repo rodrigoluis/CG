@@ -75,7 +75,7 @@ export class Arvores {
     const escalasPossiveis = [2, 3, 2.5, 4];
     const escalaSorteada =
       escalasPossiveis[Math.floor(Math.random() * escalasPossiveis.length)];
-    
+
     objetoTipo1.scale.set(escalaSorteada, escalaSorteada, escalaSorteada);
     objetoTipo12.scale.set(escalaSorteada, escalaSorteada, escalaSorteada);
 

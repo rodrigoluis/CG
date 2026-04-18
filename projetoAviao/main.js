@@ -51,7 +51,7 @@ scene.add(camera); // Add camera to the scene
 // Mouse tracking
 const mouse = new THREE.Vector2();
 globalThis.addEventListener("mousemove", (e) => {
-  mouse.x = (e.clientX / window.innerWidth)  *  2 - 1;
+  mouse.x = (e.clientX / window.innerWidth) * 2 - 1;
   mouse.y = (e.clientY / window.innerHeight) * -2 + 1;
 });
 
@@ -92,10 +92,10 @@ createWorldTiles();
 // Computes the visible world-space rectangle at a given Z depth
 function getFrustumBoundsAtZ(camera, targetZ) {
   const ndcCorners = [
-    new THREE.Vector3(-1,  1, 0.5),
-    new THREE.Vector3( 1,  1, 0.5),
+    new THREE.Vector3(-1, 1, 0.5),
+    new THREE.Vector3(1, 1, 0.5),
     new THREE.Vector3(-1, -1, 0.5),
-    new THREE.Vector3( 1, -1, 0.5),
+    new THREE.Vector3(1, -1, 0.5),
   ];
 
   const worldPoints = ndcCorners.map(ndc => {
@@ -166,7 +166,7 @@ function keyboardUpdate(delta) {
 
   targetRotationZ = THREE.MathUtils.clamp(targetRotationZ, -MAX_BANK, MAX_BANK);
   THREE.MathUtils.clamp(targetY, -MAX_YAW, MAX_YAW);
-  
+
   aviaoMesh.rotation.z +=
     (targetRotationZ - aviaoMesh.rotation.z) * alphaRotation;
   aviaoMesh.rotation.y +=
@@ -175,23 +175,23 @@ function keyboardUpdate(delta) {
   aviaoMesh.position.y += (clampedY - aviaoMesh.position.y) * alphaPosition;
 }
 
- function updateCamera(delta) {
-   if (!aviaoMesh) return;
-   // Usamos um tempo de resposta menor que o do avião para ela ser firme
-   const camAlpha = 1 - Math.exp(-delta / CAMERA_SMOOTHING);
+function updateCamera(delta) {
+  if (!aviaoMesh) return;
+  // Usamos um tempo de resposta menor que o do avião para ela ser firme
+  const camAlpha = 1 - Math.exp(-delta / CAMERA_SMOOTHING);
 
-   // Ela quer estar exatamente na mesma largura (X) que o avião
-   let targetCX = aviaoMesh.position.x * 0.1;
-   let targetCY = aviaoMesh.position.y * 0.1 + CAMERA_OFFSET_Y;
-   THREE.MathUtils.clamp(targetCX, -CAM_LIMIT_X, CAM_LIMIT_X);
-   THREE.MathUtils.clamp(targetCY, CAM_LIMIT_Y_MIN, CAM_LIMIT_Y_MAX);
+  // Ela quer estar exatamente na mesma largura (X) que o avião
+  let targetCX = aviaoMesh.position.x * 0.1;
+  let targetCY = aviaoMesh.position.y * 0.1 + CAMERA_OFFSET_Y;
+  THREE.MathUtils.clamp(targetCX, -CAM_LIMIT_X, CAM_LIMIT_X);
+  THREE.MathUtils.clamp(targetCY, CAM_LIMIT_Y_MIN, CAM_LIMIT_Y_MAX);
 
-   camera.position.x += (targetCX - camera.position.x) * 0.1 * camAlpha;
-   camera.position.x += (targetCX - camera.position.x) * 0.1 * camAlpha;
+  camera.position.x += (targetCX - camera.position.x) * 0.1 * camAlpha;
+  camera.position.x += (targetCX - camera.position.x) * 0.1 * camAlpha;
 
-   // Isso garante que ele fique centralizado na tela
-   camera.lookAt(aviaoMesh.position);
- }
+  // Isso garante que ele fique centralizado na tela
+  camera.lookAt(aviaoMesh.position);
+}
 
 render();
 function render() {
@@ -250,8 +250,8 @@ function createTile(offsetX, offsetZ) {                   // Cria um tile indivi
 }
 
 function updateTiles(delta) {                             // Atualiza a posição dos tiles na cena, movendo-os para criar a ilusão de movimento do avião sobre o terreno
-  const move = tileScrollSpeed * delta;                   
-  const wrapDistance = tileSize * tileGridSize;       
+  const move = tileScrollSpeed * delta;
+  const wrapDistance = tileSize * tileGridSize;
   const wrapThreshold = -tileSize * (tileRadius + 0.5);   // Quando um tile cruza esse limite, ele é reposicionado para o outro lado do grid, criando um loop infinito de tiles
 
   tiles.forEach(function (tile) {
@@ -298,13 +298,13 @@ function rebuildTreesForTile(tile, tileX, tileZ) {
     tree.scale.set(scale, scale, scale);
   }
 
-  
+
 }
 
 function createSeededRandom(seed) {
-    let state = seed >>> 0;
-    return function () {
-        state = (state * 1664525 + 1013904223) >>> 0;
-        return state / 4294967296;
-    };
+  let state = seed >>> 0;
+  return function () {
+    state = (state * 1664525 + 1013904223) >>> 0;
+    return state / 4294967296;
+  };
 }
