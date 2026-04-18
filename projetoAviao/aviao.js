@@ -30,7 +30,6 @@ export class Aviao {
     const basa2 = new THREE.Mesh(Asa, materialBranco);
     const leme = new THREE.Mesh(cilindroLeme, materialBranco);
     const roda1 = new THREE.Mesh(cilindroRabo, materialDetalhe);
-    const roda2 = new THREE.Mesh(cilindroRabo, materialDetalhe);
     const kitty = new THREE.Mesh(cilindroKitty, materialDetalhe);
     const kitty2 = new THREE.Mesh(cilindroKitty, materialDetalhe);
     this.object = new THREE.Mesh(sphereFofo, materialDetalhe);
