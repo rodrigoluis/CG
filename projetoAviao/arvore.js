@@ -12,24 +12,24 @@ export class Arvores {
     madeira = setDefaultMaterial("brown"); // create a basic materialn, zoom etc.
 
     // cria um tronco
-    let TroncoGeometry1 = new THREE.CylinderGeometry(1, 1, 6);
-    const objetoTipo1 = new THREE.Mesh(TroncoGeometry1, madeira);
+    let troncoGeometry1 = new THREE.CylinderGeometry(1, 1, 6);
+    const objetoTipo1 = new THREE.Mesh(troncoGeometry1, madeira);
 
     // posição da árvore 1
     objetoTipo1.position.set(4, 3, 0);
     // adicionando a árvore 1 na cena
 
-    let FolhaGeometry1 = new THREE.CylinderGeometry(0, 4, 4);
-    let folhas1 = new THREE.Mesh(FolhaGeometry1, folha);
+    let folhaGeometry1 = new THREE.CylinderGeometry(0, 4, 4);
+    let folhas1 = new THREE.Mesh(folhaGeometry1, folha);
 
-    let FolhaGeometry2 = new THREE.CylinderGeometry(0, 3.5, 3.5);
-    let folhas2 = new THREE.Mesh(FolhaGeometry2, folha);
+    let folhaGeometry2 = new THREE.CylinderGeometry(0, 3.5, 3.5);
+    let folhas2 = new THREE.Mesh(folhaGeometry2, folha);
 
-    let FolhaGeometry3 = new THREE.CylinderGeometry(0, 3, 3);
-    let folhas3 = new THREE.Mesh(FolhaGeometry3, folha);
+    let folhaGeometry3 = new THREE.CylinderGeometry(0, 3, 3);
+    let folhas3 = new THREE.Mesh(folhaGeometry3, folha);
 
-    let FolhaGeometry4 = new THREE.CylinderGeometry(0, 2.5, 2.5);
-    let folhas4 = new THREE.Mesh(FolhaGeometry4, folha);
+    let folhaGeometry4 = new THREE.CylinderGeometry(0, 2.5, 2.5);
+    let folhas4 = new THREE.Mesh(folhaGeometry4, folha);
 
     let FolhaGeometry5 = new THREE.CylinderGeometry(0, 2, 2.5);
     let folhas5 = new THREE.Mesh(FolhaGeometry5, folha);
@@ -47,16 +47,16 @@ export class Arvores {
     folhas5.position.set(0, 6, 0);
 
     // cria um tronco para a segunda árvore
-    let TroncoGeometry2 = new THREE.CylinderGeometry(0.5, 0.5, 5);
-    const objetoTipo12 = new THREE.Mesh(TroncoGeometry2, madeira);
+    let troncoGeometry2 = new THREE.CylinderGeometry(0.5, 0.5, 5);
+    const objetoTipo2 = new THREE.Mesh(troncoGeometry2, madeira);
     // posição da árvore 2
-    objetoTipo12.position.set(-4, 2.5, 0);
+    objetoTipo2.position.set(-4, 2.5, 0);
     // adicionando a árvore 2 na cena
 
-    let GalhoGeometry1 = new THREE.CylinderGeometry(0.3, 0.3, 2.5);
-    let galho1 = new THREE.Mesh(GalhoGeometry1, madeira);
+    let galhoGeometry1 = new THREE.CylinderGeometry(0.3, 0.3, 2.5);
+    let galho1 = new THREE.Mesh(galhoGeometry1, madeira);
     galho1.rotateX(THREE.MathUtils.degToRad(60));
-    objetoTipo12.add(galho1);
+    objetoTipo2.add(galho1);
     galho1.position.set(0, 0, 1);
 
     let FolhaGeometry6 = new THREE.SphereGeometry(2);
@@ -65,10 +65,10 @@ export class Arvores {
     let FolhaGeometry7 = new THREE.SphereGeometry(1.5);
     let folhas7 = new THREE.Mesh(FolhaGeometry7, folha);
 
-    objetoTipo12.add(folhas6);
+    objetoTipo2.add(folhas6);
     folhas6.position.set(0, 2.5, 0);
 
-    objetoTipo12.add(folhas7);
+    objetoTipo2.add(folhas7);
     folhas7.position.set(0, 1.7, 3);
 
     //Tamanhos aleatorios
@@ -77,13 +77,13 @@ export class Arvores {
       escalasPossiveis[Math.floor(Math.random() * escalasPossiveis.length)];
 
     objetoTipo1.scale.set(escalaSorteada, escalaSorteada, escalaSorteada);
-    objetoTipo12.scale.set(escalaSorteada, escalaSorteada, escalaSorteada);
+    objetoTipo2.scale.set(escalaSorteada, escalaSorteada, escalaSorteada);
 
     // Aqui definimos quem será o "objetoTipo1" para o main.js não dar erro
     if (tipo === 1) {
       this.object = objetoTipo1;
     } else {
-      this.object = objetoTipo12;
+      this.object = objetoTipo2;
     }
 
     // Aplica a escala no objeto escolhido
