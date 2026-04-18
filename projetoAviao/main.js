@@ -13,6 +13,7 @@ import {
   createGroundPlaneWired,
 } from "../libs/util/util.js";
 
+//cria cena a partir do modelo pronto
 let scene, renderer, camera, material, light, materialWire; // Initial variables
 let baseColor = "rgb(148, 181, 224)";
 materialWire = "rgb(179, 149, 149)";
@@ -21,6 +22,7 @@ scene.fog = new THREE.Fog(baseColor, 1, 400); // ADD FOG TO THE SCENE
 renderer = initRenderer(); // Init a basic renderer
 renderer.setClearColor(baseColor); // Set background to match fog color
 
+//Stats = FPS 
 const stats = new Stats();
 document.getElementById("webgl-output").appendChild(stats.domElement);
 
@@ -34,14 +36,15 @@ gui.add(fogParams, "fogFar", 50, 800, 1).onChange((value) => {
 });
 
 
-
-material = setDefaultMaterial(); // create a basic material
+//Define luz e camera
+//material = setDefaultMaterial(); // create a basic material
 light = initDefaultBasicLight(scene); // Create a basic light to illuminate the scene
 camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.set(0, 25, -50);
 const airplaneInitialYPosition = 15;
 camera.lookAt(0, airplaneInitialYPosition, 0); // Look at airplane initial position
 scene.add(camera); // Add camera to the scene
+
 // Mouse tracking
 const mouse = new THREE.Vector2();
 globalThis.addEventListener("mousemove", (e) => {
@@ -70,7 +73,7 @@ scene.add(axesHelper);
 // create the ground plane
 window.addEventListener('resize', function () { onWindowResize(camera, renderer) }, false);
 
-
+//Cria sistema de "tiles" para dar impressão que o mapa está andando 
 let tileSize = 200; // Size of each tile
 let tileSegments = 40; // Number of segments for the plane geometry (higher = more detailed)
 let tileRadius = 2; // Radius of each tile: 1 -> 3x3, 2 -> 5x5, etc.
@@ -152,12 +155,31 @@ function keyboardUpdate(delta) {
 
   //Rotação em Z automatica
   const dx = clampedX - aviaoMesh.position.x;
-  const MAX_BANK = THREE.MathUtils.degToRad(30);
-  let targetRotationZ = -dx * 0.1;
+  const dy = clampedY - aviaoMesh.position.y;
+  const MAX_BANK = THREE.MathUtils.degToRad(45);
+  const MAX_YAW = THREE.MathUtils.degToRad(15);
+
+  const sensibilidadeZ = 1.5;
+  const sensibilidadeY = 0.3;
+  let targetRotationZ = dx * -0.5;
+  let targetY = dx * 0.2;
+
+  const alphaRotation =
+    1 - Math.exp(-delta / (FOLLOW_DELAY * 0.25));
+  const alphaPosition = 1 - Math.exp(-delta / FOLLOW_DELAY);
+
+  const isReturning = Math.abs(dx) < 1;
+  const returnFactor = isReturning ? 2.5 : 1.0;
   targetRotationZ = THREE.MathUtils.clamp(targetRotationZ, -MAX_BANK, MAX_BANK);
-  aviaoMesh.rotation.z += (targetRotationZ - aviaoMesh.rotation.z) * alpha;
-  aviaoMesh.position.x += dx * alpha;
-  aviaoMesh.position.y += (clampedY - aviaoMesh.position.y) * alpha;
+  targetY = THREE.MathUtils.clamp(targetY, -MAX_YAW, MAX_YAW);
+  
+  aviaoMesh.rotation.z +=
+    (targetRotationZ - aviaoMesh.rotation.z) * alphaRotation;
+  aviaoMesh.rotation.y +=
+    (targetRotationZ - aviaoMesh.rotation.z) * 0.1 * alphaRotation;
+  aviaoMesh.position.x += dx * alphaPosition;
+  aviaoMesh.position.y += (clampedY - aviaoMesh.position.y) * alphaPosition;
+  
 
   //Rotação maunal 
   // let angle = THREE.MathUtils.degToRad(1);
