@@ -37,7 +37,14 @@ gui.add(fogParams, "fogFar", 50, 800, 1).onChange((value) => {
 
 
 //Define luz e camera
-//material = setDefaultMaterial(); // create a basic material
+// Adicione estas constantes fora do render para facilitar o ajuste da camera
+// const CAMERA_OFFSET_Y = 0; // Um pouco mais alto para ver o chão
+// const CAMERA_OFFSET_Z = 5;
+// const CAMERA_SMOOTHING = 0.2;
+// const CAM_LIMIT_X = 0.1; // O máximo que a câmera pode ir para os lados
+// const CAM_LIMIT_Y_MIN = 5; // O mínimo de altura (para não entrar no chão)
+// const CAM_LIMIT_Y_MAX = 5;
+
 light = initDefaultBasicLight(scene); // Create a basic light to illuminate the scene
 camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.set(0, 25, -50);
@@ -200,6 +207,23 @@ function keyboardUpdate(delta) {
 //   controls.add("* Scroll to zoom in/out.");
 //   controls.show();
 
+//  function updateCamera(delta) {
+//    if (!aviaoMesh) return;
+//    // Usamos um tempo de resposta menor que o do avião para ela ser firme
+//    const camAlpha = 1 - Math.exp(-delta / CAMERA_SMOOTHING);
+
+//    // Ela quer estar exatamente na mesma largura (X) que o avião
+//    let targetCX = aviaoMesh.position.x * 0.1;
+//    let targetCY = aviaoMesh.position.y * 0.1 + CAMERA_OFFSET_Y;
+//    targetCX = THREE.MathUtils.clamp(targetCX, -CAM_LIMIT_X, CAM_LIMIT_X);
+//    targetCY = THREE.MathUtils.clamp(targetCY, CAM_LIMIT_Y_MIN, CAM_LIMIT_Y_MAX);
+
+//    camera.position.x += (targetCX - camera.position.x) * 0.1 * camAlpha;
+//    camera.position.x += (targetCX - camera.position.x) * 0.1 * camAlpha;
+
+//    // Isso garante que ele fique centralizado na tela
+//    camera.lookAt(aviaoMesh.position);
+//  }
 
 render();
 function render() {
@@ -208,6 +232,7 @@ function render() {
   updateTiles(delta);
   stats.update();
   requestAnimationFrame(render);
+  updateCamera(delta);
   renderer.render(scene, camera); // Render scene
 }
 
