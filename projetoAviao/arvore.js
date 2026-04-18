@@ -3,42 +3,39 @@ import {
   setDefaultMaterial
 } from "../../libs/util/util.js";
 
-export class Arvores {
-  constructor(scene, tipo) {
-    let madeira, folha;
-    let cor = ["#738417", "#2e6f40", "#388347", "#BF5B05", "#92780A"];
-    let corAleatorio = cor[Math.floor(Math.random() * cor.length)];
-    folha = setDefaultMaterial(corAleatorio); // create a basic material
-    madeira = setDefaultMaterial("brown"); // create a basic materialn, zoom etc.
+const COR_FOLHA = ["#738417", "#2e6f40", "#388347", "#BF5B05", "#92780A"];
+const ESCALAS_POSSIVEIS = [2, 3, 2.5, 4];
 
-    // cria um tronco
-    let troncoGeometry1 = new THREE.CylinderGeometry(1, 1, 6);
-    const objetoTipo1 = new THREE.Mesh(troncoGeometry1, madeira);
+const madeira = setDefaultMaterial("brown");
 
-    // posição da árvore 1
+const geomTronco1 = new THREE.CylinderGeometry(1, 1, 6);
+const geomFolha1 = new THREE.CylinderGeometry(0, 4, 4);
+const geomFolha2 = new THREE.CylinderGeometry(0, 3.5, 3.5);
+const geomFolha3 = new THREE.CylinderGeometry(0, 3, 3);
+const geomFolha4 = new THREE.CylinderGeometry(0, 2.5, 2.5);
+const geomFolha5 = new THREE.CylinderGeometry(0, 2, 2.5);
+
+const geomTronco2 = new THREE.CylinderGeometry(0.5, 0.5, 5);
+const geomGalho1 = new THREE.CylinderGeometry(0.3, 0.3, 2.5);
+const geomFolha6 = new THREE.SphereGeometry(2);
+const geomFolha7 = new THREE.SphereGeometry(1.5);
+
+export function criaArvore(scene, tipo) {
+  const corAleatorio = COR_FOLHA[Math.floor(Math.random() * COR_FOLHA.length)];
+  const folha = setDefaultMaterial(corAleatorio);
+  const escalaSorteada = ESCALAS_POSSIVEIS[Math.floor(Math.random() * ESCALAS_POSSIVEIS.length)];
+
+  let object;
+
+  if (tipo === 1) {
+    const objetoTipo1 = new THREE.Mesh(geomTronco1, madeira);
     objetoTipo1.position.set(4, 3, 0);
-    // adicionando a árvore 1 na cena
 
-    let folhaGeometry1 = new THREE.CylinderGeometry(0, 4, 4);
-    let folhas1 = new THREE.Mesh(folhaGeometry1, folha);
-
-    let folhaGeometry2 = new THREE.CylinderGeometry(0, 3.5, 3.5);
-    let folhas2 = new THREE.Mesh(folhaGeometry2, folha);
-
-    let folhaGeometry3 = new THREE.CylinderGeometry(0, 3, 3);
-    let folhas3 = new THREE.Mesh(folhaGeometry3, folha);
-
-    let folhaGeometry4 = new THREE.CylinderGeometry(0, 2.5, 2.5);
-    let folhas4 = new THREE.Mesh(folhaGeometry4, folha);
-
-    let FolhaGeometry5 = new THREE.CylinderGeometry(0, 2, 2.5);
-    let folhas5 = new THREE.Mesh(FolhaGeometry5, folha);
-
-    objetoTipo1.add(folhas1);
-    objetoTipo1.add(folhas2);
-    objetoTipo1.add(folhas3);
-    objetoTipo1.add(folhas4);
-    objetoTipo1.add(folhas5);
+    const folhas1 = new THREE.Mesh(geomFolha1, folha);
+    const folhas2 = new THREE.Mesh(geomFolha2, folha);
+    const folhas3 = new THREE.Mesh(geomFolha3, folha);
+    const folhas4 = new THREE.Mesh(geomFolha4, folha);
+    const folhas5 = new THREE.Mesh(geomFolha5, folha);
 
     folhas1.position.set(0, 2, 0);
     folhas2.position.set(0, 3, 0);
@@ -46,50 +43,28 @@ export class Arvores {
     folhas4.position.set(0, 5, 0);
     folhas5.position.set(0, 6, 0);
 
-    // cria um tronco para a segunda árvore
-    let troncoGeometry2 = new THREE.CylinderGeometry(0.5, 0.5, 5);
-    const objetoTipo2 = new THREE.Mesh(troncoGeometry2, madeira);
-    // posição da árvore 2
+    objetoTipo1.add(folhas1, folhas2, folhas3, folhas4, folhas5);
+    object = objetoTipo1;
+  } else {
+    const objetoTipo2 = new THREE.Mesh(geomTronco2, madeira);
     objetoTipo2.position.set(-4, 2.5, 0);
-    // adicionando a árvore 2 na cena
 
-    let galhoGeometry1 = new THREE.CylinderGeometry(0.3, 0.3, 2.5);
-    let galho1 = new THREE.Mesh(galhoGeometry1, madeira);
+    const galho1 = new THREE.Mesh(geomGalho1, madeira);
     galho1.rotateX(THREE.MathUtils.degToRad(60));
-    objetoTipo2.add(galho1);
     galho1.position.set(0, 0, 1);
 
-    let FolhaGeometry6 = new THREE.SphereGeometry(2);
-    let folhas6 = new THREE.Mesh(FolhaGeometry6, folha);
-
-    let FolhaGeometry7 = new THREE.SphereGeometry(1.5);
-    let folhas7 = new THREE.Mesh(FolhaGeometry7, folha);
-
-    objetoTipo2.add(folhas6);
+    const folhas6 = new THREE.Mesh(geomFolha6, folha);
     folhas6.position.set(0, 2.5, 0);
 
-    objetoTipo2.add(folhas7);
+    const folhas7 = new THREE.Mesh(geomFolha7, folha);
     folhas7.position.set(0, 1.7, 3);
 
-    //Tamanhos aleatorios
-    const escalasPossiveis = [2, 3, 2.5, 4];
-    const escalaSorteada =
-      escalasPossiveis[Math.floor(Math.random() * escalasPossiveis.length)];
-
-    objetoTipo1.scale.set(escalaSorteada, escalaSorteada, escalaSorteada);
-    objetoTipo2.scale.set(escalaSorteada, escalaSorteada, escalaSorteada);
-
-    // Aqui definimos quem será o "objetoTipo1" para o main.js não dar erro
-    if (tipo === 1) {
-      this.object = objetoTipo1;
-    } else {
-      this.object = objetoTipo2;
-    }
-
-    // Aplica a escala no objeto escolhido
-    this.object.scale.set(escalaSorteada, escalaSorteada, escalaSorteada);
-
-    // Adiciona o objeto escolhido na cena
-    scene.add(this.object);
+    objetoTipo2.add(galho1, folhas6, folhas7);
+    object = objetoTipo2;
   }
+
+  object.scale.set(escalaSorteada, escalaSorteada, escalaSorteada);
+  scene.add(object);
+
+  return { object };
 }

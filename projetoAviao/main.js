@@ -1,8 +1,8 @@
 import * as THREE from "three";
 import Stats from "../../build/jsm/libs/stats.module.js";
 import KeyboardState from "../../libs/util/KeyboardState.js";
-import { Aviao } from "./aviao.js";
-import { Arvores } from "./arvore.js";
+import { criaAviao } from "./aviao.js";
+import { criaArvore } from "./arvore.js";
 import GUI from "../../libs/util/dat.gui.module.js";
 import {
   initRenderer,
@@ -56,7 +56,7 @@ globalThis.addEventListener("mousemove", (e) => {
 });
 
 //Criando aviao
-const aviaoController = new Aviao(scene);
+const aviaoController = criaAviao(scene);
 let aviaoMesh = aviaoController.object;
 aviaoMesh.position.set(0, 25, 0);
 
@@ -226,10 +226,10 @@ function createTile(offsetX, offsetZ) {                   // Cria um tile indivi
 
   for (let i = 0; i < maxTrees; i++) {
     let tipo = i % 2 === 0 ? 1 : 2;
-    let treeWrapper = new Arvores(scene, tipo);
+    let treeWrapper = criaArvore(scene, tipo);
     let tree = treeWrapper.object;
     scene.remove(tree);
-    tree.visible = false;
+    tree.visibltipoe = false;
     tree.userData.tipo = tipo;
     treesGroup.add(tree);
     treePool.push(tree);
