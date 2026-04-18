@@ -184,44 +184,25 @@ function keyboardUpdate(delta) {
     (targetRotationZ - aviaoMesh.rotation.z) * 0.1 * alphaRotation;
   aviaoMesh.position.x += dx * alphaPosition;
   aviaoMesh.position.y += (clampedY - aviaoMesh.position.y) * alphaPosition;
-  
-
-  //Rotação maunal 
-  // let angle = THREE.MathUtils.degToRad(1);
-  // if (keyboard.pressed("A")) aviaoMesh.rotateZ(-angle);
-  // if (keyboard.pressed("D")) aviaoMesh.rotateZ(angle);
-  // if (keyboard.pressed("W")) aviaoMesh.rotateY(-angle);
-  // if (keyboard.pressed("S")) aviaoMesh.rotateY(angle);
 }
 
+ function updateCamera(delta) {
+   if (!aviaoMesh) return;
+   // Usamos um tempo de resposta menor que o do avião para ela ser firme
+   const camAlpha = 1 - Math.exp(-delta / CAMERA_SMOOTHING);
 
-// Use this to show information onscreen
-// let controls = new InfoBox();
-//   controls.add("Basic Scene");
-//   controls.addParagraph();
-//   controls.add("Use mouse to interact:");
-//   controls.add("* Left button to rotate");
-//   controls.add("* Right button to translate (pan)");
-//   controls.add("* Scroll to zoom in/out.");
-//   controls.show();
+   // Ela quer estar exatamente na mesma largura (X) que o avião
+   let targetCX = aviaoMesh.position.x * 0.1;
+   let targetCY = aviaoMesh.position.y * 0.1 + CAMERA_OFFSET_Y;
+   targetCX = THREE.MathUtils.clamp(targetCX, -CAM_LIMIT_X, CAM_LIMIT_X);
+   targetCY = THREE.MathUtils.clamp(targetCY, CAM_LIMIT_Y_MIN, CAM_LIMIT_Y_MAX);
 
-//  function updateCamera(delta) {
-//    if (!aviaoMesh) return;
-//    // Usamos um tempo de resposta menor que o do avião para ela ser firme
-//    const camAlpha = 1 - Math.exp(-delta / CAMERA_SMOOTHING);
+   camera.position.x += (targetCX - camera.position.x) * 0.1 * camAlpha;
+   camera.position.x += (targetCX - camera.position.x) * 0.1 * camAlpha;
 
-//    // Ela quer estar exatamente na mesma largura (X) que o avião
-//    let targetCX = aviaoMesh.position.x * 0.1;
-//    let targetCY = aviaoMesh.position.y * 0.1 + CAMERA_OFFSET_Y;
-//    targetCX = THREE.MathUtils.clamp(targetCX, -CAM_LIMIT_X, CAM_LIMIT_X);
-//    targetCY = THREE.MathUtils.clamp(targetCY, CAM_LIMIT_Y_MIN, CAM_LIMIT_Y_MAX);
-
-//    camera.position.x += (targetCX - camera.position.x) * 0.1 * camAlpha;
-//    camera.position.x += (targetCX - camera.position.x) * 0.1 * camAlpha;
-
-//    // Isso garante que ele fique centralizado na tela
-//    camera.lookAt(aviaoMesh.position);
-//  }
+   // Isso garante que ele fique centralizado na tela
+   camera.lookAt(aviaoMesh.position);
+ }
 
 render();
 function render() {
