@@ -7,8 +7,6 @@ import GUI from "../../libs/util/dat.gui.module.js";
 import {
   initRenderer,
   initDefaultBasicLight,
-  setDefaultMaterial,
-  InfoBox,
   onWindowResize,
   createGroundPlaneWired,
 } from "../libs/util/util.js";
@@ -330,13 +328,13 @@ function rebuildTreesForTile(tile, tileX, tileZ) {
     tree.scale.set(scale, scale, scale);
   }
 
-  function createSeededRandom(seed) {
-    let state = seed >>> 0;
-    return function () {
-      state = (state * 1664525 + 1013904223) >>> 0;
-      return state / 4294967296;
-    };
-  }
-
+  
 }
 
+function createSeededRandom(seed) {
+    let state = seed >>> 0;
+    return function () {
+        state = (state * 1664525 + 1013904223) >>> 0;
+        return state / 4294967296;
+    };
+}
