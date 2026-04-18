@@ -12,12 +12,10 @@ import {
 } from "../libs/util/util.js";
 
 //cria cena a partir do modelo pronto
-let scene, renderer, camera, material, light, materialWire; // Initial variables
 let baseColor = "rgb(148, 181, 224)";
-materialWire = "rgb(179, 149, 149)";
-scene = new THREE.Scene(); // Create main scene
+let scene = new THREE.Scene(); // Create main scene
 scene.fog = new THREE.Fog(baseColor, 1, 400); // ADD FOG TO THE SCENE
-renderer = initRenderer(); // Init a basic renderer
+let renderer = initRenderer(); // Init a basic renderer
 renderer.setClearColor(baseColor); // Set background to match fog color
 
 //Stats = FPS 
@@ -43,8 +41,8 @@ const CAM_LIMIT_Y_MIN = 5; // O mínimo de altura (para não entrar no chão)
 const CAM_LIMIT_Y_MAX = 5;
 
 // Define luz e camera
-light = initDefaultBasicLight(scene); // Create a basic light to illuminate the scene
-camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+let light = initDefaultBasicLight(scene); // Create a basic light to illuminate the scene
+let camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.set(0, 25, -50);
 const airplaneInitialYPosition = 15;
 camera.lookAt(0, airplaneInitialYPosition, 0); // Look at airplane initial position
@@ -154,18 +152,11 @@ function keyboardUpdate(delta) {
     bounds.maxY - PLANE_MARGIN,
   );
 
-  // Lerp toward target with 0.8s time constant
-  const alpha = 1 - Math.exp(-delta / FOLLOW_DELAY);
-  // aviaoMesh.position.x += (clampedX - aviaoMesh.position.x) * alpha;
-
   //Rotação em Z automatica
   const dx = clampedX - aviaoMesh.position.x;
-  const dy = clampedY - aviaoMesh.position.y;
   const MAX_BANK = THREE.MathUtils.degToRad(45);
   const MAX_YAW = THREE.MathUtils.degToRad(15);
 
-  const sensibilidadeZ = 1.5;
-  const sensibilidadeY = 0.3;
   let targetRotationZ = dx * -0.5;
   let targetY = dx * 0.2;
 
@@ -173,10 +164,8 @@ function keyboardUpdate(delta) {
     1 - Math.exp(-delta / (FOLLOW_DELAY * 0.25));
   const alphaPosition = 1 - Math.exp(-delta / FOLLOW_DELAY);
 
-  const isReturning = Math.abs(dx) < 1;
-  const returnFactor = isReturning ? 2.5 : 1.0;
   targetRotationZ = THREE.MathUtils.clamp(targetRotationZ, -MAX_BANK, MAX_BANK);
-  targetY = THREE.MathUtils.clamp(targetY, -MAX_YAW, MAX_YAW);
+  THREE.MathUtils.clamp(targetY, -MAX_YAW, MAX_YAW);
   
   aviaoMesh.rotation.z +=
     (targetRotationZ - aviaoMesh.rotation.z) * alphaRotation;
@@ -194,8 +183,8 @@ function keyboardUpdate(delta) {
    // Ela quer estar exatamente na mesma largura (X) que o avião
    let targetCX = aviaoMesh.position.x * 0.1;
    let targetCY = aviaoMesh.position.y * 0.1 + CAMERA_OFFSET_Y;
-   targetCX = THREE.MathUtils.clamp(targetCX, -CAM_LIMIT_X, CAM_LIMIT_X);
-   targetCY = THREE.MathUtils.clamp(targetCY, CAM_LIMIT_Y_MIN, CAM_LIMIT_Y_MAX);
+   THREE.MathUtils.clamp(targetCX, -CAM_LIMIT_X, CAM_LIMIT_X);
+   THREE.MathUtils.clamp(targetCY, CAM_LIMIT_Y_MIN, CAM_LIMIT_Y_MAX);
 
    camera.position.x += (targetCX - camera.position.x) * 0.1 * camAlpha;
    camera.position.x += (targetCX - camera.position.x) * 0.1 * camAlpha;

@@ -9,7 +9,7 @@ export class Aviao {
     // criando materiais
     let materialRosa, materialBranco, materialDetalhe;
     materialRosa = setDefaultMaterial("rgb(233, 65,150)");
-    materialBranco = setDefaultMaterial("branco");
+    materialBranco = setDefaultMaterial("white");
     materialDetalhe = setDefaultMaterial("rgb(255, 217, 2)");
 
     //CorpoAviao
