@@ -40,9 +40,6 @@ aviaoMesh.position.set(0, 25, 0);
 
 window.addEventListener("resize", function () { onWindowResize(camera, renderer); }, false);
 
-let axesHelper = new THREE.AxesHelper(30);
-scene.add(axesHelper);
-
 createWorldTiles(scene);
 
 const clock = new THREE.Clock();

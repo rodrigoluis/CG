@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-const FOLLOW_DELAY = 0.25;
+const FOLLOW_DELAY = 0.15;
 
 export const PLANE_BASE_Y = 25;
 export const PLANE_BOUNDS_X = 35;
@@ -73,7 +73,7 @@ export function inputUpdate(aviaoMesh, camera, delta) {
   let targetRotationX = dy * -0.5;
   let targetY = dx * 0.2;
 
-  const alphaRotation = 1 - Math.exp(-delta / (FOLLOW_DELAY * 0.25));
+  const alphaRotation = 1 - Math.exp(-delta / (FOLLOW_DELAY * 0.5));
   const alphaPosition = 1 - Math.exp(-delta / FOLLOW_DELAY);
 
   targetRotationZ = THREE.MathUtils.clamp(targetRotationZ, -MAX_BANK, MAX_BANK);
