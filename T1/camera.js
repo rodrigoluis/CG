@@ -1,8 +1,8 @@
 import * as THREE from "three";
 import { PLANE_BASE_Y } from "./input.js";
 
-const CAM_Z_OFFSET = -50;
-const CAM_Y_OFFSET = 5;
+const CAM_Z_OFFSET = -45;
+const CAM_Y_OFFSET = 2.5;
 const CAM_LOOK_AHEAD = 25;
 const CAM_ROLL_FACTOR = 0.005;
 const XY_TIME_CONSTANT = 0.1;

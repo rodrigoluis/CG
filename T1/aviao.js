@@ -12,7 +12,7 @@ export function criaAviao(scene) {
 
   //CorpoAviao
   const cilindroCorpo = new THREE.CylinderGeometry(3, 2.6, 10, 80);
-  const Asa = new THREE.CylinderGeometry(1.2, 2.8, 12, 5);
+  const asa = new THREE.CylinderGeometry(1.2, 2.8, 12, 5);
   const sphereoNariz = new THREE.CapsuleGeometry(3, 2, 3, 80);
   const sphereoRabo = new THREE.SphereGeometry(2.6, 80, 5);
   const cilindroRabo = new THREE.CapsuleGeometry(1, 5, 2, 30);
@@ -24,8 +24,8 @@ export function criaAviao(scene) {
   const nariz = new THREE.Mesh(sphereoNariz, materialBranco);
   const rabo = new THREE.Mesh(sphereoRabo, materialBranco);
   const empenagem = new THREE.Mesh(cilindroRabo, materialRosa);
-  const basa1 = new THREE.Mesh(Asa, materialBranco);
-  const basa2 = new THREE.Mesh(Asa, materialBranco);
+  const basa1 = new THREE.Mesh(asa, materialBranco);
+  const basa2 = new THREE.Mesh(asa, materialBranco);
   const leme = new THREE.Mesh(cilindroLeme, materialBranco);
   const roda1 = new THREE.Mesh(cilindroRabo, materialDetalhe);
   const kitty = new THREE.Mesh(cilindroKitty, materialDetalhe);

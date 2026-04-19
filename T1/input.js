@@ -1,6 +1,6 @@
 import * as THREE from "three";
 
-const FOLLOW_DELAY = 0.5;
+const FOLLOW_DELAY = 0.25;
 
 export const PLANE_BASE_Y = 25;
 export const PLANE_BOUNDS_X = 35;
@@ -64,20 +64,25 @@ export function inputUpdate(aviaoMesh, camera, delta) {
   );
 
   const dx = clampedX - aviaoMesh.position.x;
+  const dy = clampedY - aviaoMesh.position.y;
   const MAX_BANK = THREE.MathUtils.degToRad(45);
+  const MAX_PITCH = THREE.MathUtils.degToRad(10);
   const MAX_YAW = THREE.MathUtils.degToRad(15);
 
   let targetRotationZ = dx * -0.5;
+  let targetRotationX = dy * -0.5;
   let targetY = dx * 0.2;
 
   const alphaRotation = 1 - Math.exp(-delta / (FOLLOW_DELAY * 0.25));
   const alphaPosition = 1 - Math.exp(-delta / FOLLOW_DELAY);
 
   targetRotationZ = THREE.MathUtils.clamp(targetRotationZ, -MAX_BANK, MAX_BANK);
+  targetRotationX = THREE.MathUtils.clamp(targetRotationX, -MAX_PITCH, MAX_PITCH);
   THREE.MathUtils.clamp(targetY, -MAX_YAW, MAX_YAW);
 
   aviaoMesh.rotation.z += (targetRotationZ - aviaoMesh.rotation.z) * alphaRotation;
   aviaoMesh.rotation.y += (targetRotationZ - aviaoMesh.rotation.z) * 0.1 * alphaRotation;
+  aviaoMesh.rotation.x += (targetRotationX - aviaoMesh.rotation.x) * alphaRotation;
   aviaoMesh.position.x += dx * alphaPosition;
   aviaoMesh.position.y += (clampedY - aviaoMesh.position.y) * alphaPosition;
 }
