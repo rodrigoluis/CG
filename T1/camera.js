@@ -2,15 +2,13 @@ import * as THREE from "three";
 import { PLANE_BASE_Y, PLANE_BOUNDS_X, PLANE_BOUNDS_Y } from "./input.js";
 
 const CAM_Z_OFFSET = -95;
-const CAM_Y_OFFSET = 3;
-const CAM_LOOK_AHEAD = 25;
+const CAM_Y_OFFSET = 0;
+const CAM_LOOK_AHEAD = 200;
 const CAM_ROLL_FACTOR = 0.005;
-const XY_TIME_CONSTANT = 0.1;
+const XY_TIME_CONSTANT = 1;
 
-// Camera rectangle is smaller than plane rectangle.
-// Near edges, plane drifts off-center → player feels proximity to limit.
-const CAM_BOUNDS_X = PLANE_BOUNDS_X * 0.7;
-const CAM_BOUNDS_Y = PLANE_BOUNDS_Y * 0.7;
+const CAM_BOUNDS_X = PLANE_BOUNDS_X * 0.07;
+const CAM_BOUNDS_Y = PLANE_BOUNDS_Y * 0.07;
 
 const _lookTarget = new THREE.Vector3();
 

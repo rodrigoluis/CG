@@ -1,9 +1,11 @@
 import * as THREE from "three";
 
-const FOLLOW_DELAY = 0.15;
+// Resposta mais rápida ao mouse: avião alcança borda com menos latência.
+const FOLLOW_DELAY = 0.2;
 
 export const PLANE_BASE_Y = 25;
-export const PLANE_BOUNDS_X = 35;
+// 43 + wing_tip(9.5) ≈ 52.5 ≈ frustum_half_width(53) → asa quase toca a borda.
+export const PLANE_BOUNDS_X = 45;
 export const PLANE_BOUNDS_Y = 15;
 
 export const mouse = new THREE.Vector2();
