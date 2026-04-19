@@ -27,7 +27,7 @@ gui.add(fogParams, "fogFar", 50, 800, 1).onChange((value) => {
 });
 
 let light = initDefaultBasicLight(scene);
-let camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 1000);
+let camera = new THREE.PerspectiveCamera(35, window.innerWidth / window.innerHeight, 0.1, 1000);
 camera.position.set(0, 25, -50);
 camera.lookAt(0, 25, 0);
 scene.add(camera);
