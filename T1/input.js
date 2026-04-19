@@ -1,7 +1,10 @@
 import * as THREE from "three";
 
 const FOLLOW_DELAY = 0.5;
-const PLANE_MARGIN = 3;
+
+export const PLANE_BASE_Y = 25;
+export const PLANE_BOUNDS_X = 35;
+export const PLANE_BOUNDS_Y = 15;
 
 export const mouse = new THREE.Vector2();
 
@@ -53,16 +56,11 @@ export function getWorldPositionAtZ(camera, ndcX, ndcY, targetZ) {
 
 export function inputUpdate(aviaoMesh, camera, delta) {
   const target = getWorldPositionAtZ(camera, mouse.x, mouse.y, aviaoMesh.position.z);
-  const bounds = getFrustumBoundsAtZ(camera, aviaoMesh.position.z);
-  const clampedX = THREE.MathUtils.clamp(
-    target.x,
-    bounds.minX + PLANE_MARGIN,
-    bounds.maxX - PLANE_MARGIN,
-  );
+  const clampedX = THREE.MathUtils.clamp(target.x, -PLANE_BOUNDS_X, PLANE_BOUNDS_X);
   const clampedY = THREE.MathUtils.clamp(
     target.y,
-    Math.max(bounds.minY + PLANE_MARGIN, PLANE_MARGIN),
-    bounds.maxY - PLANE_MARGIN,
+    PLANE_BASE_Y - PLANE_BOUNDS_Y,
+    PLANE_BASE_Y + PLANE_BOUNDS_Y,
   );
 
   const dx = clampedX - aviaoMesh.position.x;
