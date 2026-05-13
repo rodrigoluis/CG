@@ -57,6 +57,163 @@ window.addEventListener("resize", function () { onWindowResize(camera, renderer)
 createWorldTiles(scene);
 
 const clock = new THREE.Clock();
+let isPaused = false;
+let gameSpeed = 1;
+
+const pauseOverlay = document.createElement("div");
+pauseOverlay.style.position = "fixed";
+pauseOverlay.style.inset = "0";
+pauseOverlay.style.display = "none";
+pauseOverlay.style.alignItems = "center";
+pauseOverlay.style.justifyContent = "center";
+pauseOverlay.style.backgroundColor = "rgba(0, 0, 0, 0.45)";
+pauseOverlay.style.color = "#ffffff";
+pauseOverlay.style.zIndex = "10";
+pauseOverlay.style.userSelect = "none";
+
+const pausePanel = document.createElement("div");
+pausePanel.style.display = "flex";
+pausePanel.style.flexDirection = "column";
+pausePanel.style.gap = "14px";
+pausePanel.style.minWidth = "280px";
+pausePanel.style.padding = "20px 22px";
+pausePanel.style.borderRadius = "10px";
+pausePanel.style.backgroundColor = "rgba(20, 24, 31, 0.92)";
+pausePanel.style.border = "1px solid rgba(255, 255, 255, 0.15)";
+pausePanel.style.boxShadow = "0 10px 28px rgba(0, 0, 0, 0.35)";
+
+const pauseTitle = document.createElement("div");
+pauseTitle.textContent = "PAUSADO";
+pauseTitle.style.font = "700 30px/1.1 Arial, sans-serif";
+pauseTitle.style.letterSpacing = "2px";
+pauseTitle.style.textAlign = "center";
+
+const speedLabel = document.createElement("div");
+speedLabel.textContent = "Velocidade do jogo";
+speedLabel.style.font = "600 14px/1.2 Arial, sans-serif";
+speedLabel.style.opacity = "0.85";
+
+const speedRow = document.createElement("div");
+speedRow.style.display = "flex";
+speedRow.style.alignItems = "center";
+speedRow.style.gap = "8px";
+
+const speedButtonBase = {
+  padding: "8px 10px",
+  borderRadius: "6px",
+  border: "1px solid rgba(255, 255, 255, 0.2)",
+  background: "#2a3242",
+  color: "#ffffff",
+  font: "600 13px/1 Arial, sans-serif",
+  cursor: "pointer",
+  flex: "1",
+};
+
+const speedButton1 = document.createElement("button");
+speedButton1.textContent = "1.0x";
+Object.assign(speedButton1.style, speedButtonBase);
+
+const speedButton2 = document.createElement("button");
+speedButton2.textContent = "2.0x";
+Object.assign(speedButton2.style, speedButtonBase);
+
+const speedButton3 = document.createElement("button");
+speedButton3.textContent = "3.0x";
+Object.assign(speedButton3.style, speedButtonBase);
+
+const resumeButton = document.createElement("button");
+resumeButton.textContent = "Resumir";
+resumeButton.style.padding = "10px 12px";
+resumeButton.style.borderRadius = "6px";
+resumeButton.style.border = "1px solid rgba(255, 255, 255, 0.2)";
+resumeButton.style.background = "#2f8f4e";
+resumeButton.style.color = "#ffffff";
+resumeButton.style.font = "600 14px/1 Arial, sans-serif";
+resumeButton.style.cursor = "pointer";
+
+const closeButton = document.createElement("button");
+closeButton.textContent = "Fechar jogo";
+closeButton.style.padding = "10px 12px";
+closeButton.style.borderRadius = "6px";
+closeButton.style.border = "1px solid rgba(255, 255, 255, 0.2)";
+closeButton.style.background = "#a13d3d";
+closeButton.style.color = "#ffffff";
+closeButton.style.font = "600 14px/1 Arial, sans-serif";
+closeButton.style.cursor = "pointer";
+
+speedRow.appendChild(speedButton1);
+speedRow.appendChild(speedButton2);
+speedRow.appendChild(speedButton3);
+pausePanel.appendChild(pauseTitle);
+pausePanel.appendChild(speedLabel);
+pausePanel.appendChild(speedRow);
+pausePanel.appendChild(resumeButton);
+pausePanel.appendChild(closeButton);
+pauseOverlay.appendChild(pausePanel);
+document.body.appendChild(pauseOverlay);
+
+function updateSpeedButtons() {
+  const activeColor = "#4b7cff";
+  const inactiveColor = "#2a3242";
+  speedButton1.style.background = gameSpeed === 1 ? activeColor : inactiveColor;
+  speedButton2.style.background = gameSpeed === 2 ? activeColor : inactiveColor;
+  speedButton3.style.background = gameSpeed === 3 ? activeColor : inactiveColor;
+}
+
+function setPaused(value) {
+  isPaused = value;
+  pauseOverlay.style.display = value ? "flex" : "none";
+  if (!value) {
+    clock.getDelta(); // descarta o delta acumulado durante a pausa
+  }
+}
+
+window.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    setPaused(true);
+  }
+});
+
+renderer.domElement.addEventListener("pointerdown", () => {
+  if (isPaused) {
+    setPaused(false);
+  }
+});
+
+pauseOverlay.addEventListener("pointerdown", () => {
+  if (isPaused) {
+    setPaused(false);
+  }
+});
+
+pausePanel.addEventListener("pointerdown", (event) => {
+  event.stopPropagation();
+});
+
+resumeButton.addEventListener("click", () => {
+  setPaused(false);
+});
+
+closeButton.addEventListener("click", () => {
+  window.location.href = "../index.html";
+});
+
+speedButton1.addEventListener("click", () => {
+  gameSpeed = 1;
+  updateSpeedButtons();
+});
+
+speedButton2.addEventListener("click", () => {
+  gameSpeed = 2;
+  updateSpeedButtons();
+});
+
+speedButton3.addEventListener("click", () => {
+  gameSpeed = 3;
+  updateSpeedButtons();
+});
+
+updateSpeedButtons();
 
 render();
 /**
@@ -64,10 +221,13 @@ render();
  */
 function render() {
   const delta = clock.getDelta(); // tempo em segundos desde o último frame
-  inputUpdate(aviaoMesh, camera, delta); // move o avião em direção ao mouse
-  updateTiles(delta);                    // rola e recicla os tiles de chão
+  if (!isPaused) {
+    const scaledDelta = delta * gameSpeed;
+    inputUpdate(aviaoMesh, camera, scaledDelta); // move o avião em direção ao mouse
+    updateTiles(scaledDelta);                    // rola e recicla os tiles de chão
+    updateCamera(camera, aviaoMesh, scaledDelta); // câmera segue o avião suavemente
+  }
   stats.update();                        // atualiza contador de FPS
   requestAnimationFrame(render);         // agenda o próximo frame
-  updateCamera(camera, aviaoMesh, delta); // câmera segue o avião suavemente
   renderer.render(scene, camera);        // desenha a cena na tela
 }
