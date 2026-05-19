@@ -1,7 +1,7 @@
 // bottons.js
 
 /**
- * Inicializa a interface de usuário do menu de pausa e injeta no DOM.
+ * Inicializa a interface de usuário do menu de pausa e injeta no DOM com paleta Pastel.
  * @param {Object} params
  * @param {Object} params.renderer - O renderizador do Three.js para capturar cliques na tela.
  * @param {Function} params.setPaused - Callback para alterar o estado de pausa na main.
@@ -23,32 +23,35 @@ export function initPauseMenu({
   pauseOverlay.style.display = "none";
   pauseOverlay.style.alignItems = "center";
   pauseOverlay.style.justifyContent = "center";
-  pauseOverlay.style.backgroundColor = "rgba(0, 0, 0, 0.45)";
-  pauseOverlay.style.color = "#ffffff";
+  pauseOverlay.style.backgroundColor = "rgba(61, 64, 91, 0.4)"; // Sombra usando o tom grafite suave da paleta
   pauseOverlay.style.zIndex = "10";
   pauseOverlay.style.userSelect = "none";
 
   const pausePanel = document.createElement("div");
   pausePanel.style.display = "flex";
   pausePanel.style.flexDirection = "column";
-  pausePanel.style.gap = "14px";
-  pausePanel.style.minWidth = "280px";
-  pausePanel.style.padding = "20px 22px";
-  pausePanel.style.borderRadius = "10px";
-  pausePanel.style.backgroundColor = "rgba(20, 24, 31, 0.92)";
-  pausePanel.style.border = "1px solid rgba(255, 255, 255, 0.15)";
-  pausePanel.style.boxShadow = "0 10px 28px rgba(0, 0, 0, 0.35)";
+  pausePanel.style.gap = "16px";
+  pausePanel.style.minWidth = "290px";
+  pausePanel.style.padding = "24px 26px";
+  pausePanel.style.borderRadius = "14px";
+  pausePanel.style.backgroundColor = "#fbf8f3"; // Creme suave da imagem enviada
+  pausePanel.style.border = "2px solid #3d405b"; // Borda fina no tom grafite elegante
+  pausePanel.style.boxShadow = "0 12px 30px rgba(61, 64, 91, 0.15)";
 
   const pauseTitle = document.createElement("div");
   pauseTitle.textContent = "PAUSADO";
-  pauseTitle.style.font = "700 30px/1.1 Arial, sans-serif";
-  pauseTitle.style.letterSpacing = "2px";
+  pauseTitle.style.font = "800 28px/1.1 'Arial Rounded MT Bold', sans-serif";
+  pauseTitle.style.letterSpacing = "3px";
   pauseTitle.style.textAlign = "center";
+  pauseTitle.style.color = "#e06187"; // Texto Grafite
 
   const speedLabel = document.createElement("div");
-  speedLabel.textContent = "Velocidade do jogo";
-  speedLabel.style.font = "600 14px/1.2 Arial, sans-serif";
-  speedLabel.style.opacity = "0.85";
+  speedLabel.textContent = "Velocidade do Jogo";
+  speedLabel.style.font = "700 13px/1.2 sans-serif";
+  speedLabel.style.color = "#7d809b"; // Grafite médio/atenuado
+  speedLabel.style.textAlign = "center";
+  speedLabel.style.textTransform = "uppercase";
+  speedLabel.style.letterSpacing = "1px";
 
   const speedRow = document.createElement("div");
   speedRow.style.display = "flex";
@@ -56,14 +59,15 @@ export function initPauseMenu({
   speedRow.style.gap = "8px";
 
   const speedButtonBase = {
-    padding: "8px 10px",
-    borderRadius: "6px",
-    border: "1px solid rgba(255, 255, 255, 0.2)",
-    background: "#2a3242",
-    color: "#ffffff",
-    font: "600 13px/1 Arial, sans-serif",
+    padding: "10px 10px",
+    borderRadius: "8px",
+    border: "1.5px solid #3d405b",
+    background: "#ffffff", // Branco limpo
+    color: "#3d405b", // Texto grafite por padrão
+    font: "800 13px/1 sans-serif",
     cursor: "pointer",
     flex: "1",
+    transition: "all 0.15s ease-in-out",
   };
 
   const speedButton1 = document.createElement("button");
@@ -80,23 +84,25 @@ export function initPauseMenu({
 
   const resumeButton = document.createElement("button");
   resumeButton.textContent = "Resumir";
-  resumeButton.style.padding = "10px 12px";
-  resumeButton.style.borderRadius = "6px";
-  resumeButton.style.border = "1px solid rgba(255, 255, 255, 0.2)";
-  resumeButton.style.background = "#2f8f4e";
+  resumeButton.style.padding = "12px 12px";
+  resumeButton.style.borderRadius = "8px";
+  resumeButton.style.border = "none";
+  resumeButton.style.background = "#1f6494"; // Atualizado para o azul clássico
   resumeButton.style.color = "#ffffff";
-  resumeButton.style.font = "600 14px/1 Arial, sans-serif";
+  resumeButton.style.font = "800 14px/1 sans-serif";
   resumeButton.style.cursor = "pointer";
+  resumeButton.style.boxShadow = "0 3px 6px rgba(31, 100, 148, 0.4)"; // Sombra combinando com o novo azul
 
   const closeButton = document.createElement("button");
-  closeButton.textContent = "Fechar jogo";
-  closeButton.style.padding = "10px 12px";
-  closeButton.style.borderRadius = "6px";
-  closeButton.style.border = "1px solid rgba(255, 255, 255, 0.2)";
-  closeButton.style.background = "#a13d3d";
+  closeButton.textContent = "Fechar Jogo";
+  closeButton.style.padding = "12px 12px";
+  closeButton.style.borderRadius = "8px";
+  closeButton.style.border = "none";
+  closeButton.style.background = "#d6213b"; // Corrigido: apenas uma hashtag!
   closeButton.style.color = "#ffffff";
-  closeButton.style.font = "600 14px/1 Arial, sans-serif";
+  closeButton.style.font = "800 14px/1 sans-serif";
   closeButton.style.cursor = "pointer";
+  closeButton.style.boxShadow = "0 3px 6px rgba(214, 33, 59, 0.4)"; // Sombra suave usando o mesmo tom de vermelho
 
   // Montando a árvore de elementos no DOM
   speedRow.appendChild(speedButton1);
@@ -112,29 +118,36 @@ export function initPauseMenu({
 
   // --- FUNÇÃO INTERNA PARA SINALIZAR VELOCIDADE ATIVA ---
   function updateSpeedButtons() {
-    const activeColor = "#4b7cff";
-    const inactiveColor = "#2a3242";
+    const activeColor = "#f2d925"; // Rosa Pastel Fofo e delicado pedido
+    const activeTextColor = "#3d405b"; // Mantém o texto grafite para legibilidade elegante
+    const inactiveColor = "#ffffff"; // Branco Puro
+
     const currentSpeed = getGameSpeed();
 
     speedButton1.style.background =
       currentSpeed === 1 ? activeColor : inactiveColor;
+    speedButton1.style.borderColor = currentSpeed === 1 ? "#3d405b" : "#d1d3dc";
+    speedButton1.style.color = activeTextColor;
+
     speedButton2.style.background =
       currentSpeed === 2 ? activeColor : inactiveColor;
+    speedButton2.style.borderColor = currentSpeed === 2 ? "#3d405b" : "#d1d3dc";
+    speedButton2.style.color = activeTextColor;
+
     speedButton3.style.background =
       currentSpeed === 3 ? activeColor : inactiveColor;
+    speedButton3.style.borderColor = currentSpeed === 3 ? "#3d405b" : "#d1d3dc";
+    speedButton3.style.color = activeTextColor;
   }
 
   // --- LISTENERS DE INTERAÇÃO DO MENU ---
 
-  // Apenas UM listener de teclado para controlar tudo sem conflitos
   window.addEventListener("keydown", (event) => {
-    // 1. TECLA ESCAPE (Pausa e despausa)
     if (event.key === "Escape") {
       setPaused(!getIsPaused());
-      return; // Para a execução aqui para o código não ler as linhas de baixo
+      return;
     }
 
-    // 2. TECLAS DE VELOCIDADE (1, 2, 3)
     if (event.key === "1") {
       setGameSpeed(1);
       updateSpeedButtons();
@@ -147,7 +160,6 @@ export function initPauseMenu({
     }
   });
 
-  // Cliques do mouse na tela e nos botões visuais
   renderer.domElement.addEventListener("pointerdown", () => {
     if (getIsPaused()) {
       setPaused(false);
@@ -161,7 +173,7 @@ export function initPauseMenu({
   });
 
   pausePanel.addEventListener("pointerdown", (event) => {
-    event.stopPropagation(); // Impede que clicar dentro do painel despause o jogo
+    event.stopPropagation();
   });
 
   resumeButton.addEventListener("click", () => {
@@ -186,10 +198,9 @@ export function initPauseMenu({
     setGameSpeed(3);
     updateSpeedButtons();
   });
-  // Renderização inicial dos botões
+
   updateSpeedButtons();
 
-  // Retorna métodos de controle visual para a main poder usar
   return {
     toggleDisplay: (value) => {
       pauseOverlay.style.display = value ? "flex" : "none";
