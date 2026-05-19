@@ -9,7 +9,7 @@ import {
   onWindowResize,
   createGroundPlaneXZ,
 } from "../../libs/util/util.js";
-import { carregarAviaoInimigo } from "./alienVerde.js"; // Certifique-se de usar o nome correto do arquivo
+import { carregarAviaoInimigo2 } from "./oviniInimigo.js"; // Certifique-se de usar o nome correto do arquivo
 
 let scene, renderer, camera, material, light, orbit; // Initial variables
 scene = new THREE.Scene(); // Create main scene
@@ -38,8 +38,7 @@ let plane = createGroundPlaneXZ(20, 20);
 scene.add(plane);
 
 let inimigo;
-carregarAviaoInimigo().then((aviao) => {
-  aviao.scale.set(5, 5, 5);
+carregarAviaoInimigo2().then((aviao) => {
   aviao.position.set(0, 2, 0);
 
   // 2. Adicionamos o "aviao" direto na cena

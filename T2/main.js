@@ -16,6 +16,7 @@ import { createWorldTiles, updateTiles } from "./tiles.js";
 import { initMouseTracking, inputUpdate } from "./input.js";
 import { updateCamera } from "./camera.js";
 import { carregarAviaoInimigo } from "./alienVerde.js"; // Certifique-se de usar o nome correto do arquivo
+import { carregarAviaoInimigo2 } from "./oviniInimigo.js"; // Certifique-se de usar o nome correto do arquivo
 import { initPauseMenu } from "./bottons.js"; // Importa o arquivo separado
 
 // Cor do céu — usada tanto no fundo do renderer quanto na névoa para fundir o horizonte
@@ -55,13 +56,20 @@ aviaoMesh.position.set(0, 25, 0);
 //Inimigos
 let inimigo;
 carregarAviaoInimigo().then((aviao) => {
-  aviao.scale.set(8, 8, 8);
-  aviao.position.set(0, 25, 30);
+  aviao.scale.set(10, 10, 10);
+  aviao.position.set(0, 20, 90);
   scene.add(aviao);
   inimigo = aviao;
 });
+let inimigo2;
+carregarAviaoInimigo2().then((aviao) => {
+  aviao.position.set(0, 42, 100);
+  scene.add(aviao);
+  inimigo2 = aviao;
+});
 
 //Movimentação inimigo
+let tempoInimigo = 0;
 
 // Recalcula aspect ratio da câmera quando a janela muda de tamanho
 window.addEventListener("resize", function () { onWindowResize(camera, renderer); }, false);
@@ -106,6 +114,28 @@ function render() {
     inputUpdate(aviaoMesh, camera, scaledDelta); // move o avião em direção ao mouse
     updateTiles(scaledDelta); // rola e recicla os tiles de chão
     updateCamera(camera, aviaoMesh, scaledDelta); // câmera segue o avião suavemente
+    if (inimigo || inimigo2) {
+      tempoInimigo += scaledDelta;
+      const distanciaZ = Math.abs(camera.position.z - inimigo.position.z);
+
+      const fovRadianos = (camera.fov * Math.PI) / 180;
+
+      const alturaVisivel = 2 * Math.tan(fovRadianos / 2) * distanciaZ;
+
+      const larguraTotalVisivel = alturaVisivel * camera.aspect;
+
+      // Definimos a margem segura para o avião não sumir metade para fora da borda (ex: 85% da tela)
+      const limiteBordaX = (larguraTotalVisivel / 2) * 0.85;
+
+      // 2. APLICAÇÃO DO MOVIMENTO
+      const velocidade = 1; // Velocidade do zigue-zague
+
+      inimigo.position.x = Math.sin(tempoInimigo * velocidade) * limiteBordaX;
+      inimigo.rotation.z = Math.cos(tempoInimigo * velocidade) * 0.2;
+
+      inimigo2.position.x = -Math.sin(tempoInimigo * 2 * velocidade) * limiteBordaX;
+      inimigo2.rotation.z = Math.cos(tempoInimigo * velocidade) * -0.2;
+    }
   }
   stats.update();                        // atualiza contador de FPS
   requestAnimationFrame(render);         // agenda o próximo frame
