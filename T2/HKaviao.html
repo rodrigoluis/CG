@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+
+<head>
+   <title>Hello Kitty Flight Simulator</title>
+
+   <link rel="shortcut icon" href="../../favicon.ico">
+   <link rel="stylesheet" href="../../html/resources/default.css">
+   <meta name="viewport" content="width=device-width, initial-scale=1">
+   <meta http-equiv="Content-Security-Policy" content="default-src 'none'; ...">
+</head>
+
+<body>
+   
+  <script type="importmap">
+  {
+     "imports": {
+        "three": "https://unpkg.com/three@0.160.0/build/three.module.js",
+        "three/examples/jsm/": "https://unpkg.com/three@0.160.0/examples/jsm/"
+     }
+  }
+</script>
+
+   <div id="webgl-output">
+      <script type="module" src="HKairplane.js"></script>
+   </div>
+</body>
+
+</html>
