@@ -94,7 +94,7 @@ export function initPauseMenu({
   resumeButton.style.boxShadow = "0 3px 6px rgba(31, 100, 148, 0.4)"; // Sombra combinando com o novo azul
 
   const closeButton = document.createElement("button");
-  closeButton.textContent = "Fechar Jogo";
+  closeButton.textContent = "Reiniciar Jogo";
   closeButton.style.padding = "12px 12px";
   closeButton.style.borderRadius = "8px";
   closeButton.style.border = "none";
@@ -181,7 +181,7 @@ export function initPauseMenu({
   });
 
   closeButton.addEventListener("click", () => {
-    window.location.href = "../index.html";
+    window.location.reload(); 
   });
 
   speedButton1.addEventListener("click", () => {
