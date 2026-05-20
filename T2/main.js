@@ -16,16 +16,16 @@ import { createWorldTiles, updateTiles } from "./tiles.js";
 import { initMouseTracking, inputUpdate } from "./input.js";
 import { updateCamera } from "./camera.js";
 import { CriadorInimigos } from "./CriadorInimigos.js";
-import { initPauseMenu } from "./bottons.js"; // Importa o arquivo separado
+import { initPauseMenu } from "./bottons.js";
 import { LaserPool } from "./SistemaTiros.js";
-import { CollisionManager } from "./CollisionManager.js"; // Novo Import
+import { CollisionManager } from "./CollisionManager.js";
 
 // Cor do céu — usada tanto no fundo do renderer quanto na névoa para fundir o horizonte
 let baseColor = "rgb(148, 181, 224)";
 let scene = new THREE.Scene();
-scene.fog = new THREE.Fog(baseColor, 1, 400); // névoa linear: começa em z=1, some em z=400
+scene.fog = new THREE.Fog(baseColor, 1, 400);
 let renderer = initRenderer();
-renderer.setClearColor(baseColor); // fundo da tela igual à névoa
+renderer.setClearColor(baseColor);
 
 // Painel de FPS no canto da tela
 const stats = new Stats();
@@ -34,19 +34,21 @@ document.getElementById("webgl-output").appendChild(stats.domElement);
 /** @type {{ fogFar: number }} Parâmetros do GUI para controle (slider) da névoa. */
 let fogParams = { fogFar: scene.fog.far };
 let gui = new GUI();
-// Slider que ajusta em tempo real até onde a névoa some os objetos
 gui.add(fogParams, "fogFar", 50, 800, 1).onChange((value) => {
   scene.fog.far = value;
 });
 
 let light = initDefaultBasicLight(scene);
-// FOV de 22° = zoom longo, parecido com câmera de perseguição de shoot-em-up
-let camera = new THREE.PerspectiveCamera(22, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(0, 25, -150); // começa atrás e na mesma altura do avião
+let camera = new THREE.PerspectiveCamera(
+  22,
+  window.innerWidth / window.innerHeight,
+  0.1,
+  1000,
+);
+camera.position.set(0, 25, -150);
 camera.lookAt(0, 25, 0);
 scene.add(camera);
 
-// Registra o listener de mousemove para rastrear posição do cursor
 initMouseTracking();
 
 // Cria o modelo do avião e posiciona no centro da cena
@@ -54,25 +56,13 @@ const aviaoController = criaAviao(scene);
 let aviaoMesh = aviaoController.object;
 aviaoMesh.position.set(0, 25, 0);
 
-//Inimigos
-let inimigo = null;
-let inimigo2 = null;
 let tempoInimigo = 0;
-
-// Configuração do atraso na perseguição (quanto menor, mais lento/atrasado o inimigo segue)
-const VELOCIDADE_PERSEGUICAO = 2.0;
-
-let inimigoTarget1 = { mesh: null, bb: new THREE.Box3(), ativo: false };
-let inimigoTarget2 = { mesh: null, bb: new THREE.Box3(), ativo: false };
-
-// --- CONFIGURAÇÃO DA POPULAÇÃO DE INIMIGOS (5 INIMIGOS) ---
-// --- CONFIGURAÇÃO DA POPULAÇÃO DE INIMIGOS (5 INIMIGOS) ---
 let listaInimigos = [];
 const POPULACAO_TOTAL = 5;
 
 const criadorInimigos = new CriadorInimigos(scene);
 
-// Cria e armazena os 5 objetos no pool (Evita instanciar coisas no loop render)
+// Cria e armazena os 5 objetos no pool
 for (let i = 0; i < POPULACAO_TOTAL; i++) {
   const ladoDoCanto = i % 2 === 0 ? -80 : 80;
   const posicaoZFixa = 90 + i * 30;
@@ -81,9 +71,18 @@ for (let i = 0; i < POPULACAO_TOTAL; i++) {
     .criarInimigoAleatorio(ladoDoCanto, 25, posicaoZFixa)
     .then((inimigoSorteado) => {
       inimigoSorteado.indice = i;
+
+      // Injeta propriedades de vida iniciais garantidas para o CollisionManager reconhecer
+      inimigoSorteado.vida = 100;
+      inimigoSorteado.life = 100;
+      inimigoSorteado.destruido = false;
+      if (inimigoSorteado.mesh) {
+        inimigoSorteado.mesh.vida = 100;
+        inimigoSorteado.mesh.life = 100;
+      }
+
       listaInimigos.push(inimigoSorteado);
 
-      // Regra do Pool: Ativa apenas os 2 primeiros inimigos criados
       if (i < 2) {
         inimigoSorteado.ativo = true;
         inimigoSorteado.mesh.visible = true;
@@ -91,30 +90,36 @@ for (let i = 0; i < POPULACAO_TOTAL; i++) {
     });
 }
 
-//Vida dos Inimigos e do Jogador
+// Vida dos Inimigos e do Jogador
 let inimigosAbatidos = 0;
 let vidaJogador = 100;
 let aviaoBB = new THREE.Box3();
 
-//Movimentação inimigo
-tempoInimigo = 0;
-
-//Sistema de tiros
-// Pool do Avião: Tipo "player", Rosa Choque Hello Kitty, tamanho 30
+// Sistema de tiros
 let laserPool = new LaserPool(scene, "player", "rgb(255, 25, 140)", 80);
-
-// Pool dos Inimigos: Tipo "enemy", Verde Alien ou Vermelho Neon, tamanho 40
 let laserPoolInimigos = new LaserPool(scene, "enemy", "rgb(191, 255, 0)", 40);
-
 
 const inimigoCollisionManager = new CollisionManager("enemy");
 
-//Avião atirando 
+// Controle de entrada de tiros (Segurar botão)
+let estáAtirando = false;
+let tempoUltimoTiro = 0;
+const CADENCIA_TIRO = 0.1;
+
+window.addEventListener("mousedown", (event) => {
+  if (event.button === 0) estáAtirando = true;
+});
+window.addEventListener("mouseup", (event) => {
+  if (event.button === 0) estáAtirando = false;
+});
 window.addEventListener("keydown", (event) => {
-  if (event.code === "Space" && !isPaused && aviaoMesh) {
-    // Passa a posição E a rotação atual do avião
-    laserPool.shoot(aviaoMesh.position, aviaoMesh.rotation);
-  }
+  if (event.code === "Space") estáAtirando = true;
+});
+window.addEventListener("keyup", (event) => {
+  if (event.code === "Space") estáAtirando = false;
+});
+window.addEventListener("blur", () => {
+  estáAtirando = false;
 });
 
 const jogadorCollisionManager = new CollisionManager(
@@ -122,70 +127,119 @@ const jogadorCollisionManager = new CollisionManager(
   (target, status) => {
     if (status.life <= 0) {
       console.log("GAME OVER! O avião foi destruído.");
-      // isPaused = true; (Exemplo de lógica de fim de jogo)
     }
   },
 );
 
-//Telas de contador de tiros
 const scoreElement = document.getElementById("score-counter");
 const lifeElement = document.getElementById("player-life");
 
-// Recalcula aspect ratio da câmera quando a janela muda de tamanho
-window.addEventListener("resize", function () { onWindowResize(camera, renderer); }, false);
+window.addEventListener(
+  "resize",
+  function () {
+    onWindowResize(camera, renderer);
+  },
+  false,
+);
 
-// Cria a grade de tiles de chão que vão rolar infinitamente
 createWorldTiles(scene);
 
-//Botao de Pause/Menu
 const clock = new THREE.Clock();
 let isPaused = false;
 let gameSpeed = 1;
 
 const pauseMenu = initPauseMenu({
   renderer: renderer,
-
-  // Função para ler o estado atual
   getIsPaused: () => isPaused,
-
-  // Função que muda a pausa, gerencia a tela e conserta o clock
   setPaused: (value) => {
     isPaused = value;
-    pauseMenu.toggleDisplay(value); // Controla a div do outro arquivo
+    pauseMenu.toggleDisplay(value);
     if (!value) {
-      clock.getDelta(); // descarta o delta acumulado durante a pausa
+      clock.getDelta();
     }
-    console.log("Jogo pausado:", isPaused);
   },
-
   getGameSpeed: () => gameSpeed,
   setGameSpeed: (value) => {
     gameSpeed = value;
-    console.log("Nova velocidade do jogo via Teclado/Menu:", gameSpeed);
-  }
+  },
 });
 
+/**
+ * Processa o temporizador e a cadência de tiros do jogador.
+ */
+function gerenciarDisparoJogador(scaledDelta) {
+  tempoUltimoTiro += scaledDelta;
+  if (estáAtirando && tempoUltimoTiro >= CADENCIA_TIRO && aviaoMesh) {
+    laserPool.shoot(aviaoMesh.position, aviaoMesh.rotation);
+    tempoUltimoTiro = 0;
+  }
+}
+
+/**
+ * Varre o pool de inimigos para reciclar os que foram destruídos pelo CollisionManager.
+ */
+function processarReciclagemInimigos() {
+  listaInimigos.forEach((inimigoTarget) => {
+    if (!inimigoTarget || !inimigoTarget.ativo) return;
+
+    const meshInterna = inimigoTarget.mesh;
+    if (!meshInterna) return;
+
+    // 1. Verifica se o CollisionManager zerou as propriedades de vida
+    const foiAbatido =
+      inimigoTarget.vida <= 0 ||
+      inimigoTarget.life <= 0 ||
+      inimigoTarget.destruido === true ||
+      meshInterna.vida <= 0 ||
+      meshInterna.life <= 0 ||
+      (meshInterna.userData &&
+        (meshInterna.userData.vida <= 0 || meshInterna.userData.life <= 0));
+
+    // 2. Verifica se a malha foi deletada da cena física
+    const sumiuDaCena = !scene.children.includes(meshInterna);
+
+    if (foiAbatido || sumiuDaCena) {
+      inimigoTarget.ativo = false;
+      meshInterna.visible = false;
+      inimigosAbatidos++;
+
+      // Limpa os dados de dano para permitir reuso com vida cheia no próximo ciclo
+      inimigoTarget.vida = 100;
+      inimigoTarget.life = 100;
+      inimigoTarget.destruido = false;
+      meshInterna.vida = 100;
+      meshInterna.life = 100;
+      if (meshInterna.userData) {
+        meshInterna.userData.vida = 100;
+        meshInterna.userData.life = 100;
+      }
+
+      if (sumiuDaCena) {
+        scene.add(meshInterna);
+      }
+      console.log(
+        `[POOL] Inimigo ${inimigoTarget.indice} reciclado com sucesso.`,
+      );
+    }
+  });
+}
+
+// Inicia o loop do jogo
 render();
 
 function render() {
-  const delta = clock.getDelta(); // tempo em segundos desde o último frame
-  
+  const delta = clock.getDelta();
+
   if (!isPaused) {
     const scaledDelta = delta * gameSpeed;
-    inputUpdate(aviaoMesh, camera, scaledDelta); // move o avião em direção ao mouse
-    updateTiles(scaledDelta); // rola e recicla os tiles de chão
-    updateCamera(camera, aviaoMesh, scaledDelta); // câmera segue o avião suavemente
+
+    // 1. Atualização de Movimentação e Câmera
+    inputUpdate(aviaoMesh, camera, scaledDelta);
+    updateTiles(scaledDelta);
+    updateCamera(camera, aviaoMesh, scaledDelta);
+
     if (aviaoMesh) {
-      tempoInimigo += scaledDelta; // Incrementa o tempo para o zigue-zague
-
-      // 1. CÁLCULO DINÂMICO DA BORDA DA TELA (Baseado no FOV e na distância Z)
-      const fovRadianos = (camera.fov * Math.PI) / 180;
-      const velocidadeZigueZague = 1.2; // Controla a velocidade do balanço lateral
-
-      if (aviaoMesh) {
-      tempoInimigo += scaledDelta; // Incrementa o tempo para o zigue-zague
-
-      // Executa a movimentação e a lógica de Object Pooling da população de 5 inimigos
+      tempoInimigo += scaledDelta;
       criadorInimigos.atualizarMovimento(
         scaledDelta,
         aviaoMesh,
@@ -193,63 +247,41 @@ function render() {
         listaInimigos,
       );
     }
-  }
 
+    // 2. Gerenciamento e Atualização de Projéteis
     aviaoBB.setFromObject(aviaoMesh);
+    gerenciarDisparoJogador(scaledDelta);
     laserPool.update(scaledDelta, scene.fog.far);
     laserPoolInimigos.update(scaledDelta);
 
-    inimigoCollisionManager.checkLaserAgainstTargets(
-      laserPool.getActiveLasers(),
-      listaInimigos,
-      laserPool,
-    );
-
-    inimigoCollisionManager.checkLaserAgainstTargets(
-      laserPool.getActiveLasers(),
-      listaInimigos,
-      laserPool,
-    );
-
-    // --- SUBSTITUI POR ESTE BLOCO DE VERIFICAÇÃO INTELIGENTE ---
-    listaInimigos.forEach((inimigoTarget) => {
-      if (inimigoTarget.ativo) {
-        // Log temporário para descobrires como o CollisionManager do teu projeto avisa que o inimigo morreu:
-        // Podes apagar estes consol.log depois que funcionar!
-        if (
-          inimigoTarget.vida !== undefined ||
-          inimigoTarget.life !== undefined
-        ) {
-          console.log(
-            `Inimigo ${inimigoTarget.indice} status -> Vida: ${inimigoTarget.vida}, Life: ${inimigoTarget.life}, Destruido: ${inimigoTarget.destruido}`,
-          );
-        }
-
-        // CHECAGEM EXPANSIVA: Tenta capturar qualquer padrão comum de destruição do CollisionManager
-        const foiAbatido =
-          inimigoTarget.vida <= 0 ||
-          inimigoTarget.life <= 0 ||
-          inimigoTarget.destruido === true ||
-          (inimigoTarget.mesh &&
-            inimigoTarget.mesh.userData &&
-            inimigoTarget.mesh.userData.vida <= 0);
-
-        if (foiAbatido) {
-          inimigoTarget.ativo = false; // Libera a vaga no Object Pool
-          inimigoTarget.mesh.visible = false; // Esconde visualmente da cena
-          inimigosAbatidos++; // Pontuação global
-
-          console.log(
-            `[POOL] Inimigo ${inimigoTarget.indice} removido com sucesso. Ativando próximo reserva...`,
-          );
-        }
+    // CORREÇÃO ESSENCIAL: Atualiza as caixas de colisão (bb) dos inimigos conforme eles se movem
+    listaInimigos.forEach((inimigo) => {
+      if (inimigo.ativo && inimigo.mesh && inimigo.bb) {
+        inimigo.bb.setFromObject(inimigo.mesh);
       }
     });
-    // --------------------------------------------
 
-    jogadorCollisionManager.checkPlayerAgainstTargets(aviaoBB, listaInimigos);
+    // 3. Sistema de Colisões Filtrado por naves vivas
+    const meshesInimigasAtivas = listaInimigos
+      .filter((inimigo) => inimigo.ativo && inimigo.mesh)
+      .map((inimigo) => inimigo.mesh);
+
+    inimigoCollisionManager.checkLaserAgainstTargets(
+      laserPool.getActiveLasers(),
+      listaInimigos,
+      laserPool,
+    );
+
+    // Processa a morte e limpa os inimigos abatidos da tela
+    processarReciclagemInimigos();
+
+    jogadorCollisionManager.checkPlayerAgainstTargets(
+      aviaoBB,
+      meshesInimigasAtivas,
+    );
   }
-  stats.update();                        // atualiza contador de FPS
-  requestAnimationFrame(render);         // agenda o próximo frame
-  renderer.render(scene, camera);        // desenha a cena na tela
+
+  stats.update();
+  requestAnimationFrame(render);
+  renderer.render(scene, camera);
 }

@@ -14,7 +14,7 @@ export class CollisionManager {
     this.life = 100;
 
     this.uiElement = null;
-    this.lifeBarInner = null; // Guarda a referência da barra de progresso da vida
+    this.lifeBarInner = null;
 
     this._initUI();
   }
@@ -28,11 +28,6 @@ export class CollisionManager {
     if (!container) {
       container = document.createElement("div");
       container.id = "game-arcade-ui";
-
-      // MUDANÇAS CRÍTICAS DE LAYOUT:
-      // - Mudado de column para row (coloca lado a lado)
-      // - Mudado de right:20px para left:50% com transform (centraliza perfeitamente no topo)
-      // - O gap define o espaçamento horizontal entre as caixas
       container.style.cssText = `
         position: fixed; 
         top: 25px; 
@@ -63,7 +58,6 @@ export class CollisionManager {
 
     if (this.type === "enemy") {
       this.uiElement.id = "score-box";
-      // Reduzido min-width da caixa pai se necessário, padding interno menor, e tamanhos de fontes reduzidos
       this.uiElement.style.padding = "8px 14px";
       this.uiElement.style.minWidth = "160px";
       this.uiElement.innerHTML = `
@@ -74,7 +68,6 @@ export class CollisionManager {
       `;
     } else if (this.type === "player") {
       this.uiElement.id = "life-box";
-      // Reduzido padding interno, fontes menores e a altura da barra de progresso caiu de 12px para 7px
       this.uiElement.style.padding = "8px 14px";
       this.uiElement.style.minWidth = "160px";
       this.uiElement.innerHTML = `
@@ -103,34 +96,37 @@ export class CollisionManager {
     if (this.type === "enemy") {
       this.score += 1;
 
-      // CORREÇÃO: Procura a tag interna em vez de sobrescrever o bloco inteiro com innerText puro
       const scoreVal = this.uiElement.querySelector("#ui-score-val");
       if (scoreVal) {
         scoreVal.innerText = this.score;
       }
 
-      // Ocultação segura do alvo atingido pelos seus tiros ativos
+      // Ocultação e desativação segura baseada no objeto estruturado do pool
       if (target) {
-        if (target.mesh) target.mesh.visible = false;
         target.ativo = false;
+        target.vida = 0; // Sinaliza diretamente para a main.js reciclar
+        target.life = 0;
+        if (target.mesh) target.mesh.visible = false;
       }
     }
 
     if (this.type === "player") {
       this.life -= 20;
       if (this.life < 0) this.life = 0;
-      this.uiElement.innerText = `Vida do Avião: ${this.life}%`;
+
+      // CORREÇÃO DE REFATORAÇÃO DA BARRINHA DE VIDA DO JOGADOR
+      const lifeVal = this.uiElement.querySelector("#ui-life-val");
+      if (lifeVal) lifeVal.innerText = `${this.life}%`;
+      if (this.lifeBarInner) this.lifeBarInner.style.width = `${this.life}%`;
     }
 
-    // Se a main passou alguma função customizada (ex: checar Game Over), executa aqui
     if (this.onCollisionCallback) {
       this.onCollisionCallback(target, { score: this.score, life: this.life });
     }
   }
 
   /**
-   * EXATAMENTE O NOME QUE A MAIN.JS PROCURA
-   * Verifica colisões entre os tiros (LaserPool) e a lista de alvos.
+   * CORREÇÃO: Varre os dados estruturados reais do Object Pool dos Inimigos
    */
   checkLaserAgainstTargets(activeLasers, targetList, laserPoolInstance) {
     for (let i = activeLasers.length - 1; i >= 0; i--) {
@@ -139,11 +135,11 @@ export class CollisionManager {
       for (let j = 0; j < targetList.length; j++) {
         let target = targetList[j];
 
-        if (target.ativo && target.mesh) {
+        // Agora sim! Lemos as propriedades diretas do objeto do Pool
+        if (target && target.ativo && target.mesh && target.bb) {
           if (laser.bb.intersectsBox(target.bb)) {
             this._registerHit(target);
             laserPoolInstance.despawn(laser, i); // Recicla o tiro rosa Hello Kitty
-
             break;
           }
         }
@@ -151,14 +147,11 @@ export class CollisionManager {
     }
   }
 
-  /**
-   * Verifica colisão direta entre o avião do jogador e os alvos.
-   */
   checkPlayerAgainstTargets(playerBB, targetList) {
     for (let j = 0; j < targetList.length; j++) {
       let target = targetList[j];
 
-      if (target.ativo && target.mesh) {
+      if (target && target.ativo && target.mesh && target.bb) {
         if (playerBB.intersectsBox(target.bb)) {
           this._registerHit(target);
           break;
@@ -167,4 +160,3 @@ export class CollisionManager {
     }
   }
 }
-
