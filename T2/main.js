@@ -181,12 +181,14 @@ function render() {
       const fovRadianos = (camera.fov * Math.PI) / 180;
       const velocidadeZigueZague = 1.2; // Controla a velocidade do balanço lateral
 
-      criadorInimigos.atualizarMovimento(
-        scaledDelta,
-        aviaoMesh,
-        camera,
-        listaInimigos,
-      );
+      if (aviaoMesh) {
+        criadorInimigos.atualizarMovimento(
+          scaledDelta,
+          aviaoMesh,
+          camera,
+          listaInimigos,
+        );
+      }
   }
 
     aviaoBB.setFromObject(aviaoMesh);
