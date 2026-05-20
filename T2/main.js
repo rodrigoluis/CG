@@ -198,9 +198,7 @@ const pauseMenu = initPauseMenu({
   },
 });
 
-/**
- * Processa o temporizador e a cadência de tiros do jogador.
- */
+
 function gerenciarDisparoJogador(scaledDelta) {
   tempoUltimoTiro += scaledDelta;
   if (estáAtirando && tempoUltimoTiro >= CADENCIA_TIRO && aviaoMesh) {

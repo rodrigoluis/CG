@@ -35,7 +35,8 @@ export class CriadorInimigos {
       ativo: false, // Começa desativado esperando a sua vez de entrar na tela
       tipo: tipoInimigo,
       cantoOriginalX: x, // Guarda de qual canto ele deve surgir quando for ativado
-      posicaoZOriginal: z,
+      posicaoZOriginal: z, // ESSA É A POSIÇÃO ALVO DE COMBATE FINAL (ex: 90, 120, 150)
+      offsetZAtual: z, // Controla a transição do Z frame a frame
     };
   }
 
@@ -63,7 +64,17 @@ export class CriadorInimigos {
       inimigo.visible = true; // Garante que está visível
 
       const i = inimigoTarget.indice;
-      const offsetZ = inimigoTarget.posicaoZOriginal;
+
+      // === DINÂMICA DE APROXIMAÇÃO SUAVE ===
+      // Se o inimigo acabou de nascer em +300, ele vai deslizando suavemente (lerp)
+      // em direção à sua posicaoZOriginal de combate (velocidade de aproximação: 1.5)
+      inimigoTarget.offsetZAtual = THREE.MathUtils.lerp(
+        inimigoTarget.offsetZAtual,
+        inimigoTarget.posicaoZOriginal,
+        scaledDelta * 1.5,
+      );
+
+      const offsetZ = inimigoTarget.offsetZAtual;
       const distanciaZ = Math.abs(
         camera.position.z - (aviaoMesh.position.z + offsetZ),
       );
@@ -100,6 +111,8 @@ export class CriadorInimigos {
         aviaoMesh.position.y + offsetY,
         scaledDelta * (this.velocidadePerseguicao * 0.8),
       );
+
+      // Aplica o offsetZ que está deslizando dinamicamente até o alvo original
       inimigo.position.z = aviaoMesh.position.z + offsetZ;
 
       let velocidadexReal = (inimigo.position.x - posXAnterior) / scaledDelta;
@@ -113,18 +126,27 @@ export class CriadorInimigos {
     });
 
     // SISTEMA LOGÍSTICO DE OBJECT POOLING:
-    // Se houver menos de 2 inimigos na tela, ativamos o próximo da reserva!
     if (ativosNaTela < 2) {
       const proximoReserva = listaInimigos.find((inimigo) => !inimigo.ativo);
       if (proximoReserva && proximoReserva.mesh) {
-        // Reinicia a posição dele para o canto do ecrã antes de entrar deslizando
-        proximoReserva.mesh.position.set(
-          proximoReserva.cantoOriginalX,
-          25,
-          proximoReserva.posicaoZOriginal,
-        );
+        const novoCantoX = Math.random() < 0.5 ? -80 : 80;
+
+        // SURGIMENTO NO HORIZONTE: Nasce exatamente onde você gostou (+300 na frente do avião)
+        const novaPosicaoZ = aviaoMesh.position.z + 800;
+        proximoReserva.mesh.position.set(novoCantoX, 25, novaPosicaoZ);
+
+        // CONFIGURAÇÃO INICIAL: Dizemos que o offset ATUAL dele é 300 (longe)
+        // O loop lá em cima vai se encarregar de puxar esse valor de volta até o original!
+        proximoReserva.offsetZAtual = 300;
+        proximoReserva.cantoOriginalX = novoCantoX;
+
+        // Ativa a nave
         proximoReserva.ativo = true;
         proximoReserva.mesh.visible = true;
+
+        console.log(
+          `[POOL] Inimigo ${proximoReserva.indice} surgindo na névoa em Z+300. Viajando para o Z original: ${proximoReserva.posicaoZOriginal}`,
+        );
       }
     }
   }
