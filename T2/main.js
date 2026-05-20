@@ -173,62 +173,7 @@ function render() {
       const fovRadianos = (camera.fov * Math.PI) / 180;
       const velocidadeZigueZague = 1.2; // Controla a velocidade do balanço lateral
 
-      // Movimentação do Inimigo 1
-      // --- Movimentação do Inimigo 1 ---
-      if (aviaoMesh) {
-      tempoInimigo += scaledDelta; // Incrementa o tempo para o zigue-zague
-
-      const fovRadianos = (camera.fov * Math.PI) / 180;
-      const velocidadeZigueZague = 1.4; // Ajusta o ritmo do balanço lateral
-
-      // --- Movimentação do Inimigo 1 ---
-      if (inimigoTarget1 && inimigoTarget1.ativo && inimigo) {
-        const distanciaZ1 = Math.abs(camera.position.z - (aviaoMesh.position.z + 90));
-        const alturaVisivel1 = 3 * Math.tan(fovRadianos / 2) * distanciaZ1;
-        const limiteBordaX1 = ((alturaVisivel1 * camera.aspect) / 1.5) * 0.85;
-
-        // MELHORIA: A oscilação acontece EM VOLTA do X do avião
-        // Multiplicamos por 0.4 para ele cobrir um bom espaço ao seu redor sem fugir instantaneamente
-        let desvioX = Math.sin(tempoInimigo * velocidadeZigueZague) * (limiteBordaX1 * 0.4);
-        let destinoX = THREE.MathUtils.clamp(aviaoMesh.position.x + desvioX, -limiteBordaX1, limiteBordaX1);
-
-        // Guarda a posição anterior para calcular a inclinação física real
-        let posXAnterior = inimigo.position.x;
-
-        inimigo.position.x = THREE.MathUtils.lerp(inimigo.position.x, destinoX, scaledDelta * VELOCIDADE_PERSEGUICAO);
-        inimigo.position.y = THREE.MathUtils.lerp(inimigo.position.y, aviaoMesh.position.y - 5, scaledDelta * VELOCIDADE_PERSEGUICAO);
-        inimigo.position.z = aviaoMesh.position.z + 90;
-
-        // MELHORIA: Inclinação baseada na velocidade real do movimento lateral (Efeito Inércia)
-        let velocidadeXReal = (inimigo.position.x - posXAnterior) / scaledDelta;
-        inimigo.rotation.z = THREE.MathUtils.lerp(inimigo.rotation.z, -velocidadeXReal * 0.01, scaledDelta * 5);
-
-        inimigoTarget1.bb.setFromObject(inimigo);
-      }
-
-      // --- Movimentação do Inimigo 2 ---
-      if (inimigoTarget2 && inimigoTarget2.ativo && inimigo2) {
-        const distanciaZ2 = Math.abs(camera.position.z - (aviaoMesh.position.z + 130));
-        const alturaVisivel2 = 4.5 * Math.tan(fovRadianos / 2) * distanciaZ2;
-        const limiteBordaX2 = ((alturaVisivel2 * camera.aspect) / 1.5) * 0.85;
-
-        // MELHORIA: Oscila em sentido oposto, mas também rastreando o centro do seu avião
-        let desvioX = -Math.sin(tempoInimigo * 1.3 * velocidadeZigueZague) * (limiteBordaX2 * 0.4);
-        let destinoX = THREE.MathUtils.clamp(aviaoMesh.position.x + desvioX, -limiteBordaX2, limiteBordaX2);
-
-        let posXAnterior = inimigo2.position.x;
-
-        inimigo2.position.x = THREE.MathUtils.lerp(inimigo2.position.x, destinoX, scaledDelta * (VELOCIDADE_PERSEGUICAO * 0.8));
-        inimigo2.position.y = THREE.MathUtils.lerp(inimigo2.position.y, aviaoMesh.position.y + 20, scaledDelta * (VELOCIDADE_PERSEGUICAO * 0.8));
-        inimigo2.position.z = aviaoMesh.position.z + 130;
-
-        // MELHORIA: Inclinação baseada na velocidade real para o segundo inimigo
-        let velocidadeXReal = (inimigo2.position.x - posXAnterior) / scaledDelta;
-        inimigo2.rotation.z = THREE.MathUtils.lerp(inimigo2.rotation.z, -velocidadeXReal * 0.01, scaledDelta * 5);
-
-        inimigoTarget2.bb.setFromObject(inimigo2);
-      }
-    }
+      criadorInimigos.atualizarMovimento(scaledDelta, aviaoMesh, camera, inimigoTarget1, inimigoTarget2);
     }
 
     aviaoBB.setFromObject(aviaoMesh);
