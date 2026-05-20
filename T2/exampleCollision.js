@@ -56,7 +56,7 @@ scene.add(sphere2);
 // Create car movement parameters
 const lerpConfig = {
    destination: new THREE.Vector3(0.0, 0.0, 1.5),
-   alpha: 0.01,
+   alpha: 0.05,
    move: true
 }
 

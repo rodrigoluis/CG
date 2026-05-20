@@ -18,6 +18,8 @@ import { updateCamera } from "./camera.js";
 import { carregarAviaoInimigo } from "./alienVerde.js"; // Certifique-se de usar o nome correto do arquivo
 import { carregarAviaoInimigo2 } from "./oviniInimigo.js"; // Certifique-se de usar o nome correto do arquivo
 import { initPauseMenu } from "./bottons.js"; // Importa o arquivo separado
+import { LaserPool } from "./SistemaTiros.js";
+import { CollisionManager } from "./CollisionManager.js"; // Novo Import
 
 // Cor do céu — usada tanto no fundo do renderer quanto na névoa para fundir o horizonte
 let baseColor = "rgb(148, 181, 224)";
@@ -67,9 +69,67 @@ carregarAviaoInimigo2().then((aviao) => {
   scene.add(aviao);
   inimigo2 = aviao;
 });
+//Vida dos Inimigos e do Jogador
+let inimigosAbatidos = 0;
+let vidaJogador = 100;
+let aviaoBB = new THREE.Box3();
 
 //Movimentação inimigo
 let tempoInimigo = 0;
+
+//Sistema de tiros
+let laserPool = new LaserPool(scene, 30); // <--- Adicione o "= new LaserPool..."
+//Tiros dos Inimigos
+let inimigoTarget1 = { mesh: null, bb: new THREE.Box3(), ativo: false };
+let inimigoTarget2 = { mesh: null, bb: new THREE.Box3(), ativo: false };
+let listaInimigos = [inimigoTarget1, inimigoTarget2];
+
+carregarAviaoInimigo().then((aviao) => {
+  aviao.scale.set(10, 10, 10);
+  aviao.position.set(0, 20, 90);
+  scene.add(aviao);
+
+  inimigo = aviao;
+
+  inimigoTarget1.mesh = aviao;
+  inimigoTarget1.ativo = true;
+  inimigoTarget1.bb.setFromObject(aviao);
+});
+
+carregarAviaoInimigo2().then((aviao) => {
+  aviao.position.set(0, 42, 100);
+  scene.add(aviao);
+
+  inimigo2 = aviao;
+
+  inimigoTarget2.mesh = aviao;
+  inimigoTarget2.ativo = true;
+  inimigoTarget2.bb.setFromObject(aviao);
+});
+
+const inimigoCollisionManager = new CollisionManager("enemy");
+
+//Avião atirando 
+window.addEventListener("keydown", (event) => {
+  if (event.code === "Space" && !isPaused && aviaoMesh) {
+    // Passa a posição E a rotação atual do avião
+    laserPool.shoot(aviaoMesh.position, aviaoMesh.rotation);
+  }
+});
+
+const jogadorCollisionManager = new CollisionManager(
+  "player",
+  (target, status) => {
+    if (status.life <= 0) {
+      console.log("GAME OVER! O avião foi destruído.");
+      // isPaused = true; (Exemplo de lógica de fim de jogo)
+    }
+  },
+);
+
+//Telas de contador de tiros
+const scoreElement = document.getElementById("score-counter");
+const lifeElement = document.getElementById("player-life");
 
 // Recalcula aspect ratio da câmera quando a janela muda de tamanho
 window.addEventListener("resize", function () { onWindowResize(camera, renderer); }, false);
@@ -109,6 +169,7 @@ render();
 
 function render() {
   const delta = clock.getDelta(); // tempo em segundos desde o último frame
+  
   if (!isPaused) {
     const scaledDelta = delta * gameSpeed;
     inputUpdate(aviaoMesh, camera, scaledDelta); // move o avião em direção ao mouse
@@ -133,9 +194,26 @@ function render() {
       inimigo.position.x = Math.sin(tempoInimigo * velocidade) * limiteBordaX;
       inimigo.rotation.z = Math.cos(tempoInimigo * velocidade) * 0.2;
 
+      inimigoTarget1.bb.setFromObject(inimigoTarget1.mesh);
+      listaInimigos.push(inimigoTarget1);
+
       inimigo2.position.x = -Math.sin(tempoInimigo * 2 * velocidade) * limiteBordaX;
       inimigo2.rotation.z = Math.cos(tempoInimigo * velocidade) * -0.2;
+      
+      inimigoTarget2.bb.setFromObject(inimigoTarget2.mesh);
+      listaInimigos.push(inimigoTarget2);
+      
     }
+    aviaoBB.setFromObject(aviaoMesh);
+    laserPool.update(scaledDelta, scene.fog.far);
+
+    inimigoCollisionManager.checkLaserAgainstTargets(
+      laserPool.getActiveLasers(),
+      listaInimigos,
+      laserPool,
+    );
+
+    jogadorCollisionManager.checkPlayerAgainstTargets(aviaoBB, listaInimigos);
   }
   stats.update();                        // atualiza contador de FPS
   requestAnimationFrame(render);         // agenda o próximo frame
