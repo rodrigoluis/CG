@@ -4,9 +4,6 @@
  */
 
 import * as THREE from 'three';
-import {
-  setDefaultMaterial
-} from "../../libs/util/util.js";
 
 /** Cores possíveis para as folhas das árvores. */
 const COR_FOLHA = ["#738417", "#2e6f40", "#388347", "#BF5B05", "#92780A"];
@@ -14,7 +11,7 @@ const COR_FOLHA = ["#738417", "#2e6f40", "#388347", "#BF5B05", "#92780A"];
 const ESCALAS_POSSIVEIS = [2, 3, 2.5, 4];
 
 // Material de madeira compartilhado entre todas as árvores (criado uma única vez)
-const madeira = setDefaultMaterial("brown");
+const madeira = new THREE.MeshToonMaterial({color: "brown"});
 
 // --- Geometrias pré-criadas (compartilhadas entre todas as instâncias) ---
 // Tipo 1: parecida com um pinheiro
@@ -40,7 +37,7 @@ const geomFolha7  = new THREE.SphereGeometry(1.5);             // copa secundár
 export function criaArvore(scene, tipo) {
   // Cor e escala sorteadas aleatoriamente a cada criação
   const corAleatorio   = COR_FOLHA[Math.floor(Math.random() * COR_FOLHA.length)];
-  const folha          = setDefaultMaterial(corAleatorio);
+  const folha          = new THREE.MeshToonMaterial({color: corAleatorio});
   const escalaSorteada = ESCALAS_POSSIVEIS[Math.floor(Math.random() * ESCALAS_POSSIVEIS.length)];
 
   let object;

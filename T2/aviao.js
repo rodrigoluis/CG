@@ -4,9 +4,6 @@
  */
 
 import * as THREE from 'three';
-import {
-  setDefaultMaterial
-} from "../../libs/util/util.js";
 
 /**
  * Cria e adiciona o avião à cena.
@@ -15,10 +12,13 @@ import {
  */
 export function criaAviao(scene) {
   // --- Materiais ---
-  let materialRosa, materialBranco, materialDetalhe;
-  materialRosa    = setDefaultMaterial("rgb(233, 65,150)");  // fuselagem
-  materialBranco  = setDefaultMaterial("white");             // asas e nariz
-  materialDetalhe = setDefaultMaterial("rgb(255, 217, 2)");  // detalhes amarelos
+  const materialRosa    = new THREE.MeshToonMaterial({color: "rgb(233, 65,150)"});  // fuselagem
+  const materialBranco  = new THREE.MeshToonMaterial({color: "white"});             // asas e nariz
+  const materialDetalhe = new THREE.MeshToonMaterial({color: "rgb(255, 217, 2)"});  // detalhes amarelos
+
+  // const materialRosa    = new THREE.MeshPhongMaterial({color: "rgb(233, 65,150)", shininess: 500});  // fuselagem
+  // const materialBranco  = new THREE.MeshPhongMaterial({color: "white", shininess: 500});             // asas e nariz
+  // const materialDetalhe = new THREE.MeshPhongMaterial({color: "rgb(255, 217, 2)", shininess: 500});  // detalhes amarelos
 
   // --- Geometrias (formas brutas, sem posição ainda) ---
   const cilindroCorpo = new THREE.CylinderGeometry(3, 2.6, 10, 80);    // fuselagem cilíndrica
