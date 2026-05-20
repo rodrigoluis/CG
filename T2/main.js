@@ -106,10 +106,6 @@ let laserPool = new LaserPool(scene, "player", "rgb(255, 25, 140)", 80);
 // Pool dos Inimigos: Tipo "enemy", Verde Alien ou Vermelho Neon, tamanho 40
 let laserPoolInimigos = new LaserPool(scene, "enemy", "rgb(191, 255, 0)", 40);
 
-//Tiros dos Inimigos
-inimigoTarget1 = { mesh: null, bb: new THREE.Box3(), ativo: false };
-inimigoTarget2 = { mesh: null, bb: new THREE.Box3(), ativo: false };
-listaInimigos = [inimigoTarget1, inimigoTarget2];
 
 const inimigoCollisionManager = new CollisionManager("enemy");
 
@@ -187,13 +183,16 @@ function render() {
       const velocidadeZigueZague = 1.2; // Controla a velocidade do balanço lateral
 
       if (aviaoMesh) {
-        criadorInimigos.atualizarMovimento(
-          scaledDelta,
-          aviaoMesh,
-          camera,
-          listaInimigos,
-        );
-      }
+      tempoInimigo += scaledDelta; // Incrementa o tempo para o zigue-zague
+
+      // Executa a movimentação e a lógica de Object Pooling da população de 5 inimigos
+      criadorInimigos.atualizarMovimento(
+        scaledDelta,
+        aviaoMesh,
+        camera,
+        listaInimigos,
+      );
+    }
   }
 
     aviaoBB.setFromObject(aviaoMesh);
@@ -205,6 +204,48 @@ function render() {
       listaInimigos,
       laserPool,
     );
+
+    inimigoCollisionManager.checkLaserAgainstTargets(
+      laserPool.getActiveLasers(),
+      listaInimigos,
+      laserPool,
+    );
+
+    // --- SUBSTITUI POR ESTE BLOCO DE VERIFICAÇÃO INTELIGENTE ---
+    listaInimigos.forEach((inimigoTarget) => {
+      if (inimigoTarget.ativo) {
+        // Log temporário para descobrires como o CollisionManager do teu projeto avisa que o inimigo morreu:
+        // Podes apagar estes consol.log depois que funcionar!
+        if (
+          inimigoTarget.vida !== undefined ||
+          inimigoTarget.life !== undefined
+        ) {
+          console.log(
+            `Inimigo ${inimigoTarget.indice} status -> Vida: ${inimigoTarget.vida}, Life: ${inimigoTarget.life}, Destruido: ${inimigoTarget.destruido}`,
+          );
+        }
+
+        // CHECAGEM EXPANSIVA: Tenta capturar qualquer padrão comum de destruição do CollisionManager
+        const foiAbatido =
+          inimigoTarget.vida <= 0 ||
+          inimigoTarget.life <= 0 ||
+          inimigoTarget.destruido === true ||
+          (inimigoTarget.mesh &&
+            inimigoTarget.mesh.userData &&
+            inimigoTarget.mesh.userData.vida <= 0);
+
+        if (foiAbatido) {
+          inimigoTarget.ativo = false; // Libera a vaga no Object Pool
+          inimigoTarget.mesh.visible = false; // Esconde visualmente da cena
+          inimigosAbatidos++; // Pontuação global
+
+          console.log(
+            `[POOL] Inimigo ${inimigoTarget.indice} removido com sucesso. Ativando próximo reserva...`,
+          );
+        }
+      }
+    });
+    // --------------------------------------------
 
     jogadorCollisionManager.checkPlayerAgainstTargets(aviaoBB, listaInimigos);
   }

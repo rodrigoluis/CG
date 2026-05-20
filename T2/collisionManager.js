@@ -67,9 +67,9 @@ export class CollisionManager {
       this.uiElement.style.padding = "8px 14px";
       this.uiElement.style.minWidth = "160px";
       this.uiElement.innerHTML = `
-        <div style="font-size: 6px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: 0.8px;">Placar de Combate</div>
-        <div style="font-size: 12px; font-weight: 900; color: #1a1a1a; margin-top: 1px;">
-          Inimigos derrotados: <span id="ui-score-val" style="color: #1f6494;">0</span>
+        <div style="font-size: 9px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: 0.8px;">Placar de Combate</div>
+        <div style="font-size: 16px; font-weight: 900; color: #1a1a1a; margin-top: 1px;">
+          Inimigos derrotados: <span id="ui-score-val" style="color: #e06187;">0</span>
         </div>
       `;
     } else if (this.type === "player") {
@@ -102,11 +102,18 @@ export class CollisionManager {
   _registerHit(target) {
     if (this.type === "enemy") {
       this.score += 1;
-      this.uiElement.innerText = `Inimigos Abatidos: ${this.score}`;
 
-      // Comportamento padrão para inimigos: esconde o objeto atingido
-      target.mesh.visible = false;
-      target.ativo = false;
+      // CORREÇÃO: Procura a tag interna em vez de sobrescrever o bloco inteiro com innerText puro
+      const scoreVal = this.uiElement.querySelector("#ui-score-val");
+      if (scoreVal) {
+        scoreVal.innerText = this.score;
+      }
+
+      // Ocultação segura do alvo atingido pelos seus tiros ativos
+      if (target) {
+        if (target.mesh) target.mesh.visible = false;
+        target.ativo = false;
+      }
     }
 
     if (this.type === "player") {
