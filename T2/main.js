@@ -112,24 +112,24 @@ function gerenciarDisparoInimigos(scaledDelta, aviaoMesh) {
   listaInimigos.forEach((inimigoTarget) => {
     if (!inimigoTarget.ativo || !inimigoTarget.mesh) return;
 
-    // Inicializa ou incrementa o relógio interno de recarga de cada inimigo
+    // SEGUNDOS INICIAIS: Se o cronômetro não existe, começamos com -2.0 segundos.
+    // Isso cria um atraso/delay obrigatório de 2 segundos antes do primeiríssimo disparo!
     if (inimigoTarget.tempoRecarga === undefined) {
-      inimigoTarget.tempoRecarga = Math.random() * INTERVALO_TIRO_INIMIGO; // Inicialização levemente aleatória para eles não atirarem juntos
+      inimigoTarget.tempoRecarga = -0.8;
     }
 
     inimigoTarget.tempoRecarga += scaledDelta;
 
-    // Se o inimigo terminou de recarregar
+    // Se o inimigo terminou de recarregar (passou do tempo negativo e bateu o intervalo)
     if (inimigoTarget.tempoRecarga >= INTERVALO_TIRO_INIMIGO) {
-      
       // CALCULA A DIREÇÃO: Vetor que vai do Inimigo direto para o Avião do jogador
       let direcaoAlvo = new THREE.Vector3();
       direcaoAlvo.subVectors(aviaoMesh.position, inimigoTarget.mesh.position);
 
-      // Dispara o laser verde usando o pool de inimigos
+      // Dispara o laser usando o pool de inimigos
       laserPoolInimigos.shoot(inimigoTarget.mesh.position, direcaoAlvo);
 
-      // Reseta o cooldown do inimigo
+      // Reseta o cooldown do inimigo para 0 (os próximos tiros seguirão o padrão de 1.5s)
       inimigoTarget.tempoRecarga = 0;
     }
   });
