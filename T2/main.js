@@ -15,8 +15,7 @@ import {
 import { createWorldTiles, updateTiles } from "./tiles.js";
 import { initMouseTracking, inputUpdate } from "./input.js";
 import { updateCamera } from "./camera.js";
-import { carregarAviaoInimigo } from "./alienVerde.js"; // Certifique-se de usar o nome correto do arquivo
-import { carregarAviaoInimigo2 } from "./oviniInimigo.js"; // Certifique-se de usar o nome correto do arquivo
+import { CriadorInimigos } from "./CriadorInimigos.js";
 import { initPauseMenu } from "./bottons.js"; // Importa o arquivo separado
 import { LaserPool } from "./SistemaTiros.js";
 import { CollisionManager } from "./CollisionManager.js"; // Novo Import
@@ -56,56 +55,48 @@ let aviaoMesh = aviaoController.object;
 aviaoMesh.position.set(0, 25, 0);
 
 //Inimigos
-let inimigo;
-carregarAviaoInimigo().then((aviao) => {
-  aviao.scale.set(10, 10, 10);
-  aviao.position.set(0, 20, 90);
-  scene.add(aviao);
-  inimigo = aviao;
+let inimigo = null;
+let inimigo2 = null;
+let tempoInimigo = 0;
+
+// Configuração do atraso na perseguição (quanto menor, mais lento/atrasado o inimigo segue)
+const VELOCIDADE_PERSEGUICAO = 2.0;
+
+let inimigoTarget1 = { mesh: null, bb: new THREE.Box3(), ativo: false };
+let inimigoTarget2 = { mesh: null, bb: new THREE.Box3(), ativo: false };
+let listaInimigos = []; // Começa vazia e recebe os objetos estruturados
+
+// Inicializa o criador passando a cena
+const criadorInimigos = new CriadorInimigos(scene);
+
+// Inimigo 1: Criado em Z fixo no horizonte (ex: 90)
+criadorInimigos.criarInimigoAleatorio(0, 25, 90).then((inimigoSorteado1) => {
+  inimigoTarget1 = inimigoSorteado1;
+  inimigo = inimigoSorteado1.mesh;
+  listaInimigos.push(inimigoTarget1); // Dá PUSH apenas uma vez aqui!
 });
-let inimigo2;
-carregarAviaoInimigo2().then((aviao) => {
-  aviao.position.set(0, 42, 100);
-  scene.add(aviao);
-  inimigo2 = aviao;
+
+// Inimigo 2: Criado em outro Z fixo no horizonte (ex: 130)
+criadorInimigos.criarInimigoAleatorio(0, 25, 130).then((inimigoSorteado2) => {
+  inimigoTarget2 = inimigoSorteado2;
+  inimigo2 = inimigoSorteado2.mesh;
+  listaInimigos.push(inimigoTarget2); // Dá PUSH apenas uma vez aqui!
 });
+
 //Vida dos Inimigos e do Jogador
 let inimigosAbatidos = 0;
 let vidaJogador = 100;
 let aviaoBB = new THREE.Box3();
 
 //Movimentação inimigo
-let tempoInimigo = 0;
+tempoInimigo = 0;
 
 //Sistema de tiros
 let laserPool = new LaserPool(scene, 30); // <--- Adicione o "= new LaserPool..."
 //Tiros dos Inimigos
-let inimigoTarget1 = { mesh: null, bb: new THREE.Box3(), ativo: false };
-let inimigoTarget2 = { mesh: null, bb: new THREE.Box3(), ativo: false };
-let listaInimigos = [inimigoTarget1, inimigoTarget2];
-
-carregarAviaoInimigo().then((aviao) => {
-  aviao.scale.set(10, 10, 10);
-  aviao.position.set(0, 20, 90);
-  scene.add(aviao);
-
-  inimigo = aviao;
-
-  inimigoTarget1.mesh = aviao;
-  inimigoTarget1.ativo = true;
-  inimigoTarget1.bb.setFromObject(aviao);
-});
-
-carregarAviaoInimigo2().then((aviao) => {
-  aviao.position.set(0, 42, 100);
-  scene.add(aviao);
-
-  inimigo2 = aviao;
-
-  inimigoTarget2.mesh = aviao;
-  inimigoTarget2.ativo = true;
-  inimigoTarget2.bb.setFromObject(aviao);
-});
+inimigoTarget1 = { mesh: null, bb: new THREE.Box3(), ativo: false };
+inimigoTarget2 = { mesh: null, bb: new THREE.Box3(), ativo: false };
+listaInimigos = [inimigoTarget1, inimigoTarget2];
 
 const inimigoCollisionManager = new CollisionManager("enemy");
 
@@ -175,35 +166,71 @@ function render() {
     inputUpdate(aviaoMesh, camera, scaledDelta); // move o avião em direção ao mouse
     updateTiles(scaledDelta); // rola e recicla os tiles de chão
     updateCamera(camera, aviaoMesh, scaledDelta); // câmera segue o avião suavemente
-    if (inimigo || inimigo2) {
-      tempoInimigo += scaledDelta;
-      const distanciaZ = Math.abs(camera.position.z - inimigo.position.z);
+    if (aviaoMesh) {
+      tempoInimigo += scaledDelta; // Incrementa o tempo para o zigue-zague
+
+      // 1. CÁLCULO DINÂMICO DA BORDA DA TELA (Baseado no FOV e na distância Z)
+      const fovRadianos = (camera.fov * Math.PI) / 180;
+      const velocidadeZigueZague = 1.2; // Controla a velocidade do balanço lateral
+
+      // Movimentação do Inimigo 1
+      // --- Movimentação do Inimigo 1 ---
+      if (aviaoMesh) {
+      tempoInimigo += scaledDelta; // Incrementa o tempo para o zigue-zague
 
       const fovRadianos = (camera.fov * Math.PI) / 180;
+      const velocidadeZigueZague = 1.4; // Ajusta o ritmo do balanço lateral
 
-      const alturaVisivel = 2 * Math.tan(fovRadianos / 2) * distanciaZ;
+      // --- Movimentação do Inimigo 1 ---
+      if (inimigoTarget1 && inimigoTarget1.ativo && inimigo) {
+        const distanciaZ1 = Math.abs(camera.position.z - (aviaoMesh.position.z + 90));
+        const alturaVisivel1 = 3 * Math.tan(fovRadianos / 2) * distanciaZ1;
+        const limiteBordaX1 = ((alturaVisivel1 * camera.aspect) / 1.5) * 0.85;
 
-      const larguraTotalVisivel = alturaVisivel * camera.aspect;
+        // MELHORIA: A oscilação acontece EM VOLTA do X do avião
+        // Multiplicamos por 0.4 para ele cobrir um bom espaço ao seu redor sem fugir instantaneamente
+        let desvioX = Math.sin(tempoInimigo * velocidadeZigueZague) * (limiteBordaX1 * 0.4);
+        let destinoX = THREE.MathUtils.clamp(aviaoMesh.position.x + desvioX, -limiteBordaX1, limiteBordaX1);
 
-      // Definimos a margem segura para o avião não sumir metade para fora da borda (ex: 85% da tela)
-      const limiteBordaX = (larguraTotalVisivel / 2) * 0.85;
+        // Guarda a posição anterior para calcular a inclinação física real
+        let posXAnterior = inimigo.position.x;
 
-      // 2. APLICAÇÃO DO MOVIMENTO
-      const velocidade = 1; // Velocidade do zigue-zague
+        inimigo.position.x = THREE.MathUtils.lerp(inimigo.position.x, destinoX, scaledDelta * VELOCIDADE_PERSEGUICAO);
+        inimigo.position.y = THREE.MathUtils.lerp(inimigo.position.y, aviaoMesh.position.y - 5, scaledDelta * VELOCIDADE_PERSEGUICAO);
+        inimigo.position.z = aviaoMesh.position.z + 90;
 
-      inimigo.position.x = Math.sin(tempoInimigo * velocidade) * limiteBordaX;
-      inimigo.rotation.z = Math.cos(tempoInimigo * velocidade) * 0.2;
+        // MELHORIA: Inclinação baseada na velocidade real do movimento lateral (Efeito Inércia)
+        let velocidadeXReal = (inimigo.position.x - posXAnterior) / scaledDelta;
+        inimigo.rotation.z = THREE.MathUtils.lerp(inimigo.rotation.z, -velocidadeXReal * 0.01, scaledDelta * 5);
 
-      inimigoTarget1.bb.setFromObject(inimigoTarget1.mesh);
-      listaInimigos.push(inimigoTarget1);
+        inimigoTarget1.bb.setFromObject(inimigo);
+      }
 
-      inimigo2.position.x = -Math.sin(tempoInimigo * 2 * velocidade) * limiteBordaX;
-      inimigo2.rotation.z = Math.cos(tempoInimigo * velocidade) * -0.2;
-      
-      inimigoTarget2.bb.setFromObject(inimigoTarget2.mesh);
-      listaInimigos.push(inimigoTarget2);
-      
+      // --- Movimentação do Inimigo 2 ---
+      if (inimigoTarget2 && inimigoTarget2.ativo && inimigo2) {
+        const distanciaZ2 = Math.abs(camera.position.z - (aviaoMesh.position.z + 130));
+        const alturaVisivel2 = 4.5 * Math.tan(fovRadianos / 2) * distanciaZ2;
+        const limiteBordaX2 = ((alturaVisivel2 * camera.aspect) / 1.5) * 0.85;
+
+        // MELHORIA: Oscila em sentido oposto, mas também rastreando o centro do seu avião
+        let desvioX = -Math.sin(tempoInimigo * 1.3 * velocidadeZigueZague) * (limiteBordaX2 * 0.4);
+        let destinoX = THREE.MathUtils.clamp(aviaoMesh.position.x + desvioX, -limiteBordaX2, limiteBordaX2);
+
+        let posXAnterior = inimigo2.position.x;
+
+        inimigo2.position.x = THREE.MathUtils.lerp(inimigo2.position.x, destinoX, scaledDelta * (VELOCIDADE_PERSEGUICAO * 0.8));
+        inimigo2.position.y = THREE.MathUtils.lerp(inimigo2.position.y, aviaoMesh.position.y + 20, scaledDelta * (VELOCIDADE_PERSEGUICAO * 0.8));
+        inimigo2.position.z = aviaoMesh.position.z + 130;
+
+        // MELHORIA: Inclinação baseada na velocidade real para o segundo inimigo
+        let velocidadeXReal = (inimigo2.position.x - posXAnterior) / scaledDelta;
+        inimigo2.rotation.z = THREE.MathUtils.lerp(inimigo2.rotation.z, -velocidadeXReal * 0.01, scaledDelta * 5);
+
+        inimigoTarget2.bb.setFromObject(inimigo2);
+      }
     }
+    }
+
     aviaoBB.setFromObject(aviaoMesh);
     laserPool.update(scaledDelta, scene.fog.far);
 
