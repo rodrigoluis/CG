@@ -3,24 +3,27 @@ import * as THREE from "three";
 
 export class CollisionManager {
   /**
-   * @param {String} type - Tipo: "player" (vida do avião) ou "enemy" (score).
-   * @param {Function} onCollisionCallback - Função extra (ex: acionar tela de Game Over).
+   * @param {String} type - Tipo: "player" (tiros recebidos) ou "enemy" (score).
+   * @param {Function} onCollisionCallback - Código extra para rodar na main (opcional).
    */
   constructor(type, onCollisionCallback = null) {
     this.type = type;
     this.onCollisionCallback = onCollisionCallback;
 
+    // Objeto estático global para que as instâncias compartilhem os dados de saldo
+    if (typeof globalThis._gameStats === "undefined") {
+      globalThis._gameStats = { enemy: 0, player: 0 };
+    }
+
     this.score = 0;
-    this.life = 100;
+    this.life = type === "player" ? 0 : 100; // Começa em 0 impactos se for o player
 
     this.uiElement = null;
-    this.lifeBarInner = null;
-
     this._initUI();
   }
 
   /**
-   * Monta uma interface de jogo estilizada (Estética Fofa/Arcade Moderno)
+   * Cria os elementos HTML dinamicamente na tela (Encapsulamento da UI)
    * @private
    */
   _initUI() {
@@ -28,10 +31,12 @@ export class CollisionManager {
     if (!container) {
       container = document.createElement("div");
       container.id = "game-arcade-ui";
+
+      // Layout em linha com 20% do topo para manter o alinhamento que escolheu
       container.style.cssText = `
         position: fixed; 
         top: 25px; 
-        left: 20%;
+        left: 30%;
         transform: translateX(-50%);
         display: flex;
         flex-direction: row;
@@ -44,48 +49,54 @@ export class CollisionManager {
     }
 
     this.uiElement = document.createElement("div");
-    this.uiElement.style.cssText = `
-      background: rgba(255, 255, 255, 0.9);
-      border: 3px solid #1a1a1a;
-      border-radius: 12px;
-      padding: 12px 18px;
-      min-width: 160px;
-      box-shadow: 4px 4px 0px #1a1a1a;
-      display: flex;
-      flex-direction: column;
-      justify-content: center;
-    `;
 
-    if (this.type === "enemy") {
-      this.uiElement.id = "score-box";
-      this.uiElement.style.padding = "8px 14px";
-      this.uiElement.style.minWidth = "160px";
+    // O truque de mestre: Usamos a propriedade "order" do CSS para fixar a ordem exata na tela
+    let ordemVisual = 0;
+
+    if (this.type === "player") {
+      ordemVisual = 1; // 1º à esquerda
+      this.uiElement.id = "2life-box";
+      this.uiElement.innerHTML = `
+        <div style="font-size: 9px; font-weight: 800; color: #aaa; text-transform: uppercase; letter-spacing: 0.8px;">Status do Piloto</div>
+        <div style="font-size: 16px; font-weight: 900; color: #1a1a1a; margin-top: 1px;">
+          Tiros recebidos: <span id="ui-life-val" style="color: #1500ff;">0</span>
+        </div>
+      `;
+    } else if (this.type === "enemy") {
+      ordemVisual = 2; // 2º ao centro
+      this.uiElement.id = "1score-box";
       this.uiElement.innerHTML = `
         <div style="font-size: 9px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: 0.8px;">Placar de Combate</div>
         <div style="font-size: 16px; font-weight: 900; color: #1a1a1a; margin-top: 1px;">
           Inimigos derrotados: <span id="ui-score-val" style="color: #e06187;">0</span>
         </div>
       `;
-    } else if (this.type === "player") {
-      this.uiElement.id = "life-box";
-      this.uiElement.style.padding = "8px 14px";
-      this.uiElement.style.minWidth = "160px";
+    } else if (this.type === "saldo") {
+      ordemVisual = 3; // 3º à direita
+      this.uiElement.id = "3saldo-box";
       this.uiElement.innerHTML = `
-        <div style="font-size: 6px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: 0.8px;">Status do Piloto</div>
-        <div style="font-size: 12px; font-weight: 900; color: #1a1a1a; margin-bottom: 4px; display: flex; justify-content: space-between;">
-          <span>Vida do Avião</span> <span id="ui-life-val">100%</span>
-        </div>
-        <div style="width: 100%; height: 7px; background: #e0e0e0; border: 1.5px solid #1a1a1a; border-radius: 4px; overflow: hidden;">
-          <div id="ui-life-bar-inner" style="width: 100%; height: 100%; background: linear-gradient(90deg, #ff69b4, #e06187); transition: width 0.3s ease;"></div>
+        <div style="font-size: 9px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: 0.8px;">Eficiência</div>
+        <div style="font-size: 16px; font-weight: 900; color: #1a1a1a; margin-top: 1px;">
+          Saldo de tiros: <span id="ui-saldo-val" style="color: #1a1a1a;">0</span>
         </div>
       `;
     }
 
-    container.appendChild(this.uiElement);
+    // Aplica o CSS padrão do estilo arcade com o modificador de ordem forçada
+    this.uiElement.style.cssText = `
+      background: rgba(255, 255, 255, 0.9);
+      border: 3px solid #1a1a1a;
+      border-radius: 12px;
+      padding: 8px 14px;
+      min-width: 160px;
+      box-shadow: 4px 4px 0px #1a1a1a;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      order: ${ordemVisual}; /* Força o navegador a ordenar pelo número, ignorando o tempo do new */
+    `;
 
-    if (this.type === "player") {
-      this.lifeBarInner = this.uiElement.querySelector("#ui-life-bar-inner");
-    }
+    container.appendChild(this.uiElement);
   }
 
   /**
@@ -95,38 +106,63 @@ export class CollisionManager {
   _registerHit(target) {
     if (this.type === "enemy") {
       this.score += 1;
+      globalThis._gameStats.enemy = this.score; // Atualiza registro global
 
       const scoreVal = this.uiElement.querySelector("#ui-score-val");
       if (scoreVal) {
         scoreVal.innerText = this.score;
       }
 
-      // Ocultação e desativação segura baseada no objeto estruturado do pool
       if (target) {
         target.ativo = false;
-        target.vida = 0; // Sinaliza diretamente para a main.js reciclar
+        target.vida = 0;
         target.life = 0;
         if (target.mesh) target.mesh.visible = false;
       }
     }
 
     if (this.type === "player") {
-      this.life -= 20;
-      if (this.life < 0) this.life = 0;
+      this.life += 1;
+      globalThis._gameStats.player = this.life; // Atualiza registro global
 
-      // CORREÇÃO DE REFATORAÇÃO DA BARRINHA DE VIDA DO JOGADOR
       const lifeVal = this.uiElement.querySelector("#ui-life-val");
-      if (lifeVal) lifeVal.innerText = `${this.life}%`;
-      if (this.lifeBarInner) this.lifeBarInner.style.width = `${this.life}%`;
+      if (lifeVal) {
+        lifeVal.innerText = this.life;
+      }
     }
 
     if (this.onCollisionCallback) {
       this.onCollisionCallback(target, { score: this.score, life: this.life });
     }
+
+    // Atualiza a caixa de saldo dinamicamente a cada acerto
+    this._updateSaldoVisual();
   }
 
   /**
-   * CORREÇÃO: Varre os dados estruturados reais do Object Pool dos Inimigos
+   * Recalcula o saldo de abates vs danos recebidos e altera a cor do texto condicionalmente
+   * @private
+   */
+  _updateSaldoVisual() {
+    const saldoSpan = document.getElementById("ui-saldo-val");
+    if (saldoSpan) {
+      const mortes = globalThis._gameStats.enemy;
+      const danos = globalThis._gameStats.player;
+      const resultado = mortes - danos;
+
+      saldoSpan.innerText = resultado;
+
+      // CONDIÇÃO DE COR: Se o saldo for menor que 0, fica vermelho. Caso contrário, preto padrão.
+      if (resultado < 0) {
+        saldoSpan.style.color = "#ff0000";
+      } else {
+        saldoSpan.style.color = "#23b500";
+      }
+    }
+  }
+
+  /**
+   * Verifica colisões entre os tiros (LaserPool) e a lista de alvos.
    */
   checkLaserAgainstTargets(activeLasers, targetList, laserPoolInstance) {
     for (let i = activeLasers.length - 1; i >= 0; i--) {
@@ -135,11 +171,10 @@ export class CollisionManager {
       for (let j = 0; j < targetList.length; j++) {
         let target = targetList[j];
 
-        // Agora sim! Lemos as propriedades diretas do objeto do Pool
         if (target && target.ativo && target.mesh && target.bb) {
           if (laser.bb.intersectsBox(target.bb)) {
             this._registerHit(target);
-            laserPoolInstance.despawn(laser, i); // Recicla o tiro rosa Hello Kitty
+            laserPoolInstance.despawn(laser, i); // Recicla o tiro
             break;
           }
         }
@@ -147,6 +182,9 @@ export class CollisionManager {
     }
   }
 
+  /**
+   * Verifica colisão direta entre o avião do jogador e os alvos.
+   */
   checkPlayerAgainstTargets(playerBB, targetList) {
     for (let j = 0; j < targetList.length; j++) {
       let target = targetList[j];

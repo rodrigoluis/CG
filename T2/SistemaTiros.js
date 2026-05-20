@@ -6,6 +6,8 @@ export class LaserPool {
    * @param {string} tipoAtirador - Identifica quem usa este pool: "player" ou "enemy".
    * @param {string} corRGB - Cor do laser em formato de string (ex: "rgb(255, 105, 180)")
    * @param {number} poolSize - Quantidade máxima de tiros alocados.
+   * @param {THREE.Vector3} spawnPosition - Onde o tiro nasce
+   * @param {THREE.Euler|THREE.Vector3} direcaoOuRotacao
    */
   constructor(
     scene,
@@ -57,13 +59,27 @@ export class LaserPool {
   /**
    * Ativa um tiro do pool a partir de uma posição e rotação de disparo
    */
-  shoot(spawnPosition, rotation) {
+  shoot(spawnPosition, direcaoOuRotacao) {
     let laser = this.pool.find((l) => !l.active);
 
     if (laser) {
       laser.mesh.position.copy(spawnPosition);
-      laser.mesh.rotation.copy(rotation);
-      laser.startPosition.copy(spawnPosition); // Registra a origem do disparo
+      laser.startPosition.copy(spawnPosition);
+
+      // Se for um Vetor (direção do tiro do inimigo)
+      if (direcaoOuRotacao instanceof THREE.Vector3) {
+        // Faz o laser olhar diretamente para a direção do alvo
+        let alvoLook = new THREE.Vector3().addVectors(
+          spawnPosition,
+          direcaoOuRotacao,
+        );
+        laser.mesh.lookAt(alvoLook);
+        laser.direcaoCustomizada = direcaoOuRotacao.clone().normalize();
+      } else {
+        // Se for Euler (rotação padrão do jogador)
+        laser.mesh.rotation.copy(direcaoOuRotacao);
+        laser.direcaoCustomizada = null;
+      }
 
       laser.mesh.visible = true;
       laser.active = true;
@@ -81,11 +97,19 @@ export class LaserPool {
     for (let i = this.activeLasers.length - 1; i >= 0; i--) {
       let laser = this.activeLasers[i];
 
-      // CORREÇÃO DE SINAL: Invertido para o jogador ir para frente e inimigo para trás
-      const direcaoVelocidade = this.tipoAtirador === "player" ? 300 : -300;
-      laser.mesh.translateZ(direcaoVelocidade * scaledDelta);
+      // --- SISTEMA DE MOVIMENTAÇÃO ISOLADO ---
+      if (laser.direcaoCustomizada) {
+        // INIMIGO: Se tem direção customizada (Vetor), move baseado nele (Velocidade 150)
+        laser.mesh.position.addScaledVector(
+          laser.direcaoCustomizada,
+          150 * scaledDelta,
+        );
+      } else {
+        // JOGADOR: Se não tem, usa o translateZ local padrão para frente (+300)
+        laser.mesh.translateZ(300 * scaledDelta);
+      }
 
-      // Atualiza a Bounding Box de colisão
+      // Atualiza a Bounding Box de colisão acompanhando a nova posição
       laser.bb.setFromObject(laser.mesh);
 
       // --- SISTEMA LOGÍSTICO DE DESCARTE ---
@@ -99,8 +123,8 @@ export class LaserPool {
           this.despawn(laser, i);
         }
       } else {
-        // INIMIGOS: Usam um descarte fixo por distância
-        if (distanciaPercorrida > 250) {
+        // INIMIGOS: Usam um descarte fixo por distância para não sumirem no meio da tela
+        if (distanciaPercorrida > 350) {
           this.despawn(laser, i);
         }
       }

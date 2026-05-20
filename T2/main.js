@@ -97,9 +97,43 @@ let aviaoBB = new THREE.Box3();
 
 // Sistema de tiros
 let laserPool = new LaserPool(scene, "player", "rgb(255, 25, 140)", 80);
-let laserPoolInimigos = new LaserPool(scene, "enemy", "rgb(191, 255, 0)", 40);
+let laserPoolInimigos = new LaserPool(scene, "enemy", "rgb(21, 0, 255)", 40);
 
 const inimigoCollisionManager = new CollisionManager("enemy");
+const saldoCollisionManager = new CollisionManager("saldo");
+
+//Tiro dos inimigos
+// --- COOLDOWN DE DISPARO DOS INIMIGOS ---
+const INTERVALO_TIRO_INIMIGO = 1.5; // Tempo em segundos entre os tiros de cada inimigo
+
+function gerenciarDisparoInimigos(scaledDelta, aviaoMesh) {
+  if (!aviaoMesh) return;
+
+  listaInimigos.forEach((inimigoTarget) => {
+    if (!inimigoTarget.ativo || !inimigoTarget.mesh) return;
+
+    // Inicializa ou incrementa o relógio interno de recarga de cada inimigo
+    if (inimigoTarget.tempoRecarga === undefined) {
+      inimigoTarget.tempoRecarga = Math.random() * INTERVALO_TIRO_INIMIGO; // Inicialização levemente aleatória para eles não atirarem juntos
+    }
+
+    inimigoTarget.tempoRecarga += scaledDelta;
+
+    // Se o inimigo terminou de recarregar
+    if (inimigoTarget.tempoRecarga >= INTERVALO_TIRO_INIMIGO) {
+      
+      // CALCULA A DIREÇÃO: Vetor que vai do Inimigo direto para o Avião do jogador
+      let direcaoAlvo = new THREE.Vector3();
+      direcaoAlvo.subVectors(aviaoMesh.position, inimigoTarget.mesh.position);
+
+      // Dispara o laser verde usando o pool de inimigos
+      laserPoolInimigos.shoot(inimigoTarget.mesh.position, direcaoAlvo);
+
+      // Reseta o cooldown do inimigo
+      inimigoTarget.tempoRecarga = 0;
+    }
+  });
+}
 
 // Controle de entrada de tiros (Segurar botão)
 let estáAtirando = false;
@@ -251,6 +285,8 @@ function render() {
     // 2. Gerenciamento e Atualização de Projéteis
     aviaoBB.setFromObject(aviaoMesh);
     gerenciarDisparoJogador(scaledDelta);
+    gerenciarDisparoInimigos(scaledDelta, aviaoMesh); 
+
     laserPool.update(scaledDelta, scene.fog.far);
     laserPoolInimigos.update(scaledDelta);
 
@@ -275,12 +311,13 @@ function render() {
     // Processa a morte e limpa os inimigos abatidos da tela
     processarReciclagemInimigos();
 
-    jogadorCollisionManager.checkPlayerAgainstTargets(
-      aviaoBB,
-      meshesInimigasAtivas,
+    jogadorCollisionManager.checkLaserAgainstTargets(
+      laserPoolInimigos.getActiveLasers(),
+      [{ ativo: true, mesh: aviaoMesh, bb: aviaoBB }], // Engana o sistema passando o jogador como alvo único
+      laserPoolInimigos,
     );
   }
-
+  
   stats.update();
   requestAnimationFrame(render);
   renderer.render(scene, camera);
