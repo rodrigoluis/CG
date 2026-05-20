@@ -6,13 +6,11 @@ export class LaserPool {
    * @param {string} tipoAtirador - Identifica quem usa este pool: "player" ou "enemy".
    * @param {string} corRGB - Cor do laser em formato de string (ex: "rgb(255, 105, 180)")
    * @param {number} poolSize - Quantidade máxima de tiros alocados.
-   * @param {THREE.Vector3} spawnPosition - Onde o tiro nasce
-   * @param {THREE.Euler|THREE.Vector3} direcaoOuRotacao
    */
   constructor(
     scene,
     tipoAtirador = "player",
-    corRGB = "rgb(255, 105, 180)",
+    corRGB = "#e06187",
     poolSize = 30,
   ) {
     this.scene = scene;
@@ -22,15 +20,20 @@ export class LaserPool {
     this.pool = [];
     this.activeLasers = [];
 
-    // Geometria padrão para os lasers do jogo (Cilindro linear alongado)
-    this.geometry = new THREE.CylinderGeometry(0.15, 0.15, 2.5, 6);
-    this.geometry.rotateX(Math.PI / 2);
+    // === 1. GEOMETRIA ANATOMICA MUITO MAIS CHAMATIVA ===
+    // Engordamos o raio de 0.15 para 0.65 e esticamos o comprimento de 2.5 para 8.5
+    // Isso cria um feixe robusto que corta o cenário de forma nítida e imponente!
+    this.geometry = new THREE.BoxGeometry(0.25, 0.25, 2.0, 6);
 
-    // Material customizável pela cor passada no construtor
-    this.material = new THREE.MeshBasicMaterial({
+    // === 2. MATERIAL ESTILO NEON BRILHANTE (IMUNE À NÉVOA) ===
+    // Mudamos para MeshStandardMaterial para habilitar a emissão de cor (brilho próprio no escuro)
+    this.material = new THREE.MeshStandardMaterial({
       color: corRGB,
+      emissive: corRGB, // Faz o laser brilhar com luz própria (efeito sabre de luz)
+      emissiveIntensity: 2.5, // Intensidade forte para destacar no céu azul
       transparent: true,
       opacity: 0.95,
+      fog: false, // O TRUQUE DE OURO: Impede que a névoa da main.js apague ou desbote o laser
     });
 
     this.initPool();
