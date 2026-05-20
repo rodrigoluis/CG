@@ -1,13 +1,13 @@
 import * as THREE from  'three';
-import GUI from '../libs/util/dat.gui.module.js'
-import {OrbitControls} from '../build/jsm/controls/OrbitControls.js';
-import {GLTFLoader} from '../build/jsm/loaders/GLTFLoader.js';
+import GUI from '../../libs/util/dat.gui.module.js'
+import {OrbitControls} from '../../build/jsm/controls/OrbitControls.js';
+import {GLTFLoader} from '../../build/jsm/loaders/GLTFLoader.js';
 import {initRenderer, 
         SecondaryBox,
         initDefaultBasicLight,
         createGroundPlane,
         onWindowResize, 
-        getMaxSize} from "../libs/util/util.js";
+        getMaxSize} from "../../libs/util/util.js";
 
 let scene, renderer, camera, light, orbit;        
 scene = new THREE.Scene();    // Create main scene
@@ -56,7 +56,7 @@ scene.add(sphere2);
 // Create car movement parameters
 const lerpConfig = {
    destination: new THREE.Vector3(0.0, 0.0, 1.5),
-   alpha: 0.01,
+   alpha: 0.05,
    move: true
 }
 
