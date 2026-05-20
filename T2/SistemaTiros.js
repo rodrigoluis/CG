@@ -1,55 +1,69 @@
 import * as THREE from "three";
 
 export class LaserPool {
-  constructor(scene, poolSize = 20) {
+  /**
+   * @param {THREE.Scene} scene - A cena principal do jogo.
+   * @param {string} tipoAtirador - Identifica quem usa este pool: "player" ou "enemy".
+   * @param {string} corRGB - Cor do laser em formato de string (ex: "rgb(255, 105, 180)")
+   * @param {number} poolSize - Quantidade máxima de tiros alocados.
+   */
+  constructor(
+    scene,
+    tipoAtirador = "player",
+    corRGB = "rgb(255, 105, 180)",
+    poolSize = 30,
+  ) {
     this.scene = scene;
+    this.tipoAtirador = tipoAtirador; // "player" ou "enemy"
     this.poolSize = poolSize;
 
     this.pool = [];
     this.activeLasers = [];
 
+    // Geometria padrão para os lasers do jogo (Cilindro linear alongado)
     this.geometry = new THREE.CylinderGeometry(0.15, 0.15, 2.5, 6);
     this.geometry.rotateX(Math.PI / 2);
-    this.geometry.rotateY(Math.PI);
 
+    // Material customizável pela cor passada no construtor
     this.material = new THREE.MeshBasicMaterial({
-      color: "rgb(181, 28, 104)", // Rosa choque (Hot Pink) bem no estilo Hello Kitty!
+      color: corRGB,
       transparent: true,
-      opacity: 0.9, // Deixa um leve efeito de brilho/laser
+      opacity: 0.95,
     });
+
     this.initPool();
   }
 
-  // Inicializa o pool com objetos "desativados"
+  /**
+   * Preenche a memória inicialmente com tiros desativados
+   */
   initPool() {
     for (let i = 0; i < this.poolSize; i++) {
       let mesh = new THREE.Mesh(this.geometry, this.material);
-      mesh.visible = false; // Desativado por padrão
+      mesh.visible = false;
 
       let laserData = {
         mesh: mesh,
         bb: new THREE.Box3(),
         active: false,
-        speed: 0.2,
+        startPosition: new THREE.Vector3(), // Guarda onde o tiro nasceu
       };
 
       this.pool.push(laserData);
-      this.scene.add(mesh); // Adicionado à cena uma única vez
+      this.scene.add(mesh);
     }
   }
 
-  // Ativa um tiro do pool (Equivalente ao "Instantiate" ou New)
-  shoot(spawnPosition, aircraftRotation) {
+  /**
+   * Ativa um tiro do pool a partir de uma posição e rotação de disparo
+   */
+  shoot(spawnPosition, rotation) {
     let laser = this.pool.find((l) => !l.active);
+
     if (laser) {
       laser.mesh.position.copy(spawnPosition);
-      laser.mesh.rotation.copy(aircraftRotation);
-
-      // Guarda a posição exata de onde o tiro nasceu
-      if (!laser.startPosition) {
-        laser.startPosition = new THREE.Vector3();
-      }
-      laser.startPosition.copy(spawnPosition);
+      laser.mesh.rotation.copy(rotation);
+      laser.startPosition.copy(spawnPosition); // Registra a origem do disparo
 
       laser.mesh.visible = true;
       laser.active = true;
@@ -58,56 +72,53 @@ export class LaserPool {
     }
   }
 
-  update(scaledDelta, fogFar) {
+  /**
+   * Atualiza e move os lasers ativos, aplicando o descarte por névoa APENAS para o jogador
+   * @param {number} scaledDelta - Delta do clock multiplicado pelo gameSpeed
+   * @param {number|null} fogFar - Limite de corte da névoa da cena (opcional para inimigos)
+   */
+  update(scaledDelta, fogFar = null) {
     for (let i = this.activeLasers.length - 1; i >= 0; i--) {
       let laser = this.activeLasers[i];
 
-      // Move o tiro para a frente
-      laser.mesh.translateZ(-300 * scaledDelta);
+      // CORREÇÃO DE SINAL: Invertido para o jogador ir para frente e inimigo para trás
+      const direcaoVelocidade = this.tipoAtirador === "player" ? 300 : -300;
+      laser.mesh.translateZ(direcaoVelocidade * scaledDelta);
 
       // Atualiza a Bounding Box de colisão
       laser.bb.setFromObject(laser.mesh);
 
-      // CALCULO SEGURO DE DESCARTE:
-      // Mede a distância real entre a posição atual do tiro e onde ele nasceu
+      // --- SISTEMA LOGÍSTICO DE DESCARTE ---
       let distanciaPercorrida = laser.mesh.position.distanceTo(
         laser.startPosition,
       );
 
-      // Se o tiro viajou mais do que a distância da névoa, ele some!
-      if (distanciaPercorrida > fogFar) {
-        this.despawn(laser, i);
+      if (this.tipoAtirador === "player") {
+        // APENAS O JOGADOR: Usa o fog collector da névoa
+        if (fogFar && distanciaPercorrida > fogFar) {
+          this.despawn(laser, i);
+        }
+      } else {
+        // INIMIGOS: Usam um descarte fixo por distância
+        if (distanciaPercorrida > 250) {
+          this.despawn(laser, i);
+        }
       }
     }
   }
 
-  // Desativa o tiro e devolve ao pool (Evita chamar o Garbage Collector)
+  /**
+   * Esconde o tiro e devolve-o à reserva do pool
+   */
   despawn(laser, index) {
     laser.active = false;
     laser.mesh.visible = false;
     this.activeLasers.splice(index, 1);
   }
 
-  // Atualiza a posição dos tiros e suas Bounding Boxes
-  update() {
-    for (let i = this.activeLasers.length - 1; i >= 0; i--) {
-      let laser = this.activeLasers[i];
-
-      // No estilo Star Fox, o tiro vai para frente (eixo -Z ou conforme seu cenário)
-      // Ajuste o sinal do speed de acordo com a direção do seu jogo
-      laser.mesh.translateZ(-laser.speed);
-
-      // Atualiza a Bounding Box do laser para acompanhar o movimento
-      laser.bb.setFromObject(laser.mesh);
-
-      // Limite de alcance: Se o tiro se afastar demais, ele é reciclado
-      if (laser.mesh.position.z < -50 || laser.mesh.position.z > 50) {
-        this.despawn(laser, i);
-      }
-    }
-  }
-
-  // Retorna a lista de tiros ativos para checagem de colisão na main
+  /**
+   * Retorna os lasers ativos para o CollisionManager
+   */
   getActiveLasers() {
     return this.activeLasers;
   }

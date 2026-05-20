@@ -100,7 +100,12 @@ let aviaoBB = new THREE.Box3();
 tempoInimigo = 0;
 
 //Sistema de tiros
-let laserPool = new LaserPool(scene, 30); // <--- Adicione o "= new LaserPool..."
+// Pool do Avião: Tipo "player", Rosa Choque Hello Kitty, tamanho 30
+let laserPool = new LaserPool(scene, "player", "rgb(255, 25, 140)", 80);
+
+// Pool dos Inimigos: Tipo "enemy", Verde Alien ou Vermelho Neon, tamanho 40
+let laserPoolInimigos = new LaserPool(scene, "enemy", "rgb(191, 255, 0)", 40);
+
 //Tiros dos Inimigos
 inimigoTarget1 = { mesh: null, bb: new THREE.Box3(), ativo: false };
 inimigoTarget2 = { mesh: null, bb: new THREE.Box3(), ativo: false };
@@ -193,6 +198,7 @@ function render() {
 
     aviaoBB.setFromObject(aviaoMesh);
     laserPool.update(scaledDelta, scene.fog.far);
+    laserPoolInimigos.update(scaledDelta);
 
     inimigoCollisionManager.checkLaserAgainstTargets(
       laserPool.getActiveLasers(),
