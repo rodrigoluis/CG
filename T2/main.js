@@ -64,24 +64,32 @@ const VELOCIDADE_PERSEGUICAO = 2.0;
 
 let inimigoTarget1 = { mesh: null, bb: new THREE.Box3(), ativo: false };
 let inimigoTarget2 = { mesh: null, bb: new THREE.Box3(), ativo: false };
-let listaInimigos = []; // Começa vazia e recebe os objetos estruturados
 
-// Inicializa o criador passando a cena
+// --- CONFIGURAÇÃO DA POPULAÇÃO DE INIMIGOS (5 INIMIGOS) ---
+// --- CONFIGURAÇÃO DA POPULAÇÃO DE INIMIGOS (5 INIMIGOS) ---
+let listaInimigos = [];
+const POPULACAO_TOTAL = 5;
+
 const criadorInimigos = new CriadorInimigos(scene);
 
-// Inimigo 1: Criado em Z fixo no horizonte (ex: 90)
-criadorInimigos.criarInimigoAleatorio(0, 25, 90).then((inimigoSorteado1) => {
-  inimigoTarget1 = inimigoSorteado1;
-  inimigo = inimigoSorteado1.mesh;
-  listaInimigos.push(inimigoTarget1); // Dá PUSH apenas uma vez aqui!
-});
+// Cria e armazena os 5 objetos no pool (Evita instanciar coisas no loop render)
+for (let i = 0; i < POPULACAO_TOTAL; i++) {
+  const ladoDoCanto = i % 2 === 0 ? -80 : 80;
+  const posicaoZFixa = 90 + i * 30;
 
-// Inimigo 2: Criado em outro Z fixo no horizonte (ex: 130)
-criadorInimigos.criarInimigoAleatorio(0, 25, 130).then((inimigoSorteado2) => {
-  inimigoTarget2 = inimigoSorteado2;
-  inimigo2 = inimigoSorteado2.mesh;
-  listaInimigos.push(inimigoTarget2); // Dá PUSH apenas uma vez aqui!
-});
+  criadorInimigos
+    .criarInimigoAleatorio(ladoDoCanto, 25, posicaoZFixa)
+    .then((inimigoSorteado) => {
+      inimigoSorteado.indice = i;
+      listaInimigos.push(inimigoSorteado);
+
+      // Regra do Pool: Ativa apenas os 2 primeiros inimigos criados
+      if (i < 2) {
+        inimigoSorteado.ativo = true;
+        inimigoSorteado.mesh.visible = true;
+      }
+    });
+}
 
 //Vida dos Inimigos e do Jogador
 let inimigosAbatidos = 0;
@@ -173,8 +181,13 @@ function render() {
       const fovRadianos = (camera.fov * Math.PI) / 180;
       const velocidadeZigueZague = 1.2; // Controla a velocidade do balanço lateral
 
-      criadorInimigos.atualizarMovimento(scaledDelta, aviaoMesh, camera, inimigoTarget1, inimigoTarget2);
-    }
+      criadorInimigos.atualizarMovimento(
+        scaledDelta,
+        aviaoMesh,
+        camera,
+        listaInimigos,
+      );
+  }
 
     aviaoBB.setFromObject(aviaoMesh);
     laserPool.update(scaledDelta, scene.fog.far);

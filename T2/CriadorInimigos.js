@@ -5,15 +5,13 @@ import { carregarAviaoInimigo2 } from "./oviniInimigo.js";
 export class CriadorInimigos {
   constructor(scene) {
     this.scene = scene;
-
-    // Armazena o tempo interno de oscilação e os parâmetros de controle
     this.tempoInimigo = 0;
     this.velocidadePerseguicao = 2.0;
     this.velocidadeZigueZague = 1.4;
   }
 
   /**
-   * Instancia um inimigo aleatório na cena
+   * Instancia um inimigo desativado no pool (Garbage Collector Friendly)
    */
   async criarInimigoAleatorio(x, y, z) {
     const tipoInimigo = Math.random() < 0.5 ? "alien" : "ovni";
@@ -27,49 +25,67 @@ export class CriadorInimigos {
     }
 
     aviaoMesh.position.set(x, y, z);
+    aviaoMesh.visible = false; // Começa invisível/escondido no pool
+
     this.scene.add(aviaoMesh);
 
     return {
       mesh: aviaoMesh,
       bb: new THREE.Box3().setFromObject(aviaoMesh),
-      ativo: true,
+      ativo: false, // Começa desativado esperando a sua vez de entrar na tela
       tipo: tipoInimigo,
+      cantoOriginalX: x, // Guarda de qual canto ele deve surgir quando for ativado
+      posicaoZOriginal: z,
     };
   }
 
   /**
-   * GERENCIADOR UNIFICADO DE MOVIMENTAÇÃO
-   * Processa o zigue-zague, lerp, limites de borda e inclinação (inércia)
+   * GERENCIADOR DE MOVIMENTAÇÃO DO POOL ATIVO
    */
-  atualizarMovimento(
-    scaledDelta,
-    aviaoMesh,
-    camera,
-    inimigoTarget1,
-    inimigoTarget2,
-  ) {
-    if (!aviaoMesh) return;
+  atualizarMovimento(scaledDelta, aviaoMesh, camera, listaInimigos) {
+    if (!aviaoMesh || !listaInimigos) return;
 
-    // Incrementa o tempo interno da classe
     this.tempoInimigo += scaledDelta;
     const fovRadianos = (camera.fov * Math.PI) / 180;
 
-    // --- Movimentação do Inimigo 1 ---
-    if (inimigoTarget1 && inimigoTarget1.ativo && inimigoTarget1.mesh) {
-      const inimigo = inimigoTarget1.mesh;
-      const distanciaZ1 = Math.abs(
-        camera.position.z - (aviaoMesh.position.z + 90),
+    // Controla quantos inimigos estão ativos atualmente na tela
+    let ativosNaTela = 0;
+
+    listaInimigos.forEach((inimigoTarget) => {
+      // Se o inimigo não está ativo, ignoramos a movimentação dele
+      if (!inimigoTarget.ativo) {
+        if (inimigoTarget.mesh) inimigoTarget.mesh.visible = false;
+        return;
+      }
+
+      ativosNaTela++;
+      const inimigo = inimigoTarget.mesh;
+      inimigo.visible = true; // Garante que está visível
+
+      const i = inimigoTarget.indice;
+      const offsetZ = inimigoTarget.posicaoZOriginal;
+      const distanciaZ = Math.abs(
+        camera.position.z - (aviaoMesh.position.z + offsetZ),
       );
-      const alturaVisivel1 = 3 * Math.tan(fovRadianos / 2) * distanciaZ1;
-      const limiteBordaX1 = ((alturaVisivel1 * camera.aspect) / 1.5) * 0.85;
+
+      const multiplicadorAltura = i % 2 === 0 ? 3 : 4.5;
+      const offsetY = i % 2 === 0 ? -5 : 15 + i * 2;
+
+      const alturaVisivel =
+        multiplicadorAltura * Math.tan(fovRadianos / 2) * distanciaZ;
+      const limiteBordaX = ((alturaVisivel * camera.aspect) / 1.5) * 0.85;
+
+      const direcaoSinal = i % 2 === 0 ? 1 : -1;
+      const variacaoVelocidade = this.velocidadeZigueZague * (1 + i * 0.05);
 
       let desvioX =
-        Math.sin(this.tempoInimigo * this.velocidadeZigueZague) *
-        (limiteBordaX1 * 0.4);
+        direcaoSinal *
+        Math.sin(this.tempoInimigo * variacaoVelocidade) *
+        (limiteBordaX * 0.4);
       let destinoX = THREE.MathUtils.clamp(
         aviaoMesh.position.x + desvioX,
-        -limiteBordaX1,
-        limiteBordaX1,
+        -limiteBordaX,
+        limiteBordaX,
       );
 
       let posXAnterior = inimigo.position.x;
@@ -81,61 +97,35 @@ export class CriadorInimigos {
       );
       inimigo.position.y = THREE.MathUtils.lerp(
         inimigo.position.y,
-        aviaoMesh.position.y - 5,
-        scaledDelta * this.velocidadePerseguicao,
+        aviaoMesh.position.y + offsetY,
+        scaledDelta * (this.velocidadePerseguicao * 0.8),
       );
-      inimigo.position.z = aviaoMesh.position.z + 90;
+      inimigo.position.z = aviaoMesh.position.z + offsetZ;
 
-      let velocidadeXReal = (inimigo.position.x - posXAnterior) / scaledDelta;
+      let velocidadexReal = (inimigo.position.x - posXAnterior) / scaledDelta;
       inimigo.rotation.z = THREE.MathUtils.lerp(
         inimigo.rotation.z,
-        -velocidadeXReal * 0.01,
+        -velocidadexReal * 0.01,
         scaledDelta * 5,
       );
 
-      inimigoTarget1.bb.setFromObject(inimigo);
-    }
+      inimigoTarget.bb.setFromObject(inimigo);
+    });
 
-    // --- Movimentação do Inimigo 2 ---
-    if (inimigoTarget2 && inimigoTarget2.ativo && inimigoTarget2.mesh) {
-      const inimigo2 = inimigoTarget2.mesh;
-      const distanciaZ2 = Math.abs(
-        camera.position.z - (aviaoMesh.position.z + 130),
-      );
-      const alturaVisivel2 = 4.5 * Math.tan(fovRadianos / 2) * distanciaZ2;
-      const limiteBordaX2 = ((alturaVisivel2 * camera.aspect) / 1.5) * 0.85;
-
-      let desvioX =
-        -Math.sin(this.tempoInimigo * 1.3 * this.velocidadeZigueZague) *
-        (limiteBordaX2 * 0.4);
-      let destinoX = THREE.MathUtils.clamp(
-        aviaoMesh.position.x + desvioX,
-        -limiteBordaX2,
-        limiteBordaX2,
-      );
-
-      let posXAnterior = inimigo2.position.x;
-
-      inimigo2.position.x = THREE.MathUtils.lerp(
-        inimigo2.position.x,
-        destinoX,
-        scaledDelta * (this.velocidadePerseguicao * 0.8),
-      );
-      inimigo2.position.y = THREE.MathUtils.lerp(
-        inimigo2.position.y,
-        aviaoMesh.position.y + 20,
-        scaledDelta * (this.velocidadePerseguicao * 0.8),
-      );
-      inimigo2.position.z = aviaoMesh.position.z + 130;
-
-      let velocidadeXReal = (inimigo2.position.x - posXAnterior) / scaledDelta;
-      inimigo2.rotation.z = THREE.MathUtils.lerp(
-        inimigo2.rotation.z,
-        -velocidadeXReal * 0.01,
-        scaledDelta * 5,
-      );
-
-      inimigoTarget2.bb.setFromObject(inimigo2);
+    // SISTEMA LOGÍSTICO DE OBJECT POOLING:
+    // Se houver menos de 2 inimigos na tela, ativamos o próximo da reserva!
+    if (ativosNaTela < 2) {
+      const proximoReserva = listaInimigos.find((inimigo) => !inimigo.ativo);
+      if (proximoReserva && proximoReserva.mesh) {
+        // Reinicia a posição dele para o canto do ecrã antes de entrar deslizando
+        proximoReserva.mesh.position.set(
+          proximoReserva.cantoOriginalX,
+          25,
+          proximoReserva.posicaoZOriginal,
+        );
+        proximoReserva.ativo = true;
+        proximoReserva.mesh.visible = true;
+      }
     }
   }
 }
