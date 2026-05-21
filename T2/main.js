@@ -19,6 +19,7 @@ import { CriadorInimigos } from "./CriadorInimigos.js";
 import { initPauseMenu } from "./bottons.js";
 import { LaserPool } from "./SistemaTiros.js";
 import { CollisionManager } from "./CollisionManager.js";
+import { criaTarget } from "./target.js";
 
 // Cor do céu — usada tanto no fundo do renderer quanto na névoa para fundir o horizonte
 let baseColor = "rgb(148, 181, 224)";
@@ -54,8 +55,12 @@ initMouseTracking();
 // Cria o modelo do avião e posiciona no centro da cena
 const aviaoController = criaAviao(scene);
 let aviaoMesh = aviaoController.object;
-aviaoMesh.position.set(0, 25, 0);
+aviaoMesh.position.set(0, 32, 0);
 
+//Target
+const targetMesh = criaTarget(scene);
+
+//População inimigo
 let tempoInimigo = 0;
 let listaInimigos = [];
 const POPULACAO_TOTAL = 5;
@@ -194,7 +199,7 @@ createWorldTiles(scene);
 
 const clock = new THREE.Clock();
 let isPaused = false;
-let gameSpeed = 1;
+let gameSpeed = 0.8;
 
 const pauseMenu = initPauseMenu({
   renderer: renderer,
@@ -212,13 +217,27 @@ const pauseMenu = initPauseMenu({
   },
 });
 
+const _direcaoTiroJogador = new THREE.Vector3();
 
 function gerenciarDisparoJogador(scaledDelta) {
   tempoUltimoTiro += scaledDelta;
   if (globalThis._shootEnabled === false) return;
 
-  if (estáAtirando && tempoUltimoTiro >= CADENCIA_TIRO && aviaoMesh) {
-    laserPool.shoot(aviaoMesh.position, aviaoMesh.rotation);
+  if (
+    estáAtirando &&
+    tempoUltimoTiro >= CADENCIA_TIRO &&
+    targetMesh &&
+    aviaoMesh
+  ) {
+    // 1. CALCULA O VETOR DE DIREÇÃO REAL: Direção que vai do avião direto para o Target
+    _direcaoTiroJogador
+      .subVectors(targetMesh.position, aviaoMesh.position)
+      .normalize();
+
+    // 2. DISPARO DO LASER: O tiro nasce na frente do avião e viaja apontado na direção da mira.
+    // Isso garante o deslocamento completo tridimensional e faz os tiros atravessarem os colisores inimigos!
+    laserPool.shoot(aviaoMesh.position, _direcaoTiroJogador);
+
     tempoUltimoTiro = 0;
   }
 }
@@ -285,10 +304,10 @@ function render() {
   const delta = clock.getDelta();
 
   if (!isPaused) {
-    const scaledDelta = delta * gameSpeed;
+    const scaledDelta = delta * gameSpeed * 1.2;
 
     // 1. Atualização de Movimentação e Câmera
-    inputUpdate(aviaoMesh, camera, scaledDelta);
+    inputUpdate(aviaoMesh, targetMesh, camera, scaledDelta); // Repassa o targetMesh para a física operar
     updateTiles(scaledDelta);
     updateCamera(camera, aviaoMesh, scaledDelta);
 

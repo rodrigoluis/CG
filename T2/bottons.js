@@ -179,13 +179,13 @@ export function initPauseMenu({
     }
 
     if (event.key === "1") {
-      setGameSpeed(1);
+      setGameSpeed(0.8);
       updateSpeedButtons();
     } else if (event.key === "2") {
-      setGameSpeed(2);
+      setGameSpeed(1.2);
       updateSpeedButtons();
     } else if (event.key === "3") {
-      setGameSpeed(3);
+      setGameSpeed(1.8);
       updateSpeedButtons();
     }
   });

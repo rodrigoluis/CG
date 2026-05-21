@@ -23,7 +23,7 @@ export class LaserPool {
     // === 1. GEOMETRIA ANATOMICA MUITO MAIS CHAMATIVA ===
     // Engordamos o raio de 0.15 para 0.65 e esticamos o comprimento de 2.5 para 8.5
     // Isso cria um feixe robusto que corta o cenário de forma nítida e imponente!
-    this.geometry = new THREE.BoxGeometry(0.25, 0.25, 2.0, 6);
+    this.geometry = new THREE.BoxGeometry(0.3, 0.3, 2.0, 6);
 
     // === 2. MATERIAL ESTILO NEON BRILHANTE (IMUNE À NÉVOA) ===
     // Mudamos para MeshStandardMaterial para habilitar a emissão de cor (brilho próprio no escuro)
