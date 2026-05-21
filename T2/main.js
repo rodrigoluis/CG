@@ -18,7 +18,7 @@ import { updateCamera } from "./camera.js";
 import { CriadorInimigos } from "./CriadorInimigos.js";
 import { initPauseMenu } from "./bottons.js";
 import { LaserPool } from "./SistemaTiros.js";
-import { CollisionManager } from "./CollisionManager.js";
+import { CollisionManager } from "./collisionManager.js";
 import { criaTarget } from "./target.js";
 import { CONFIG } from "./Configuracao.js";
 import { initSceneLighting } from "./light.js";
