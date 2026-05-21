@@ -114,12 +114,23 @@ const saldoCollisionManager = new CollisionManager("saldo");
 const INTERVALO_TIRO_INIMIGO = 1.5; // Tempo em segundos entre os tiros de cada inimigo
 
 function gerenciarDisparoInimigos(scaledDelta, aviaoMesh) {
-  if (!aviaoMesh) return;
+  if (!aviaoMesh || !camera) return;
 
   listaInimigos.forEach((inimigoTarget) => {
-    // ADICIONADO: Se estiver caindo, não atira de jeito nenhum!
+    // Se estiver inativo, sem malha ou caindo, não atira de jeito nenhum!
     if (!inimigoTarget.ativo || !inimigoTarget.mesh || inimigoTarget.caindo)
       return;
+
+    // === SOLUÇÃO: BLOQUEIO DE DISPARO PELA NÉVOA (FOG) ===
+    // Calcula a distância tridimensional exata entre o inimigo e a câmera do jogador
+    const distanciaAteCamera = inimigoTarget.mesh.position.distanceTo(
+      camera.position,
+    );
+
+    // Se o inimigo estiver além do limite de corte visível do fog, o tiro é cancelado
+    if (scene.fog && distanciaAteCamera > scene.fog.far) {
+      return;
+    }
 
     if (inimigoTarget.tempoRecarga === undefined) {
       inimigoTarget.tempoRecarga = -0.8;
