@@ -147,9 +147,6 @@ function gerenciarDisparoInimigos(scaledDelta, aviaoMesh) {
 
     inimigoTarget.posicaoZOriginal = CONFIG.inimigos.posicaoZCombate;
 
-    // === ADAPTAÇÃO DINÂMICA DA CADÊNCIA ===
-    // Dividimos o intervalo base pelo gameSpeed atual.
-    // Se o gameSpeed for 1.8 (tecla 3), o intervalo cai de 1.5s para ~0.83s!
     const intervaloAdaptado = CONFIG.inimigos.intervaloTiro / gameSpeed;
 
     if (inimigoTarget.tempoRecarga >= intervaloAdaptado) {
