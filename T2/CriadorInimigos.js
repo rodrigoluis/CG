@@ -68,17 +68,24 @@ export class CriadorInimigos {
 
       inimigo.visible = true;
 
+      // === COMPORTAMENTO DE ANIMAÇÃO DE QUEDA ===
       if (inimigoTarget.caindo) {
-        // 1. Desce no eixo Y acelerando pela gravidade simulada
-        inimigoTarget.velocidadeQuedaY += scaledDelta * 55;
+        // Puxa a aceleração da gravidade direto do CONFIG centralizado
+        const forcaGravidade = CONFIG.inimigos.gravidadeQueda || 280;
+
+        // Desce no eixo Y acelerando muito mais rápido
+        inimigoTarget.velocidadeQuedaY += scaledDelta * forcaGravidade;
         inimigo.position.y -= inimigoTarget.velocidadeQuedaY * scaledDelta;
 
-        // CORREÇÃO CRÍTICA: Atualiza o offsetZ do cadáver em tempo real conforme o avião avança.
-        // Isso impede que o offset fique parado no passado!
-        inimigoTarget.offsetZAtual = inimigo.position.z - aviaoMesh.position.z;
+        // Aumentamos também a velocidade do giro desgovernado para combinar com a queda rápida
+        inimigo.rotation.x += inimigoTarget.velocidadeGiro * 2 * scaledDelta;
+        inimigo.rotation.z += inimigoTarget.velocidadeGiro * 2.5 * scaledDelta;
+
+        // Continua avançando em Z acompanhando o fluxo do cenário
+        inimigo.position.z = aviaoMesh.position.z + inimigoTarget.offsetZAtual;
 
         inimigoTarget.bb.makeEmpty();
-        return;
+        return; // Pula o restante do código
       }
 
       // === COMPORTAMENTO NORMAL DE VOO (SÓ SE NÃO ESTIVER CAINDO) ===

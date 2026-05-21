@@ -207,7 +207,7 @@ createWorldTiles(scene);
 
 const clock = new THREE.Clock();
 let isPaused = false;
-let gameSpeed = 0.8;
+let gameSpeed = CONFIG.modos.velocidadeJogoPadrao;
 
 const pauseMenu = initPauseMenu({
   renderer: renderer,
@@ -271,8 +271,14 @@ function processarReciclagemInimigos() {
 
     if (foiAbatido && !inimigoTarget.caindo) {
       inimigoTarget.caindo = true;
-      inimigoTarget.velocidadeQuedaY = 0;
-      meshInterna.rotation.z = 0;
+
+      // ALERADO: De 6 para 25. Dá um tranco vertical para baixo instantâneo no momento do impacto!
+      inimigoTarget.velocidadeQuedaY = 25;
+
+      inimigoTarget.velocidadeGiro = Math.random() * 8 + 6; // Giros mais rápidos e agressivos
+
+      inimigoTarget.destruido = false;
+      if (meshInterna.userData) meshInterna.userData.destruido = false;
       return;
     }
 
@@ -337,12 +343,28 @@ function render() {
     laserPool.update(scaledDelta, scene.fog.far);
     laserPoolInimigos.update(scaledDelta);
 
-    // CORREÇÃO ESSENCIAL: Atualiza as caixas de colisão (bb) dos inimigos conforme eles se movem
     listaInimigos.forEach((inimigo) => {
       if (inimigo.ativo && inimigo.mesh && inimigo.bb) {
-        inimigo.bb.setFromObject(inimigo.mesh);
+        if (inimigo.caindo) {
+          // Se já foi abatido e está na animação de queda, esvazia a caixa para o laser passar direto
+          inimigo.bb.makeEmpty();
+        } else {
+          // Se está vivo e combatendo, atualiza o colisor normalmente
+          inimigo.bb.setFromObject(inimigo.mesh);
+        }
       }
     });
+
+    // 2. Sistema de Colisões Filtrado apenas por naves que estão vivas e combatendo (NÃO CAINDO)
+    const inimigosProntosParaColidir = listaInimigos.filter(
+      (inimigo) => inimigo.ativo && !inimigo.caindo,
+    );
+
+    inimigoCollisionManager.checkLaserAgainstTargets(
+      laserPool.getActiveLasers(),
+      inimigosProntosParaColidir, // Passa a lista limpa e blindada para o gerenciador
+      laserPool,
+    );
 
     // 3. Sistema de Colisões Filtrado por naves vivas
     const meshesInimigasAtivas = listaInimigos

@@ -12,6 +12,9 @@ export const CONFIG = {
     delayPrimeiroTiro: -2.0,
     posicaoZCombate: 140,
     distanciaSpawnZ: 800,
+
+    // === ADICIONE ESTA LINHA: Aumentamos a força física da gravidade ===
+    gravidadeQueda: 280.0, // Valor original era equivalente a 98. Aumentado para cair feito pedra!
   },
 
   // === CONFIGURAÇÕES DO SISTEMA DE LASERS ===
