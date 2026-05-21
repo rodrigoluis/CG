@@ -21,6 +21,7 @@ import { LaserPool } from "./SistemaTiros.js";
 import { CollisionManager } from "./CollisionManager.js";
 import { criaTarget } from "./target.js";
 import { CONFIG } from "./Configuracao.js";
+import { initSceneLighting } from "./light.js";
 
 // Cor do céu — usada tanto no fundo do renderer quanto na névoa para fundir o horizonte
 let baseColor = "rgb(148, 181, 224)";
@@ -40,7 +41,6 @@ gui.add(fogParams, "fogFar", 50, 800, 1).onChange((value) => {
   scene.fog.far = value;
 });
 
-let light = initDefaultBasicLight(scene);
 let camera = new THREE.PerspectiveCamera(
   22,
   window.innerWidth / window.innerHeight,
@@ -50,6 +50,7 @@ let camera = new THREE.PerspectiveCamera(
 camera.position.set(0, 25, -150);
 camera.lookAt(0, 25, 0);
 scene.add(camera);
+let light = initSceneLighting(camera.near, camera.far, [camera.position.x, camera.position.y], scene, true);
 
 initMouseTracking();
 
