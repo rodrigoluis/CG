@@ -22,7 +22,7 @@ import { initPauseMenu } from "./bottons.js"; // Importa o arquivo separado
 // Cor do céu — usada tanto no fundo do renderer quanto na névoa para fundir o horizonte
 let baseColor = "rgb(148, 181, 224)";
 let scene = new THREE.Scene();
-scene.fog = new THREE.Fog(baseColor, 1, 400); // névoa linear: começa em z=1, some em z=400
+scene.fog = new THREE.Fog(baseColor, 1, 10000); // névoa linear: começa em z=1, some em z=400
 let renderer = initRenderer();
 renderer.setClearColor(baseColor); // fundo da tela igual à névoa
 
@@ -34,15 +34,18 @@ document.getElementById("webgl-output").appendChild(stats.domElement);
 let fogParams = { fogFar: scene.fog.far };
 let gui = new GUI();
 // Slider que ajusta em tempo real até onde a névoa some os objetos
-gui.add(fogParams, "fogFar", 50, 800, 1).onChange((value) => {
+gui.add(fogParams, "fogFar", 50, 10000, 1).onChange((value) => {
   scene.fog.far = value;
 });
+
+const altitudeParams = { altitude: 0 };
+gui.add(altitudeParams, "altitude").name("Altitude").listen();
 
 let light = initDefaultBasicLight(scene);
 // FOV de 22° = zoom longo, parecido com câmera de perseguição de shoot-em-up
 let camera = new THREE.PerspectiveCamera(22, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(0, 25, -150); // começa atrás e na mesma altura do avião
-camera.lookAt(0, 25, 0);
+camera.position.set(0, 120, -150); // começa atrás e na mesma altura do avião
+camera.lookAt(0, 120, 0);
 scene.add(camera);
 
 // Registra o listener de mousemove para rastrear posição do cursor
@@ -51,19 +54,19 @@ initMouseTracking();
 // Cria o modelo do avião e posiciona no centro da cena
 const aviaoController = criaAviao(scene);
 let aviaoMesh = aviaoController.object;
-aviaoMesh.position.set(0, 25, 0);
+aviaoMesh.position.set(0, 120, 0);
 
 //Inimigos
 let inimigo;
 carregarAviaoInimigo().then((aviao) => {
   aviao.scale.set(10, 10, 10);
-  aviao.position.set(0, 20, 90);
+  aviao.position.set(0, 120, 90);
   scene.add(aviao);
   inimigo = aviao;
 });
 let inimigo2;
 carregarAviaoInimigo2().then((aviao) => {
-  aviao.position.set(0, 42, 100);
+  aviao.position.set(0, 120, 100);
   scene.add(aviao);
   inimigo2 = aviao;
 });
@@ -137,6 +140,7 @@ function render() {
       inimigo2.rotation.z = Math.cos(tempoInimigo * velocidade) * -0.2;
     }
   }
+  altitudeParams.altitude = Math.round(aviaoMesh.position.y);
   stats.update();                        // atualiza contador de FPS
   requestAnimationFrame(render);         // agenda o próximo frame
   renderer.render(scene, camera);        // desenha a cena na tela
