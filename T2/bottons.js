@@ -1,4 +1,5 @@
 // bottons.js
+import { CONFIG } from "./Configuracao.js";
 
 /**
  * Inicializa a interface de usuário do menu de pausa e injeta no DOM com paleta Pastel.
@@ -172,23 +173,24 @@ export function initPauseMenu({
 
   // --- LISTENERS DE INTERAÇÃO DO MENU ---
 
-  window.addEventListener("keydown", (event) => {
-    if (event.key === "Escape") {
-      setPaused(!getIsPaused());
-      return;
-    }
+window.addEventListener("keydown", (event) => {
+  if (event.key === "Escape") {
+    setPaused(!getIsPaused());
+    return;
+  }
 
-    if (event.key === "1") {
-      setGameSpeed(0.8);
-      updateSpeedButtons();
-    } else if (event.key === "2") {
-      setGameSpeed(1.2);
-      updateSpeedButtons();
-    } else if (event.key === "3") {
-      setGameSpeed(1.8);
-      updateSpeedButtons();
-    }
-  });
+  // Agora as velocidades são lidas de forma limpa direto do Configuracao.js!
+  if (event.key === "1") {
+    setGameSpeed(CONFIG.modos.velocidadeTecla1);
+    updateSpeedButtons();
+  } else if (event.key === "2") {
+    setGameSpeed(CONFIG.modos.velocidadeTecla2);
+    updateSpeedButtons();
+  } else if (event.key === "3") {
+    setGameSpeed(CONFIG.modos.velocidadeTecla3);
+    updateSpeedButtons();
+  }
+});
 
   renderer.domElement.addEventListener("pointerdown", () => {
     if (getIsPaused()) {

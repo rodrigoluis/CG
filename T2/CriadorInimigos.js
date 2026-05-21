@@ -1,13 +1,15 @@
 import * as THREE from "three";
 import { carregarAviaoInimigo } from "./alienVerde.js";
 import { carregarAviaoInimigo2 } from "./oviniInimigo.js";
+import { CONFIG } from "./Configuracao.js";
 
 export class CriadorInimigos {
   constructor(scene) {
     this.scene = scene;
     this.tempoInimigo = 0;
-    this.velocidadePerseguicao = 2.0;
-    this.velocidadeZigueZague = 1.4;
+    // Puxa os valores direto da configuração central
+    this.velocidadePerseguicao = CONFIG.inimigos.velocidadePerseguicao;
+    this.velocidadeZigueZague = CONFIG.inimigos.velocidadeZigueZague;
   }
 
   /**
@@ -159,8 +161,8 @@ export class CriadorInimigos {
             Math.random() < 0.5 ? -bordaSpawnX * 0.85 : bordaSpawnX * 0.85;
 
           // CORREÇÃO DE OURO: Forçamos o destino e o ponto de partida atual a começarem IGUAIS!
-          proximoReserva.posicaoZOriginal = 110; // Onde ele vai parar para combater
-          proximoReserva.offsetZAtual = 800;     // Onde ele nasce na névoa
+          proximoReserva.posicaoZOriginal = CONFIG.inimigos.posicaoZCombate;
+          proximoReserva.offsetZAtual = CONFIG.inimigos.distanciaSpawnZ;
 
           // Reseta rotações, posições em Y e estados de queda para o reuso limpo
           proximoReserva.caindo = false;
@@ -172,7 +174,7 @@ export class CriadorInimigos {
           proximoReserva.mesh.position.set(
             bordaNascimentoX,
             32,
-            aviaoMesh.position.z + 800,
+            aviaoMesh.position.z + CONFIG.inimigos.distanciaSpawnZ,
           );
 
           proximoReserva.cantoOriginalX = bordaNascimentoX;

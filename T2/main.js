@@ -20,6 +20,7 @@ import { initPauseMenu } from "./bottons.js";
 import { LaserPool } from "./SistemaTiros.js";
 import { CollisionManager } from "./CollisionManager.js";
 import { criaTarget } from "./target.js";
+import { CONFIG } from "./Configuracao.js";
 
 // Cor do céu — usada tanto no fundo do renderer quanto na névoa para fundir o horizonte
 let baseColor = "rgb(148, 181, 224)";
@@ -68,19 +69,19 @@ const POPULACAO_TOTAL = 5;
 const criadorInimigos = new CriadorInimigos(scene);
 
 // Cria e armazena os 5 objetos no pool
+// === COLOQUE ESTE BLOCO CORRIGIDO NO SEU LAÇO DE CRIAÇÃO (FOR) ===
 for (let i = 0; i < POPULACAO_TOTAL; i++) {
   const ladoDoCanto = i % 2 === 0 ? -80 : 80;
-
-  // SOLUÇÃO: Cada índice ganha uma distância de combate fixa exclusiva no horizonte relativo
-  // Exemplo: Inimigo 0 combate a 100 de distância, Inimigo 1 combate a 130, Inimigo 2 a 160...
-  const posicaoZFixaDesteInimigo = 110;
+  
+  // DECLARAÇÃO CORRETA: Puxa a distância padrão de combate do seu CONFIG
+  const posicaoZFixaDesteInimigo = CONFIG.inimigos.posicaoZCombate;
 
   criadorInimigos
     .criarInimigoAleatorio(ladoDoCanto, 25, posicaoZFixaDesteInimigo)
     .then((inimigoSorteado) => {
       inimigoSorteado.indice = i;
 
-      // Injeta os dados limpos de estrutura
+      // Injeta propriedades de vida iniciais garantidas para o CollisionManager
       inimigoSorteado.vida = 100;
       inimigoSorteado.life = 100;
       inimigoSorteado.destruido = false;
@@ -89,10 +90,8 @@ for (let i = 0; i < POPULACAO_TOTAL; i++) {
         inimigoSorteado.mesh.life = 100;
       }
 
-      // CORREÇÃO: Força as duas primeiras naves que já começam ativas na tela
-      // a irem para o horizonte de respawn (800), iniciando a aproximação linda por lerp!
-      inimigoSorteado.posicaoZOriginal = posicaoZFixaDesteInimigo; // O ponto fixo de parada dele
-      inimigoSorteado.offsetZAtual = 800; // Ele nasce lá atrás na névoa
+      // Sincroniza o offset inicial do pool com a distância fixa de combate original
+      inimigoSorteado.offsetZAtual = posicaoZFixaDesteInimigo;
 
       listaInimigos.push(inimigoSorteado);
 
@@ -116,7 +115,7 @@ const saldoCollisionManager = new CollisionManager("saldo");
 
 //Tiro dos inimigos
 // --- COOLDOWN DE DISPARO DOS INIMIGOS ---
-const INTERVALO_TIRO_INIMIGO = 1.5; // Tempo em segundos entre os tiros de cada inimigo
+const INTERVALO_TIRO_INIMIGO = CONFIG.inimigos.intervaloTiro; // Tempo em segundos entre os tiros de cada inimigo
 
 function gerenciarDisparoInimigos(scaledDelta, aviaoMesh) {
   if (!aviaoMesh || !camera) return;
@@ -127,28 +126,37 @@ function gerenciarDisparoInimigos(scaledDelta, aviaoMesh) {
     if (!inimigoTarget.ativo || !inimigoTarget.mesh || inimigoTarget.caindo)
       return;
 
-    // === SOLUÇÃO: BLOQUEIO DE DISPARO PELA NÉVOA (FOG) ===
-    // Calcula a distância tridimensional exata entre o inimigo e a câmera do jogador
+    // === BLOQUEIO DE DISPARO PELA NÉVOA (FOG) ===
     const distanciaAteCamera = inimigoTarget.mesh.position.distanceTo(
       camera.position,
     );
 
-    // Se o inimigo estiver além do limite de corte visível do fog, o tiro é cancelado
     if (scene.fog && distanciaAteCamera > scene.fog.far) {
       return;
     }
 
-    if (inimigoTarget.tempoRecarga === undefined) {
-      inimigoTarget.tempoRecarga = -0.8;
+    // Inicializa o relógio se ele não existir
+    if (
+      inimigoTarget.tempoRecarga === undefined ||
+      inimigoTarget.tempoRecarga === null
+    ) {
+      inimigoTarget.tempoRecarga = CONFIG.inimigos.delayPrimeiroTiro;
     }
 
+    // === CORREÇÃO CRÍTICA: READICIONADA A LINHA QUE FAZ O TEMPO CORRER ===
     inimigoTarget.tempoRecarga += scaledDelta;
 
+    // Sincroniza a posição Z de combate caso necessário
+    inimigoTarget.posicaoZOriginal = CONFIG.inimigos.posicaoZCombate;
+
+    // Verifica se a arma está pronta para disparar
     if (inimigoTarget.tempoRecarga >= INTERVALO_TIRO_INIMIGO) {
       let direcaoAlvo = new THREE.Vector3();
       direcaoAlvo.subVectors(aviaoMesh.position, inimigoTarget.mesh.position);
 
       laserPoolInimigos.shoot(inimigoTarget.mesh.position, direcaoAlvo);
+
+      // Reseta o cooldown para o próximo ciclo de 1.5s
       inimigoTarget.tempoRecarga = 0;
     }
   });
@@ -157,7 +165,7 @@ function gerenciarDisparoInimigos(scaledDelta, aviaoMesh) {
 // Controle de entrada de tiros (Segurar botão)
 let estáAtirando = false;
 let tempoUltimoTiro = 0;
-const CADENCIA_TIRO = 0.15;
+const CADENCIA_TIRO = CONFIG.lasers.cadenciaJogador;
 
 window.addEventListener("mousedown", (event) => {
   if (event.button === 0) estáAtirando = true;

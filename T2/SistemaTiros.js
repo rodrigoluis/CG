@@ -1,4 +1,6 @@
 import * as THREE from "three";
+// === 1. ADICIONA A IMPORTAÇÃO DO CONFIG NO TOPO ===
+import { CONFIG } from "./Configuracao.js";
 
 export class LaserPool {
   /**
@@ -20,20 +22,17 @@ export class LaserPool {
     this.pool = [];
     this.activeLasers = [];
 
-    // === 1. GEOMETRIA ANATOMICA MUITO MAIS CHAMATIVA ===
-    // Engordamos o raio de 0.15 para 0.65 e esticamos o comprimento de 2.5 para 8.5
-    // Isso cria um feixe robusto que corta o cenário de forma nítida e imponente!
+    // === GEOMETRIA ANATOMICA MUITO MAIS CHAMATIVA ===
     this.geometry = new THREE.BoxGeometry(0.3, 0.3, 2.0, 6);
 
-    // === 2. MATERIAL ESTILO NEON BRILHANTE (IMUNE À NÉVOA) ===
-    // Mudamos para MeshStandardMaterial para habilitar a emissão de cor (brilho próprio no escuro)
+    // === MATERIAL ESTILO NEON BRILHANTE (IMUNE À NÉVOA) ===
     this.material = new THREE.MeshStandardMaterial({
       color: corRGB,
-      emissive: corRGB, // Faz o laser brilhar com luz própria (efeito sabre de luz)
-      emissiveIntensity: 2.5, // Intensidade forte para destacar no céu azul
+      emissive: corRGB,
+      emissiveIntensity: 2.5,
       transparent: true,
       opacity: 0.95,
-      fog: true, // Impede que a névoa da main.js apague ou desbote o laser
+      fog: true,
     });
 
     this.initPool();
@@ -51,7 +50,7 @@ export class LaserPool {
         mesh: mesh,
         bb: new THREE.Box3(),
         active: false,
-        startPosition: new THREE.Vector3(), // Guarda onde o tiro nasceu
+        startPosition: new THREE.Vector3(),
       };
 
       this.pool.push(laserData);
@@ -69,9 +68,8 @@ export class LaserPool {
       laser.mesh.position.copy(spawnPosition);
       laser.startPosition.copy(spawnPosition);
 
-      // Se for um Vetor (direção do tiro do inimigo)
+      // Se for um Vetor (direção do tiro do inimigo ou do jogador com retícula)
       if (direcaoOuRotacao instanceof THREE.Vector3) {
-        // Faz o laser olhar diretamente para a direção do alvo
         let alvoLook = new THREE.Vector3().addVectors(
           spawnPosition,
           direcaoOuRotacao,
@@ -92,30 +90,39 @@ export class LaserPool {
   }
 
   /**
-   * Atualiza e move os lasers ativos, aplicando o descarte por névoa APENAS para o jogador
+   * Atualiza e move os lasers ativos com base na classe central CONFIG
    * @param {number} scaledDelta - Delta do clock multiplicado pelo gameSpeed
-   * @param {number|null} fogFar - Limite de corte da névoa da cena (opcional para inimigos)
+   * @param {number|null} fogFar - Limite de corte da névoa da cena
    */
   update(scaledDelta, fogFar = null) {
     for (let i = this.activeLasers.length - 1; i >= 0; i--) {
       let laser = this.activeLasers[i];
 
-      // --- SISTEMA DE MOVIMENTAÇÃO ISOLADO ---
+      // --- 2. SISTEMA DE MOVIMENTAÇÃO ADAPTADO AO CONFIG ---
       if (laser.direcaoCustomizada) {
-        // INIMIGO: Se tem direção customizada (Vetor), move baseado nele (Velocidade 150)
+        // INIMIGO (ou Jogador com mira em Vector3): usa a velocidade configurada multiplicada por um fator base de física
+        const velocidadeInimigoBase = CONFIG.lasers.velocidadeInimigo * 75;
         laser.mesh.position.addScaledVector(
           laser.direcaoCustomizada,
-          150 * scaledDelta,
+          velocidadeInimigoBase * scaledDelta,
         );
       } else {
-        // JOGADOR: Se não tem, usa o translateZ local padrão para frente (+300)
-        laser.mesh.translateZ(300 * scaledDelta);
+        // JOGADOR (Em modo de rotação local Euler): usa a velocidade do jogador configurada
+        const velocidadeJogadorBase = CONFIG.lasers.velocidadeJogador * 75;
+        laser.mesh.translateZ(velocidadeJogadorBase * scaledDelta);
       }
 
       // Atualiza a Bounding Box de colisão acompanhando a nova posição
       laser.bb.setFromObject(laser.mesh);
 
-      // --- SISTEMA LOGÍSTICO DE DESCARTE ---
+      // --- 3. CHECK DE SEGURANÇA: SUMIÇO PERTO DA TELA ---
+      // Se o tiro passar raspando e cruzar para trás do limite perto da tela, desativa na hora
+      if (laser.mesh.position.z < CONFIG.lasers.distanciaSumiçoPerto) {
+        this.despawn(laser, i);
+        continue; // Pula para o próximo loop
+      }
+
+      // --- SISTEMA LOGÍSTICO DE DESCARTE POR DISTÂNCIA ---
       let distanciaPercorrida = laser.mesh.position.distanceTo(
         laser.startPosition,
       );
@@ -126,8 +133,7 @@ export class LaserPool {
           this.despawn(laser, i);
         }
       } else {
-        // INIMIGOS: Usam um descarte fixo por distância para não sumirem no meio da tela
-        //Para alterar onde os tiros dos inimigos somem é só mexer aqui 
+        // INIMIGOS: Usam o limite máximo estipulado no horizonte
         if (distanciaPercorrida > 350) {
           this.despawn(laser, i);
         }
