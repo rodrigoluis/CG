@@ -65,14 +65,13 @@ const criadorInimigos = new CriadorInimigos(scene);
 // Cria e armazena os 5 objetos no pool
 for (let i = 0; i < POPULACAO_TOTAL; i++) {
   const ladoDoCanto = i % 2 === 0 ? -80 : 80;
-  const posicaoZFixa = 90 + i * 30;
+  const posicaoZFixa = 90; // Travado em 90 para manter o alinhamento linear perfeito
 
   criadorInimigos
     .criarInimigoAleatorio(ladoDoCanto, 25, posicaoZFixa)
     .then((inimigoSorteado) => {
       inimigoSorteado.indice = i;
 
-      // Injeta propriedades de vida iniciais garantidas para o CollisionManager reconhecer
       inimigoSorteado.vida = 100;
       inimigoSorteado.life = 100;
       inimigoSorteado.destruido = false;
@@ -80,6 +79,8 @@ for (let i = 0; i < POPULACAO_TOTAL; i++) {
         inimigoSorteado.mesh.vida = 100;
         inimigoSorteado.mesh.life = 100;
       }
+
+      inimigoSorteado.offsetZAtual = posicaoZFixa;
 
       listaInimigos.push(inimigoSorteado);
 
@@ -217,7 +218,6 @@ function processarReciclagemInimigos() {
     const meshInterna = inimigoTarget.mesh;
     if (!meshInterna) return;
 
-    // 1. Verifica se o CollisionManager zerou as propriedades de vida
     const foiAbatido =
       inimigoTarget.vida <= 0 ||
       inimigoTarget.life <= 0 ||
@@ -227,15 +227,16 @@ function processarReciclagemInimigos() {
       (meshInterna.userData &&
         (meshInterna.userData.vida <= 0 || meshInterna.userData.life <= 0));
 
-    // 2. Verifica se a malha foi deletada da cena física
     const sumiuDaCena = !scene.children.includes(meshInterna);
 
     if (foiAbatido || sumiuDaCena) {
+      // === AJUSTE DE FLAGS ===
       inimigoTarget.ativo = false;
+      inimigoTarget.active = false;
       meshInterna.visible = false;
       inimigosAbatidos++;
 
-      // Limpa os dados de dano para permitir reuso com vida cheia no próximo ciclo
+      // Limpa os dados de dano para permitir reuso com vida cheia
       inimigoTarget.vida = 100;
       inimigoTarget.life = 100;
       inimigoTarget.destruido = false;
@@ -246,12 +247,15 @@ function processarReciclagemInimigos() {
         meshInterna.userData.life = 100;
       }
 
+      // GARANTIA: Força a distância fixa padrão de combate no retorno para a reserva
+      inimigoTarget.posicaoZOriginal = 90;
+
+      // Dá o delay obrigatório na arma antes de o novo inimigo surgir
+      inimigoTarget.tempoRecarga = -2.0;
+
       if (sumiuDaCena) {
         scene.add(meshInterna);
       }
-      console.log(
-        `[POOL] Inimigo ${inimigoTarget.indice} reciclado com sucesso.`,
-      );
     }
   });
 }
