@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
-const CAMERA_X_POSITION = 200;
-const CAMERA_Y_POSITION = 200;
+const CAMERA_X_POSITION = -50;
+const CAMERA_Y_POSITION = 50;
 /**
  * @param {number} cameraNearZ Z position of camera near plane
  * @param {number} cameraFarZ Z position of camera far plane
