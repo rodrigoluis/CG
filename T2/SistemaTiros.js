@@ -90,24 +90,25 @@ export class LaserPool {
   }
 
   /**
-   * Atualiza e move os lasers ativos com base na classe central CONFIG
+   * Atualiza e move os lasers ativos, aplicando o descarte por névoa em relação ao avião
    * @param {number} scaledDelta - Delta do clock multiplicado pelo gameSpeed
+   * @param {THREE.Mesh} aviaoMesh - Referência do avião para calcular o descarte visual real
    * @param {number|null} fogFar - Limite de corte da névoa da cena
    */
-  update(scaledDelta, fogFar = null) {
+  update(scaledDelta, aviaoMesh, fogFar = null) {
     for (let i = this.activeLasers.length - 1; i >= 0; i--) {
       let laser = this.activeLasers[i];
 
-      // --- 2. SISTEMA DE MOVIMENTAÇÃO ADAPTADO AO CONFIG ---
+      // --- SISTEMA DE MOVIMENTAÇÃO ISOLADO ---
       if (laser.direcaoCustomizada) {
-        // INIMIGO (ou Jogador com mira em Vector3): usa a velocidade configurada multiplicada por um fator base de física
+        // INIMIGO
         const velocidadeInimigoBase = CONFIG.lasers.velocidadeInimigo * 75;
         laser.mesh.position.addScaledVector(
           laser.direcaoCustomizada,
           velocidadeInimigoBase * scaledDelta,
         );
       } else {
-        // JOGADOR (Em modo de rotação local Euler): usa a velocidade do jogador configurada
+        // JOGADOR
         const velocidadeJogadorBase = CONFIG.lasers.velocidadeJogador * 75;
         laser.mesh.translateZ(velocidadeJogadorBase * scaledDelta);
       }
@@ -115,25 +116,28 @@ export class LaserPool {
       // Atualiza a Bounding Box de colisão acompanhando a nova posição
       laser.bb.setFromObject(laser.mesh);
 
-      // --- 3. CHECK DE SEGURANÇA: SUMIÇO PERTO DA TELA ---
-      // Se o tiro passar raspando e cruzar para trás do limite perto da tela, desativa na hora
+      // --- CHECK DE SEGURANÇA: SUMIÇO PERTO DA TELA ---
       if (laser.mesh.position.z < CONFIG.lasers.distanciaSumiçoPerto) {
         this.despawn(laser, i);
-        continue; // Pula para o próximo loop
+        continue;
       }
 
-      // --- SISTEMA LOGÍSTICO DE DESCARTE POR DISTÂNCIA ---
-      let distanciaPercorrida = laser.mesh.position.distanceTo(
-        laser.startPosition,
-      );
-
+      // --- SISTEMA LOGÍSTICO DE DESCARTE POR NÉVOA (CORRIGIDO) ---
       if (this.tipoAtirador === "player") {
-        // APENAS O JOGADOR: Usa o fog collector da névoa
-        if (fogFar && distanciaPercorrida > fogFar) {
+        // APENAS O JOGADOR: Calcula a distância do tiro até o avião (ponto de vista do jogador)
+        // Isso impede que a rolagem do cenário quebre o descarte!
+        let distanciaAteJogador = aviaoMesh
+          ? laser.mesh.position.distanceTo(aviaoMesh.position)
+          : laser.mesh.position.distanceTo(laser.startPosition);
+
+        if (fogFar && distanciaAteJogador > fogFar) {
           this.despawn(laser, i);
         }
       } else {
-        // INIMIGOS: Usam o limite máximo estipulado no horizonte
+        // INIMIGOS: Mantêm o descarte fixo por deslocamento próprio
+        let distanciaPercorrida = laser.mesh.position.distanceTo(
+          laser.startPosition,
+        );
         if (distanciaPercorrida > 350) {
           this.despawn(laser, i);
         }

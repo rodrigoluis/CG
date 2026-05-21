@@ -340,8 +340,8 @@ function render() {
     gerenciarDisparoJogador(scaledDelta);
     gerenciarDisparoInimigos(scaledDelta, aviaoMesh); 
 
-    laserPool.update(scaledDelta, scene.fog.far);
-    laserPoolInimigos.update(scaledDelta);
+    laserPool.update(scaledDelta, aviaoMesh, scene.fog.far);
+    laserPoolInimigos.update(scaledDelta, aviaoMesh);
 
     listaInimigos.forEach((inimigo) => {
       if (inimigo.ativo && inimigo.mesh && inimigo.bb) {
@@ -360,10 +360,13 @@ function render() {
       (inimigo) => inimigo.ativo && !inimigo.caindo,
     );
 
+    // Executa a colisão passando a lista protegida, a câmera e a cena
     inimigoCollisionManager.checkLaserAgainstTargets(
       laserPool.getActiveLasers(),
-      inimigosProntosParaColidir, // Passa a lista limpa e blindada para o gerenciador
+      inimigosProntosParaColidir,
       laserPool,
+      camera,
+      scene,
     );
 
     // 3. Sistema de Colisões Filtrado por naves vivas
@@ -373,8 +376,10 @@ function render() {
 
     inimigoCollisionManager.checkLaserAgainstTargets(
       laserPool.getActiveLasers(),
-      listaInimigos,
+      inimigosProntosParaColidir,
       laserPool,
+      camera,
+      scene,
     );
 
     // Processa a morte e limpa os inimigos abatidos da tela
