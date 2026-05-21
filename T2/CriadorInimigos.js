@@ -19,7 +19,6 @@ export class CriadorInimigos {
 
     if (tipoInimigo === "alien") {
       aviaoMesh = await carregarAviaoInimigo();
-      aviaoMesh.scale.set(10, 10, 10);
     } else {
       aviaoMesh = await carregarAviaoInimigo2();
     }
@@ -137,7 +136,7 @@ export class CriadorInimigos {
       let velocidadexReal = (inimigo.position.x - posXAnterior) / scaledDelta;
       inimigo.rotation.z = THREE.MathUtils.lerp(
         inimigo.rotation.z,
-        -velocidadexReal * 0.01,
+        -velocidadexReal * 0.002,
         scaledDelta * 5,
       );
 
