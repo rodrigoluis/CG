@@ -65,7 +65,7 @@ const criadorInimigos = new CriadorInimigos(scene);
 // Cria e armazena os 5 objetos no pool
 for (let i = 0; i < POPULACAO_TOTAL; i++) {
   const ladoDoCanto = i % 2 === 0 ? -80 : 80;
-  const posicaoZFixa = 90; // Travado em 90 para manter o alinhamento linear perfeito
+  const posicaoZFixa = 110; // Travado em 90 para manter o alinhamento linear perfeito
 
   criadorInimigos
     .criarInimigoAleatorio(ladoDoCanto, 25, posicaoZFixa)
@@ -111,26 +111,21 @@ function gerenciarDisparoInimigos(scaledDelta, aviaoMesh) {
   if (!aviaoMesh) return;
 
   listaInimigos.forEach((inimigoTarget) => {
-    if (!inimigoTarget.ativo || !inimigoTarget.mesh) return;
+    // ADICIONADO: Se estiver caindo, não atira de jeito nenhum!
+    if (!inimigoTarget.ativo || !inimigoTarget.mesh || inimigoTarget.caindo)
+      return;
 
-    // SEGUNDOS INICIAIS: Se o cronômetro não existe, começamos com -2.0 segundos.
-    // Isso cria um atraso/delay obrigatório de 2 segundos antes do primeiríssimo disparo!
     if (inimigoTarget.tempoRecarga === undefined) {
       inimigoTarget.tempoRecarga = -0.8;
     }
 
     inimigoTarget.tempoRecarga += scaledDelta;
 
-    // Se o inimigo terminou de recarregar (passou do tempo negativo e bateu o intervalo)
     if (inimigoTarget.tempoRecarga >= INTERVALO_TIRO_INIMIGO) {
-      // CALCULA A DIREÇÃO: Vetor que vai do Inimigo direto para o Avião do jogador
       let direcaoAlvo = new THREE.Vector3();
       direcaoAlvo.subVectors(aviaoMesh.position, inimigoTarget.mesh.position);
 
-      // Dispara o laser usando o pool de inimigos
       laserPoolInimigos.shoot(inimigoTarget.mesh.position, direcaoAlvo);
-
-      // Reseta o cooldown do inimigo para 0 (os próximos tiros seguirão o padrão de 1.5s)
       inimigoTarget.tempoRecarga = 0;
     }
   });
@@ -209,7 +204,7 @@ function gerenciarDisparoJogador(scaledDelta) {
 }
 
 /**
- * Varre o pool de inimigos para reciclar os que foram destruídos pelo CollisionManager.
+ * Varre o pool de inimigos para gerenciar a animação de queda e reciclar
  */
 function processarReciclagemInimigos() {
   listaInimigos.forEach((inimigoTarget) => {
@@ -218,6 +213,7 @@ function processarReciclagemInimigos() {
     const meshInterna = inimigoTarget.mesh;
     if (!meshInterna) return;
 
+    // 1. Detecta o momento exato em que a vida zerou no combate
     const foiAbatido =
       inimigoTarget.vida <= 0 ||
       inimigoTarget.life <= 0 ||
@@ -227,16 +223,28 @@ function processarReciclagemInimigos() {
       (meshInterna.userData &&
         (meshInterna.userData.vida <= 0 || meshInterna.userData.life <= 0));
 
+    // 2. Se foi atingido agora e ainda não estava caindo, ativa a animação de queda reta
+    if (foiAbatido && !inimigoTarget.caindo) {
+      inimigoTarget.caindo = true;
+      inimigoTarget.velocidadeQuedaY = 0; // Começa a cair a partir do repouso (velocidade 0)
+
+      // Congela pequenas inclinações de ziguezague para dar efeito estático de pane
+      meshInterna.rotation.z = 0;
+      return;
+    }
+
+    // 3. RECICLAGEM DEFINITIVA: Limpa os dados e joga nas reservas ao atingir o chão (Y <= -20)
+    const bateuNoChao = meshInterna.position.y <= -20;
     const sumiuDaCena = !scene.children.includes(meshInterna);
 
-    if (foiAbatido || sumiuDaCena) {
-      // === AJUSTE DE FLAGS ===
+    if (bateuNoChao || sumiuDaCena) {
       inimigoTarget.ativo = false;
       inimigoTarget.active = false;
+      inimigoTarget.caindo = false;
       meshInterna.visible = false;
       inimigosAbatidos++;
 
-      // Limpa os dados de dano para permitir reuso com vida cheia
+      // Limpa os dados de dano para o próximo ciclo vir com vida cheia
       inimigoTarget.vida = 100;
       inimigoTarget.life = 100;
       inimigoTarget.destruido = false;
@@ -247,10 +255,7 @@ function processarReciclagemInimigos() {
         meshInterna.userData.life = 100;
       }
 
-      // GARANTIA: Força a distância fixa padrão de combate no retorno para a reserva
-      inimigoTarget.posicaoZOriginal = 90;
-
-      // Dá o delay obrigatório na arma antes de o novo inimigo surgir
+      inimigoTarget.posicaoZOriginal = 140;
       inimigoTarget.tempoRecarga = -2.0;
 
       if (sumiuDaCena) {

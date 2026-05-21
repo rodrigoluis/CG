@@ -114,10 +114,10 @@ export class CollisionManager {
       }
 
       if (target) {
-        target.ativo = false;
+        // CORREÇÃO: Não mude 'ativo' para false e não mude 'visible' para false aqui!
+        // Deixamos apenas a vida zerada para a main disparar o gatilho de queda.
         target.vida = 0;
         target.life = 0;
-        if (target.mesh) target.mesh.visible = false;
       }
     }
 

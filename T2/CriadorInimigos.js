@@ -33,6 +33,9 @@ export class CriadorInimigos {
       mesh: aviaoMesh,
       bb: new THREE.Box3().setFromObject(aviaoMesh),
       ativo: false,
+      caindo: false, // Nova propriedade para controlar a animação de morte
+      velocidadeQuedaY: 0,
+      velocidadeGiro: 0,
       tipo: tipoInimigo,
       cantoOriginalX: x,
       posicaoZOriginal: z,
@@ -49,19 +52,38 @@ export class CriadorInimigos {
     this.tempoInimigo += scaledDelta;
     const fovRadianos = (camera.fov * Math.PI) / 180;
 
-    // Filtra e ordena os inimigos ativos
-    let inimigosAtivos = listaInimigos.filter((inimigo) => inimigo.ativo);
+    // Filtra e ordena apenas os inimigos que estão combatendo normalmente (ativos e não caindo)
+    let inimigosAtivos = listaInimigos.filter(
+      (inimigo) => inimigo.ativo && !inimigo.caindo,
+    );
     let ativosNaTela = inimigosAtivos.length;
     inimigosAtivos.sort((a, b) => a.indice - b.indice);
 
-    inimigosAtivos.forEach((inimigoTarget, ordem) => {
+    listaInimigos.forEach((inimigoTarget) => {
+      if (!inimigoTarget.ativo) return;
+
       const inimigo = inimigoTarget.mesh;
       if (!inimigo) return;
 
       inimigo.visible = true;
-      const i = inimigoTarget.indice;
 
-      // === 1. REGRA DO Z: HORIZONTE ATÉ O PONTO FIXO ===
+      if (inimigoTarget.caindo) {
+        // 1. Desce no eixo Y acelerando pela gravidade simulada
+        inimigoTarget.velocidadeQuedaY += scaledDelta * 55; // Ajuste de força da queda
+        inimigo.position.y -= inimigoTarget.velocidadeQuedaY * scaledDelta;
+
+        // 2. CORREÇÃO: Removemos a atualização dos eixos X e Z!
+        // O inimigo agora fica totalmente estático no plano horizontal, caindo reto.
+
+        // 3. Atualiza a Bounding Box vazia para evitar novos registros de colisão no fantasma
+        inimigoTarget.bb.makeEmpty();
+        return;
+      }
+
+      // === COMPORTAMENTO NORMAL DE VOO (SÓ SE NÃO ESTIVER CAINDO) ===
+      const i = inimigoTarget.indice;
+      const ordem = inimigosAtivos.indexOf(inimigoTarget);
+
       inimigoTarget.offsetZAtual = THREE.MathUtils.lerp(
         inimigoTarget.offsetZAtual,
         inimigoTarget.posicaoZOriginal,
@@ -69,9 +91,6 @@ export class CriadorInimigos {
       );
       inimigo.position.z = aviaoMesh.position.z + inimigoTarget.offsetZAtual;
 
-      // === 2. REGRA DO X DINÂMICO (TRAVADO NO ALVO DE COMBATE PARA EVITAR DEFORMAÇÃO) ===
-      // CORREÇÃO CRÍTICA: Calculamos a distância baseada na posição fixa de combate desejada (offsetZAtual)
-      // somada à distância estática da câmera ao avião (150 unidades). Isso impede que a borda mude com o andar do mapa!
       const distanciaFixaCamera = 150 + inimigoTarget.offsetZAtual;
       const metadeAlturaVisivel =
         Math.tan(fovRadianos / 2) * distanciaFixaCamera;
@@ -98,12 +117,11 @@ export class CriadorInimigos {
         scaledDelta * this.velocidadePerseguicao,
       );
 
-      // === 3. REGRA DO Y: CENTRALIZAÇÃO SIMÉTRICA ===
       const centroTelaY = 32;
-      const novaDistanciaY = 14;
+      const novaDistanciaY = 24;
 
       let offsetY = 0;
-      if (ativosNaTela > 1) {
+      if (ativosNaTela > 1 && ordem !== -1) {
         offsetY = (ordem === 0 ? -0.5 : 0.5) * novaDistanciaY;
       }
 
@@ -116,7 +134,6 @@ export class CriadorInimigos {
         scaledDelta * this.velocidadePerseguicao,
       );
 
-      // --- ROTAÇÃO LATERAL (ROLL) ---
       let velocidadexReal = (inimigo.position.x - posXAnterior) / scaledDelta;
       inimigo.rotation.z = THREE.MathUtils.lerp(
         inimigo.rotation.z,
@@ -124,25 +141,32 @@ export class CriadorInimigos {
         scaledDelta * 5,
       );
 
-      // Atualiza a Bounding Box de colisão
       inimigoTarget.bb.setFromObject(inimigo);
     });
 
+    // === LOGÍSTICA DE REPOSICIONAMENTO DE RESERVAS (Z+800) ===
     if (ativosNaTela < 2) {
       const reservas = listaInimigos.filter((inimigo) => !inimigo.ativo);
 
       if (reservas.length > 0) {
-        const proximoReserva = reservas[Math.floor(Math.random() * reservas.length)];
+        const proximoReserva =
+          reservas[Math.floor(Math.random() * reservas.length)];
 
         if (proximoReserva && proximoReserva.mesh) {
-          // Calcula o frustum inicial de spawn baseado na distância real de 800 + 150 (câmera)
           const distanciaSpawnZ = 950;
-          const bordaSpawnX = Math.tan(fovRadianos / 2) * distanciaSpawnZ * camera.aspect;
-          const bordaNascimentoX = Math.random() < 0.5 ? -bordaSpawnX * 0.85 : bordaSpawnX * 0.85;
+          const bordaSpawnX =
+            Math.tan(fovRadianos / 2) * distanciaSpawnZ * camera.aspect;
+          const bordaNascimentoX =
+            Math.random() < 0.5 ? -bordaSpawnX * 0.85 : bordaSpawnX * 0.85;
 
-          // CORREÇÃO DEFINITIVA: Unifica a distância de combate em 90 para todos os membros do pool
-          proximoReserva.posicaoZOriginal = 90;
+          proximoReserva.posicaoZOriginal = 140;
           proximoReserva.offsetZAtual = 800;
+
+          // Reseta rotações e estados de queda para o reuso limpo
+          proximoReserva.caindo = false;
+          proximoReserva.velocidadeQuedaY = 0;
+          proximoReserva.velocidadeGiro = 0;
+          proximoReserva.mesh.rotation.set(0, 0, 0);
 
           proximoReserva.mesh.position.set(
             bordaNascimentoX,
