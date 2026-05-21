@@ -140,7 +140,7 @@ function gerenciarDisparoInimigos(scaledDelta, aviaoMesh) {
 // Controle de entrada de tiros (Segurar botão)
 let estáAtirando = false;
 let tempoUltimoTiro = 0;
-const CADENCIA_TIRO = 0.1;
+const CADENCIA_TIRO = 0.3;
 
 window.addEventListener("mousedown", (event) => {
   if (event.button === 0) estáAtirando = true;

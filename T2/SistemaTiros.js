@@ -33,7 +33,7 @@ export class LaserPool {
       emissiveIntensity: 2.5, // Intensidade forte para destacar no céu azul
       transparent: true,
       opacity: 0.95,
-      fog: false, // O TRUQUE DE OURO: Impede que a névoa da main.js apague ou desbote o laser
+      fog: true, // Impede que a névoa da main.js apague ou desbote o laser
     });
 
     this.initPool();
@@ -127,6 +127,7 @@ export class LaserPool {
         }
       } else {
         // INIMIGOS: Usam um descarte fixo por distância para não sumirem no meio da tela
+        //Para alterar onde os tiros dos inimigos somem é só mexer aqui 
         if (distanciaPercorrida > 350) {
           this.despawn(laser, i);
         }
