@@ -115,6 +115,7 @@ const INTERVALO_TIRO_INIMIGO = 1.5; // Tempo em segundos entre os tiros de cada 
 
 function gerenciarDisparoInimigos(scaledDelta, aviaoMesh) {
   if (!aviaoMesh || !camera) return;
+  if (globalThis._shootEnabled === false) return;
 
   listaInimigos.forEach((inimigoTarget) => {
     // Se estiver inativo, sem malha ou caindo, não atira de jeito nenhum!
@@ -214,6 +215,8 @@ const pauseMenu = initPauseMenu({
 
 function gerenciarDisparoJogador(scaledDelta) {
   tempoUltimoTiro += scaledDelta;
+  if (globalThis._shootEnabled === false) return;
+
   if (estáAtirando && tempoUltimoTiro >= CADENCIA_TIRO && aviaoMesh) {
     laserPool.shoot(aviaoMesh.position, aviaoMesh.rotation);
     tempoUltimoTiro = 0;

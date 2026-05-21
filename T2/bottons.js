@@ -16,6 +16,11 @@ export function initPauseMenu({
   setGameSpeed,
   getGameSpeed,
 }) {
+  // Inicializa o estado global dos tiros se não existir (começa ativado)
+  if (typeof globalThis._shootEnabled === "undefined") {
+    globalThis._shootEnabled = true;
+  }
+
   // --- CRIANDO ELEMENTOS VISUAIS ---
   const pauseOverlay = document.createElement("div");
   pauseOverlay.style.position = "fixed";
@@ -82,6 +87,15 @@ export function initPauseMenu({
   speedButton3.textContent = "3.0x";
   Object.assign(speedButton3.style, speedButtonBase);
 
+  // === NOVO BOTÃO DE ALTERNAR TIROS ===
+  const toggleShootingButton = document.createElement("button");
+  toggleShootingButton.style.padding = "12px 12px";
+  toggleShootingButton.style.borderRadius = "8px";
+  toggleShootingButton.style.border = "1.5px solid	#f4b900";
+  toggleShootingButton.style.font = "800 14px/1 sans-serif";
+  toggleShootingButton.style.cursor = "pointer";
+  toggleShootingButton.style.transition = "all 0.15s ease-in-out";
+
   const resumeButton = document.createElement("button");
   resumeButton.textContent = "Resumir";
   resumeButton.style.padding = "12px 12px";
@@ -98,11 +112,11 @@ export function initPauseMenu({
   closeButton.style.padding = "12px 12px";
   closeButton.style.borderRadius = "8px";
   closeButton.style.border = "none";
-  closeButton.style.background = "#d6213b"; // Corrigido: apenas uma hashtag!
+  closeButton.style.background = "#d6213b";
   closeButton.style.color = "#ffffff";
   closeButton.style.font = "800 14px/1 sans-serif";
   closeButton.style.cursor = "pointer";
-  closeButton.style.boxShadow = "0 3px 6px rgba(214, 33, 59, 0.4)"; // Sombra suave usando o mesmo tom de vermelho
+  closeButton.style.boxShadow = "0 3px 6px rgba(214, 33, 59, 0.4)";
 
   // Montando a árvore de elementos no DOM
   speedRow.appendChild(speedButton1);
@@ -111,6 +125,7 @@ export function initPauseMenu({
   pausePanel.appendChild(pauseTitle);
   pausePanel.appendChild(speedLabel);
   pausePanel.appendChild(speedRow);
+  pausePanel.appendChild(toggleShootingButton); // Injeta o novo botão no painel
   pausePanel.appendChild(resumeButton);
   pausePanel.appendChild(closeButton);
   pauseOverlay.appendChild(pausePanel);
@@ -138,6 +153,21 @@ export function initPauseMenu({
       currentSpeed === 3 ? activeColor : inactiveColor;
     speedButton3.style.borderColor = currentSpeed === 3 ? "#3d405b" : "#d1d3dc";
     speedButton3.style.color = activeTextColor;
+  }
+
+  // --- FUNÇÃO PARA ATUALIZAR O VISUAL DO BOTÃO DE DISPAROS ---
+  function updateShootingButton() {
+    if (globalThis._shootEnabled) {
+      toggleShootingButton.textContent = "Tiros: Ativados";
+      toggleShootingButton.style.background = "#fbe750"; // Verde Sucesso
+      toggleShootingButton.style.color = "#3d405b";
+      toggleShootingButton.style.boxShadow = "0 3px 6px #f2d925";
+    } else {
+      toggleShootingButton.textContent = "Tiros: Desativados";
+      toggleShootingButton.style.background = "#cb1e2b"; // Bege/Pastel desbotado de aviso
+      toggleShootingButton.style.color = "#ffffff";
+      toggleShootingButton.style.boxShadow = "none";
+    }
   }
 
   // --- LISTENERS DE INTERAÇÃO DO MENU ---
@@ -176,12 +206,17 @@ export function initPauseMenu({
     event.stopPropagation();
   });
 
+  toggleShootingButton.addEventListener("click", () => {
+    globalThis._shootEnabled = !globalThis._shootEnabled;
+    updateShootingButton();
+  });
+
   resumeButton.addEventListener("click", () => {
     setPaused(false);
   });
 
   closeButton.addEventListener("click", () => {
-    window.location.reload(); 
+    window.location.reload();
   });
 
   speedButton1.addEventListener("click", () => {
@@ -200,6 +235,7 @@ export function initPauseMenu({
   });
 
   updateSpeedButtons();
+  updateShootingButton();
 
   return {
     toggleDisplay: (value) => {
