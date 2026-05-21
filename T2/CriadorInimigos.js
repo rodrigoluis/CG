@@ -160,7 +160,7 @@ export class CriadorInimigos {
             Math.random() < 0.5 ? -bordaSpawnX * 0.85 : bordaSpawnX * 0.85;
 
           // CORREÇÃO DE OURO: Forçamos o destino e o ponto de partida atual a começarem IGUAIS!
-          proximoReserva.posicaoZOriginal = 140; // Onde ele vai parar para combater
+          proximoReserva.posicaoZOriginal = 110; // Onde ele vai parar para combater
           proximoReserva.offsetZAtual = 800;     // Onde ele nasce na névoa
 
           // Reseta rotações, posições em Y e estados de queda para o reuso limpo

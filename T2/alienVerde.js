@@ -16385,7 +16385,7 @@ f 2221/9188/2399 2219/9187/2399 2262/9186/2399 2263/9185/2399
 
     // Ajustes padrão de escala e posição do seu asset
     object.name = "aviaoInimigo";
-    object.scale.set(1, 1, 1); // Se o modelo sumir ou ficar gigante, ajuste aqui (ex: 0.1 ou 10)
+    object.scale.set(2, 2, 2); // Se o modelo sumir ou ficar gigante, ajuste aqui (ex: 0.1 ou 10)
     object.position.set(0, 0, 0);
 
     console.log("Objeto 3D processado com sucesso sem usar a rede! 🚀");

@@ -68,7 +68,7 @@ for (let i = 0; i < POPULACAO_TOTAL; i++) {
 
   // SOLUÇÃO: Cada índice ganha uma distância de combate fixa exclusiva no horizonte relativo
   // Exemplo: Inimigo 0 combate a 100 de distância, Inimigo 1 combate a 130, Inimigo 2 a 160...
-  const posicaoZFixaDesteInimigo = 100 + i * 30;
+  const posicaoZFixaDesteInimigo = 110;
 
   criadorInimigos
     .criarInimigoAleatorio(ladoDoCanto, 25, posicaoZFixaDesteInimigo)
@@ -100,7 +100,6 @@ for (let i = 0; i < POPULACAO_TOTAL; i++) {
 
 // Vida dos Inimigos e do Jogador
 let inimigosAbatidos = 0;
-let vidaJogador = 100;
 let aviaoBB = new THREE.Box3();
 
 // Sistema de tiros
@@ -255,7 +254,7 @@ function processarReciclagemInimigos() {
 
       // CORREÇÃO: Força o offset de segurança alto para o próximo CriadorInimigos pescar limpo
       inimigoTarget.offsetZAtual = 800;
-      inimigoTarget.posicaoZOriginal = 110;
+      inimigoTarget.posicaoZOriginal = 100;
       inimigoTarget.tempoRecarga = -2.0;
 
       if (sumiuDaCena) {
