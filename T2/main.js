@@ -122,11 +122,10 @@ function gerenciarDisparoInimigos(scaledDelta, aviaoMesh) {
   if (globalThis._shootEnabled === false) return;
 
   listaInimigos.forEach((inimigoTarget) => {
-    // Se estiver inativo, sem malha ou caindo, não atira de jeito nenhum!
     if (!inimigoTarget.ativo || !inimigoTarget.mesh || inimigoTarget.caindo)
       return;
 
-    // === BLOQUEIO DE DISPARO PELA NÉVOA (FOG) ===
+    // BLOQUEIO DE DISPARO PELA NÉVOA (FOG)
     const distanciaAteCamera = inimigoTarget.mesh.position.distanceTo(
       camera.position,
     );
@@ -143,20 +142,22 @@ function gerenciarDisparoInimigos(scaledDelta, aviaoMesh) {
       inimigoTarget.tempoRecarga = CONFIG.inimigos.delayPrimeiroTiro;
     }
 
-    // === CORREÇÃO CRÍTICA: READICIONADA A LINHA QUE FAZ O TEMPO CORRER ===
+    // O tempo corre baseado no delta escalado (que já engloba o gameSpeed)
     inimigoTarget.tempoRecarga += scaledDelta;
 
-    // Sincroniza a posição Z de combate caso necessário
     inimigoTarget.posicaoZOriginal = CONFIG.inimigos.posicaoZCombate;
 
-    // Verifica se a arma está pronta para disparar
-    if (inimigoTarget.tempoRecarga >= INTERVALO_TIRO_INIMIGO) {
+    // === ADAPTAÇÃO DINÂMICA DA CADÊNCIA ===
+    // Dividimos o intervalo base pelo gameSpeed atual.
+    // Se o gameSpeed for 1.8 (tecla 3), o intervalo cai de 1.5s para ~0.83s!
+    const intervaloAdaptado = CONFIG.inimigos.intervaloTiro / gameSpeed;
+
+    if (inimigoTarget.tempoRecarga >= intervaloAdaptado) {
       let direcaoAlvo = new THREE.Vector3();
       direcaoAlvo.subVectors(aviaoMesh.position, inimigoTarget.mesh.position);
 
       laserPoolInimigos.shoot(inimigoTarget.mesh.position, direcaoAlvo);
 
-      // Reseta o cooldown para o próximo ciclo de 1.5s
       inimigoTarget.tempoRecarga = 0;
     }
   });
