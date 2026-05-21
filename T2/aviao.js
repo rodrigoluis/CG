@@ -83,7 +83,7 @@ export function criaAviao(scene) {
   corpo.rotateX(angle);
   object.add(corpo);
   corpo.position.set(0, 0, -8.8); // reposiciona após a rotação para centralizar
-  corpo.scale.set(0.8, 0.8, 0.8);
+  corpo.scale.set(0.6, 0.6, 0.6);
 
   scene.add(object); // adiciona o avião inteiro à cena por meio do objeto raiz
 
