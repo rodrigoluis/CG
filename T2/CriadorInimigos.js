@@ -69,13 +69,13 @@ export class CriadorInimigos {
 
       if (inimigoTarget.caindo) {
         // 1. Desce no eixo Y acelerando pela gravidade simulada
-        inimigoTarget.velocidadeQuedaY += scaledDelta * 55; // Ajuste de força da queda
+        inimigoTarget.velocidadeQuedaY += scaledDelta * 55;
         inimigo.position.y -= inimigoTarget.velocidadeQuedaY * scaledDelta;
 
-        // 2. CORREÇÃO: Removemos a atualização dos eixos X e Z!
-        // O inimigo agora fica totalmente estático no plano horizontal, caindo reto.
+        // CORREÇÃO CRÍTICA: Atualiza o offsetZ do cadáver em tempo real conforme o avião avança.
+        // Isso impede que o offset fique parado no passado!
+        inimigoTarget.offsetZAtual = inimigo.position.z - aviaoMesh.position.z;
 
-        // 3. Atualiza a Bounding Box vazia para evitar novos registros de colisão no fantasma
         inimigoTarget.bb.makeEmpty();
         return;
       }
@@ -144,7 +144,6 @@ export class CriadorInimigos {
       inimigoTarget.bb.setFromObject(inimigo);
     });
 
-    // === LOGÍSTICA DE REPOSICIONAMENTO DE RESERVAS (Z+800) ===
     if (ativosNaTela < 2) {
       const reservas = listaInimigos.filter((inimigo) => !inimigo.ativo);
 
@@ -154,20 +153,23 @@ export class CriadorInimigos {
 
         if (proximoReserva && proximoReserva.mesh) {
           const distanciaSpawnZ = 950;
+          const fovRadianos = (camera.fov * Math.PI) / 180;
           const bordaSpawnX =
             Math.tan(fovRadianos / 2) * distanciaSpawnZ * camera.aspect;
           const bordaNascimentoX =
             Math.random() < 0.5 ? -bordaSpawnX * 0.85 : bordaSpawnX * 0.85;
 
-          proximoReserva.posicaoZOriginal = 140;
-          proximoReserva.offsetZAtual = 800;
+          // CORREÇÃO DE OURO: Forçamos o destino e o ponto de partida atual a começarem IGUAIS!
+          proximoReserva.posicaoZOriginal = 140; // Onde ele vai parar para combater
+          proximoReserva.offsetZAtual = 800;     // Onde ele nasce na névoa
 
-          // Reseta rotações e estados de queda para o reuso limpo
+          // Reseta rotações, posições em Y e estados de queda para o reuso limpo
           proximoReserva.caindo = false;
           proximoReserva.velocidadeQuedaY = 0;
           proximoReserva.velocidadeGiro = 0;
           proximoReserva.mesh.rotation.set(0, 0, 0);
 
+          // Define a posição física real da malha tridimensional acompanhando o avião
           proximoReserva.mesh.position.set(
             bordaNascimentoX,
             32,
@@ -177,6 +179,7 @@ export class CriadorInimigos {
           proximoReserva.cantoOriginalX = bordaNascimentoX;
           proximoReserva.bb.setFromObject(proximoReserva.mesh);
 
+          // Ativa o objeto e torna a malha visível para o motor gráfico
           proximoReserva.ativo = true;
           proximoReserva.mesh.visible = true;
         }

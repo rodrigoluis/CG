@@ -65,13 +65,17 @@ const criadorInimigos = new CriadorInimigos(scene);
 // Cria e armazena os 5 objetos no pool
 for (let i = 0; i < POPULACAO_TOTAL; i++) {
   const ladoDoCanto = i % 2 === 0 ? -80 : 80;
-  const posicaoZFixa = 110; // Travado em 90 para manter o alinhamento linear perfeito
+
+  // SOLUÇÃO: Cada índice ganha uma distância de combate fixa exclusiva no horizonte relativo
+  // Exemplo: Inimigo 0 combate a 100 de distância, Inimigo 1 combate a 130, Inimigo 2 a 160...
+  const posicaoZFixaDesteInimigo = 100 + i * 30;
 
   criadorInimigos
-    .criarInimigoAleatorio(ladoDoCanto, 25, posicaoZFixa)
+    .criarInimigoAleatorio(ladoDoCanto, 25, posicaoZFixaDesteInimigo)
     .then((inimigoSorteado) => {
       inimigoSorteado.indice = i;
 
+      // Injeta os dados limpos de estrutura
       inimigoSorteado.vida = 100;
       inimigoSorteado.life = 100;
       inimigoSorteado.destruido = false;
@@ -80,7 +84,10 @@ for (let i = 0; i < POPULACAO_TOTAL; i++) {
         inimigoSorteado.mesh.life = 100;
       }
 
-      inimigoSorteado.offsetZAtual = posicaoZFixa;
+      // CORREÇÃO: Força as duas primeiras naves que já começam ativas na tela
+      // a irem para o horizonte de respawn (800), iniciando a aproximação linda por lerp!
+      inimigoSorteado.posicaoZOriginal = posicaoZFixaDesteInimigo; // O ponto fixo de parada dele
+      inimigoSorteado.offsetZAtual = 800; // Ele nasce lá atrás na névoa
 
       listaInimigos.push(inimigoSorteado);
 
@@ -213,7 +220,6 @@ function processarReciclagemInimigos() {
     const meshInterna = inimigoTarget.mesh;
     if (!meshInterna) return;
 
-    // 1. Detecta o momento exato em que a vida zerou no combate
     const foiAbatido =
       inimigoTarget.vida <= 0 ||
       inimigoTarget.life <= 0 ||
@@ -223,17 +229,13 @@ function processarReciclagemInimigos() {
       (meshInterna.userData &&
         (meshInterna.userData.vida <= 0 || meshInterna.userData.life <= 0));
 
-    // 2. Se foi atingido agora e ainda não estava caindo, ativa a animação de queda reta
     if (foiAbatido && !inimigoTarget.caindo) {
       inimigoTarget.caindo = true;
-      inimigoTarget.velocidadeQuedaY = 0; // Começa a cair a partir do repouso (velocidade 0)
-
-      // Congela pequenas inclinações de ziguezague para dar efeito estático de pane
+      inimigoTarget.velocidadeQuedaY = 0;
       meshInterna.rotation.z = 0;
       return;
     }
 
-    // 3. RECICLAGEM DEFINITIVA: Limpa os dados e joga nas reservas ao atingir o chão (Y <= -20)
     const bateuNoChao = meshInterna.position.y <= -20;
     const sumiuDaCena = !scene.children.includes(meshInterna);
 
@@ -244,18 +246,16 @@ function processarReciclagemInimigos() {
       meshInterna.visible = false;
       inimigosAbatidos++;
 
-      // Limpa os dados de dano para o próximo ciclo vir com vida cheia
+      // Limpa dados de dano
       inimigoTarget.vida = 100;
       inimigoTarget.life = 100;
       inimigoTarget.destruido = false;
       meshInterna.vida = 100;
       meshInterna.life = 100;
-      if (meshInterna.userData) {
-        meshInterna.userData.vida = 100;
-        meshInterna.userData.life = 100;
-      }
 
-      inimigoTarget.posicaoZOriginal = 140;
+      // CORREÇÃO: Força o offset de segurança alto para o próximo CriadorInimigos pescar limpo
+      inimigoTarget.offsetZAtual = 800;
+      inimigoTarget.posicaoZOriginal = 110;
       inimigoTarget.tempoRecarga = -2.0;
 
       if (sumiuDaCena) {
