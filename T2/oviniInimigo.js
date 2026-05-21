@@ -6026,7 +6026,7 @@ f 1877/2117 1865/2105 1876/2116 1899/2139
 
     // 2. CORREÇÃO DE ESCALA DEFINITIVA
     // Reduzimos bastante porque as coordenadas deste ficheiro passam de 40 unidades
-    wrapper.scale.set(0.15, 0.15, 0.15);
+    wrapper.scale.set(0.12, 0.12, 0.12);
 
 
     // Retorna o wrapper (grupo corrigido) para a sua main.js

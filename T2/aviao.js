@@ -28,7 +28,7 @@ export function criaAviao(scene) {
   const cilindroRabo  = new THREE.CapsuleGeometry(1, 5, 2, 30);        // empenagem horizontal
   const cilindroLeme  = new THREE.CylinderGeometry(2, 1, 6.5);         // leme vertical
   const cilindroKitty = new THREE.CylinderGeometry(0.1, 2, 1, 3);      // orelhas da Hello Kitty
-  const sphereFofo    = new THREE.CapsuleGeometry(0.3, 0.5, 0.3, 80);  // nó de fita (objeto raiz)
+  const sphereFofo    = new THREE.SphereGeometry(0.4);  // nó de fita (objeto raiz)
 
   // --- Meshes (geometria + material) ---
   const corpo     = new THREE.Mesh(cilindroCorpo, materialRosa);
@@ -72,6 +72,7 @@ export function criaAviao(scene) {
   kitty2.position.set(-2.5, 7, -1);
 
   object.position.set(0, 8.8, 0); // posição inicial do nó raiz
+  object.scale.set(1.2, 1, 1);
 
   // Leme vertical na cauda, inclinado para frente
   leme.position.set(0, -7.2, -1.2);
@@ -82,7 +83,8 @@ export function criaAviao(scene) {
   // Corpo principal girado 90° para que o "topo" do cilindro aponte para frente
   corpo.rotateX(angle);
   object.add(corpo);
-  corpo.position.set(0, 0, -8.8); // reposiciona após a rotação para centralizar
+  corpo.position.set(0, 0, -5.2); // reposiciona após a rotação para centralizar
+  corpo.scale.set(0.6, 0.6, 0.6);
 
   scene.add(object); // adiciona o avião inteiro à cena por meio do objeto raiz
 
