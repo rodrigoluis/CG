@@ -7,14 +7,10 @@ export class CriadorInimigos {
   constructor(scene) {
     this.scene = scene;
     this.tempoInimigo = 0;
-    // Puxa os valores direto da configuração central
     this.velocidadePerseguicao = CONFIG.inimigos.velocidadePerseguicao;
     this.velocidadeZigueZague = CONFIG.inimigos.velocidadeZigueZague;
   }
 
-  /**
-   * Instancia um inimigo desativado no pool
-   */
   async criarInimigoAleatorio(x, y, z) {
     const tipoInimigo = Math.random() < 0.5 ? "alien" : "ovni";
     let aviaoMesh;
@@ -34,7 +30,7 @@ export class CriadorInimigos {
       mesh: aviaoMesh,
       bb: new THREE.Box3().setFromObject(aviaoMesh),
       ativo: false,
-      caindo: false, // Nova propriedade para controlar a animação de morte
+      caindo: false,
       velocidadeQuedaY: 0,
       velocidadeGiro: 0,
       tipo: tipoInimigo,
@@ -44,16 +40,12 @@ export class CriadorInimigos {
     };
   }
 
-  /**
-   * GERENCIADOR DE MOVIMENTAÇÃO ADAPTÁVEL COM FORMAÇÃO SIMÉTRICA OTIMIZADA
-   */
   atualizarMovimento(scaledDelta, aviaoMesh, camera, listaInimigos) {
     if (!aviaoMesh || !listaInimigos) return;
 
     this.tempoInimigo += scaledDelta;
     const fovRadianos = (camera.fov * Math.PI) / 180;
 
-    // Filtra e ordena apenas os inimigos que estão combatendo normalmente (ativos e não caindo)
     let inimigosAtivos = listaInimigos.filter(
       (inimigo) => inimigo.ativo && !inimigo.caindo,
     );
@@ -68,27 +60,20 @@ export class CriadorInimigos {
 
       inimigo.visible = true;
 
-      // === COMPORTAMENTO DE ANIMAÇÃO DE QUEDA ===
       if (inimigoTarget.caindo) {
-        // Puxa a aceleração da gravidade direto do CONFIG centralizado
         const forcaGravidade = CONFIG.inimigos.gravidadeQueda || 280;
-
-        // Desce no eixo Y acelerando muito mais rápido
         inimigoTarget.velocidadeQuedaY += scaledDelta * forcaGravidade;
         inimigo.position.y -= inimigoTarget.velocidadeQuedaY * scaledDelta;
 
-        // Aumentamos também a velocidade do giro desgovernado para combinar com a queda rápida
         inimigo.rotation.x += inimigoTarget.velocidadeGiro * 2 * scaledDelta;
         inimigo.rotation.z += inimigoTarget.velocidadeGiro * 2.5 * scaledDelta;
 
-        // Continua avançando em Z acompanhando o fluxo do cenário
         inimigo.position.z = aviaoMesh.position.z + inimigoTarget.offsetZAtual;
 
         inimigoTarget.bb.makeEmpty();
-        return; // Pula o restante do código
+        return;
       }
 
-      // === COMPORTAMENTO NORMAL DE VOO (SÓ SE NÃO ESTIVER CAINDO) ===
       const i = inimigoTarget.indice;
       const ordem = inimigosAtivos.indexOf(inimigoTarget);
 
@@ -125,7 +110,8 @@ export class CriadorInimigos {
         scaledDelta * this.velocidadePerseguicao,
       );
 
-      const centroTelaY = 32;
+      // SUBSTITUÍDO: Lendo a altura de combate direto do nó unificado de inputs
+      const centroTelaY = CONFIG.input.planeBaseY;
       const novaDistanciaY = 24;
 
       let offsetY = 0;
@@ -161,33 +147,28 @@ export class CriadorInimigos {
 
         if (proximoReserva && proximoReserva.mesh) {
           const distanciaSpawnZ = 950;
-          const fovRadianos = (camera.fov * Math.PI) / 180;
-          const bordaSpawnX =
+          const borderSpawnX =
             Math.tan(fovRadianos / 2) * distanciaSpawnZ * camera.aspect;
           const bordaNascimentoX =
-            Math.random() < 0.5 ? -bordaSpawnX * 0.85 : bordaSpawnX * 0.85;
+            Math.random() < 0.5 ? -borderSpawnX * 0.85 : borderSpawnX * 0.85;
 
-          // CORREÇÃO DE OURO: Forçamos o destino e o ponto de partida atual a começarem IGUAIS!
           proximoReserva.posicaoZOriginal = CONFIG.inimigos.posicaoZCombate;
           proximoReserva.offsetZAtual = CONFIG.inimigos.distanciaSpawnZ;
 
-          // Reseta rotações, posições em Y e estados de queda para o reuso limpo
           proximoReserva.caindo = false;
           proximoReserva.velocidadeQuedaY = 0;
           proximoReserva.velocidadeGiro = 0;
           proximoReserva.mesh.rotation.set(0, 0, 0);
 
-          // Define a posição física real da malha tridimensional acompanhando o avião
           proximoReserva.mesh.position.set(
             bordaNascimentoX,
-            32,
+            CONFIG.input.planeBaseY, // Sincronizado dinamicamente aqui também
             aviaoMesh.position.z + CONFIG.inimigos.distanciaSpawnZ,
           );
 
           proximoReserva.cantoOriginalX = bordaNascimentoX;
           proximoReserva.bb.setFromObject(proximoReserva.mesh);
 
-          // Ativa o objeto e torna a malha visível para o motor gráfico
           proximoReserva.ativo = true;
           proximoReserva.mesh.visible = true;
         }

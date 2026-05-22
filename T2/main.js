@@ -55,10 +55,11 @@ initMouseTracking();
 // Cria o modelo do avião e posiciona no centro da cena
 const aviaoController = criaAviao(scene);
 let aviaoMesh = aviaoController.object;
-aviaoMesh.position.set(0, 105, 0);
+aviaoMesh.position.set(0, CONFIG.input.planeBaseY, 0);
 
 //Target
 const targetMesh = criaTarget(scene);
+targetMesh.position.set(0, CONFIG.input.planeBaseY, 140);
 
 //População inimigo
 let tempoInimigo = 0;
@@ -357,20 +358,7 @@ function render() {
       (inimigo) => inimigo.ativo && !inimigo.caindo,
     );
 
-    // Executa a colisão passando a lista protegida, a câmera e a cena
-    inimigoCollisionManager.checkLaserAgainstTargets(
-      laserPool.getActiveLasers(),
-      inimigosProntosParaColidir,
-      laserPool,
-      camera,
-      scene,
-    );
-
-    // 3. Sistema de Colisões Filtrado por naves vivas
-    const meshesInimigasAtivas = listaInimigos
-      .filter((inimigo) => inimigo.ativo && inimigo.mesh)
-      .map((inimigo) => inimigo.mesh);
-
+    // Executa a colisão uma única vez passando os parâmetros necessários
     inimigoCollisionManager.checkLaserAgainstTargets(
       laserPool.getActiveLasers(),
       inimigosProntosParaColidir,
