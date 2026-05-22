@@ -52,11 +52,11 @@ const MIN_HEIGHT = -20;
  * Grade de distribuição de árvores: o tile é dividido em células,
  * e cada célula pode ter no máximo uma árvore.
  */
-const TREE_GRID_COLS = 8;
-const TREE_GRID_ROWS = 8;
+const TREE_GRID_COLS = 20;
+const TREE_GRID_ROWS = 20;
 
 /** Distância mínima entre duas árvores (unidades de mundo, espaço local do tile). */
-const TREE_MIN_DIST = 100;
+const TREE_MIN_DIST = 50;
 
 /** Faixa de altitude em que árvores podem nascer. Fora dela é rocha ou vale seco. */
 const TREE_MAX_HEIGHT =  50;
