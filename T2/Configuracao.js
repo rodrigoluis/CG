@@ -3,6 +3,8 @@
  * Centraliza os parâmetros de balanceamento, design, física, câmera e cenário do jogo.
  */
 
+const VELOCIDADE_PADRAO = 0.8;
+
 export const CONFIG = {
   // === CONFIGURAÇÕES DOS INIMIGOS ===
   inimigos: {
@@ -65,9 +67,9 @@ export const CONFIG = {
   modos: {
     tempoModoEspecial: 10.0,
     tempoTransicaoOnda: 5.0,
-    velocidadeJogoPadrao: 0.8,
-    velocidadeTecla1: 0.8,
-    velocidadeTecla2: 1.2,
-    velocidadeTecla3: 1.8,
+    velocidadeJogoPadrao: VELOCIDADE_PADRAO,
+    velocidadeTecla1: VELOCIDADE_PADRAO,
+    velocidadeTecla2: 1.2 * VELOCIDADE_PADRAO,
+    velocidadeTecla3: 2 * VELOCIDADE_PADRAO,
   },
 };
