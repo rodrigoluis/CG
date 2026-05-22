@@ -8,7 +8,7 @@ export const CONFIG = {
   inimigos: {
     velocidadePerseguicao: 2.0,
     velocidadeZigueZague: 1.4,
-    intervaloTiro: 1.5,
+    intervaloTiro: 1,
     delayPrimeiroTiro: -2.0,
     posicaoZCombate: 140,
     distanciaSpawnZ: 800,
