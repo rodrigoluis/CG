@@ -3,8 +3,8 @@ import * as THREE from "three";
 // Fatores de suavização elástica (Delay do avião perseguindo a mira)
 const SMOOTH_FACTOR_XY = 4.5;
 
-/** Altura inicial da mira e da nave na cena. */
-export const PLANE_BASE_Y = 32;
+/** Altura inicial do avião na cena. */
+export const PLANE_BASE_Y = 105;
 
 /** Limites de movimento horizontal da retícula no monitor. */
 export const PLANE_BOUNDS_X = 65;

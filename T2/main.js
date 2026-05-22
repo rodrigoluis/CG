@@ -40,15 +40,14 @@ gui.add(fogParams, "fogFar", 50, 800, 1).onChange((value) => {
   scene.fog.far = value;
 });
 
+const altitudeParams = { altitude: 0 };
+gui.add(altitudeParams, "altitude").name("Altitude").listen();
+
 let light = initDefaultBasicLight(scene);
-let camera = new THREE.PerspectiveCamera(
-  22,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  1000,
-);
-camera.position.set(0, 25, -150);
-camera.lookAt(0, 25, 0);
+// FOV de 22° = zoom longo, parecido com câmera de perseguição de shoot-em-up
+let camera = new THREE.PerspectiveCamera(22, window.innerWidth / window.innerHeight, 0.1, 1000);
+camera.position.set(0, 105, -150); // começa atrás e na mesma altura do avião
+camera.lookAt(0, 120, 0);
 scene.add(camera);
 
 initMouseTracking();
@@ -56,7 +55,7 @@ initMouseTracking();
 // Cria o modelo do avião e posiciona no centro da cena
 const aviaoController = criaAviao(scene);
 let aviaoMesh = aviaoController.object;
-aviaoMesh.position.set(0, 32, 0);
+aviaoMesh.position.set(0, 105, 0);
 
 //Target
 const targetMesh = criaTarget(scene);
@@ -72,7 +71,7 @@ const criadorInimigos = new CriadorInimigos(scene);
 // === COLOQUE ESTE BLOCO CORRIGIDO NO SEU LAÇO DE CRIAÇÃO (FOR) ===
 for (let i = 0; i < POPULACAO_TOTAL; i++) {
   const ladoDoCanto = i % 2 === 0 ? -80 : 80;
-  
+
   // DECLARAÇÃO CORRETA: Puxa a distância padrão de combate do seu CONFIG
   const posicaoZFixaDesteInimigo = CONFIG.inimigos.posicaoZCombate;
 
@@ -336,7 +335,7 @@ function render() {
     // 2. Gerenciamento e Atualização de Projéteis
     aviaoBB.setFromObject(aviaoMesh);
     gerenciarDisparoJogador(scaledDelta);
-    gerenciarDisparoInimigos(scaledDelta, aviaoMesh); 
+    gerenciarDisparoInimigos(scaledDelta, aviaoMesh);
 
     laserPool.update(scaledDelta, aviaoMesh, scene.fog.far);
     laserPoolInimigos.update(scaledDelta, aviaoMesh);
@@ -389,8 +388,8 @@ function render() {
       laserPoolInimigos,
     );
   }
-  
-  stats.update();
-  requestAnimationFrame(render);
-  renderer.render(scene, camera);
+  altitudeParams.altitude = Math.round(aviaoMesh.position.y);
+  stats.update();                        // atualiza contador de FPS
+  requestAnimationFrame(render);         // agenda o próximo frame
+  renderer.render(scene, camera);        // desenha a cena na tela
 }
