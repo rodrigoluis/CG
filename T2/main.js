@@ -44,7 +44,7 @@ gui.add(altitudeParams, "altitude").name("Altitude").listen();
 let light = initDefaultBasicLight(scene);
 // FOV de 22° = zoom longo, parecido com câmera de perseguição de shoot-em-up
 let camera = new THREE.PerspectiveCamera(22, window.innerWidth / window.innerHeight, 0.1, 1000);
-camera.position.set(0, 120, -150); // começa atrás e na mesma altura do avião
+camera.position.set(0, 105, -150); // começa atrás e na mesma altura do avião
 camera.lookAt(0, 120, 0);
 scene.add(camera);
 
@@ -54,19 +54,19 @@ initMouseTracking();
 // Cria o modelo do avião e posiciona no centro da cena
 const aviaoController = criaAviao(scene);
 let aviaoMesh = aviaoController.object;
-aviaoMesh.position.set(0, 120, 0);
+aviaoMesh.position.set(0, 105, 0);
 
 //Inimigos
 let inimigo;
 carregarAviaoInimigo().then((aviao) => {
   aviao.scale.set(10, 10, 10);
-  aviao.position.set(0, 120, 90);
+  aviao.position.set(0, 105, 90);
   scene.add(aviao);
   inimigo = aviao;
 });
 let inimigo2;
 carregarAviaoInimigo2().then((aviao) => {
-  aviao.position.set(0, 120, 100);
+  aviao.position.set(0, 105, 100);
   scene.add(aviao);
   inimigo2 = aviao;
 });

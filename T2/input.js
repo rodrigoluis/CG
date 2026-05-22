@@ -9,7 +9,7 @@ import * as THREE from "three";
 const FOLLOW_DELAY = 0.2;
 
 /** Altura inicial do avião na cena. */
-export const PLANE_BASE_Y = 120;
+export const PLANE_BASE_Y = 105;
 
 /** Limite de movimento horizontal do avião. */
 export const PLANE_BOUNDS_X = 45;
