@@ -206,6 +206,8 @@ function createTerrain(THREEParam) {
     mesh.geometry.computeVertexNormals();
     mesh.geometry.computeBoundingSphere();
 
+    mesh.receiveShadow = true;
+
     // Adiciona o mesh ao grupo raiz e devolve o terreno pronto para uso.
     scene.add(mesh);
     return scene;
