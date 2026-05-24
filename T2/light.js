@@ -30,6 +30,15 @@ export function initSceneLighting(cameraNearZ, cameraFarZ, cameraPosition, scene
     light.shadow.camera.left = 50;
     light.shadow.camera.right = -50;
 
+    light.castShadow = true;
+    light.shadow.camera.far = 300;
+    light.shadow.camera.top = 200;
+    light.shadow.camera.bottom = -200;
+    light.shadow.camera.left = -500;
+    light.shadow.camera.right = 500;
+    light.shadow.mapSize.width = 4096;
+    light.shadow.mapSize.height = 4096;
+    
     scene.add(light);
 
     if (addHelper) {
