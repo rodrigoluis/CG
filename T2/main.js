@@ -27,29 +27,31 @@ const helpers = true;
 // Cor do céu — usada tanto no fundo do renderer quanto na névoa para fundir o horizonte
 const BASE_COLOR = "rgb(148, 181, 224)";
 let scene = new THREE.Scene();
-scene.fog = new THREE.Fog(BASE_COLOR, 1, 400);
+scene.fog = new THREE.Fog(BASE_COLOR, 1, 1500);
 let renderer = startRenderer(BASE_COLOR, THREE.PCFSoftShadowMap);
 
 // Painel de FPS no canto da tela
 const stats = new Stats();
 document.getElementById("webgl-output").appendChild(stats.domElement);
 
-let camera = new THREE.PerspectiveCamera(
-  22,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  1000,
-);
-camera.position.set(0, 25, -150);
-camera.lookAt(0, 25, 0);
-scene.add(camera);
-
 /** @type {{ fogFar: number }} Parâmetros do GUI para controle (slider) da névoa. */
 let fogParams = { fogFar: scene.fog.far };
+let gui = new GUI();
+gui.add(fogParams, "fogFar", 50, 2000, 1).onChange((value) => {
+  scene.fog.far = value;
+});
+
+const altitudeParams = { altitude: 0 };
+gui.add(altitudeParams, "altitude").name("Altitude").listen();
+
+// FOV de 22° = zoom longo, parecido com câmera de perseguição de shoot-em-up
+let camera = new THREE.PerspectiveCamera(22, window.innerWidth / window.innerHeight, 0.1, 2100);
+camera.position.set(0, 105, -150); // começa atrás e na mesma altura do avião
+camera.lookAt(0, 120, 0);
+scene.add(camera);
 
 let light = initSceneLighting(camera, scene, helpers);
 
-let gui = new GUI();
 gui.add(fogParams, "fogFar", 50, 800, 1).onChange((value) => {
   scene.fog.far = value;
   updateLightVolume(light, camera, value);
@@ -61,10 +63,11 @@ initMouseTracking();
 // Cria o modelo do avião e posiciona no centro da cena
 const aviaoController = criaAviao(scene);
 let aviaoMesh = aviaoController.object;
-aviaoMesh.position.set(0, 32, 0);
+aviaoMesh.position.set(0, CONFIG.input.planeBaseY, 0);
 
 //Target
 const targetMesh = criaTarget(scene);
+targetMesh.position.set(0, CONFIG.input.planeBaseY, 140);
 
 //População inimigo
 let tempoInimigo = 0;
@@ -77,7 +80,7 @@ const criadorInimigos = new CriadorInimigos(scene);
 // === COLOQUE ESTE BLOCO CORRIGIDO NO SEU LAÇO DE CRIAÇÃO (FOR) ===
 for (let i = 0; i < POPULACAO_TOTAL; i++) {
   const ladoDoCanto = i % 2 === 0 ? -80 : 80;
-  
+
   // DECLARAÇÃO CORRETA: Puxa a distância padrão de combate do seu CONFIG
   const posicaoZFixaDesteInimigo = CONFIG.inimigos.posicaoZCombate;
 
@@ -344,7 +347,7 @@ function render() {
     // 2. Gerenciamento e Atualização de Projéteis
     aviaoBB.setFromObject(aviaoMesh);
     gerenciarDisparoJogador(scaledDelta);
-    gerenciarDisparoInimigos(scaledDelta, aviaoMesh); 
+    gerenciarDisparoInimigos(scaledDelta, aviaoMesh);
 
     laserPool.update(scaledDelta, aviaoMesh, scene.fog.far);
     laserPoolInimigos.update(scaledDelta, aviaoMesh);
@@ -366,20 +369,7 @@ function render() {
       (inimigo) => inimigo.ativo && !inimigo.caindo,
     );
 
-    // Executa a colisão passando a lista protegida, a câmera e a cena
-    inimigoCollisionManager.checkLaserAgainstTargets(
-      laserPool.getActiveLasers(),
-      inimigosProntosParaColidir,
-      laserPool,
-      camera,
-      scene,
-    );
-
-    // 3. Sistema de Colisões Filtrado por naves vivas
-    const meshesInimigasAtivas = listaInimigos
-      .filter((inimigo) => inimigo.ativo && inimigo.mesh)
-      .map((inimigo) => inimigo.mesh);
-
+    // Executa a colisão uma única vez passando os parâmetros necessários
     inimigoCollisionManager.checkLaserAgainstTargets(
       laserPool.getActiveLasers(),
       inimigosProntosParaColidir,
@@ -397,8 +387,8 @@ function render() {
       laserPoolInimigos,
     );
   }
-  
-  stats.update();
-  requestAnimationFrame(render);
-  renderer.render(scene, camera);
+  altitudeParams.altitude = Math.round(aviaoMesh.position.y);
+  stats.update();                        // atualiza contador de FPS
+  requestAnimationFrame(render);         // agenda o próximo frame
+  renderer.render(scene, camera);        // desenha a cena na tela
 }
