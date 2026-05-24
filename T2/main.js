@@ -208,21 +208,23 @@ const clock = new THREE.Clock();
 let isPaused = false;
 let gameSpeed = CONFIG.modos.velocidadeJogoPadrao;
 
-const pauseMenu = initPauseMenu({
-  renderer: renderer,
-  getIsPaused: () => isPaused,
-  setPaused: (value) => {
-    isPaused = value;
-    pauseMenu.toggleDisplay(value);
-    if (!value) {
-      clock.getDelta();
-    }
-  },
-  getGameSpeed: () => gameSpeed,
-  setGameSpeed: (value) => {
-    gameSpeed = value;
-  },
-});
+if (!CONFIG.DISABLE_START_MENU) {
+  const pauseMenu = initPauseMenu({
+    renderer: renderer,
+    getIsPaused: () => isPaused,
+    setPaused: (value) => {
+      isPaused = value;
+      pauseMenu.toggleDisplay(value);
+      if (!value) {
+        clock.getDelta();
+      }
+    },
+    getGameSpeed: () => gameSpeed,
+    setGameSpeed: (value) => {
+      gameSpeed = value;
+    },
+  });
+}
 
 const _direcaoTiroJogador = new THREE.Vector3();
 

@@ -36,4 +36,6 @@ export const CONFIG = {
     velocidadeTecla2: 1.2, // Velocidade ao pressionar a tecla "2"
     velocidadeTecla3: 1.8, // Velocidade ao pressionar a tecla "3"
   },
+
+  DISABLE_START_MENU: false
 };
