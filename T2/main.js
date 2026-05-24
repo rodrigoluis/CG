@@ -25,7 +25,7 @@ import { CONFIG } from "./Configuracao.js";
 // Cor do céu — usada tanto no fundo do renderer quanto na névoa para fundir o horizonte
 let baseColor = "rgb(148, 181, 224)";
 let scene = new THREE.Scene();
-scene.fog = new THREE.Fog(baseColor, 1, 400);
+scene.fog = new THREE.Fog(baseColor, 1, 2000);
 let renderer = initRenderer();
 renderer.setClearColor(baseColor);
 
@@ -36,7 +36,7 @@ document.getElementById("webgl-output").appendChild(stats.domElement);
 /** @type {{ fogFar: number }} Parâmetros do GUI para controle (slider) da névoa. */
 let fogParams = { fogFar: scene.fog.far };
 let gui = new GUI();
-gui.add(fogParams, "fogFar", 50, 800, 1).onChange((value) => {
+gui.add(fogParams, "fogFar", 50, 2000, 1).onChange((value) => {
   scene.fog.far = value;
 });
 
@@ -45,7 +45,7 @@ gui.add(altitudeParams, "altitude").name("Altitude").listen();
 
 let light = initDefaultBasicLight(scene);
 // FOV de 22° = zoom longo, parecido com câmera de perseguição de shoot-em-up
-let camera = new THREE.PerspectiveCamera(22, window.innerWidth / window.innerHeight, 0.1, 1000);
+let camera = new THREE.PerspectiveCamera(22, window.innerWidth / window.innerHeight, 0.1, 2100);
 camera.position.set(0, 105, -150); // começa atrás e na mesma altura do avião
 camera.lookAt(0, 120, 0);
 scene.add(camera);
