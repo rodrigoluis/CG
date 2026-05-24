@@ -1,7 +1,7 @@
 import * as THREE from 'three';
 
-const LIGHT_SOURCE_X_POSITION = -50;
-const LIGHT_SOURCE_Y_POSITION = 50;
+const LIGHT_SOURCE_X_POSITION = -100;
+const LIGHT_SOURCE_Y_POSITION = 100;
 
 /**
  * @param {number} cameraNearZ Z position of camera near plane
@@ -11,40 +11,59 @@ const LIGHT_SOURCE_Y_POSITION = 50;
  * @param {scene} scene to add light to
  * @returns 
  */
-export function initSceneLighting(cameraNearZ, cameraFarZ, cameraPosition, scene, addHelper = false) {
+export function initSceneLighting(camera, scene, addHelper = false) {
     const color = 0xFFFFFF;
     const intensity = 1;
-    const light = new THREE.DirectionalLight(color, intensity);
-    
-    // uma fração entre o near da câmera e a fog
-    const fraction = (scene.fog.far - cameraNearZ) / 10;
+    let light = new THREE.DirectionalLight(color, intensity);
 
-    // negativo para projetar sombras diagonalmente
-    // TODO perguntar para o professor para onde as sombras vão ficar
-    light.position.set(LIGHT_SOURCE_X_POSITION, LIGHT_SOURCE_Y_POSITION, -fraction);
+    light.position.set(LIGHT_SOURCE_X_POSITION, LIGHT_SOURCE_Y_POSITION, -30);
     light.target.position.set(0, 0, 0);
 
     light.castShadow = true;
-    light.shadow.camera.top = 100;
-    light.shadow.camera.bottom = 0;
-    light.shadow.camera.left = 50;
-    light.shadow.camera.right = -50;
-
-    light.castShadow = true;
-    light.shadow.camera.far = 300;
-    light.shadow.camera.top = 200;
-    light.shadow.camera.bottom = -200;
-    light.shadow.camera.left = -500;
-    light.shadow.camera.right = 500;
     light.shadow.mapSize.width = 4096;
     light.shadow.mapSize.height = 4096;
-    
+
     scene.add(light);
+    scene.add(light.target);
 
     if (addHelper) {
-        const helper = new THREE.DirectionalLightHelper(light);
+        let helper = new THREE.DirectionalLightHelper(light);
         scene.add(helper);
-        const helperShadow = new THREE.CameraHelper(light.shadow.camera);
+        let helperShadow = new THREE.CameraHelper(light.shadow.camera);
         scene.add(helperShadow);
+        light.userData.lightHelper = helper;
+        light.userData.shadowHelper = helperShadow;
     }
+
+    updateLightVolume(light, camera, scene.fog.far);
+    return light;
+}
+
+const MAX_TREE_HEIGHT = 15;
+
+export function updateLightVolume(light, camera, fogFar) {
+    const topBottom = fogFar + MAX_TREE_HEIGHT;
+
+    light.shadow.camera.left = -fogFar * 0.2;   // small backward buffer; game flies forward
+    light.shadow.camera.right = fogFar;
+    light.shadow.camera.top = topBottom;
+    light.shadow.camera.bottom = -topBottom;
+    light.shadow.camera.far = fogFar + 200;      // light offset (~141) + fog range
+    light.shadow.camera.updateProjectionMatrix();
+    if (light.userData.shadowHelper) {
+        light.userData.shadowHelper.update();
+    }
+    if (light.userData.lightHelper) {
+        light.userData.lightHelper.update();
+    }
+}
+
+export function updateLightPosition(light, camera) {
+    light.position.set(
+        camera.position.x + LIGHT_SOURCE_X_POSITION,
+        LIGHT_SOURCE_Y_POSITION,
+        camera.position.z
+    );
+    light.target.position.set(camera.position.x, 0, camera.position.z);
+    light.target.updateMatrixWorld();
 }

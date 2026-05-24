@@ -19,7 +19,7 @@ import { LaserPool } from "./SistemaTiros.js";
 import { CollisionManager } from "./collisionManager.js";
 import { criaTarget } from "./target.js";
 import { CONFIG } from "./Configuracao.js";
-import { initSceneLighting } from "./light.js";
+import { initSceneLighting, updateLightVolume } from "./light.js";
 import { startRenderer } from "./renderer.js";
 
 const helpers = true;
@@ -34,13 +34,6 @@ let renderer = startRenderer(BASE_COLOR, THREE.PCFSoftShadowMap);
 const stats = new Stats();
 document.getElementById("webgl-output").appendChild(stats.domElement);
 
-/** @type {{ fogFar: number }} Parâmetros do GUI para controle (slider) da névoa. */
-let fogParams = { fogFar: scene.fog.far };
-let gui = new GUI();
-gui.add(fogParams, "fogFar", 50, 800, 1).onChange((value) => {
-  scene.fog.far = value;
-});
-
 let camera = new THREE.PerspectiveCamera(
   22,
   window.innerWidth / window.innerHeight,
@@ -50,7 +43,18 @@ let camera = new THREE.PerspectiveCamera(
 camera.position.set(0, 25, -150);
 camera.lookAt(0, 25, 0);
 scene.add(camera);
-let light = initSceneLighting(camera.near, camera.far, [camera.position.x, camera.position.y], scene, helpers);
+
+/** @type {{ fogFar: number }} Parâmetros do GUI para controle (slider) da névoa. */
+let fogParams = { fogFar: scene.fog.far };
+
+let light = initSceneLighting(camera, scene, helpers);
+
+let gui = new GUI();
+gui.add(fogParams, "fogFar", 50, 800, 1).onChange((value) => {
+  scene.fog.far = value;
+  updateLightVolume(light, camera, value);
+});
+
 
 initMouseTracking();
 
@@ -198,6 +202,7 @@ window.addEventListener(
   "resize",
   function () {
     onWindowResize(camera, renderer);
+    updateLightVolume(light, camera, scene.fog.far);
   },
   false,
 );
