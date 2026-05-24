@@ -1,9 +1,10 @@
 /**
  * @file tiles.js
+
  * Gerencia dois tiles de terreno procedural que rolam infinitamente no eixo Z.
  *
  * Opção implementada: múltiplos planos alternados (opção mais simples).
- *   Dois tiles de tamanho TILE_SIZE se alternam: quando o tile da frente sai
+ *   Dois tiles de tamanho TILE_DEPTH se alternam: quando o tile da frente sai
  *   do campo de visão, ele é teleportado para atrás do tile atual e reconstruído
  *   com costura na borda de junção.
  *
@@ -20,16 +21,177 @@
  */
 
 import * as THREE from "three";
-import { installTerrain } from "./Terrain.js";
 import { criaArvore } from "./arvore.js";
-const Terrain = installTerrain(THREE);
+const Terrain = createTerrain(THREE);
+
+function ensureNoise() {
+  if (
+    globalThis.noise &&
+    typeof globalThis.noise.seed === "function" &&
+    typeof globalThis.noise.perlin === "function"
+  ) {
+    return;
+  }
+
+  const noise = {};
+  globalThis.noise = noise;
+
+  function Grad(x, y, z) {
+    this.x = x;
+    this.y = y;
+    this.z = z;
+  }
+
+  Grad.prototype.dot2 = function (x, y) {
+    return this.x * x + this.y * y;
+  };
+
+  var grad3 = [
+    new Grad(1, 1, 0), new Grad(-1, 1, 0), new Grad(1, -1, 0), new Grad(-1, -1, 0),
+    new Grad(1, 0, 1), new Grad(-1, 0, 1), new Grad(1, 0, -1), new Grad(-1, 0, -1),
+    new Grad(0, 1, 1), new Grad(0, -1, 1), new Grad(0, 1, -1), new Grad(0, -1, -1),
+  ];
+
+  var p = [151, 160, 137, 91, 90, 15, 131, 13, 201, 95, 96, 53, 194, 233, 7, 225, 140, 36, 103,
+    30, 69, 142, 8, 99, 37, 240, 21, 10, 23, 190, 6, 148, 247, 120, 234, 75, 0, 26, 197, 62, 94,
+    252, 219, 203, 117, 35, 11, 32, 57, 177, 33, 88, 237, 149, 56, 87, 174, 20, 125, 136, 171,
+    168, 68, 175, 74, 165, 71, 134, 139, 48, 27, 166, 77, 146, 158, 231, 83, 111, 229, 122,
+    60, 211, 133, 230, 220, 105, 92, 41, 55, 46, 245, 40, 244, 102, 143, 54, 65, 25, 63, 161,
+    1, 216, 80, 73, 209, 76, 132, 187, 208, 89, 18, 169, 200, 196, 135, 130, 116, 188, 159,
+    86, 164, 100, 109, 198, 173, 186, 3, 64, 52, 217, 226, 250, 124, 123, 5, 202, 38, 147,
+    118, 126, 255, 82, 85, 212, 207, 206, 59, 227, 47, 16, 58, 17, 182, 189, 28, 42, 223, 183,
+    170, 213, 119, 248, 152, 2, 44, 154, 163, 70, 221, 153, 101, 155, 167, 43, 172, 9, 129,
+    22, 39, 253, 19, 98, 108, 110, 79, 113, 224, 232, 178, 185, 112, 104, 218, 246, 97, 228,
+    251, 34, 242, 193, 238, 210, 144, 12, 191, 179, 162, 241, 81, 51, 145, 235, 249, 14, 239,
+    107, 49, 192, 214, 31, 181, 199, 106, 157, 184, 84, 204, 176, 115, 121, 50, 45, 127, 4,
+    150, 254, 138, 236, 205, 93, 222, 114, 67, 29, 24, 72, 243, 141, 128, 195, 78, 66, 215,
+    61, 156, 180];
+
+  var perm = new Array(512), gradP = new Array(512);
+
+  noise.seed = function (seed) {
+    if (seed > 0 && seed < 1) {
+      seed *= 65536;
+    }
+
+    seed = Math.floor(seed);
+    if (seed < 256) {
+      seed |= seed << 8;
+    }
+
+    for (var i = 0; i < 256; i++) {
+      var v;
+      if (i & 1) {
+        v = p[i] ^ (seed & 255);
+      } else {
+        v = p[i] ^ ((seed >> 8) & 255);
+      }
+
+      perm[i] = perm[i + 256] = v;
+      gradP[i] = gradP[i + 256] = grad3[v % 12];
+    }
+  };
+
+  function fade(t) {
+    return t * t * t * (t * (t * 6 - 15) + 10);
+  }
+
+  function lerp(a, b, t) {
+    return (1 - t) * a + t * b;
+  }
+
+  noise.perlin = function (x, y) {
+    var X = Math.floor(x), Y = Math.floor(y);
+    x = x - X;
+    y = y - Y;
+    X = X & 255;
+    Y = Y & 255;
+
+    var n00 = gradP[X + perm[Y]].dot2(x, y);
+    var n01 = gradP[X + perm[Y + 1]].dot2(x, y - 1);
+    var n10 = gradP[X + 1 + perm[Y]].dot2(x - 1, y);
+    var n11 = gradP[X + 1 + perm[Y + 1]].dot2(x - 1, y - 1);
+
+    var u = fade(x);
+
+    return lerp(
+      lerp(n00, n10, u),
+      lerp(n01, n11, u),
+      fade(y)
+    );
+  };
+}
+
+function createTerrain(THREEParam) {
+  const THREE = Object.assign({}, THREEParam);
+  ensureNoise();
+
+  return function Terrain(options) {
+    const defaultOptions = {
+      heightmap: null,
+      material: null,
+      maxHeight: 100,
+      minHeight: -100,
+      xSegments: 63,
+      xSize: 1024,
+      ySegments: 63,
+      ySize: 1024,
+      frequency: 2.5,
+    };
+
+    options = options || {};
+    for (const opt in defaultOptions) {
+      if (Object.prototype.hasOwnProperty.call(defaultOptions, opt)) {
+        options[opt] = typeof options[opt] === "undefined" ? defaultOptions[opt] : options[opt];
+      }
+    }
+
+    options.material = options.material || new THREE.MeshBasicMaterial({ color: 0xee6633 });
+
+    const scene = new THREE.Object3D();
+    scene.rotation.x = -0.5 * Math.PI;
+
+    const mesh = new THREE.Mesh(
+      new THREE.PlaneGeometry(options.xSize, options.ySize, options.xSegments, options.ySegments),
+      options.material,
+    );
+
+    const positions = mesh.geometry.attributes.position;
+    const zs = new Float32Array(positions.count);
+    for (let i = 0; i < positions.count; i++) {
+      zs[i] = positions.getZ(i);
+    }
+
+    if (typeof options.heightmap === "function") {
+      const result = options.heightmap(zs, options);
+      if (result && typeof result.length === "number" && result.length === zs.length) {
+        for (let i = 0; i < zs.length; i++) {
+          zs[i] = result[i];
+        }
+      }
+    } else {
+      console.warn("An invalid value was passed for `options.heightmap`: " + options.heightmap);
+    }
+
+    for (let i = 0; i < positions.count; i++) {
+      positions.setZ(i, zs[i]);
+    }
+    positions.needsUpdate = true;
+    mesh.geometry.computeVertexNormals();
+    mesh.geometry.computeBoundingSphere();
+
+    scene.add(mesh);
+    return scene;
+  };
+}
 
 // ---------------------------------------------------------------------------
 // Constantes de configuração do mundo
 // ---------------------------------------------------------------------------
 
 /** Largura e profundidade de cada tile em unidades de mundo. */
-const TILE_SIZE = 2000;
+const TILE_WIDTH = 1000;
+const TILE_DEPTH = 4000;
 
 /**
  * Número de subdivisões do plano em cada eixo.
@@ -109,7 +271,7 @@ export function createWorldTiles(scene) {
   tileA.position.set(0, 0, 0);
   tileA.userData.tileZ = 0;
 
-  tileB.position.set(0, 0, TILE_SIZE);
+  tileB.position.set(0, 0, TILE_DEPTH);
   tileB.userData.tileZ = 1;
 
   // Primeiro tile: sem costura (não há vizinho à frente)
@@ -126,9 +288,9 @@ export function createWorldTiles(scene) {
  *
  * Garantia contra gap/overlap:
  *   - Identifica explicitamente qual tile está à frente (maior Z) e qual está atrás.
- *   - O tile reciclado recebe `frontTile.position.z + TILE_SIZE` — posição absoluta,
+ *   - O tile reciclado recebe `frontTile.position.z + TILE_DEPTH` — posição absoluta,
  *     calculada depois que ambos os tiles já foram movidos neste frame.
- *   - O threshold é conservador (−TILE_SIZE * 0.3) para que a reciclagem ocorra
+ *   - O threshold é conservador (−TILE_DEPTH * 0.5) para que a reciclagem ocorra
  *     bem antes do tile sair completamente da tela, com margem para gameSpeed 3×.
  *
  * @param {number} delta - Segundos desde o último frame (já multiplicado por gameSpeed).
@@ -146,14 +308,14 @@ export function updateTiles(delta) {
   const backTile  = tileA.position.z <  tileB.position.z ? tileA : tileB;
 
   // 3. Recicla o tile de trás se ele cruzou o threshold
-  //    Threshold em −TILE_SIZE * 0.3: o tile ainda está parcialmente visível,
+  //    Threshold em −TILE_DEPTH * 0.5
   //    mas já é seguro teleportá-lo — há terreno suficiente na frente para cobrir a transição.
-  const recycleThreshold = -TILE_SIZE * 0.4;
+  const recycleThreshold = -TILE_DEPTH * 0.5;
 
   if (backTile.position.z < recycleThreshold) {
-    // Posição absoluta: exatamente um TILE_SIZE atrás do tile da frente.
+    // Posição absoluta: exatamente um TILE_DEPTH atrás do tile da frente.
     // Calculada depois do move deste frame → sem gap nem overlap garantido.
-    backTile.position.z = frontTile.position.z + TILE_SIZE;
+    backTile.position.z = frontTile.position.z + TILE_DEPTH;
     backTile.userData.tileZ += 2;
 
     // Costura: usa a borda traseira do tile à frente como borda frontal do reciclado
@@ -172,6 +334,8 @@ function createTileGroup() {
     tileZ:           null,
     terrain:         null,
     backEdgeHeights: null, // Float32Array: alturas da borda traseira para costura
+    heightMatrix:    null, // Float32Array[COLS×COLS]: alturas de todos os vértices
+
   };
   return group;
 }
@@ -198,20 +362,18 @@ function rebuildTerrain(tile, frontEdgeHeights) {
   const toRemove = tile.children.filter((c) => c.userData.isTree);
   for (const tree of toRemove) {
     tile.remove(tree);
-    tree.traverse((obj) => {
-      if (obj.geometry) obj.geometry.dispose();
-    });
+    tree.traverse((obj) => {if (obj.geometry) obj.geometry.dispose();});
   }
 
   // --- Constrói novo terreno ---
   const cols      = TILE_SEGMENTS + 1;
   const heightmap = buildFbmHeightmap(tile.userData.tileZ, frontEdgeHeights, cols);
-
+  tile.userData.heightMatrix = heightmap; // Armazena a função de heightmap para referência futura (opcional, pode ser omitida)
   const terrainGroup = Terrain({
     heightmap,
     material:  terrainMaterial,
-    xSize:     TILE_SIZE,
-    ySize:     TILE_SIZE,
+    xSize:     TILE_WIDTH,
+    ySize:     TILE_DEPTH,
     xSegments: TILE_SEGMENTS,
     ySegments: TILE_SEGMENTS,
     maxHeight: MAX_HEIGHT,
@@ -219,18 +381,11 @@ function rebuildTerrain(tile, frontEdgeHeights) {
     frequency: 2.0,
   });
 
-  applyHeightColors(terrainGroup);
-
   tile.userData.backEdgeHeights = extractBackEdge(terrainGroup, cols);
+  
   tile.add(terrainGroup);
   tile.userData.terrain = terrainGroup;
 
-  // --- Planta árvores como filhas do tile ---
-  const mesh = terrainGroup.children[0];
-  if (mesh) {
-    plantTrees(tile, mesh.geometry, cols);
-  }
-}
 
 // ---------------------------------------------------------------------------
 // Geração de heightmap com fbm (fractal Brownian motion)
@@ -343,183 +498,4 @@ function extractBackEdge(terrainGroup, cols) {
   return heights;
 }
 
-// ---------------------------------------------------------------------------
-// Colorização por altura
-// ---------------------------------------------------------------------------
-
-/**
- * Atribui cores aos vértices do terreno com base na altitude,
- * simulando faixas de vegetação como em um mapa topográfico.
- *
- * @param {THREE.Group} terrainGroup
- */
-function applyHeightColors(terrainGroup) {
-  const mesh = terrainGroup.children[0];
-  if (!mesh) return;
-
-  const geometry  = mesh.geometry;
-  const positions = geometry.attributes.position;
-  const count     = positions.count;
-  const colors    = new Float32Array(count * 3);
-
-  for (let i = 0; i < count; i++) {
-    const height = positions.getZ(i);
-    const t = Math.min(1, Math.max(0, (height - MIN_HEIGHT) / (MAX_HEIGHT - MIN_HEIGHT)));
-
-    const [r, g, b] = sampleHeightGradient(t);
-    colors[i * 3]     = r;
-    colors[i * 3 + 1] = g;
-    colors[i * 3 + 2] = b;
-  }
-
-  geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
-  geometry.attributes.color.needsUpdate = true;
-}
-
-/**
- * Interpola cor ao longo de um gradiente de altitude.
- *
- * Faixas:
- *   0.00 → verde escuro  — vales e planícies
- *   0.55 → verde claro   — encostas baixas
- *   0.70 → marrom        — rocha exposta
- *   1.00 → branco neve   — picos
- *
- * @param {number} t - Altitude normalizada [0, 1].
- * @returns {[number, number, number]} RGB em [0, 1].
- */
-function sampleHeightGradient(t) {
-  const gradient = [
-    { t: 0.00, color: [0.10, 0.40, 0.15] }, // verde escuro  — vales e planícies
-    { t: 0.55, color: [0.35, 0.55, 0.20] }, // verde claro   — encostas baixas
-    { t: 0.70, color: [0.45, 0.32, 0.18] }, // marrom        — rocha nua
-    { t: 1.00, color: [0.92, 0.92, 0.92] }, // branco acinzentado — neve nos picos
-  ];
-
-  for (let i = 0; i < gradient.length - 1; i++) {
-    const from = gradient[i];
-    const to   = gradient[i + 1];
-    if (t >= from.t && t <= to.t) {
-      const localT = (t - from.t) / (to.t - from.t);
-      return [
-        from.color[0] + (to.color[0] - from.color[0]) * localT,
-        from.color[1] + (to.color[1] - from.color[1]) * localT,
-        from.color[2] + (to.color[2] - from.color[2]) * localT,
-      ];
-    }
-  }
-
-  return gradient[gradient.length - 1].color;
-}
-
-// ---------------------------------------------------------------------------
-// Plantio de árvores
-// ---------------------------------------------------------------------------
-
-/**
- * Distribui árvores pelo tile usando grade com jitter e verificação de distância mínima.
- * As árvores são adicionadas como filhas do tile (não da cena), então se movem com ele.
- *
- * Estratégia:
- *   1. Divide o tile em TREE_GRID_COLS × TREE_GRID_ROWS células.
- *   2. Sorteia uma posição aleatória dentro de cada célula (jitter).
- *   3. Lê a altura do terreno nessa posição via interpolação bilinear.
- *   4. Rejeita se fora da faixa de altitude de vegetação.
- *   5. Rejeita se muito próxima de outra árvore já aceita (TREE_MIN_DIST).
- *   6. Cria a árvore e a adiciona ao tile com posição em espaço local.
- *
- * @param {THREE.Group} tile
- * @param {THREE.BufferGeometry} geometry - Geometria do mesh do terreno.
- * @param {number} cols - Número de vértices por linha.
- */
-function plantTrees(tile, geometry, cols) {
-  const positions = geometry.attributes.position;
-  const halfSize  = TILE_SIZE / 2; // vértices vão de -halfSize a +halfSize em X e Z
-
-  const cellW = TILE_SIZE / TREE_GRID_COLS;
-  const cellD = TILE_SIZE / TREE_GRID_ROWS;
-
-  const placedPositions = []; // posições locais aceitas — para checar distância mínima
-
-  for (let row = 0; row < TREE_GRID_ROWS; row++) {
-    for (let col = 0; col < TREE_GRID_COLS; col++) {
-
-      // Posição local aleatória dentro da célula (espaço do tile: −half a +half)
-      const localX = -halfSize + (col + Math.random()) * cellW;
-      const localZ = -halfSize + (row + Math.random()) * cellD;
-
-      // Converte para coordenadas normalizadas [0, 1] para amostrar o heightmap
-      const u = (localX + halfSize) / TILE_SIZE;
-      const v = (localZ + halfSize) / TILE_SIZE;
-
-      // Lê a altura do terreno nessa posição com interpolação bilinear
-      const terrainHeight = sampleTerrainHeight(positions, u, v, cols);
-
-      // Rejeita se altitude fora da faixa de vegetação
-      if (terrainHeight < TREE_MIN_HEIGHT || terrainHeight > TREE_MAX_HEIGHT) continue;
-
-      // Rejeita se muito próxima de outra árvore já aceita
-      let tooClose = false;
-      for (const p of placedPositions) {
-        const dx = localX - p.x;
-        const dz = localZ - p.z;
-        if (dx * dx + dz * dz < TREE_MIN_DIST * TREE_MIN_DIST) {
-          tooClose = true;
-          break;
-        }
-      }
-      if (tooClose) continue;
-
-      // Cria a árvore e adiciona ao tile (não à cena) — ela se move com o tile
-      const tipo   = Math.random() < 0.5 ? 1 : 2;
-      const object = criaArvore(tipo);
-      tile.add(object);
-
-      // Posição em espaço local do tile:
-      //   X e Z são as coordenadas locais calculadas acima.
-      //   Y = altura do terreno lida da geometria (já em espaço local do tile).
-      object.position.set(localX, terrainHeight, localZ);
-      object.userData.isTree = true;
-
-      placedPositions.push({ x: localX, z: localZ });
-    }
-  }
-}
-
-/**
- * Amostra a altura do terreno numa posição normalizada (u, v) usando interpolação bilinear
- * entre os quatro vértices da célula da grade correspondente.
- *
- * Interpolação bilinear:
- *   Calcula a altura dos quatro vértices que cercam o ponto e combina seus valores
- *   proporcionalmente à distância — resultado muito mais preciso do que o vértice mais próximo.
- *
- * @param {THREE.BufferAttribute} positions
- * @param {number} u - Posição horizontal normalizada [0, 1].
- * @param {number} v - Posição de profundidade normalizada [0, 1].
- * @param {number} cols
- * @returns {number} Altura interpolada.
- */
-function sampleTerrainHeight(positions, u, v, cols) {
-  // Índices flutuantes na grade de vértices
-  const fx = Math.min(u * TILE_SEGMENTS, TILE_SEGMENTS - 0.001);
-  const fz = Math.min(v * TILE_SEGMENTS, TILE_SEGMENTS - 0.001);
-
-  const x0 = Math.floor(fx);
-  const z0 = Math.floor(fz);
-  const x1 = x0 + 1;
-  const z1 = z0 + 1;
-
-  const tx = fx - x0; // fração horizontal dentro da célula
-  const tz = fz - z0; // fração de profundidade dentro da célula
-
-  const h00 = positions.getZ(z0 * cols + x0);
-  const h10 = positions.getZ(z0 * cols + x1);
-  const h01 = positions.getZ(z1 * cols + x0);
-  const h11 = positions.getZ(z1 * cols + x1);
-
-  // Interpola nas duas linhas da célula, depois entre elas
-  const h0 = h00 + (h10 - h00) * tx;
-  const h1 = h01 + (h11 - h01) * tx;
-  return h0 + (h1 - h0) * tz;
 }
