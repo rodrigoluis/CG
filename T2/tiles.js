@@ -203,7 +203,7 @@ const TILE_SEGMENTS = 63;
 const TILE_SCROLL_SPEED = 50;
 
 /** Amplitude máxima das montanhas em relação ao plano base. */
-const MAX_HEIGHT =  100;
+const MAX_HEIGHT =  80;
 const MIN_HEIGHT = -20;
 
 // ---------------------------------------------------------------------------
@@ -237,7 +237,7 @@ const terrainMaterial = new THREE.MeshLambertMaterial({
 // Semente do ruído — terreno igual a cada execução
 // ---------------------------------------------------------------------------
 
-const TERRAIN_SEED = 1337;
+const TERRAIN_SEED = Math.random() * 65536;
 if (globalThis.noise && typeof globalThis.noise.seed === "function") {
   globalThis.noise.seed(TERRAIN_SEED);
 }
@@ -381,6 +381,8 @@ function rebuildTerrain(tile, frontEdgeHeights) {
     frequency: 2.0,
   });
 
+    applyHeightColors(terrainGroup);
+
   tile.userData.backEdgeHeights = extractBackEdge(terrainGroup, cols);
   
   tile.add(terrainGroup);
@@ -468,7 +470,8 @@ function fbm(ni, nj, options) {
     amp    *= persistence;
   }
 
-  return (value / maxAmp) * amplitude;
+  const normalized = Math.max(-1, Math.min(1, value / maxAmp));
+  return options.minHeight + ((normalized + 1) * 0.5) * (options.maxHeight - options.minHeight);
 }
 
 // ---------------------------------------------------------------------------
@@ -498,4 +501,60 @@ function extractBackEdge(terrainGroup, cols) {
   return heights;
 }
 
+
+/**
+ * Aplica coloração discreta ao plane com base na altitude normalizada.
+ *
+ * Faixas:
+ *   - t > 0.90 -> branco
+ *   - 0.65 < t <= 0.90 -> marrom
+ *   - t <= 0.65 -> verde
+ *
+ * Onde t é a altura normalizada no intervalo [0, 1].
+ *
+ * @param {THREE.Group} terrainGroup
+ */
+function applyHeightColors(terrainGroup) {
+  const mesh = terrainGroup.children[0];
+  if (!mesh) return;
+
+  const geometry = mesh.geometry;
+  const positions = geometry.attributes.position;
+  const count = positions.count;
+  const colors = new Float32Array(count * 3);
+
+  for (let i = 0; i < count; i++) {
+    const height = positions.getZ(i);
+    const t = Math.min(1, Math.max(0, (height - MIN_HEIGHT) / (MAX_HEIGHT - MIN_HEIGHT)));
+    const [r, g, b] = samplePlaneColor(t);
+    colors[i * 3] = r;
+    colors[i * 3 + 1] = g;
+    colors[i * 3 + 2] = b;
+  }
+
+  geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
+  geometry.attributes.color.needsUpdate = true;
+}
+
+/**
+ * Retorna a cor do plane a partir da altura normalizada.
+ *
+ * @param {number} t
+ * @returns {[number, number, number]}
+ */
+function samplePlaneColor(t) {
+  if (t > 0.8) {
+    return [1.0, 1.0, 1.0];
+  }
+
+  if (t > 0.70) {
+    return [0.4, 0.4, 0.4];
+  }
+
+  if (t > 0.55) {
+    return [0.45, 0.32, 0.18];
+  }
+
+  return [0.10, 0.40, 0.15];
+}
 }
