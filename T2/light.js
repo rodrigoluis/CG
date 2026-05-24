@@ -13,8 +13,8 @@ const LIGHT_SOURCE_Y_POSITION = 100;
  */
 export function initSceneLighting(camera, scene, addHelper = false) {
     const color = 0xFFFFFF;
-    const intensity = 1;
-    let light = new THREE.DirectionalLight(color, intensity);
+    let ambientLight = new THREE.AmbientLight(color, 0.1);
+    let light = new THREE.DirectionalLight(color, 1);
 
     light.position.set(LIGHT_SOURCE_X_POSITION, LIGHT_SOURCE_Y_POSITION, -30);
     light.target.position.set(0, 0, 0);
@@ -24,6 +24,7 @@ export function initSceneLighting(camera, scene, addHelper = false) {
     light.shadow.mapSize.height = 4096;
 
     scene.add(light);
+    scene.add(ambientLight);
     scene.add(light.target);
 
     if (addHelper) {
