@@ -13,8 +13,8 @@ export const CONFIG = {
     intervaloTiro: 1,
     delayPrimeiroTiro: -1.5,
     posicaoZCombate: 140,
-    distanciaSpawnZ: 800,
-    gravidadeQueda: 280.0,
+    distanciaSpawnZ: 1000,
+    gravidadeQueda: 300.0,
   },
 
   // === CONFIGURAÇÕES DO SISTEMA DE LASERS ===

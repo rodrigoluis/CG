@@ -14,7 +14,7 @@ import { setDefaultMaterial } from "../../libs/util/util.js";
 const COR_FOLHA = ["#738417", "#2e6f40", "#388347", "#BF5B05", "#92780A"];
 
 /** Escalas possíveis — sorteadas aleatoriamente a cada criação. */
-const ESCALAS_POSSIVEIS = [1, 2, 2.5, 1.5];
+const ESCALAS_POSSIVEIS = [0.75, 1, 1.5, 1.75];
 
 // Material de madeira compartilhado entre todas as instâncias (criado uma única vez)
 const madeira = setDefaultMaterial("brown");

@@ -25,7 +25,7 @@ import { CONFIG } from "./Configuracao.js";
 // Cor do céu — usada tanto no fundo do renderer quanto na névoa para fundir o horizonte
 let baseColor = "rgb(148, 181, 224)";
 let scene = new THREE.Scene();
-scene.fog = new THREE.Fog(baseColor, 1, 2000);
+scene.fog = new THREE.Fog(baseColor, 1, 1500);
 let renderer = initRenderer();
 renderer.setClearColor(baseColor);
 

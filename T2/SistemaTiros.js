@@ -130,9 +130,9 @@ export class LaserPool {
           ? laser.mesh.position.distanceTo(aviaoMesh.position)
           : laser.mesh.position.distanceTo(laser.startPosition);
 
-        if (fogFar && distanciaAteJogador > fogFar) {
-          this.despawn(laser, i);
-        }
+        if (distanciaAteJogador > 900 || (fogFar && distanciaAteJogador > fogFar)) {
+        this.despawn(laser, i);
+      }
       } else {
         // INIMIGOS: Mantêm o descarte fixo por deslocamento próprio
         let distanciaPercorrida = laser.mesh.position.distanceTo(
