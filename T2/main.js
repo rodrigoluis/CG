@@ -8,8 +8,6 @@ import Stats from "../../build/jsm/libs/stats.module.js";
 import { criaAviao } from "./aviao.js";
 import GUI from "../../libs/util/dat.gui.module.js";
 import {
-  initRenderer,
-  initDefaultBasicLight,
   onWindowResize,
 } from "../libs/util/util.js";
 import { createWorldTiles, updateTiles } from "./tiles.js";
@@ -22,13 +20,15 @@ import { CollisionManager } from "./collisionManager.js";
 import { criaTarget } from "./target.js";
 import { CONFIG } from "./Configuracao.js";
 import { initSceneLighting } from "./light.js";
+import { startRenderer } from "./renderer.js";
+
+const helpers = true;
 
 // Cor do céu — usada tanto no fundo do renderer quanto na névoa para fundir o horizonte
-let baseColor = "rgb(148, 181, 224)";
+const BASE_COLOR = "rgb(148, 181, 224)";
 let scene = new THREE.Scene();
-scene.fog = new THREE.Fog(baseColor, 1, 400);
-let renderer = initRenderer();
-renderer.setClearColor(baseColor);
+scene.fog = new THREE.Fog(BASE_COLOR, 1, 400);
+let renderer = startRenderer(BASE_COLOR, THREE.VSMShadowMap);
 
 // Painel de FPS no canto da tela
 const stats = new Stats();
@@ -50,7 +50,7 @@ let camera = new THREE.PerspectiveCamera(
 camera.position.set(0, 25, -150);
 camera.lookAt(0, 25, 0);
 scene.add(camera);
-let light = initSceneLighting(camera.near, camera.far, [camera.position.x, camera.position.y], scene, true);
+let light = initSceneLighting(camera.near, camera.far, [camera.position.x, camera.position.y], scene, helpers);
 
 initMouseTracking();
 
