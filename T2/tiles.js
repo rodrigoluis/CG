@@ -642,9 +642,14 @@ function samplePlaneColor(t) {
     return [0.45, 0.32, 0.18];
   }
 
-  // Regiões baixas permanecem verdes.
-  return [0.10, 0.40, 0.15];
+  if (t > 0.30) {
+    return [0.10, 0.40, 0.15];
+  }
+
+  return [0.05, 0.20, 0.10]; // Altitudes baixas viram vegetação densa.
 }
+  // Regiões baixas permanecem verdes.
+  
 
 /**
  * Planta árvores no tile respeitando altura, inclinação e distância mínima.
