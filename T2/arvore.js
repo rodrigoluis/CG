@@ -83,6 +83,9 @@ export function criaArvore(scene, tipo) {
 
   // Aplica a escala sorteada uniformemente nos 3 eixos
   object.scale.set(escalaSorteada, escalaSorteada, escalaSorteada);
+
+  object.traverse(function (o) { o.castShadow = true });
+
   scene.add(object);
 
   return { object };

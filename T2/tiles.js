@@ -38,7 +38,7 @@ export function createWorldTiles(scene) {
 
 function createTile(scene, offsetX, offsetZ) {
   let tile      = new THREE.Group(); // agrupa plano + árvores num único objeto
-  let plane     = createGroundPlaneWired(tileSize, tileSize, tileSegments, tileSegments, 2, "rgb(44, 57, 42)", "rgb(2, 60, 4)");
+  let plane     = createGroundPlaneWired(tileSize, tileSize, tileSegments, tileSegments, 2, "rgb(103, 182, 90)", "rgb(2, 60, 4)");
   let treesGroup = new THREE.Group();
   let treePool   = []; // pool de árvores pré-criadas para evitar criar/destruir a cada reciclagem
 
