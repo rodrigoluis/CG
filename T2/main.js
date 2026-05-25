@@ -71,38 +71,32 @@ const POPULACAO_TOTAL = 5;
 
 const criadorInimigos = new CriadorInimigos(scene);
 
-// Cria e armazena os 5 objetos no pool
-// === COLOQUE ESTE BLOCO CORRIGIDO NO SEU LAÇO DE CRIAÇÃO (FOR) ===
 for (let i = 0; i < POPULACAO_TOTAL; i++) {
   const ladoDoCanto = i % 2 === 0 ? -80 : 80;
   const posicaoZFixaDesteInimigo = CONFIG.inimigos.posicaoZCombate;
 
-  criadorInimigos
-    // MODIFICADO: Agora nascem na altura do horizonte (CONFIG.input.planeBaseY) em vez de Y=25
-    .criarInimigoAleatorio(
-      ladoDoCanto,
-      CONFIG.input.planeBaseY,
-      posicaoZFixaDesteInimigo,
-    )
-    .then((inimigoSorteado) => {
-      inimigoSorteado.indice = i;
+  const inimigoSorteado = await criadorInimigos.criarInimigoAleatorio(
+    ladoDoCanto,
+    CONFIG.input.planeBaseY,
+    posicaoZFixaDesteInimigo,
+  );
 
-      inimigoSorteado.vida = 100;
-      inimigoSorteado.life = 100;
-      inimigoSorteado.destruido = false;
-      if (inimigoSorteado.mesh) {
-        inimigoSorteado.mesh.vida = 100;
-        inimigoSorteado.mesh.life = 100;
-      }
+  inimigoSorteado.indice = i;
+  inimigoSorteado.vida = 100;
+  inimigoSorteado.life = 100;
+  inimigoSorteado.destruido = false;
+  if (inimigoSorteado.mesh) {
+    inimigoSorteado.mesh.vida = 100;
+    inimigoSorteado.mesh.life = 100;
+  }
 
-      inimigoSorteado.offsetZAtual = posicaoZFixaDesteInimigo;
-      listaInimigos.push(inimigoSorteado);
+  inimigoSorteado.offsetZAtual = posicaoZFixaDesteInimigo;
+  listaInimigos.push(inimigoSorteado);
 
-      if (i < 2) {
-        inimigoSorteado.ativo = true;
-        inimigoSorteado.mesh.visible = true;
-      }
-    });
+  if (i < 2) {
+    inimigoSorteado.ativo = true;
+    inimigoSorteado.mesh.visible = true;
+  }
 }
 
 // Vida dos Inimigos e do Jogador
