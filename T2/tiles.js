@@ -22,6 +22,100 @@
 
 import * as THREE from "three";
 import { criaArvore } from "./arvore.js";
+
+// Estrutura simples para representar gradientes 3D usados no Perlin.
+function Grad(x, y, z) {
+  this.x = x;
+  this.y = y;
+  this.z = z;
+}
+
+function fade(t) {
+  // Curva suave usada para interpolar os valores sem cantos duros.
+  return t * t * t * (t * (t * 6 - 15) + 10);
+}
+
+function lerp(a, b, t) {
+  // Interpolação linear entre dois valores.
+  return (1 - t) * a + t * b;
+}
+
+/**
+ * Altura num ponto via fractal Brownian motion (fbm):
+ * soma de octaves de Perlin com frequência crescente e amplitude decrescente,
+ * produzindo montanhas com detalhes em múltiplas escalas.
+ *
+ * @param {number} ni - Índice X do vértice.
+ * @param {number} nj - Índice Z do vértice (já com offsetZ aplicado).
+ * @param {object} options
+ * @returns {number} Altura em unidades de mundo.
+ */
+function fbm(ni, nj, options) {
+  // Calcula a amplitude geral do relevo com base na faixa de alturas configurada.
+  const amplitude = (options.maxHeight - options.minHeight) * 0.5;
+  // Escala inicial do ruído, ajustando a frequência espacial do terreno.
+  const baseScale = (options.frequency * 5) / (options.xSegments + 1);
+
+
+  // Número de camadas de ruído empilhadas para criar detalhe em múltiplas escalas.
+  const octaves = 5;
+  // Cada octave aumenta a frequência do ruído.
+  const lacunarity = 1; // frequência dobra a cada octave
+  // Cada octave reduz a amplitude da contribuição.
+  const persistence = 0.5; // amplitude cai à metade a cada octave
+
+
+  // Acumuladores do valor final e da normalização.
+  let value = 0;
+  let freq = baseScale;
+  let amp = 1;
+  let maxAmp = 0;
+
+
+  // Soma várias amostras de Perlin com frequências e amplitudes diferentes.
+  for (let o = 0; o < octaves; o++) {
+    value += globalThis.noise.perlin(ni * freq, nj * freq) * amp;
+    maxAmp += amp;
+    freq *= lacunarity;
+    amp *= persistence;
+  }
+
+
+  // Normaliza o resultado para o intervalo esperado e converte para altura real.
+  const normalized = Math.max(-1, Math.min(1, value / maxAmp));
+  return options.minHeight + ((normalized + 1) * 0.5) * (options.maxHeight - options.minHeight);
+}
+
+/**
+ * Retorna a cor do plane a partir da altura normalizada.
+ *
+ * @param {number} t
+ * @returns {[number, number, number]}
+ */
+function samplePlaneColor(t) {
+  // Altitudes muito altas viram neve.
+  if (t > 0.8) {
+    return [1, 1, 1];
+  }
+
+  // Altitudes intermediárias altas viram rocha.
+  if (t > 0.7) {
+    return [0.4, 0.4, 0.4];
+  }
+
+  // Altitudes intermediárias viram terra exposta.
+  if (t > 0.55) {
+    return [0.45, 0.32, 0.18];
+  }
+
+  if (t > 0.3) {
+    return [0.1, 0.4, 0.15];
+  }
+
+  return [0.05, 0.2, 0.1]; // Altitudes baixas viram vegetação densa.
+}
+  // Regiões baixas permanecem verdes.
+
 const Terrain = createTerrain(THREE);
 
 function ensureNoise() {
@@ -37,13 +131,6 @@ function ensureNoise() {
   // Cria o objeto global de ruído que será usado pelo terreno procedural.
   const noise = {};
   globalThis.noise = noise;
-
-  // Estrutura simples para representar gradientes 3D usados no Perlin.
-  function Grad(x, y, z) {
-    this.x = x;
-    this.y = y;
-    this.z = z;
-  }
 
   // Produto escalar no plano XY, usado para calcular contribuição do gradiente.
   Grad.prototype.dot2 = function (x, y) {
@@ -100,16 +187,6 @@ function ensureNoise() {
       gradP[i] = gradP[i + 256] = grad3[v % 12];
     }
   };
-
-  function fade(t) {
-    // Curva suave usada para interpolar os valores sem cantos duros.
-    return t * t * t * (t * (t * 6 - 15) + 10);
-  }
-
-  function lerp(a, b, t) {
-    // Interpolação linear entre dois valores.
-    return (1 - t) * a + t * b;
-  }
 
   // Calcula o valor de ruído Perlin em coordenadas 2D.
   noise.perlin = function (x, y) {
@@ -509,48 +586,6 @@ function buildFbmHeightmap(tileZ, frontEdgeHeights, cols) {
   };
 }
 
-/**
- * Altura num ponto via fractal Brownian motion (fbm):
- * soma de octaves de Perlin com frequência crescente e amplitude decrescente,
- * produzindo montanhas com detalhes em múltiplas escalas.
- *
- * @param {number} ni - Índice X do vértice.
- * @param {number} nj - Índice Z do vértice (já com offsetZ aplicado).
- * @param {object} options
- * @returns {number} Altura em unidades de mundo.
- */
-function fbm(ni, nj, options) {
-  // Calcula a amplitude geral do relevo com base na faixa de alturas configurada.
-  const amplitude = (options.maxHeight - options.minHeight) * 0.5;
-  // Escala inicial do ruído, ajustando a frequência espacial do terreno.
-  const baseScale = (options.frequency * 5) / (options.xSegments + 1);
-
-  // Número de camadas de ruído empilhadas para criar detalhe em múltiplas escalas.
-  const octaves     = 5;
-  // Cada octave aumenta a frequência do ruído.
-  const lacunarity  = 1; // frequência dobra a cada octave
-  // Cada octave reduz a amplitude da contribuição.
-  const persistence = 0.5; // amplitude cai à metade a cada octave
-
-  // Acumuladores do valor final e da normalização.
-  let value  = 0;
-  let freq   = baseScale;
-  let amp    = 1;
-  let maxAmp = 0;
-
-  // Soma várias amostras de Perlin com frequências e amplitudes diferentes.
-  for (let o = 0; o < octaves; o++) {
-    value  += globalThis.noise.perlin(ni * freq, nj * freq) * amp;
-    maxAmp += amp;
-    freq   *= lacunarity;
-    amp    *= persistence;
-  }
-
-  // Normaliza o resultado para o intervalo esperado e converte para altura real.
-  const normalized = Math.max(-1, Math.min(1, value / maxAmp));
-  return options.minHeight + ((normalized + 1) * 0.5) * (options.maxHeight - options.minHeight);
-}
-
 // ---------------------------------------------------------------------------
 // Utilidades de borda (seam stitching)
 // ---------------------------------------------------------------------------
@@ -620,38 +655,7 @@ function applyHeightColors(terrainGroup) {
   // Anexa o atributo de cor para que o material use as cores por vértice.
   geometry.setAttribute("color", new THREE.BufferAttribute(colors, 3));
   geometry.attributes.color.needsUpdate = true;
-}
-
-/**
- * Retorna a cor do plane a partir da altura normalizada.
- *
- * @param {number} t
- * @returns {[number, number, number]}
- */
-function samplePlaneColor(t) {
-  // Altitudes muito altas viram neve.
-  if (t > 0.8) {
-    return [1, 1, 1];
-  }
-
-  // Altitudes intermediárias altas viram rocha.
-  if (t > 0.7) {
-    return [0.4, 0.4, 0.4];
-  }
-
-  // Altitudes intermediárias viram terra exposta.
-  if (t > 0.55) {
-    return [0.45, 0.32, 0.18];
-  }
-
-  if (t > 0.3) {
-    return [0.1, 0.4, 0.15];
-  }
-
-  return [0.05, 0.2, 0.1]; // Altitudes baixas viram vegetação densa.
-}
-  // Regiões baixas permanecem verdes.
-  
+} 
 
 /**
  * Planta árvores no tile respeitando altura, inclinação e distância mínima.
