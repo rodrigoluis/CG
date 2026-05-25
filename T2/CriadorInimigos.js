@@ -110,7 +110,6 @@ export class CriadorInimigos {
         scaledDelta * this.velocidadePerseguicao,
       );
 
-      // SUBSTITUÍDO: Lendo a altura de combate direto do nó unificado de inputs
       const centroTelaY = CONFIG.input.planeBaseY;
       const novaDistanciaY = 24;
 
@@ -122,13 +121,15 @@ export class CriadorInimigos {
       const flutuacaoOrganica = Math.sin(this.tempoInimigo * 2 + i) * 1.5;
       const destinoY = centroTelaY + offsetY + flutuacaoOrganica;
 
+      // Proteção contra delta de pausa travando a nave em Y flutuante fora de órbita
       inimigo.position.y = THREE.MathUtils.lerp(
         inimigo.position.y,
         destinoY,
         scaledDelta * this.velocidadePerseguicao,
       );
 
-      let velocidadexReal = (inimigo.position.x - posXAnterior) / scaledDelta;
+      let velocidadexReal =
+        (inimigo.position.x - posXAnterior) / (scaledDelta || 0.016);
       inimigo.rotation.z = THREE.MathUtils.lerp(
         inimigo.rotation.z,
         -velocidadexReal * 0.002,
@@ -162,7 +163,7 @@ export class CriadorInimigos {
 
           proximoReserva.mesh.position.set(
             bordaNascimentoX,
-            CONFIG.input.planeBaseY, // Sincronizado dinamicamente aqui também
+            CONFIG.input.planeBaseY,
             aviaoMesh.position.z + CONFIG.inimigos.distanciaSpawnZ,
           );
 

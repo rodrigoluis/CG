@@ -77,16 +77,18 @@ const criadorInimigos = new CriadorInimigos(scene);
 // === COLOQUE ESTE BLOCO CORRIGIDO NO SEU LAÇO DE CRIAÇÃO (FOR) ===
 for (let i = 0; i < POPULACAO_TOTAL; i++) {
   const ladoDoCanto = i % 2 === 0 ? -80 : 80;
-
-  // DECLARAÇÃO CORRETA: Puxa a distância padrão de combate do seu CONFIG
   const posicaoZFixaDesteInimigo = CONFIG.inimigos.posicaoZCombate;
 
   criadorInimigos
-    .criarInimigoAleatorio(ladoDoCanto, 25, posicaoZFixaDesteInimigo)
+    // MODIFICADO: Agora nascem na altura do horizonte (CONFIG.input.planeBaseY) em vez de Y=25
+    .criarInimigoAleatorio(
+      ladoDoCanto,
+      CONFIG.input.planeBaseY,
+      posicaoZFixaDesteInimigo,
+    )
     .then((inimigoSorteado) => {
       inimigoSorteado.indice = i;
 
-      // Injeta propriedades de vida iniciais garantidas para o CollisionManager
       inimigoSorteado.vida = 100;
       inimigoSorteado.life = 100;
       inimigoSorteado.destruido = false;
@@ -95,9 +97,7 @@ for (let i = 0; i < POPULACAO_TOTAL; i++) {
         inimigoSorteado.mesh.life = 100;
       }
 
-      // Sincroniza o offset inicial do pool com a distância fixa de combate original
       inimigoSorteado.offsetZAtual = posicaoZFixaDesteInimigo;
-
       listaInimigos.push(inimigoSorteado);
 
       if (i < 2) {
@@ -275,44 +275,37 @@ function processarReciclagemInimigos() {
       (meshInterna.userData &&
         (meshInterna.userData.vida <= 0 || meshInterna.userData.life <= 0));
 
+    // 1. ATIVA QUEDA
     if (foiAbatido && !inimigoTarget.caindo) {
       inimigoTarget.caindo = true;
-
-      // ALERADO: De 6 para 25. Dá um tranco vertical para baixo instantâneo no momento do impacto!
       inimigoTarget.velocidadeQuedaY = 25;
+      inimigoTarget.velocidadeGiro = Math.random() * 8 + 6;
 
-      inimigoTarget.velocidadeGiro = Math.random() * 8 + 6; // Giros mais rápidos e agressivos
-
-      inimigoTarget.destruido = false;
       if (meshInterna.userData) meshInterna.userData.destruido = false;
       return;
     }
 
+    // 2. RECICLAGEM REAL: Quando o objeto cai abaixo do cenário, reseta e oculta de forma limpa
     const bateuNoChao = meshInterna.position.y <= -20;
-    const sumiuDaCena = !scene.children.includes(meshInterna);
 
-    if (bateuNoChao || sumiuDaCena) {
+    if (bateuNoChao) {
       inimigoTarget.ativo = false;
       inimigoTarget.active = false;
       inimigoTarget.caindo = false;
-      meshInterna.visible = false;
+      meshInterna.visible = false; // Esconde visualmente
       inimigosAbatidos++;
 
-      // Limpa dados de dano
+      // Reseta os dados de integridade estrutural
       inimigoTarget.vida = 100;
       inimigoTarget.life = 100;
       inimigoTarget.destruido = false;
       meshInterna.vida = 100;
       meshInterna.life = 100;
 
-      // CORREÇÃO: Força o offset de segurança alto para o próximo CriadorInimigos pescar limpo
-      inimigoTarget.offsetZAtual = 800;
-      inimigoTarget.posicaoZOriginal = 100;
-      inimigoTarget.tempoRecarga = -2.0;
-
-      if (sumiuDaCena) {
-        scene.add(meshInterna);
-      }
+      // Coloca de volta no pool na distância segura do horizonte
+      inimigoTarget.offsetZAtual = CONFIG.inimigos.distanciaSpawnZ;
+      inimigoTarget.posicaoZOriginal = CONFIG.inimigos.posicaoZCombate;
+      inimigoTarget.tempoRecarga = CONFIG.inimigos.delayPrimeiroTiro;
     }
   });
 }
