@@ -22,13 +22,11 @@ import { CONFIG } from "./Configuracao.js";
 import { initSceneLighting, updateLightVolume } from "./light.js";
 import { startRenderer } from "./renderer.js";
 
-const helpers = true;
-
 // Cor do céu — usada tanto no fundo do renderer quanto na névoa para fundir o horizonte
 const BASE_COLOR = "rgb(148, 181, 224)";
 let scene = new THREE.Scene();
 scene.fog = new THREE.Fog(BASE_COLOR, 1, 1500);
-let renderer = startRenderer(BASE_COLOR, THREE.PCFSoftShadowMap);
+let renderer = startRenderer(BASE_COLOR, THREE.PCFShadowMap);
 
 // Painel de FPS no canto da tela
 const stats = new Stats();
@@ -45,7 +43,7 @@ camera.position.set(0, 105, -150); // começa atrás e na mesma altura do avião
 camera.lookAt(0, 120, 0);
 scene.add(camera);
 
-let light = initSceneLighting(camera, scene, helpers);
+let light = initSceneLighting(camera, scene);
 
 /** @type {{ fogFar: number }} Parâmetros do GUI para controle (slider) da névoa. */
 let fogParams = { fogFar: scene.fog.far };

@@ -11,7 +11,7 @@ const LIGHT_SOURCE_Y_POSITION = 100;
  * @param {scene} scene to add light to
  * @returns 
  */
-export function initSceneLighting(camera, scene, addHelper = false) {
+export function initSceneLighting(camera, scene) {
     const color = 0xFFFFFF;
     let ambientLight = new THREE.AmbientLight(color, 0.1);
     let light = new THREE.DirectionalLight(color, 1);
@@ -22,19 +22,11 @@ export function initSceneLighting(camera, scene, addHelper = false) {
     light.castShadow = true;
     light.shadow.mapSize.width = 4096;
     light.shadow.mapSize.height = 4096;
+    light.shadow.radius = 1.5;
 
     scene.add(light);
     scene.add(ambientLight);
     scene.add(light.target);
-
-    if (addHelper) {
-        let helper = new THREE.DirectionalLightHelper(light);
-        scene.add(helper);
-        let helperShadow = new THREE.CameraHelper(light.shadow.camera);
-        scene.add(helperShadow);
-        light.userData.lightHelper = helper;
-        light.userData.shadowHelper = helperShadow;
-    }
 
     updateLightVolume(light, camera, scene.fog.far);
     return light;
@@ -45,18 +37,12 @@ const MAX_TREE_HEIGHT = 15;
 export function updateLightVolume(light, camera, fogFar) {
     const topBottom = fogFar + MAX_TREE_HEIGHT;
 
-    light.shadow.camera.left = -fogFar * 0.2;   // small backward buffer; game flies forward
+    light.shadow.camera.left = -fogFar * 0.2;
     light.shadow.camera.right = fogFar;
     light.shadow.camera.top = topBottom;
     light.shadow.camera.bottom = -topBottom;
-    light.shadow.camera.far = fogFar + 200;      // light offset (~141) + fog range
+    light.shadow.camera.far = fogFar + 200;
     light.shadow.camera.updateProjectionMatrix();
-    if (light.userData.shadowHelper) {
-        light.userData.shadowHelper.update();
-    }
-    if (light.userData.lightHelper) {
-        light.userData.lightHelper.update();
-    }
 }
 
 export function updateLightPosition(light, camera) {
