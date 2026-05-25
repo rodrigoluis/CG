@@ -1,4 +1,4 @@
-// bottons.js
+// menu.js
 import { CONFIG } from "./config.js";
 
 /**

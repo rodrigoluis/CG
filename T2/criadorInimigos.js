@@ -1,6 +1,6 @@
 import * as THREE from "three";
 import { carregarAviaoInimigo } from "./alienVerde.js";
-import { carregarAviaoInimigo2 } from "./oviniInimigo.js";
+import { carregarAviaoInimigo2 } from "./ovniInimigo.js";
 import { CONFIG } from "./config.js";
 
 export class CriadorInimigos {
