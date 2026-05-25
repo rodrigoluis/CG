@@ -51,14 +51,14 @@ function ensureNoise() {
   };
 
   // Vetores de gradiente pré-definidos usados pelo algoritmo de ruído.
-  var grad3 = [
+  let grad3 = [
     new Grad(1, 1, 0), new Grad(-1, 1, 0), new Grad(1, -1, 0), new Grad(-1, -1, 0),
     new Grad(1, 0, 1), new Grad(-1, 0, 1), new Grad(1, 0, -1), new Grad(-1, 0, -1),
     new Grad(0, 1, 1), new Grad(0, -1, 1), new Grad(0, 1, -1), new Grad(0, -1, -1),
   ];
 
   // Permutação base do Perlin para embaralhar o acesso aos gradientes.
-  var p = [151, 160, 137, 91, 90, 15, 131, 13, 201, 95, 96, 53, 194, 233, 7, 225, 140, 36, 103,
+  let p = [151, 160, 137, 91, 90, 15, 131, 13, 201, 95, 96, 53, 194, 233, 7, 225, 140, 36, 103,
     30, 69, 142, 8, 99, 37, 240, 21, 10, 23, 190, 6, 148, 247, 120, 234, 75, 0, 26, 197, 62, 94,
     252, 219, 203, 117, 35, 11, 32, 57, 177, 33, 88, 237, 149, 56, 87, 174, 20, 125, 136, 171,
     168, 68, 175, 74, 165, 71, 134, 139, 48, 27, 166, 77, 146, 158, 231, 83, 111, 229, 122,
@@ -74,7 +74,7 @@ function ensureNoise() {
     61, 156, 180];
 
   // Tabelas duplicadas para evitar módulos e simplificar o acesso aos vizinhos.
-  var perm = new Array(512), gradP = new Array(512);
+  let perm = new Array(512), gradP = new Array(512);
 
   // Inicializa a semente do ruído com um valor fornecido pela aplicação.
   noise.seed = function (seed) {
@@ -88,8 +88,8 @@ function ensureNoise() {
     }
 
     // Preenche as tabelas permutadas com base na semente.
-    for (var i = 0; i < 256; i++) {
-      var v;
+    for (let i = 0; i < 256; i++) {
+      let v;
       if (i & 1) {
         v = p[i] ^ (seed & 255);
       } else {
@@ -113,18 +113,18 @@ function ensureNoise() {
 
   // Calcula o valor de ruído Perlin em coordenadas 2D.
   noise.perlin = function (x, y) {
-    var X = Math.floor(x), Y = Math.floor(y);
+    let X = Math.floor(x), Y = Math.floor(y);
     x = x - X;
     y = y - Y;
     X = X & 255;
     Y = Y & 255;
 
-    var n00 = gradP[X + perm[Y]].dot2(x, y);
-    var n01 = gradP[X + perm[Y + 1]].dot2(x, y - 1);
-    var n10 = gradP[X + 1 + perm[Y]].dot2(x - 1, y);
-    var n11 = gradP[X + 1 + perm[Y + 1]].dot2(x - 1, y - 1);
+    let n00 = gradP[X + perm[Y]].dot2(x, y);
+    let n01 = gradP[X + perm[Y + 1]].dot2(x, y - 1);
+    let n10 = gradP[X + 1 + perm[Y]].dot2(x - 1, y);
+    let n11 = gradP[X + 1 + perm[Y + 1]].dot2(x - 1, y - 1);
 
-    var u = fade(x);
+    let u = fade(x);
 
     return lerp(
       lerp(n00, n10, u),
@@ -136,7 +136,7 @@ function ensureNoise() {
 
 function createTerrain(THREEParam) {
   // Copia a API do THREE recebida para usar os construtores necessários.
-  const THREE = Object.assign({}, THREEParam);
+  const THREE = { ...THREEParam};
   // Garante que o ruído procedural esteja disponível antes de criar o terreno.
   ensureNoise();
 
@@ -158,8 +158,8 @@ function createTerrain(THREEParam) {
     // Garante que sempre exista um objeto de opções para preenchimento dos defaults.
     options = options || {};
     for (const opt in defaultOptions) {
-      if (Object.prototype.hasOwnProperty.call(defaultOptions, opt)) {
-        options[opt] = typeof options[opt] === "undefined" ? defaultOptions[opt] : options[opt];
+      if (Object.hasOwn(defaultOptions, opt)) {
+        options[opt] = options[opt] === undefined ? defaultOptions[opt] : options[opt];
       }
     }
 
@@ -433,7 +433,7 @@ function rebuildTerrain(tile, frontEdgeHeights) {
     ySegments: TILE_SEGMENTS,
     maxHeight: MAX_HEIGHT,
     minHeight: MIN_HEIGHT,
-    frequency: 2.0,
+    frequency: 2,
   });
 
     // Aplica coloração por altura antes de plantar as árvores.
@@ -528,14 +528,14 @@ function fbm(ni, nj, options) {
   // Número de camadas de ruído empilhadas para criar detalhe em múltiplas escalas.
   const octaves     = 5;
   // Cada octave aumenta a frequência do ruído.
-  const lacunarity  = 1.0; // frequência dobra a cada octave
+  const lacunarity  = 1; // frequência dobra a cada octave
   // Cada octave reduz a amplitude da contribuição.
   const persistence = 0.5; // amplitude cai à metade a cada octave
 
   // Acumuladores do valor final e da normalização.
   let value  = 0;
   let freq   = baseScale;
-  let amp    = 1.0;
+  let amp    = 1;
   let maxAmp = 0;
 
   // Soma várias amostras de Perlin com frequências e amplitudes diferentes.
@@ -631,11 +631,11 @@ function applyHeightColors(terrainGroup) {
 function samplePlaneColor(t) {
   // Altitudes muito altas viram neve.
   if (t > 0.8) {
-    return [1.0, 1.0, 1.0];
+    return [1, 1, 1];
   }
 
   // Altitudes intermediárias altas viram rocha.
-  if (t > 0.70) {
+  if (t > 0.7) {
     return [0.4, 0.4, 0.4];
   }
 
@@ -644,11 +644,11 @@ function samplePlaneColor(t) {
     return [0.45, 0.32, 0.18];
   }
 
-  if (t > 0.30) {
-    return [0.10, 0.40, 0.15];
+  if (t > 0.3) {
+    return [0.1, 0.4, 0.15];
   }
 
-  return [0.05, 0.20, 0.10]; // Altitudes baixas viram vegetação densa.
+  return [0.05, 0.2, 0.1]; // Altitudes baixas viram vegetação densa.
 }
   // Regiões baixas permanecem verdes.
   
