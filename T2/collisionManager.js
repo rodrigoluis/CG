@@ -49,30 +49,26 @@ export class CollisionManager {
 
     for (let i = activeLasers.length - 1; i >= 0; i--) {
       let laser = activeLasers[i];
-      if (!laser || !laser.active) continue;
+      if (!laser?.active) continue;
 
-      for (let j = 0; j < targets.length; j++) {
-        let target = targets[j];
+      for (const element of targets) {
+        let target = element;
         if (!target) continue;
 
         // === AJUSTE DE RESOLUÇÃO DE ARQUITETURA ===
         const descobreMesh = target.mesh ? target.mesh : target;
-        const descobreBB = target.bb
-          ? target.bb
-          : target.geometry
-            ? new THREE.Box3().setFromObject(target)
-            : null;
+        const boundingBox = this.getBoundingBox(target);
 
-        const estaAtivo = target.ativo !== undefined ? target.ativo : true;
-        const estaCaindo = target.caindo !== undefined ? target.caindo : false;
+        const estaAtivo = target.ativo === undefined ? true : target.ativo;
+        const estaCaindo = target.caindo === undefined ? false : target.caindo;
 
         // Se o alvo não estiver pronto para combate, ignora
         if (!estaAtivo || estaCaindo) continue;
 
         // Executa o teste de interseção física das Bounding Boxes
-        if (laser.bb && descobreBB && laser.bb.intersectsBox(descobreBB)) {
+        if (laser.bb && boundingBox && laser.bb.intersectsBox(boundingBox)) {
           // === REGRA DO FOG BLINDADA ===
-          if (camera && scene && scene.fog && descobreMesh) {
+          if (camera && scene?.fog && descobreMesh) {
             const distanciaAteCamera = descobreMesh.position.distanceTo(
               camera.position,
             );
@@ -108,19 +104,19 @@ export class CollisionManager {
       }
     }
   }
-  /**
-   * Verifica colisão direta entre o avião do jogador e os alvos.
-   */
-  checkPlayerAgainstTargets(playerBB, targetList) {
-    for (let j = 0; j < targetList.length; j++) {
-      let target = targetList[j];
 
-      if (target && target.ativo && target.mesh && target.bb) {
-        if (playerBB.intersectsBox(target.bb)) {
-          this._registerHit(target);
-          break;
-        }
-      }
+  getBoundingBox(target) {
+    if (target.bb) {
+      return target.bb;
     }
+    if (target.geometry) {
+      return target.geometry;
+    }
+    let obj = new THREE.Box3().setFromObject(target)
+    if (obj) {
+      return obj;
+    }
+    return null;
   }
+
 }
