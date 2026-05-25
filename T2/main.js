@@ -158,24 +158,24 @@ function gerenciarDisparoInimigos(scaledDelta, aviaoMesh) {
 }
 
 // Controle de entrada de tiros (Segurar botão)
-let estáAtirando = false;
+let estaAtirando = false;
 let tempoUltimoTiro = 0;
 const CADENCIA_TIRO = CONFIG.lasers.cadenciaJogador;
 
 globalThis.addEventListener("mousedown", (event) => {
-  if (event.button === 0) estáAtirando = true;
+  if (event.button === 0) estaAtirando = true;
 });
 globalThis.addEventListener("mouseup", (event) => {
-  if (event.button === 0) estáAtirando = false;
+  if (event.button === 0) estaAtirando = false;
 });
 globalThis.addEventListener("keydown", (event) => {
-  if (event.code === "Space") estáAtirando = true;
+  if (event.code === "Space") estaAtirando = true;
 });
 globalThis.addEventListener("keyup", (event) => {
-  if (event.code === "Space") estáAtirando = false;
+  if (event.code === "Space") estaAtirando = false;
 });
 globalThis.addEventListener("blur", () => {
-  estáAtirando = false;
+  estaAtirando = false;
 });
 
 const jogadorCollisionManager = new CollisionManager(
@@ -228,7 +228,7 @@ function gerenciarDisparoJogador(scaledDelta) {
   if (globalThis._shootEnabled === false) return;
 
   if (
-    estáAtirando &&
+    estaAtirando &&
     tempoUltimoTiro >= CADENCIA_TIRO &&
     targetMesh &&
     aviaoMesh
