@@ -12,7 +12,7 @@ export function initPauseMenu({
   getGameSpeed,
 }) {
   // Inicializa o estado global dos tiros se não existir (começa ativado)
-  if (typeof globalThis._shootEnabled === "undefined") {
+  if (globalThis._shootEnabled === undefined) {
     globalThis._shootEnabled = true;
   }
 
@@ -259,7 +259,7 @@ export function initPauseMenu({
 
   // --- LISTENERS DE INTERAÇÃO DO MENU ---
 
-  window.addEventListener("keydown", (event) => {
+  globalThis.addEventListener("keydown", (event) => {
     if (startOverlay.style.display !== "none") return;
 
     if (event.key === "Escape") {
@@ -303,7 +303,7 @@ export function initPauseMenu({
   });
 
   closeButton.addEventListener("click", () => {
-    window.location.reload();
+    globalThis.location.reload();
   });
 
   speedButton1.addEventListener("click", () => {
