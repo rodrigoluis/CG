@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { CONFIG } from "./Configuracao.js";
+import { CONFIG } from "./config.js";
 
 // Mantém as propriedades expostas em escopo para compatibilidade estrita com os outros scripts
 export const PLANE_BASE_Y = CONFIG.input.planeBaseY;

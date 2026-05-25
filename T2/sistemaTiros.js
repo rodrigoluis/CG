@@ -1,6 +1,6 @@
 import * as THREE from "three";
 // === 1. ADICIONA A IMPORTAÇÃO DO CONFIG NO TOPO ===
-import { CONFIG } from "./Configuracao.js";
+import { CONFIG } from "./config.js";
 
 export class LaserPool {
   /**

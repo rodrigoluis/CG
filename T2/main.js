@@ -13,12 +13,12 @@ import {
 import { createWorldTiles, updateTiles } from "./tiles.js";
 import { initMouseTracking, inputUpdate } from "./input.js";
 import { updateCamera } from "./camera.js";
-import { CriadorInimigos } from "./CriadorInimigos.js";
+import { CriadorInimigos } from "./criadorInimigos.js";
 import { initPauseMenu } from "./bottons.js";
-import { LaserPool } from "./SistemaTiros.js";
+import { LaserPool } from "./sistemaTiros.js";
 import { CollisionManager } from "./collisionManager.js";
 import { criaTarget } from "./target.js";
-import { CONFIG } from "./Configuracao.js";
+import { CONFIG } from "./config.js";
 import { initSceneLighting, updateLightVolume } from "./light.js";
 import { startRenderer } from "./renderer.js";
 

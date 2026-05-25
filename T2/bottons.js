@@ -1,5 +1,5 @@
 // bottons.js
-import { CONFIG } from "./Configuracao.js";
+import { CONFIG } from "./config.js";
 
 /**
  * Inicializa a interface de usuário do menu de pausa e a tela de início Hello Kitty World.

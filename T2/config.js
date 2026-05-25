@@ -1,5 +1,5 @@
 /**
- * @file Configuracao.js
+ * @file config.js
  * Centraliza os parâmetros de balanceamento, design, física, câmera e cenário do jogo.
  */
 

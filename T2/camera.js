@@ -1,5 +1,5 @@
 import * as THREE from "three";
-import { CONFIG } from "./Configuracao.js";
+import { CONFIG } from "./config.js";
 
 export function updateCamera(camera, aviaoMesh, delta) {
   const px = aviaoMesh.position.x;
