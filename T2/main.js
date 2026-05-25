@@ -34,12 +34,7 @@ let renderer = startRenderer(BASE_COLOR, THREE.PCFSoftShadowMap);
 const stats = new Stats();
 document.getElementById("webgl-output").appendChild(stats.domElement);
 
-/** @type {{ fogFar: number }} Parâmetros do GUI para controle (slider) da névoa. */
-let fogParams = { fogFar: scene.fog.far };
 let gui = new GUI();
-gui.add(fogParams, "fogFar", 50, 2000, 1).onChange((value) => {
-  scene.fog.far = value;
-});
 
 const altitudeParams = { altitude: 0 };
 gui.add(altitudeParams, "altitude").name("Altitude").listen();
@@ -52,7 +47,9 @@ scene.add(camera);
 
 let light = initSceneLighting(camera, scene, helpers);
 
-gui.add(fogParams, "fogFar", 50, 800, 1).onChange((value) => {
+/** @type {{ fogFar: number }} Parâmetros do GUI para controle (slider) da névoa. */
+let fogParams = { fogFar: scene.fog.far };
+gui.add(fogParams, "fogFar", 50, 2000, 1).onChange((value) => {
   scene.fog.far = value;
   updateLightVolume(light, camera, value);
 });
