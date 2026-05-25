@@ -82,11 +82,9 @@ for (let i = 0; i < POPULACAO_TOTAL; i++) {
   );
 
   inimigoSorteado.indice = i;
-  inimigoSorteado.vida = 100;
   inimigoSorteado.life = 100;
   inimigoSorteado.destruido = false;
   if (inimigoSorteado.mesh) {
-    inimigoSorteado.mesh.vida = 100;
     inimigoSorteado.mesh.life = 100;
   }
 
@@ -257,13 +255,11 @@ function processarReciclagemInimigos() {
     if (!meshInterna) return;
 
     const foiAbatido =
-      inimigoTarget.vida <= 0 ||
       inimigoTarget.life <= 0 ||
       inimigoTarget.destruido === true ||
-      meshInterna.vida <= 0 ||
       meshInterna.life <= 0 ||
       (meshInterna.userData &&
-        (meshInterna.userData.vida <= 0 || meshInterna.userData.life <= 0));
+        (meshInterna.userData.life <= 0));
 
     // 1. ATIVA QUEDA
     if (foiAbatido && !inimigoTarget.caindo) {
@@ -286,10 +282,8 @@ function processarReciclagemInimigos() {
       inimigosAbatidos++;
 
       // Reseta os dados de integridade estrutural
-      inimigoTarget.vida = 100;
       inimigoTarget.life = 100;
       inimigoTarget.destruido = false;
-      meshInterna.vida = 100;
       meshInterna.life = 100;
 
       // Coloca de volta no pool na distância segura do horizonte

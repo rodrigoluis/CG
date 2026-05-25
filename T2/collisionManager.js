@@ -21,7 +21,6 @@ export class CollisionManager {
       globalThis._gameStats.enemy = this.score;
       this.uiCallbacks.updateScore?.(this.score);
       if (target) {
-        target.vida = 0;
         target.life = 0;
       }
     }
@@ -94,9 +93,7 @@ export class CollisionManager {
             descobreMesh.userData.takeDamage(10);
           } else {
             // Deduz os pontos de vida tanto no wrapper quanto na mesh por segurança
-            if (target.vida !== undefined) target.vida -= 50;
             if (target.life !== undefined) target.life -= 50;
-            if (descobreMesh.vida !== undefined) descobreMesh.vida -= 50;
             if (descobreMesh.life !== undefined) descobreMesh.life -= 50;
           }
 
