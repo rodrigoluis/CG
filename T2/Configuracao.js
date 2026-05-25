@@ -8,19 +8,19 @@ const VELOCIDADE_PADRAO = 0.8;
 export const CONFIG = {
   // === CONFIGURAÇÕES DOS INIMIGOS ===
   inimigos: {
-    velocidadePerseguicao: 2.0,
+    velocidadePerseguicao: 2,
     velocidadeZigueZague: 1.4,
     intervaloTiro: 1,
     delayPrimeiroTiro: -1.5,
     posicaoZCombate: 140,
     distanciaSpawnZ: 1000,
-    gravidadeQueda: 300.0,
+    gravidadeQueda: 300,
   },
 
   // === CONFIGURAÇÕES DO SISTEMA DE LASERS ===
   lasers: {
-    velocidadeJogador: 4.0,
-    velocidadeInimigo: 2.0,
+    velocidadeJogador: 4,
+    velocidadeInimigo: 2,
     cadenciaJogador: 0.1,
     distanciaSumiçoPerto: -140,
   },
@@ -65,8 +65,8 @@ export const CONFIG = {
 
   // === CONFIGURAÇÕES DE TEMPO E VELOCIDADES DE MODOS ===
   modos: {
-    tempoModoEspecial: 10.0,
-    tempoTransicaoOnda: 5.0,
+    tempoModoEspecial: 10,
+    tempoTransicaoOnda: 5,
     velocidadeJogoPadrao: VELOCIDADE_PADRAO,
     velocidadeTecla1: VELOCIDADE_PADRAO,
     velocidadeTecla2: 1.2 * VELOCIDADE_PADRAO,

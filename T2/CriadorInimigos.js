@@ -146,7 +146,7 @@ export class CriadorInimigos {
         const proximoReserva =
           reservas[Math.floor(Math.random() * reservas.length)];
 
-        if (proximoReserva && proximoReserva.mesh) {
+        if (proximoReserva?.mesh) {
           const distanciaSpawnZ = 950;
           const borderSpawnX =
             Math.tan(fovRadianos / 2) * distanciaSpawnZ * camera.aspect;

@@ -168,19 +168,19 @@ let estáAtirando = false;
 let tempoUltimoTiro = 0;
 const CADENCIA_TIRO = CONFIG.lasers.cadenciaJogador;
 
-window.addEventListener("mousedown", (event) => {
+globalThis.addEventListener("mousedown", (event) => {
   if (event.button === 0) estáAtirando = true;
 });
-window.addEventListener("mouseup", (event) => {
+globalThis.addEventListener("mouseup", (event) => {
   if (event.button === 0) estáAtirando = false;
 });
-window.addEventListener("keydown", (event) => {
+globalThis.addEventListener("keydown", (event) => {
   if (event.code === "Space") estáAtirando = true;
 });
-window.addEventListener("keyup", (event) => {
+globalThis.addEventListener("keyup", (event) => {
   if (event.code === "Space") estáAtirando = false;
 });
-window.addEventListener("blur", () => {
+globalThis.addEventListener("blur", () => {
   estáAtirando = false;
 });
 
@@ -259,7 +259,7 @@ function gerenciarDisparoJogador(scaledDelta) {
  */
 function processarReciclagemInimigos() {
   listaInimigos.forEach((inimigoTarget) => {
-    if (!inimigoTarget || !inimigoTarget.ativo) return;
+    if (!inimigoTarget?.ativo) return;
 
     const meshInterna = inimigoTarget.mesh;
     if (!meshInterna) return;
