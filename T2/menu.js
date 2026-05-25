@@ -1,6 +1,85 @@
 // menu.js
 import { CONFIG } from "./config.js";
 
+export function initUI() {
+  const container = document.createElement("div");
+  container.id = "game-arcade-ui";
+  container.style.cssText = `
+    position: fixed;
+    top: 25px;
+    left: 30%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: row;
+    gap: 24px;
+    font-family: 'Segoe UI', Roboto, sans-serif;
+    pointer-events: none;
+    z-index: 1000;
+  `;
+  document.body.appendChild(container);
+
+  const boxStyle = `
+    background: rgba(255, 255, 255, 0.9);
+    border: 3px solid #1a1a1a;
+    border-radius: 12px;
+    padding: 8px 14px;
+    min-width: 160px;
+    box-shadow: 4px 4px 0px #1a1a1a;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+  `;
+
+  const lifeBox = document.createElement("div");
+  lifeBox.style.cssText = boxStyle + "order: 1;";
+  lifeBox.innerHTML = `
+    <div style="font-size: 9px; font-weight: 800; color: #aaa; text-transform: uppercase; letter-spacing: 0.8px;">Status do Piloto</div>
+    <div style="font-size: 16px; font-weight: 900; color: #1a1a1a; margin-top: 1px;">
+      Tiros recebidos: <span id="ui-life-val" style="color: #1500ff;">0</span>
+    </div>
+  `;
+
+  const scoreBox = document.createElement("div");
+  scoreBox.style.cssText = boxStyle + "order: 2;";
+  scoreBox.innerHTML = `
+    <div style="font-size: 9px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: 0.8px;">Placar de Combate</div>
+    <div style="font-size: 16px; font-weight: 900; color: #1a1a1a; margin-top: 1px;">
+      Inimigos derrotados: <span id="ui-score-val" style="color: #e06187;">0</span>
+    </div>
+  `;
+
+  const saldoBox = document.createElement("div");
+  saldoBox.style.cssText = boxStyle + "order: 3;";
+  saldoBox.innerHTML = `
+    <div style="font-size: 9px; font-weight: 800; color: #888; text-transform: uppercase; letter-spacing: 0.8px;">Eficiência</div>
+    <div style="font-size: 16px; font-weight: 900; color: #1a1a1a; margin-top: 1px;">
+      Saldo de tiros: <span id="ui-saldo-val" style="color: #1a1a1a;">0</span>
+    </div>
+  `;
+
+  container.appendChild(lifeBox);
+  container.appendChild(scoreBox);
+  container.appendChild(saldoBox);
+
+  const scoreSpan = scoreBox.querySelector("#ui-score-val");
+  const lifeSpan = lifeBox.querySelector("#ui-life-val");
+  const saldoSpan = saldoBox.querySelector("#ui-saldo-val");
+
+  return {
+    updateScore(n) {
+      scoreSpan.innerText = n;
+    },
+    updateLife(n) {
+      lifeSpan.innerText = n;
+    },
+    updateSaldo(kills, hits) {
+      const resultado = kills - hits;
+      saldoSpan.innerText = resultado;
+      saldoSpan.style.color = resultado < 0 ? "#ff0000" : "#23b500";
+    },
+  };
+}
+
 /**
  * Inicializa a interface de usuário do menu de pausa e a tela de início Hello Kitty World.
  */

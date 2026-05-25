@@ -14,7 +14,7 @@ import { createWorldTiles, updateTiles } from "./tiles.js";
 import { initMouseTracking, inputUpdate } from "./input.js";
 import { updateCamera } from "./camera.js";
 import { CriadorInimigos } from "./criadorInimigos.js";
-import { initPauseMenu } from "./menu.js";
+import { initPauseMenu, initUI } from "./menu.js";
 import { LaserPool } from "./sistemaTiros.js";
 import { CollisionManager } from "./collisionManager.js";
 import { criaTarget } from "./target.js";
@@ -107,8 +107,8 @@ let aviaoBB = new THREE.Box3();
 let laserPool = new LaserPool(scene, "player", "rgb(255, 25, 140)", 80);
 let laserPoolInimigos = new LaserPool(scene, "enemy", "rgb(21, 0, 255)", 40);
 
-const inimigoCollisionManager = new CollisionManager("enemy");
-const saldoCollisionManager = new CollisionManager("saldo");
+const hud = initUI();
+const inimigoCollisionManager = new CollisionManager("enemy", null, hud);
 
 //Tiro dos inimigos
 // --- COOLDOWN DE DISPARO DOS INIMIGOS ---
@@ -185,10 +185,8 @@ const jogadorCollisionManager = new CollisionManager(
       console.log("GAME OVER! O avião foi destruído.");
     }
   },
+  hud,
 );
-
-const scoreElement = document.getElementById("score-counter");
-const lifeElement = document.getElementById("player-life");
 
 window.addEventListener(
   "resize",
