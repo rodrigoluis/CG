@@ -1,6 +1,6 @@
 import * as THREE from 'three';
 
-export function startRenderer(color, shadowMapType) {
+export function startRenderer(color) {
     
     const renderer = new THREE.WebGLRenderer();
 
@@ -8,7 +8,7 @@ export function startRenderer(color, shadowMapType) {
 
     renderer.shadowMap.enabled = true;
     renderer.shadowMapSoft = true;
-    renderer.shadowMap.type = shadowMapType;
+    renderer.shadowMap.type = THREE.PCFShadowMap;
 
     renderer.setSize(window.innerWidth, window.innerHeight);
     document.getElementById("webgl-output").appendChild(renderer.domElement);
