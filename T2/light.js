@@ -32,7 +32,7 @@ export function initSceneLighting(camera, scene) {
     return light;
 }
 
-const MAX_TREE_HEIGHT = 15;
+const MAX_TREE_HEIGHT = 19; // maior tamanho de conífera possível com as escalas randomizadas
 
 export function updateLightVolume(light, camera, fogFar) {
     const topBottom = fogFar + MAX_TREE_HEIGHT;
