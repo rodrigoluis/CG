@@ -24,7 +24,7 @@ import { startRenderer } from "./renderer.js";
 // Cor do céu — usada tanto no fundo do renderer quanto na névoa para fundir o horizonte
 const BASE_COLOR = "rgb(148, 181, 224)";
 let scene = new THREE.Scene();
-scene.fog = new THREE.Fog(BASE_COLOR, 1, 1500);
+scene.fog = new THREE.Fog(BASE_COLOR, 1, 1200);
 let renderer = startRenderer(BASE_COLOR, THREE.PCFShadowMap);
 
 // Painel de FPS no canto da tela
