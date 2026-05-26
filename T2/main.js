@@ -48,7 +48,7 @@ let light = initSceneLighting(camera, scene);
 let fogParams = { fogFar: scene.fog.far };
 gui.add(fogParams, "fogFar", 50, 2000, 1).onChange((value) => {
   scene.fog.far = value;
-  updateLightVolume(light, camera, value);
+  updateLightVolume(light, value);
 });
 
 
@@ -189,7 +189,7 @@ window.addEventListener(
   "resize",
   function () {
     onWindowResize(camera, renderer);
-    updateLightVolume(light, camera, scene.fog.far);
+    updateLightVolume(light, scene.fog.far);
   },
   false,
 );
