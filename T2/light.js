@@ -44,13 +44,3 @@ export function updateLightVolume(light, camera, fogFar) {
     light.shadow.camera.far = fogFar + 200;
     light.shadow.camera.updateProjectionMatrix();
 }
-
-export function updateLightPosition(light, camera) {
-    light.position.set(
-        camera.position.x + LIGHT_SOURCE_X_POSITION,
-        LIGHT_SOURCE_Y_POSITION,
-        camera.position.z
-    );
-    light.target.position.set(camera.position.x, 0, camera.position.z);
-    light.target.updateMatrixWorld();
-}
