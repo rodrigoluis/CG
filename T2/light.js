@@ -20,9 +20,9 @@ export function initSceneLighting(camera, scene) {
     light.target.position.set(0, 0, 0);
 
     light.castShadow = true;
-    light.shadow.mapSize.width = 4096;
-    light.shadow.mapSize.height = 4096;
-    light.shadow.radius = 1.5;
+    light.shadow.mapSize.width = 8112;
+    light.shadow.mapSize.height = 8112;
+    light.shadow.radius = 2;
 
     scene.add(light);
     scene.add(ambientLight);
