@@ -1,6 +1,5 @@
 /**
- * @file config.js
- * Centraliza os parâmetros de balanceamento, design, física, câmera e cenário do jogo.
+ * @file Centraliza os parâmetros de balanceamento, design, física, câmera e cenário do jogo.
  */
 
 const VELOCIDADE_PADRAO = 0.8;

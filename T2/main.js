@@ -1,6 +1,5 @@
 /**
- * @file main.js
- * Ponto de entrada da cena. Inicializa renderer, cena, câmera, avião e loop de animação.
+ * @file Ponto de entrada da cena. Inicializa renderer, cena, câmera, avião e loop de animação.
  */
 
 import * as THREE from "three";

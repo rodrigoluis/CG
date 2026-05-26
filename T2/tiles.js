@@ -1,7 +1,5 @@
 /**
- * @file tiles.js
-
- * Gerencia dois tiles de terreno procedural que rolam infinitamente no eixo Z.
+ * @file Gerencia dois tiles de terreno procedural que rolam infinitamente no eixo Z.
  *
  * Opção implementada: múltiplos planos alternados (opção mais simples).
  *   Dois tiles de tamanho TILE_DEPTH se alternam: quando o tile da frente sai

@@ -1,6 +1,5 @@
 /**
- * @file arvore.js
- * Cria dois tipos de árvore 3D para popular os tiles do cenário.
+ * @file Cria dois tipos de árvore 3D para popular os tiles do cenário.
  *
  * As árvores são construídas na origem local (0, 0, 0) e não são adicionadas
  * a nenhum pai aqui — quem chama criaArvore é responsável por adicionar o

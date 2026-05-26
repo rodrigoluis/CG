@@ -1,6 +1,5 @@
 /**
- * @file aviao.js
- * Constrói o modelo 3D do avião (corpo, asas, leme e detalhes).
+ * @file Constrói o modelo 3D do avião (corpo, asas, leme e detalhes).
  */
 
 import * as THREE from 'three';
