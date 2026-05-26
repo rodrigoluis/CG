@@ -13,7 +13,7 @@ import { createWorldTiles, updateTiles } from "./tiles.js";
 import { initMouseTracking, inputUpdate } from "./input.js";
 import { updateCamera } from "./camera.js";
 import { CriadorInimigos } from "./criadorInimigos.js";
-import { initPauseMenu, initUI } from "./menu.js";
+import { initPauseMenu, initUI } from "./buttons.js";
 import { LaserPool } from "./sistemaTiros.js";
 import { CollisionManager } from "./collisionManager.js";
 import { criaTarget } from "./target.js";
