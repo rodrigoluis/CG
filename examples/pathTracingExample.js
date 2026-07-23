@@ -137,7 +137,7 @@ function initTHREEjs()
 	stats = new Stats(); 
 	document.getElementById("webgl-output").appendChild(stats.domElement);	
 
-	clock = new THREE.Clock();
+	clock = new THREE.Timer();
 
 	pathTracingScene = new THREE.Scene();
 	screenCopyScene = new THREE.Scene();
@@ -299,7 +299,8 @@ function initTHREEjs()
 
 function render()
 {
-	elapsedTime = clock.getElapsedTime() % 1000;
+   clock.update();
+	elapsedTime = clock.getElapsed() % 1000;
 
 	// reset flags
 	cameraIsMoving = false;

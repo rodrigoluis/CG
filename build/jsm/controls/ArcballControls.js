@@ -98,9 +98,9 @@ const _EPS = 0.000001;
  * consistent camera movements. Dragging cursor/fingers will cause camera to orbit around the center of the trackball in a conservative
  * way (returning to the starting point will make the camera return to its starting orientation).
  *
- * In addition to supporting pan, zoom and pinch gestures, Arcball controls provide focus< functionality with a double click/tap for intuitively
- * moving the object's point of interest in the center of the virtual trackball. Focus allows a much better inspection and navigation in complex
- * environment. Moreover Arcball controls allow FOV manipulation (in a vertigo-style method) and z-rotation. Saving and restoring of Camera State
+ * In addition to supporting pan, zoom and pinch gestures, double clicking/tapping focuses on a point, intuitively moving the object's
+ * point of interest to the center of the virtual trackball. Focus allows a much better inspection and navigation in complex environment.
+ * Moreover Arcball controls allow FOV manipulation (in a vertigo-style method) and z-rotation. Saving and restoring of Camera State
  * is supported also through clipboard (use ctrl+c and ctrl+v shortcuts for copy and paste the state).
  *
  * Unlike {@link OrbitControls} and {@link TrackballControls}, `ArcballControls` doesn't require `update()` to be called externally in an
@@ -115,7 +115,7 @@ class ArcballControls extends Controls {
 	 * Constructs a new controls instance.
 	 *
 	 * @param {Camera} camera - The camera to be controlled. The camera must not be a child of another object, unless that object is the scene itself.
-	 * @param {?HTMLDOMElement} [domElement=null] - The HTML element used for event listeners.
+	 * @param {?HTMLElement} [domElement=null] - The HTML element used for event listeners.
 	 * @param {?Scene} [scene=null] The scene rendered by the camera. If not given, gizmos cannot be shown.
 	 */
 	constructor( camera, domElement = null, scene = null ) {
@@ -264,6 +264,10 @@ class ArcballControls extends Controls {
 		 * If set to `true`, the camera's near and far values will be adjusted every time zoom is
 		 * performed trying to maintain the same visible portion given by initial near and far
 		 * values. Only works with perspective cameras.
+		 *
+		 * This feature only works as expected if the camera's initial state (position, near and far values)
+		 * is correctly configured before creating the controls. Otherwise {@link ArcballControls#setCamera}
+		 * must be called by the application.
 		 *
 		 * @type {boolean}
 		 * @default false
@@ -453,7 +457,6 @@ class ArcballControls extends Controls {
 
 		super.connect( element );
 
-		this.domElement.style.touchAction = 'none';
 		this._devPxRatio = window.devicePixelRatio;
 
 		this.domElement.addEventListener( 'contextmenu', this._onContextMenu );
@@ -462,6 +465,8 @@ class ArcballControls extends Controls {
 		this.domElement.addEventListener( 'pointercancel', this._onPointerCancel );
 
 		window.addEventListener( 'resize', this._onWindowResize );
+
+		this.domElement.style.touchAction = 'none'; // Disable touch scroll
 
 	}
 
@@ -476,6 +481,8 @@ class ArcballControls extends Controls {
 		window.removeEventListener( 'pointerup', this._onPointerUp );
 
 		window.removeEventListener( 'resize', this._onWindowResize );
+
+		this.domElement.style.touchAction = ''; // Restore touch scroll
 
 	}
 
@@ -1315,7 +1322,7 @@ class ArcballControls extends Controls {
 	 *
 	 * @param {'PAN'|'ROTATE'|'ZOOM'|'FOV'} operation - The operation to be performed ('PAN', 'ROTATE', 'ZOOM', 'FOV').
 	 * @param {0|1|2|'WHEEL'} mouse - A mouse button (0, 1, 2) or 'WHEEL' for wheel notches.
-	 * @param {'CTRL'|'SHIFT'|null} [key=null] - The keyboard modifier ('CTRL', 'SHIFT') or null if key is not needed.
+	 * @param {?('CTRL'|'SHIFT')} [key=null] - The keyboard modifier ('CTRL', 'SHIFT') or null if key is not needed.
 	 * @returns {boolean} `true` if the mouse action has been successfully added, `false` otherwise.
 	 */
 	setMouseAction( operation, mouse, key = null ) {
@@ -1396,7 +1403,7 @@ class ArcballControls extends Controls {
 	 * Remove a mouse action by specifying its mouse/key combination.
 	 *
 	 * @param {0|1|2|'WHEEL'} mouse - A mouse button (0, 1, 2) or 'WHEEL' for wheel notches.
-	 * @param {'CTRL'|'SHIFT'|null} key - The keyboard modifier ('CTRL', 'SHIFT') or null if key is not needed.
+	 * @param {?('CTRL'|'SHIFT')} key - The keyboard modifier ('CTRL', 'SHIFT') or null if key is not needed.
 	 * @returns {boolean} `true` if the operation has been successfully removed, `false` otherwise.
 	 */
 	unsetMouseAction( mouse, key = null ) {
@@ -1421,8 +1428,8 @@ class ArcballControls extends Controls {
 	 *
 	 * @private
 	 * @param {0|1|2|'WHEEL'} mouse - Mouse button index (0, 1, 2) or 'WHEEL' for wheel notches.
-	 * @param {'CTRL'|'SHIFT'|null} key - Keyboard modifier.
-	 * @returns {'PAN'|'ROTATE'|'ZOOM'|'FOV'|null} The operation if it has been found, `null` otherwise.
+	 * @param {?('CTRL'|'SHIFT')} key - Keyboard modifier.
+	 * @returns {?('PAN'|'ROTATE'|'ZOOM'|'FOV')} The operation if it has been found, `null` otherwise.
 	 */
 	getOpFromAction( mouse, key ) {
 
@@ -1463,7 +1470,7 @@ class ArcballControls extends Controls {
 	 *
 	 * @private
 	 * @param {0|1|2} mouse - Mouse button index (0, 1, 2)
-	 * @param {'CTRL'|'SHIFT'|null} key - Keyboard modifier
+	 * @param {?('CTRL'|'SHIFT')} key - Keyboard modifier
 	 * @returns {?STATE} The FSA state obtained from the operation associated to mouse/keyboard combination.
 	 */
 	getOpStateFromAction( mouse, key ) {
@@ -2005,8 +2012,8 @@ class ArcballControls extends Controls {
 		const gizmoZ = new Line( curveGeometry, curveMaterialZ );
 
 		const rotation = Math.PI * 0.5;
-		gizmoX.rotation.x = rotation;
-		gizmoY.rotation.y = rotation;
+		gizmoX.rotation.y = rotation;
+		gizmoY.rotation.x = rotation;
 
 
 		//setting state
@@ -2509,8 +2516,8 @@ class ArcballControls extends Controls {
 	 * Sets values in transformation object.
 	 *
 	 * @private
-	 * @param {Matrix4} [camera=null] - Transformation to be applied to the camera.
-	 * @param {Matrix4} [gizmos=null] - Transformation to be applied to gizmos.
+	 * @param {?Matrix4} [camera=null] - Transformation to be applied to the camera.
+	 * @param {?Matrix4} [gizmos=null] - Transformation to be applied to gizmos.
 	 */
 	setTransformationMatrices( camera = null, gizmos = null ) {
 

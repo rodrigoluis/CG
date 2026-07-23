@@ -1,5 +1,5 @@
 import {
-	FileLoader, Loader, TextureLoader, RepeatWrapping, MeshBasicNodeMaterial,
+	FileLoader, Loader, ImageBitmapLoader, Texture, RepeatWrapping, MeshBasicNodeMaterial,
 	MeshPhysicalNodeMaterial, DoubleSide,
 } from 'three/webgpu';
 
@@ -410,9 +410,15 @@ class MaterialXNode {
 	getTexture() {
 
 		const filePrefix = this.getRecursiveAttribute( 'fileprefix' ) || '';
+		const uri = filePrefix + this.value;
+
+		if ( this.materialX.textureCache.has( uri ) ) {
+
+			return this.materialX.textureCache.get( uri );
+
+		}
 
 		let loader = this.materialX.textureLoader;
-		const uri = filePrefix + this.value;
 
 		if ( uri ) {
 
@@ -421,9 +427,17 @@ class MaterialXNode {
 
 		}
 
-		const texture = loader.load( uri );
+		const texture = new Texture();
 		texture.wrapS = texture.wrapT = RepeatWrapping;
-		texture.flipY = false;
+
+		this.materialX.textureCache.set( uri, texture );
+
+		loader.load( uri, function ( imageBitmap ) {
+
+			texture.image = imageBitmap;
+			texture.needsUpdate = true;
+
+		} );
 
 		return texture;
 
@@ -872,17 +886,39 @@ class MaterialXNode {
 		material.specularIntensityNode = specularIntensityNode || float( 0.5 );
 		material.specularColorNode = specularColorNode || color( 1.0, 1.0, 1.0 );
 		material.iorNode = iorNode || float( 1.5 );
-		material.anisotropyNode = anisotropyNode || float( 0 );
-		material.anisotropyRotationNode = anisotropyRotationNode || float( 0 );
-		material.transmissionNode = transmissionNode || float( 0 );
-		material.transmissionColorNode = transmissionColorNode || color( 1.0, 1.0, 1.0 );
+
+		if ( anisotropyNode !== null ) {
+
+			material.anisotropyNode = anisotropyNode;
+			material.anisotropyRotationNode = anisotropyRotationNode || float( 0 );
+
+		}
+
+		if ( transmissionNode !== null ) {
+
+			material.transmissionNode = transmissionNode;
+			material.transmissionColorNode = transmissionColorNode || color( 1.0, 1.0, 1.0 );
+
+		}
+
 		material.thinFilmThicknessNode = thinFilmThicknessNode || float( 0 );
 		material.thinFilmIorNode = thinFilmIorNode || float( 1.5 );
-		material.sheenNode = sheenNode || float( 0 );
-		material.sheenColorNode = sheenColorNode || color( 1.0, 1.0, 1.0 );
-		material.sheenRoughnessNode = sheenRoughnessNode || float( 0.5 );
-		material.clearcoatNode = clearcoatNode || float( 0 );
-		material.clearcoatRoughnessNode = clearcoatRoughnessNode || float( 0 );
+
+		if ( sheenNode !== null ) {
+
+			material.sheenNode = sheenNode;
+			material.sheenColorNode = sheenColorNode || color( 1.0, 1.0, 1.0 );
+			material.sheenRoughnessNode = sheenRoughnessNode || float( 0.5 );
+
+		}
+
+		if ( clearcoatNode !== null ) {
+
+			material.clearcoatNode = clearcoatNode;
+			material.clearcoatRoughnessNode = clearcoatRoughnessNode || float( 0 );
+
+		}
+
 		if ( normalNode ) material.normalNode = normalNode;
 		if ( emissiveNode ) material.emissiveNode = emissiveNode;
 
@@ -1030,7 +1066,10 @@ class MaterialX {
 		this.nodesXLib = new Map();
 		//this.nodesXRefLib = new WeakMap();
 
-		this.textureLoader = new TextureLoader( manager );
+		this.textureLoader = new ImageBitmapLoader( manager );
+		this.textureLoader.setOptions( { imageOrientation: 'flipY' } );
+
+		this.textureCache = new Map();
 
 	}
 

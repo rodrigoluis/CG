@@ -8,7 +8,7 @@ import {initRenderer,
         createGroundPlaneWired} from "../libs/util/util.js";
 
 var scene = new THREE.Scene();    // Create main scene
-const clock = new THREE.Clock();
+const clock = new THREE.Timer();
 initDefaultBasicLight(scene, true); // Use default light
 
 var renderer = initRenderer();    // View function in util/utils
@@ -61,6 +61,7 @@ function showInformation()
 
 function render()
 {
+  clock.update();
   const delta = clock.getDelta();
   //stats.update();
   flyCamera.update(delta);

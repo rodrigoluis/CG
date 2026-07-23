@@ -1,4 +1,4 @@
-import { Clock, Vector3, Quaternion, Matrix4 } from 'three';
+import { Timer, Vector3, Quaternion, Matrix4 } from 'three';
 
 const RAPIER_PATH = 'https://cdn.skypack.dev/@dimforge/rapier3d-compat@0.17.3';
 
@@ -73,6 +73,8 @@ function getShape( geometry ) {
 
 	}
 
+	console.error( 'RapierPhysics: Unsupported geometry type:', geometry.type );
+
 	return null;
 
 }
@@ -95,7 +97,7 @@ async function RapierPhysics() {
 
 	if ( RAPIER === null ) {
 
-		RAPIER = await import( `${RAPIER_PATH}` );
+		RAPIER = await import( RAPIER_PATH /* @vite-ignore */ );
 		await RAPIER.init();
 
 	}
@@ -279,6 +281,20 @@ async function RapierPhysics() {
 
 	}
 
+	function applyImpulse( mesh, impulse, index = 0 ) {
+
+		let { body } = meshMap.get( mesh );
+
+		if ( mesh.isInstancedMesh ) {
+
+			body = body[ index ];
+
+		}
+
+		body.applyImpulse( impulse, true );
+
+	}
+
 	function addHeightfield( mesh, width, depth, heights, scale ) {
 
 		const shape = RAPIER.ColliderDesc.heightfield( width, depth, heights, scale );
@@ -299,11 +315,13 @@ async function RapierPhysics() {
 
 	//
 
-	const clock = new Clock();
+	const timer = new Timer();
 
 	function step() {
 
-		world.timestep = clock.getDelta();
+		timer.update();
+
+		world.timestep = timer.getDelta();
 		world.step();
 
 		//
@@ -372,7 +390,7 @@ async function RapierPhysics() {
 		 * @name RapierPhysics#addMesh
 		 * @param {Mesh} mesh The mesh to add.
 		 * @param {number} [mass=0] The mass in kg of the mesh.
-		 * @param {number} [restitution=0] The restitution/friction of the mesh.
+		 * @param {number} [restitution=0] The restitution of the mesh, usually from 0 to 1. Represents how "bouncy" objects are when they collide with each other.
 		 */
 		addMesh: addMesh,
 
@@ -410,7 +428,7 @@ async function RapierPhysics() {
 
 		/**
 		 * Adds a heightfield terrain to the physics simulation.
-		 * 
+		 *
 		 * @method
 		 * @name RapierPhysics#addHeightfield
 		 * @param {Mesh} mesh - The Three.js mesh representing the terrain.
@@ -423,7 +441,18 @@ async function RapierPhysics() {
 		 * @param {number} scale.z - Scale factor for depth.
 		 * @returns {RigidBody} The created Rapier rigid body for the heightfield.
 		 */
-		addHeightfield: addHeightfield
+		addHeightfield: addHeightfield,
+
+		/**
+		 * Applies an impulse to the given mesh which is part of the physics simulation.
+		 *
+		 * @method
+		 * @name RapierPhysics#applyImpulse
+		 * @param {Mesh} mesh - The mesh to apply the impulse to.
+		 * @param {Vector3} impulse - The impulse to apply.
+		 * @param {number} [index=0] - If the mesh is instanced, the index represents the instanced ID.
+		 */
+		applyImpulse: applyImpulse
 
 	};
 

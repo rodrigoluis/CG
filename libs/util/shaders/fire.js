@@ -33,8 +33,8 @@ export default class Fire extends THREE.Mesh {
    }
 
    update(clock) {
-      clock.getDelta();
-      var time = clock.elapsedTime;
+      clock.update();
+      const time = clock.getElapsed();
 
       var invModelMatrix = this.material.uniforms.invModelMatrix.value;
       this.updateMatrixWorld();

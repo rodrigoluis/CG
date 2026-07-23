@@ -64,8 +64,9 @@ render();
 //----------------------------------------------------------------------------------
 function render()
 {
+   clock.update();
 	let frameTime = clock.getDelta();
-	let elapsedTime = clock.getElapsedTime() % 1000;
+	let elapsedTime = clock.getElapsed() % 1000;
    
 	// reset flags
 	cameraIsMoving = false;
@@ -229,7 +230,7 @@ function initTHREEjs()
 	context.getExtension('EXT_color_buffer_float');
    document.getElementById("webgl-output").appendChild(renderer.domElement);
 
-   clock = new THREE.Clock();
+   clock = new THREE.Timer();
          
 	rayTracingScene = new THREE.Scene();
 	screenCopyScene = new THREE.Scene();

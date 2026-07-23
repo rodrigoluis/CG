@@ -16,7 +16,7 @@ import {initRenderer,
 let stats;
 let camera, controls, scene, renderer, light;
 let textureLoader;
-const clock = new THREE.Clock();
+const clock = new THREE.Timer();
 const mouseCoords = new THREE.Vector2();
 const raycaster = new THREE.Raycaster();
 const ballMaterial = new THREE.MeshPhongMaterial( { color: 0x202020 } );
@@ -298,6 +298,7 @@ function initInput() {
 }
 
 function updatePhysics( deltaTime ) {
+   clock.update();
 	// Step world
 	physicsWorld.stepSimulation( deltaTime, 10 );
 

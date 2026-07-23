@@ -21,7 +21,7 @@ orbit = new OrbitControls( camera, renderer.domElement ); // Enable mouse rotati
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
 // To be used to manage keyboard
-let clock = new THREE.Clock();
+let clock = new THREE.Timer();
 
 // Show text information onscreen
 showInformation();
@@ -50,6 +50,7 @@ render();
 function keyboardUpdate() {
 
   keyboard.update();
+  clock.update();
 
   var speed = 30;
   var moveDistance = speed * clock.getDelta();

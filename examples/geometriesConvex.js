@@ -11,7 +11,6 @@ import {initRenderer,
 
 var scene = new THREE.Scene();    // Create main scene
 var stats = new Stats();          // To show FPS information        
-var clock = new THREE.Clock();
 var light = initDefaultBasicLight(scene, true, new THREE.Vector3(3, 3, 1)); 
 var renderer = initRenderer();    // View function in util/utils
   renderer.setClearColor("rgb(30, 30, 30)");

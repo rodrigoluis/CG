@@ -4,7 +4,7 @@ import {
 	Matrix4,
 	Vector3
 } from 'three';
-import * as fflate from '../libs/fflate.module.js';
+import { gunzipSync } from '../libs/fflate.module.js';
 import { Volume } from '../misc/Volume.js';
 
 /**
@@ -223,13 +223,13 @@ class NRRDLoader extends Loader {
 
 			if ( ! headerObject.isNrrd ) {
 
-				throw new Error( 'Not an NRRD file' );
+				throw new Error( 'THREE.NRRDLoader: Not an NRRD file' );
 
 			}
 
 			if ( headerObject.encoding === 'bz2' || headerObject.encoding === 'bzip2' ) {
 
-				throw new Error( 'Bzip is not supported' );
+				throw new Error( 'THREE.NRRDLoader: Bzip is not supported' );
 
 			}
 
@@ -356,7 +356,7 @@ class NRRDLoader extends Loader {
 
 			// we need to decompress the datastream
 			// here we start the unzipping and get a typed Uint8Array back
-			_data = fflate.gunzipSync( new Uint8Array( _data ) );
+			_data = gunzipSync( new Uint8Array( _data ) );
 
 		} else if ( headerObject.encoding === 'ascii' || headerObject.encoding === 'text' || headerObject.encoding === 'txt' || headerObject.encoding === 'hex' ) {
 
@@ -598,7 +598,7 @@ const _fieldFunctions = {
 				this.__array = Float64Array;
 				break;
 			default:
-				throw new Error( 'Unsupported NRRD data type: ' + data );
+				throw new Error( 'THREE.NRRDLoader: Unsupported NRRD data type: ' + data );
 
 		}
 

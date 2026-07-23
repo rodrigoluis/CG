@@ -10,7 +10,7 @@ import {initRenderer,
 import Fire from '../libs/util/shaders/fire.js'
 
 let scene, renderer, camera, light, orbit; // Initial variables
-var clock = new THREE.Clock();;
+var clock = new THREE.Timer();
 
 scene = new THREE.Scene();    // Create main scene
 renderer = initRenderer();    // Init a basic renderer
@@ -46,7 +46,7 @@ render();
 
 function render()
 {
-  requestAnimationFrame(render);
   fire.update(clock); // Update fire animation
+  requestAnimationFrame(render);  
   renderer.render(scene, camera) // Render scene
 }

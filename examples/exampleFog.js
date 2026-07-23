@@ -11,7 +11,7 @@ import {
    createGroundPlaneWired
 } from "../libs/util/util.js";
 
-let clock = new THREE.Clock();
+let clock = new THREE.Timer();
 let flyOn = true;
 let baseColor = "rgb(175, 200, 220)"; // It's important the fog color is the same as the background
 let keyboard = new KeyboardState();
@@ -92,6 +92,7 @@ function keyboardUpdate() {
 }
 
 function render() {
+   clock.update();
    const delta = clock.getDelta();
    keyboardUpdate();
    if (flyOn) flyCamera.update(delta);

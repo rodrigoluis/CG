@@ -26,7 +26,7 @@ camera = initCamera(new THREE.Vector3(0, 7, 15)); // Init camera in this positio
 window.addEventListener('resize', function () { onWindowResize(camera, renderer) }, false);
 scene.add(camera); // Add camera to the scene
 orbit = new OrbitControls(camera, renderer.domElement); // Enable mouse rotation, pan, zoom etc.
-clock = new THREE.Clock();
+clock = new THREE.Timer();
 keyboard = new KeyboardState();
 
 let DOWN = 0, LEFT = 1, UP = 2, RIGHT = 3; // Directions
@@ -105,6 +105,7 @@ function render() {
 
 // Update sprite position 
 function spriteUpdate() {
+   clock.update();
    delta = clock.getDelta();
    spriteMixer.update(delta);
    let speed = 0.05; // Speed of the sprite movement

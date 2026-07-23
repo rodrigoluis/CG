@@ -85,12 +85,12 @@ function render() {
     requestAnimationFrame(render);
     keyboardUpdate();
     if (dragOn) {
-        dragControl.activate(); //
+        dragControl.connect(renderer.domElement ); //
         trackballControls.enabled = false;
         infoBox.changeMessage("Drag Control ON");            
     }
     else {
-        dragControl.deactivate();
+        dragControl.disconnect();
         trackballControls.enabled = true;
         trackballControls.update();
         infoBox.changeMessage("Drag Control OFF");                

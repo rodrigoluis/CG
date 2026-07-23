@@ -1,6 +1,6 @@
-import { Program, FunctionDeclaration, Switch, For, AccessorElements, Ternary, Varying, DynamicElement, StaticElement, FunctionParameter, Unary, Conditional, VariableDeclaration, Operator, Number, String, FunctionCall, Return, Accessor, Uniform, Discard, SwitchCase, Continue, Break, While, Comment } from './AST.js';
+import { Program, FunctionDeclaration, Switch, For, AccessorElements, Ternary, Varying, DynamicElement, StaticElement, FunctionParameter, Unary, Conditional, VariableDeclaration, Operator, Number, String, FunctionCall, Return, Accessor, Uniform, Discard, SwitchCase, Continue, Break, While, Comment, StructMember, StructDefinition } from './AST.js';
 
-import { isType } from './TranspilerUtils.js';
+import { isBuiltinType } from './TranspilerUtils.js';
 
 const unaryOperators = [
 	'+', '-', '~', '!', '++', '--'
@@ -11,22 +11,21 @@ const arithmeticOperators = [
 ];
 
 const precedenceOperators = [
-	'/', '*', '%',
-	'-', '+',
-	'<<', '>>',
-	'<', '>', '<=', '>=',
-	'==', '!=',
-	'&',
-	'^',
-	'|',
-	'&&',
-	'^^',
-	'||',
-	'?',
-	'=',
-	'+=', '-=', '*=', '/=', '%=', '^=', '&=', '|=', '<<=', '>>=',
-	','
-].reverse();
+	[ ',' ],
+	[ '=', '+=', '-=', '*=', '/=', '%=', '^=', '&=', '|=', '<<=', '>>=' ],
+	[ '?' ],
+	[ '||' ],
+	[ '^^' ],
+	[ '&&' ],
+	[ '|' ],
+	[ '^' ],
+	[ '&' ],
+	[ '==', '!=' ],
+	[ '<', '>', '<=', '>=' ],
+	[ '<<', '>>' ],
+	[ '+', '-' ],
+	[ '*', '/', '%' ]
+];
 
 const associativityRightToLeft = [
 	'=',
@@ -171,7 +170,7 @@ class Tokenizer {
 
 	skip( ...params ) {
 
-		let remainingCode = this.source.substr( this.position );
+		let remainingCode = this.source.slice( this.position );
 		let i = params.length;
 
 		while ( i -- ) {
@@ -183,7 +182,7 @@ class Tokenizer {
 
 				this.position += skipLength;
 
-				remainingCode = this.source.substr( this.position );
+				remainingCode = this.source.slice( this.position );
 
 				// re-skip, new remainingCode is generated
 				// maybe exist previous regexp non detected
@@ -256,6 +255,7 @@ class GLSLDecoder {
 		this.index = 0;
 		this.tokenizer = null;
 		this.keywords = [];
+		this.structTypes = new Map();
 
 		this.addPolyfill( 'gl_FragCoord', 'vec3 gl_FragCoord = vec3( screenCoordinate.x, screenCoordinate.y.oneMinus(), screenCoordinate.z );' );
 
@@ -334,7 +334,7 @@ class GLSLDecoder {
 
 		let groupIndex = 0;
 
-		for ( const operator of precedenceOperators ) {
+		for ( const operators of precedenceOperators ) {
 
 			const parseToken = ( i, inverse = false ) => {
 
@@ -351,7 +351,9 @@ class GLSLDecoder {
 
 				}
 
-				if ( groupIndex === 0 && token.str === operator ) {
+				if ( groupIndex === 0 && operators.includes( token.str ) ) {
+
+					const operator = token.str;
 
 					if ( operator === '?' ) {
 
@@ -396,7 +398,9 @@ class GLSLDecoder {
 
 			};
 
-			if ( associativityRightToLeft.includes( operator ) ) {
+			const isRightAssociative = operators.some( op => associativityRightToLeft.includes( op ) );
+
+			if ( isRightAssociative ) {
 
 				for ( let i = 0; i < tokens.length; i ++ ) {
 
@@ -673,7 +677,7 @@ class GLSLDecoder {
 
 			params.push( new FunctionParameter( type, name, qualifier, immutable ) );
 
-			if ( tokens[ i ] && tokens[ i ].str !== ',' ) throw new Error( 'Expected ","' );
+			if ( tokens[ i ] && tokens[ i ].str !== ',' ) throw new Error( 'THREE.GLSLDecoder: Expected ","' );
 
 		}
 
@@ -777,6 +781,54 @@ class GLSLDecoder {
 
 	}
 
+	parseStructDefinition() {
+
+		const tokens = this.readTokensUntil( ';' );
+
+		const structName = tokens[ 1 ].str;
+
+		if ( tokens[ 2 ].str !== '{' ) {
+
+			throw new Error( 'THREE.GLSLDecoder: Expected \'{\' after struct name ' );
+
+		}
+
+		const structMembers = [];
+		for ( let i = 3; i < tokens.length - 2; i += 3 ) {
+
+			const typeToken = tokens[ i ];
+			const nameToken = tokens[ i + 1 ];
+
+			if ( typeToken.type != 'literal' || nameToken.type != 'literal' ) {
+
+				throw new Error( 'THREE.GLSLDecoder: Invalid struct declaration' );
+
+			}
+
+			if ( tokens[ i + 2 ].str !== ';' ) {
+
+				throw new Error( 'THREE.GLSLDecoder: Missing \';\' after struct member name' );
+
+			}
+
+			const member = new StructMember( typeToken.str, nameToken.str );
+			structMembers.push( member );
+
+		}
+
+		if ( tokens[ tokens.length - 2 ].str !== '}' ) {
+
+			throw new Error( 'THREE.GLSLDecoder: Missing closing \'}\' for struct ' + structName );
+
+		}
+
+		const definition = new StructDefinition( structName, structMembers );
+		this.structTypes.set( structName, definition );
+
+		return definition;
+
+	}
+
 	parseReturn() {
 
 		this.readToken(); // skip 'return'
@@ -824,7 +876,9 @@ class GLSLDecoder {
 
 		let initialization;
 
-		if ( initializationTokens[ 0 ] && isType( initializationTokens[ 0 ].str ) ) {
+		const firstToken = initializationTokens[ 0 ];
+
+		if ( firstToken && ( isBuiltinType( firstToken.str ) || this.structTypes.has( firstToken.str ) ) ) {
 
 			initialization = this.parseVariablesFromToken( initializationTokens );
 
@@ -867,7 +921,7 @@ class GLSLDecoder {
 		// Validate curly braces
 		if ( this.getToken().str !== '{' ) {
 
-			throw new Error( 'Expected \'{\' after switch(...) ' );
+			throw new Error( 'THREE.GLSLDecoder: Expected \'{\' after switch(...) ' );
 
 		}
 
@@ -1076,7 +1130,11 @@ class GLSLDecoder {
 
 					statement = this.parseVarying();
 
-				} else if ( isType( token.str ) ) {
+				} else if ( token.str === 'struct' ) {
+
+					statement = this.parseStructDefinition();
+
+				} else if ( isBuiltinType( token.str ) || this.structTypes.has( token.str ) ) {
 
 					if ( this.getToken( 2 ).str === '(' ) {
 
@@ -1156,7 +1214,9 @@ class GLSLDecoder {
 		this.tokenizer = new Tokenizer( polyfill + source ).tokenize();
 
 		const body = this.parseBlock();
+
 		const program = new Program( body );
+		program.structTypes = this.structTypes;
 
 		return program;
 

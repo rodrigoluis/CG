@@ -26,7 +26,7 @@ var TRANSFORM_AUX = null;
 var ZERO_QUATERNION = new THREE.Quaternion(0, 0, 0, 1);
 
 // Graphics variables
-var clock = new THREE.Clock();
+var clock = new THREE.Timer();
 var speedometer;
 
 // Setup scene
@@ -78,6 +78,7 @@ Ammo().then(function() {
 });
 
 function render() {
+   clock.update();
 	var dt = clock.getDelta();
 	for (var i = 0; i < syncList.length; i++)
 		syncList[i](dt);

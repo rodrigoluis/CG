@@ -124,8 +124,6 @@ controls.addEventListener('unlock', function () {
     instructions.style.display = '';
 });
 
-scene.add(controls.getObject());
-
 const speed = 20;
 let moveForward = false;
 let moveBackward = false;
@@ -161,7 +159,7 @@ function movementControls(key, value) {
 }
 
 function moveAnimate(delta) {
-    raycaster.ray.origin.copy(controls.getObject().position);
+    raycaster.ray.origin.copy(controls.object.position);
     const isIntersectingGround = raycaster.intersectObjects([ground, ground2]).length > 0;
     const isIntersectingRamp = raycaster.intersectObject(ramp).length > 0;
 
@@ -193,10 +191,11 @@ function moveAnimate(delta) {
 // Listen window size changes
 window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
 
-const clock = new THREE.Clock();
+const clock = new THREE.Timer();
 render();
 function render() {
     stats.update();
+    clock.update();
 
     if (controls.isLocked) {
         moveAnimate(clock.getDelta());

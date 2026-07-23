@@ -23,7 +23,8 @@ import {
 	SpotLight,
 	Sprite,
 	SpriteMaterial,
-	TextureLoader
+	TextureLoader,
+	EquirectangularReflectionMapping
 } from 'three';
 
 import { EXRLoader } from '../loaders/EXRLoader.js';
@@ -41,7 +42,7 @@ const _taskCache = new WeakMap();
  *
  * ```js
  * const loader = new Rhino3dmLoader();
- * loader.setLibraryPath( 'https://cdn.jsdelivr.net/npm/rhino3dm@8.0.1' );
+ * loader.setLibraryPath( 'https://cdn.jsdelivr.net/npm/rhino3dm@8.17.0/' );
  *
  * const object = await loader.loadAsync( 'models/3dm/Rhino_Logo.3dm' );
  * scene.add( object );
@@ -507,7 +508,7 @@ class Rhino3dmLoader extends Loader {
 
 			new EXRLoader().load( renderEnvironment.image, function ( texture ) {
 
-				texture.mapping = THREE.EquirectangularReflectionMapping;
+				texture.mapping = EquirectangularReflectionMapping;
 				mat.envMap = texture;
 
 			} );
@@ -697,7 +698,7 @@ class Rhino3dmLoader extends Loader {
 
 				geometry = loader.parse( obj.geometry );
 
-				if ( geometry.attributes.hasOwnProperty( 'color' ) ) {
+				if ( geometry.hasAttribute( 'color' ) ) {
 
 					material = new PointsMaterial( { vertexColors: true, sizeAttenuation: false, size: 2 } );
 
@@ -740,7 +741,7 @@ class Rhino3dmLoader extends Loader {
 				}
 
 
-				if ( geometry.attributes.hasOwnProperty( 'color' ) ) {
+				if ( geometry.hasAttribute( 'color' ) ) {
 
 					mat.vertexColors = true;
 

@@ -10,7 +10,7 @@ import {initRenderer,
 
 //----------------------------------------------------------------------        
 let scene = new THREE.Scene();    // Create main scene
-let clock = new THREE.Clock();
+let clock = new THREE.Timer();
 let renderer = initRenderer();    // View function in util/utils
     renderer.setClearColor("rgb(60, 60, 80)");
 let camera = initCamera(new THREE.Vector3(15, 7, -10)); // Init camera in this position
@@ -106,11 +106,12 @@ function rotateR2D2(delta) {
 }
 
 function render() {
-    const delta = clock.getDelta();
-    if ( mixer !== undefined ) mixer.update( delta );
-    if ( r2d2 !== undefined ) rotateR2D2( delta );
+   clock.update();
+   const delta = clock.getDelta();
+   if ( mixer !== undefined ) mixer.update( delta );
+   if ( r2d2 !== undefined ) rotateR2D2( delta );
 
-    lightFollowingCamera(light, camera) // Makes light follow the camera    
-    requestAnimationFrame( render );
-    renderer.render( scene, camera );
+   lightFollowingCamera(light, camera) // Makes light follow the camera    
+   requestAnimationFrame( render );
+   renderer.render( scene, camera );
 }

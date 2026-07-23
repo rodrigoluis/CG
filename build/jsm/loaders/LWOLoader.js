@@ -23,7 +23,8 @@ import {
 	RepeatWrapping,
 	SRGBColorSpace,
 	TextureLoader,
-	Vector2
+	Vector2,
+	Vector3
 } from 'three';
 
 import { IFFParser } from './lwo/IFFParser.js';
@@ -36,8 +37,8 @@ let _lwoTree;
  * LWO3 and LWO2 formats are supported.
  *
  * References:
- * - [LWO3 format specification]{@link https://static.lightwave3d.com/sdk/2019/html/filefmts/lwo3.html}
- * - [LWO2 format specification]{@link https://static.lightwave3d.com/sdk/2019/html/filefmts/lwo2.html}
+ * - [LWO3 format specification](https://static.lightwave3d.com/sdk/2019/html/filefmts/lwo3.html)
+ * - [LWO2 format specification](https://static.lightwave3d.com/sdk/2019/html/filefmts/lwo2.html)
  *
  * ```js
  * const loader = new LWOLoader();
@@ -49,6 +50,7 @@ let _lwoTree;
  *
  * @augments Loader
  * @three_import import { LWOLoader } from 'three/addons/loaders/LWOLoader.js';
+ * @deprecated since r185.
  */
 class LWOLoader extends Loader {
 
@@ -56,10 +58,13 @@ class LWOLoader extends Loader {
 	 * Constructs a new LWO loader.
 	 *
 	 * @param {LoadingManager} [manager] - The loading manager.
+	 * @deprecated since r185.
 	 */
 	constructor( manager ) {
 
 		super( manager );
+
+		console.warn( 'THREE.LWOLoader: The loader has been deprecated and will be removed with r195. Export your LWO files to glTF before using them on the web.' ); // @deprecated, r185
 
 	}
 
@@ -185,8 +190,6 @@ class LWOTreeParser {
 
 		} );
 
-		this.applyPivots( finalMeshes );
-
 		return finalMeshes;
 
 	}
@@ -204,38 +207,14 @@ class LWOTreeParser {
 		if ( layer.name ) mesh.name = layer.name;
 		else mesh.name = this.defaultLayerName + '_layer_' + layer.number;
 
-		mesh.userData.pivot = layer.pivot;
+		const pivot = layer.pivot;
+		if ( pivot[ 0 ] !== 0 || pivot[ 1 ] !== 0 || pivot[ 2 ] !== 0 ) {
+
+			mesh.pivot = new Vector3( pivot[ 0 ], pivot[ 1 ], pivot[ 2 ] );
+
+		}
 
 		return mesh;
-
-	}
-
-	// TODO: may need to be reversed in z to convert LWO to three.js coordinates
-	applyPivots( meshes ) {
-
-		meshes.forEach( function ( mesh ) {
-
-			mesh.traverse( function ( child ) {
-
-				const pivot = child.userData.pivot;
-
-				child.position.x += pivot[ 0 ];
-				child.position.y += pivot[ 1 ];
-				child.position.z += pivot[ 2 ];
-
-				if ( child.parent ) {
-
-					const parentPivot = child.parent.userData.pivot;
-
-					child.position.x -= parentPivot[ 0 ];
-					child.position.y -= parentPivot[ 1 ];
-					child.position.z -= parentPivot[ 2 ];
-
-				}
-
-			} );
-
-		} );
 
 	}
 
@@ -812,13 +791,6 @@ class GeometryParser {
 
 		this.parseUVs( geometry, layer );
 		this.parseMorphTargets( geometry, layer );
-
-		// TODO: z may need to be reversed to account for coordinate system change
-		geometry.translate( - layer.pivot[ 0 ], - layer.pivot[ 1 ], - layer.pivot[ 2 ] );
-
-		// let userData = geometry.userData;
-		// geometry = geometry.toNonIndexed()
-		// geometry.userData = userData;
 
 		return geometry;
 

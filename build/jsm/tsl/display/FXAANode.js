@@ -1,5 +1,5 @@
 import { Vector2, TempNode } from 'three/webgpu';
-import { nodeObject, Fn, uniformArray, select, float, NodeUpdateType, uv, dot, clamp, uniform, convertToTexture, smoothstep, bool, vec2, vec3, If, Loop, max, min, Break, abs } from 'three/tsl';
+import { Fn, uniformArray, select, float, NodeUpdateType, uv, dot, clamp, uniform, convertToTexture, smoothstep, bool, vec2, vec3, If, Loop, max, min, Break, abs } from 'three/tsl';
 
 /**
  * Post processing node for applying FXAA. This node requires sRGB input
@@ -304,26 +304,25 @@ class FXAANode extends TempNode {
 		const ApplyFXAA = Fn( ( [ uv, texSize ] ) => {
 
 			const luminance = SampleLuminanceNeighborhood( texSize, uv );
-			If( ShouldSkipPixel( luminance ), () => {
+			const finalUv = vec2( uv ).toVar();
 
-				return Sample( uv );
+			If( ShouldSkipPixel( luminance ).not(), () => {
 
-			} );
+				const pixelBlend = DeterminePixelBlendFactor( luminance );
+				const edge = DetermineEdge( texSize, luminance );
+				const edgeBlend = DetermineEdgeBlendFactor( texSize, luminance, edge, uv );
 
-			const pixelBlend = DeterminePixelBlendFactor( luminance );
-			const edge = DetermineEdge( texSize, luminance );
-			const edgeBlend = DetermineEdgeBlendFactor( texSize, luminance, edge, uv );
+				const finalBlend = max( pixelBlend, edgeBlend );
 
-			const finalBlend = max( pixelBlend, edgeBlend );
-			const finalUv = uv.toVar();
+				If( edge.isHorizontal, () => {
 
-			If( edge.isHorizontal, () => {
+					finalUv.y.addAssign( edge.pixelStep.mul( finalBlend ) );
 
-				finalUv.y.addAssign( edge.pixelStep.mul( finalBlend ) );
+				} ).Else( () => {
 
-			} ).Else( () => {
+					finalUv.x.addAssign( edge.pixelStep.mul( finalBlend ) );
 
-				finalUv.x.addAssign( edge.pixelStep.mul( finalBlend ) );
+				} );
 
 			} );
 
@@ -362,4 +361,4 @@ export default FXAANode;
  * @param {Node<vec4>} node - The node that represents the input of the effect.
  * @returns {FXAANode}
  */
-export const fxaa = ( node ) => nodeObject( new FXAANode( convertToTexture( node ) ) );
+export const fxaa = ( node ) => new FXAANode( convertToTexture( node ) );

@@ -26,7 +26,7 @@ const _vector = new Vector3();
 const _matrix = new Matrix4();
 
 /**
- * This class solves the Inverse Kinematics Problem with a [CCD Algorithm]{@link https://web.archive.org/web/20221206080850/https://sites.google.com/site/auraliusproject/ccd-algorithm}.
+ * This class solves the Inverse Kinematics Problem with a [CCD Algorithm](https://web.archive.org/web/20221206080850/https://sites.google.com/site/auraliusproject/ccd-algorithm).
  *
  * `CCDIKSolver` is designed to work with instances of {@link SkinnedMesh}.
  *
@@ -50,7 +50,7 @@ class CCDIKSolver {
 		/**
 		 * The IK objects.
 		 *
-		 * @type {SkinnedMesh}
+		 * @type {Array<CCDIKSolver~IK>}
 		 */
 		this.iks = iks;
 
@@ -204,7 +204,11 @@ class CCDIKSolver {
 
 					if ( c > 1.0 ) c = 1.0;
 
-					const c2 = math.sqrt( 1 - c * c );
+					// preserve sign of the rotation along the limitation axis,
+					// otherwise negative rotations get mirrored to positive
+					const dot = link.quaternion.x * limitation.x + link.quaternion.y * limitation.y + link.quaternion.z * limitation.z;
+					const sign = dot < 0 ? - 1 : 1;
+					const c2 = sign * math.sqrt( 1 - c * c );
 					link.quaternion.set( limitation.x * c2,
 					                     limitation.y * c2,
 					                     limitation.z * c2,
@@ -357,7 +361,7 @@ class CCDIKHelper extends Object3D {
 		/**
 		 * The helpers sphere geometry.
 		 *
-		 * @type {SkinnedMesh}
+		 * @type {SphereGeometry}
 		 */
 		this.sphereGeometry = new SphereGeometry( sphereSize, 16, 8 );
 

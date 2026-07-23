@@ -100,6 +100,7 @@ class PCDLoader extends Loader {
 	/**
 	 * Get dataview value by field type and size.
 	 *
+	 * @private
 	 * @param {DataView} dataview - The DataView to read from.
 	 * @param {number} offset - The offset to start reading from.
 	 * @param {'F' | 'U' | 'I'} type - Field type.
@@ -187,8 +188,8 @@ class PCDLoader extends Loader {
 				if ( ctrl < ( 1 << 5 ) ) {
 
 					ctrl ++;
-					if ( outPtr + ctrl > outLength ) throw new Error( 'Output buffer is not large enough' );
-					if ( inPtr + ctrl > inLength ) throw new Error( 'Invalid compressed data' );
+					if ( outPtr + ctrl > outLength ) throw new Error( 'THREE.PCDLoader: Output buffer is not large enough' );
+					if ( inPtr + ctrl > inLength ) throw new Error( 'THREE.PCDLoader: Invalid compressed data' );
 					do {
 
 						outData[ outPtr ++ ] = inData[ inPtr ++ ];
@@ -199,18 +200,18 @@ class PCDLoader extends Loader {
 
 					len = ctrl >> 5;
 					ref = outPtr - ( ( ctrl & 0x1f ) << 8 ) - 1;
-					if ( inPtr >= inLength ) throw new Error( 'Invalid compressed data' );
+					if ( inPtr >= inLength ) throw new Error( 'THREE.PCDLoader: Invalid compressed data' );
 					if ( len === 7 ) {
 
 						len += inData[ inPtr ++ ];
-						if ( inPtr >= inLength ) throw new Error( 'Invalid compressed data' );
+						if ( inPtr >= inLength ) throw new Error( 'THREE.PCDLoader: Invalid compressed data' );
 
 					}
 
 					ref -= inData[ inPtr ++ ];
-					if ( outPtr + len + 2 > outLength ) throw new Error( 'Output buffer is not large enough' );
-					if ( ref < 0 ) throw new Error( 'Invalid compressed data' );
-					if ( ref >= outPtr ) throw new Error( 'Invalid compressed data' );
+					if ( outPtr + len + 2 > outLength ) throw new Error( 'THREE.PCDLoader: Output buffer is not large enough' );
+					if ( ref < 0 ) throw new Error( 'THREE.PCDLoader: Invalid compressed data' );
+					if ( ref >= outPtr ) throw new Error( 'THREE.PCDLoader: Invalid compressed data' );
 					do {
 
 						outData[ outPtr ++ ] = outData[ ref ++ ];
@@ -517,7 +518,7 @@ class PCDLoader extends Loader {
 				if ( offset.label !== undefined ) {
 
 					const labelIndex = PCDheader.fields.indexOf( 'label' );
-					label.push( dataview.getInt32( ( PCDheader.points * offset.label ) + PCDheader.size[ labelIndex ] * i, this.littleEndian ) );
+					label.push( this._getDataView( dataview, ( PCDheader.points * offset.label ) + PCDheader.size[ labelIndex ] * i, PCDheader.type[ labelIndex ], PCDheader.size[ labelIndex ] ) );
 
 				}
 
@@ -577,7 +578,8 @@ class PCDLoader extends Loader {
 
 				if ( offset.label !== undefined ) {
 
-					label.push( dataview.getInt32( row + offset.label, this.littleEndian ) );
+					const labelIndex = PCDheader.fields.indexOf( 'label' );
+					label.push( this._getDataView( dataview, row + offset.label, PCDheader.type[ labelIndex ], PCDheader.size[ labelIndex ] ) );
 
 				}
 

@@ -247,7 +247,7 @@ export function initStats(type) {
  *
  * @param additionalProperties Additional properties to pass into the renderer
  */
-export function initRenderer(color = "rgb(0, 0, 0)", shadowMapType = THREE.PCFSoftShadowMap ) {
+export function initRenderer(color = "rgb(0, 0, 0)", shadowMapType = THREE.PCFShadowMap ) {
 
    //var props = (typeof additionalProperties !== 'undefined' && additionalProperties) ? additionalProperties : {};
    var renderer = new THREE.WebGLRenderer();

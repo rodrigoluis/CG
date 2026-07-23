@@ -9,7 +9,7 @@ import {initRenderer,
         onWindowResize} from "../libs/util/util.js";
 
 var scene = new THREE.Scene();    // Create main scene
-var clock = new THREE.Clock();
+var clock = new THREE.Timer();
 var light = initDefaultBasicLight(scene, true, new THREE.Vector3(2, 2, 1), 10, 1024); 
     light.intensity = 1.0;
 var renderer = initRenderer();    // View function in util/utils
@@ -144,7 +144,8 @@ function buildInterface()
 
 function render()
 {
-  let delta = clock.getDelta(); 
+   clock.update();
+   let delta = clock.getDelta(); 
 
   // Animation control
   if (playAction)

@@ -12,7 +12,7 @@ import { initCamera,
 
 let scene, renderer, camera, orbit, clock, stats; // Initial variables
 scene = new THREE.Scene();    // Create main scene
-clock = new THREE.Clock();
+clock = new THREE.Timer();
 stats = new Stats();          // To show FPS information
 initDefaultBasicLight(scene, true, new THREE.Vector3(2, 2, 1), 10, 1024); // Create a 
 
@@ -196,6 +196,7 @@ function buildInterface() {
 }
 
 function render() {
+   clock.update();
    stats.update();
    let delta = clock.getDelta();
    let time = clock.getElapsedTime();

@@ -2,7 +2,7 @@ import {
 	FileLoader,
 	Loader
 } from 'three';
-import opentype from '../libs/opentype.module.js';
+import opentype from 'https://cdn.jsdelivr.net/npm/opentype.js@1.3.4/+esm';
 
 /**
  * A loader for the TTF format.
@@ -153,13 +153,13 @@ class TTFLoader extends Loader {
 					} );
 
 					if ( Array.isArray( glyph.unicodes ) && glyph.unicodes.length > 0 ) {
-						
+
 						glyph.unicodes.forEach( function ( unicode ) {
-							
+
 							glyphs[ String.fromCodePoint( unicode ) ] = token;
-							
+
 						} );
-						
+
 					} else {
 
 						glyphs[ String.fromCodePoint( glyph.unicode ) ] = token;

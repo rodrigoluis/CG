@@ -12,7 +12,7 @@ import {
 	Line2NodeMaterial,
 	Vector2
 } from 'three/webgpu';
-import { LineSegmentsGeometry } from '../../lines/LineSegmentsGeometry.js';
+import { LineSegmentsGeometry } from '../LineSegmentsGeometry.js';
 
 const _start = new Vector3();
 const _end = new Vector3();
@@ -321,6 +321,14 @@ class LineSegments2 extends Mesh {
 		if ( camera === null && ! worldUnits ) {
 
 			console.error( 'LineSegments2: "Raycaster.camera" needs to be set in order to raycast against LineSegments2 while worldUnits is set to false.' );
+
+		}
+
+		// early out if no resolution has been set (line was not rendered yet)
+
+		if ( worldUnits === false && ( this._resolution.x === 0 || this._resolution.y === 0 ) ) {
+
+			return;
 
 		}
 

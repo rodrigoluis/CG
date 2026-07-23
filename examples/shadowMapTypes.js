@@ -110,9 +110,6 @@ function buildInterface()
         case 'PCF':
             renderer.shadowMap.type = THREE.PCFShadowMap;
             break;
-        case 'PCF Soft':
-            renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-            break;
         case 'VSM':
             renderer.shadowMap.type = THREE.VSMShadowMap;
             break;
@@ -121,7 +118,7 @@ function buildInterface()
   };
 
   var gui = new GUI();
-  gui.add(controls, 'type', ['VSM', 'PCF', 'PCF Soft', 'Basic'])
+  gui.add(controls, 'type', ['VSM', 'PCF', 'Basic'])
     .name("Shadow Map Type")
     .onChange(function(e) { controls.onChangeShadowType(); });
   
