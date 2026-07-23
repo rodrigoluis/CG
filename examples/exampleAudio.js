@@ -199,7 +199,7 @@ function render() {
    clock.update();
    stats.update();
    let delta = clock.getDelta();
-   let time = clock.getElapsedTime();
+   let time = clock.getElapsed();
    requestAnimationFrame(render);
    renderer.render(scene, camera);
 
