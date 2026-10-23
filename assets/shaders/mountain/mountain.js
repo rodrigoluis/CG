@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {GLSL3} from 'three';
 
 export default class Mountain extends THREE.Mesh {
     constructor(vertexShader, fragmentShader) {
@@ -24,7 +25,8 @@ export default class Mountain extends THREE.Mesh {
         const material = new THREE.ShaderMaterial({
             vertexShader, 
             fragmentShader, 
-            side: THREE.DoubleSide
+            side: THREE.DoubleSide,
+            glslVersion: GLSL3            
          });
 
         super(geometry, material);

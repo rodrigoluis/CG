@@ -7,7 +7,7 @@ import {
     onWindowResize,
     createGroundPlaneWired
 } from '../libs/util/util.js';
-
+import {loadShaders} from '../libs/util/utilShaders.js';
 import Mountain from '../assets/shaders/mountain/mountain.js';
 
 let scene, renderer, camera, light, orbit;
@@ -26,22 +26,12 @@ window.addEventListener('resize', () => {
 light = initDefaultBasicLight(scene, true, new THREE.Vector3(10, 15, 10));
 orbit = new OrbitControls(camera, renderer.domElement);
 
-// const ground = createGroundPlaneWired(
-//     8, 8, 8, 8, 3, 'darkseagreen', 'darkolivegreen'
-// );
-// ground.position.y = -0.03;
-// scene.add(ground);
+const { vertexShader, fragmentShader } = await loadShaders(
+   '../assets/shaders/mountain/',
+   'mountain.vert',
+   'mountain.frag'
+);
 
-const [vertexShader, fragmentShader] = await Promise.all([
-   fetch('../assets/shaders/mountain/mountain.vert').then(response => {
-      if (!response.ok) throw new Error('Não foi possível carregar o vertex shader');
-      return response.text();
-   }),
-   fetch('../assets/shaders/mountain/mountain.frag').then(response => {
-      if (!response.ok) throw new Error('Não foi possível carregar o fragment shader');
-      return response.text();
-   })
-]);
 const mountain = new Mountain(vertexShader, fragmentShader);
 scene.add(mountain);
 

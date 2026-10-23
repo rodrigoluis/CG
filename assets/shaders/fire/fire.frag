@@ -13,7 +13,8 @@ uniform float magnitude;
 uniform float lacunarity;
 uniform float gain;
 uniform sampler2D fireTex;
-varying vec3 vWorldPos;
+in vec3 vWorldPos;
+out vec4 fragColor;
 
 vec3 mod289(vec3 x)
 {
@@ -131,5 +132,5 @@ void main()
    }
    col.rgb *= color;
    col.a = col.r;
-   gl_FragColor = col;
+   fragColor = col;
 }

@@ -8,8 +8,8 @@ import {
     onWindowResize,
     createGroundPlaneWired
 } from '../libs/util/util.js';
+import {loadShaders} from '../libs/util/utilShaders.js';
 import Fire from '../assets/shaders/fire/fire.js';
-
 
 let scene = new THREE.Scene();
 let renderer = initRenderer();
@@ -39,18 +39,12 @@ cube.position.set(0, 0.5, 0);
 cube.castShadow = true;
 scene.add(cube);
 
-// Carrega os arquivos GLSL como texto. Execute via servidor HTTP,
-// pois fetch() não funciona corretamente ao abrir o HTML com file://.
-const [vertexShader, fragmentShader] = await Promise.all([
-   fetch('../assets/shaders/fire/fire.vert').then(response => {
-      if (!response.ok) throw new Error('Não foi possível carregar fireVS.glsl');
-      return response.text();
-   }),
-   fetch('../assets/shaders/fire/fire.frag').then(response => {
-      if (!response.ok) throw new Error('Não foi possível carregar fireFS.glsl');
-      return response.text();
-   })
-]);
+//-----------------------------------------------------------
+const { vertexShader, fragmentShader } = await loadShaders(
+   '../assets/shaders/fire/',
+   'fire.vert',
+   'fire.frag'
+);
 
 const fireTex = textureLoader.load('../assets/textures/fire.png');
 const fire = new Fire(fireTex, vertexShader, fragmentShader);
@@ -59,6 +53,7 @@ const fire = new Fire(fireTex, vertexShader, fragmentShader);
 scene.add(fire);
 
 const clock = new THREE.Timer();
+
 render();
 
 function render() {

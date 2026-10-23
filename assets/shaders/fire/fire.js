@@ -3,6 +3,7 @@
  * Os shaders GLSL são recebidos como strings pelo construtor.
  */
 import * as THREE from 'three';
+import {GLSL3} from 'three';
 
 export default class Fire extends THREE.Mesh {
     constructor(fireTex, vertexShader, fragmentShader) {
@@ -24,7 +25,8 @@ export default class Fire extends THREE.Mesh {
             fragmentShader,
             transparent: true,
             depthWrite: true,
-            depthTest: true
+            depthTest: true,
+            glslVersion: GLSL3
         });
 
         super(new THREE.BoxGeometry(1.0, 1.0, 1.0), material);

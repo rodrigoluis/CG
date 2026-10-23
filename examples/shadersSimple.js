@@ -1,4 +1,5 @@
 import * as THREE from 'three';
+import {GLSL3} from 'three';
 import { OrbitControls } from '../build/jsm/controls/OrbitControls.js';
 import {
     initRenderer,
@@ -6,6 +7,7 @@ import {
     initDefaultBasicLight,
     onWindowResize
 } from '../libs/util/util.js';
+import {loadShaders} from '../libs/util/utilShaders.js';
 
 let scene, renderer, camera, light, orbit;
 
@@ -24,17 +26,14 @@ light = initDefaultBasicLight(scene, true, new THREE.Vector3(10, 15, 10));
 orbit = new OrbitControls(camera, renderer.domElement);
 
 //------------------------------------------------------------------------------------------
-const [vertexShader, fragmentShader] = await Promise.all([
-   fetch('../assets/shaders/simple/simple.vert').then(response => {
-      if (!response.ok) throw new Error('Não foi possível carregar o vertex shader');
-      return response.text();
-   }),
-   fetch('../assets/shaders/simple/simple.frag').then(response => {
-      if (!response.ok) throw new Error('Não foi possível carregar o fragment shader');
-      return response.text();
-   })
-]);
+const { vertexShader, fragmentShader } = await loadShaders(
+   '../assets/shaders/simple/',
+   'simple.vert',
+   'simple.frag'
+);
+
 const material = new THREE.ShaderMaterial({
+   glslVersion: GLSL3,
    vertexShader, 
    fragmentShader, 
    side: THREE.DoubleSide});

@@ -1,6 +1,6 @@
-varying float vHeight;
-varying vec3 vNormal;
-varying vec3 vWorldPosition;
+in float vHeight;
+in vec3 vNormal;
+out vec4 fragColor;
 
 void main() {
    vec3 sand = vec3(0.76, 0.64, 0.42);
@@ -32,5 +32,5 @@ void main() {
    // Combinação das iluminações
    vec3 finalColor = color * (ambient + 0.75 * diffuse);
 
-   gl_FragColor = vec4(finalColor, 1.0);
+   fragColor = vec4(finalColor, 1.0);
 }
