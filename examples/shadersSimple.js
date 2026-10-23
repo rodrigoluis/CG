@@ -33,10 +33,11 @@ const { vertexShader, fragmentShader } = await loadShaders(
 );
 
 const material = new THREE.ShaderMaterial({
-   glslVersion: GLSL3,
    vertexShader, 
    fragmentShader, 
-   side: THREE.DoubleSide});
+   side: THREE.DoubleSide,
+   glslVersion: GLSL3,   
+});
 
 const geometry = new THREE.BufferGeometry();
 geometry.setAttribute(
