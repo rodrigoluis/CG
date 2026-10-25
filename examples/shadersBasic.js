@@ -27,9 +27,9 @@ orbit = new OrbitControls(camera, renderer.domElement);
 
 //------------------------------------------------------------------------------------------
 const { vertexShader, fragmentShader } = await loadShaders(
-   '../assets/shaders/simple/',
-   'simple.vert',
-   'simple.frag'
+   '../assets/shaders/basic/',
+   'basic.vert',
+   'basic.frag'
 );
 
 const material = new THREE.ShaderMaterial({

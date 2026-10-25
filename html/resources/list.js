@@ -109,7 +109,7 @@ var list = {
 				"Joystick Elements":"html/exampleJoystickInfo",						
 			},
 			"Shaders":  {
-				"Simple": "html/shadersSimpleInfo",	                        
+				"Basic": "html/shadersBasicInfo",	                        
 				"Mountain": "html/shadersMountainInfo",	            
             "Fire": "html/shadersFireInfo",	
             "Water": "html/shadersWaterInfo",						            
