@@ -110,6 +110,7 @@ var list = {
 			},
 			"Shaders":  {
 				"Basic": "html/shadersBasicInfo",	                        
+				"Phong": "html/shadersPhongInfo",            
 				"Mountain": "html/shadersMountainInfo",	            
             "Fire": "html/shadersFireInfo",	
             "Water": "html/shadersWaterInfo",						            
