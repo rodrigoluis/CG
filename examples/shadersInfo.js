@@ -1,0 +1,132 @@
+import * as THREE from 'three';
+import { OrbitControls } from '../build/jsm/controls/OrbitControls.js';
+import {initRenderer, 
+        initCamera,
+        initDefaultBasicLight,
+        setDefaultMaterial,
+        InfoBox,
+        onWindowResize,
+        createGroundPlaneXZ} from "../libs/util/util.js";
+
+let scene, renderer, camera, light, orbit; // Initial variables
+scene = new THREE.Scene();    // Create main scene
+renderer = initRenderer();    // Init a basic renderer
+light = initDefaultBasicLight(scene); // Create a basic light to illuminate the scene
+camera = initCamera(new THREE.Vector3(0, 0, 40)); // Init camera in this position
+scene.add(camera); // Add camera to the scene
+//orbit = new OrbitControls( camera, renderer.domElement ); // Enable mouse rotation, pan, zoom etc.
+
+// Listen window size changes
+window.addEventListener( 'resize', function(){onWindowResize(camera, renderer)}, false );
+
+// Objeto demonstrativo
+const geometry = new THREE.TorusKnotGeometry( 5, 1.5, 200, 50 );
+const material = new THREE.MeshPhongMaterial( {color: "red", specular: "rgb(255,255,255)", shininess: 256} );
+const object = new THREE.Mesh( geometry, material );
+scene.add( object );
+
+// Painel textual sobre o render
+const panel = document.createElement('pre');
+Object.assign(panel.style, {
+    position: 'absolute',
+    top: '10px',
+    left: '10px',
+    margin: '0',
+    padding: '12px',
+    color: '#b8ffb8',
+    background: 'rgba(0,0,0,0.85)',
+    font: '14px monospace',
+    whiteSpace: 'pre-wrap',
+    pointerEvents: 'none',
+    zIndex: '10',
+    maxWidth: 'min(700px, 200vw)'
+});
+document.body.appendChild(panel);
+
+// Informações da GPU
+const gl = renderer.getContext();
+const debug = gl.getExtension('WEBGL_debug_renderer_info');
+
+function getParameter(parameter) {
+    try {
+        return gl.getParameter(parameter);
+    } catch {
+        return 'Indisponível';
+    }
+}
+
+const gpuVendor = debug
+    ? gl.getParameter(debug.UNMASKED_VENDOR_WEBGL)
+    : 'Oculto ou não disponível';
+
+const gpuRenderer = debug
+    ? gl.getParameter(debug.UNMASKED_RENDERER_WEBGL)
+    : 'Oculto ou não disponível';
+
+const info = renderer.info;
+const caps = renderer.capabilities;
+
+function updatePanel(fps) {
+    panel.textContent =
+`INFORMAÇÕES DA GPU / THREE.JS
+========================================
+Fabricante informado: ${gpuVendor}
+GPU / Renderer:       ${gpuRenderer}
+
+API gráfica:          WebGL ${gl.getParameter(gl.VERSION)}
+GLSL:                 ${gl.getParameter(gl.SHADING_LANGUAGE_VERSION)}
+Vendor WebGL:         ${getParameter(gl.VENDOR)}
+Renderer WebGL:       ${getParameter(gl.RENDERER)}
+
+CAPACIDADES GRÁFICAS
+========================================
+Textura máxima:       ${caps.maxTextureSize} x ${caps.maxTextureSize}
+Texturas por shader:  ${caps.maxTextures}
+Atributos de vértice: ${caps.maxAttributes}
+Varyings:             ${caps.maxVaryings}
+Uniforms no vertex:   ${caps.maxVertexUniforms}
+Uniforms no fragment: ${caps.maxFragmentUniforms}
+MSAA samples máx.:    ${caps.maxSamples}
+Anisotropia máxima:   ${renderer.capabilities.getMaxAnisotropy()}
+
+RENDERIZAÇÃO
+========================================
+Resolução do canvas:  ${renderer.domElement.width} x ${renderer.domElement.height}
+Pixel ratio:          ${renderer.getPixelRatio().toFixed(2)}
+FPS aproximado:       ${fps}
+Draw calls:           ${info.render.calls}
+Triângulos:           ${info.render.triangles}
+Geometrias ativas:    ${info.memory.geometries}
+Texturas ativas:      ${info.memory.textures}
+
+LIMITAÇÕES DESTE VISUALIZADOR
+========================================
+VRAM: não exposta diretamente
+Núcleos da GPU: não expostos
+Frequência da GPU: não exposta`;
+}
+
+// Animação e FPS
+let frames = 0;
+let lastTime = performance.now();
+let fps = 0;
+
+render();
+function render(now)
+{
+    requestAnimationFrame(render);
+
+    frames++;
+
+    if (now - lastTime >= 1000) {
+        fps = Math.round(frames * 1000 / (now - lastTime));
+        frames = 0;
+        lastTime = now;
+        updatePanel(fps);
+    }
+
+    object.rotation.y += 0.005;
+    object.rotation.x += 0.002;
+
+    renderer.render(scene, camera);
+}
