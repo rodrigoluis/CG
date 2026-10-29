@@ -26,22 +26,55 @@ const object = new THREE.Mesh( geometry, material );
 scene.add( object );
 
 // Painel textual sobre o render
-const panel = document.createElement('pre');
-Object.assign(panel.style, {
-    position: 'absolute',
+// const panel = document.createElement('pre');
+// Object.assign(panel.style, {
+//     position: 'absolute',
+//     top: '10px',
+//     left: '10px',
+//     margin: '0',
+//     padding: '12px',
+//     color: '#b8ffb8',
+//     background: 'rgba(0,0,0,0.85)',
+//     font: '14px monospace',
+//     whiteSpace: 'pre-wrap',
+//     pointerEvents: 'none',
+//     zIndex: '10',
+//     maxWidth: 'min(700px, 200vw)'
+// });
+// document.body.appendChild(panel);
+
+// Contêiner com rolagem
+const panelContainer = document.createElement('div');
+
+Object.assign(panelContainer.style, {
+    position: 'fixed',
     top: '10px',
     left: '10px',
+    maxWidth: 'calc(100vw - 20px)',
+    maxHeight: 'calc(100vh - 20px)',
+    overflow: 'auto',
+    zIndex: '10',
+    background: 'rgba(0,0,0,0.85)',
+    pointerEvents: 'auto'
+});
+
+document.body.appendChild(panelContainer);
+
+// Painel textual sobre o render
+const panel = document.createElement('pre');
+
+Object.assign(panel.style, {
     margin: '0',
     padding: '12px',
     color: '#b8ffb8',
-    background: 'rgba(0,0,0,0.85)',
     font: '14px monospace',
-    whiteSpace: 'pre-wrap',
-    pointerEvents: 'none',
-    zIndex: '10',
-    maxWidth: 'min(700px, 200vw)'
+    whiteSpace: 'pre',
+    width: 'max-content',
+    minWidth: '0',
+    boxSizing: 'border-box'
 });
-document.body.appendChild(panel);
+
+panelContainer.appendChild(panel);
 
 // Informações da GPU
 const gl = renderer.getContext();
