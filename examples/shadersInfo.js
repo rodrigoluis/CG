@@ -1,14 +1,11 @@
+
 import * as THREE from 'three';
-import { OrbitControls } from '../build/jsm/controls/OrbitControls.js';
 import {initRenderer, 
         initCamera,
         initDefaultBasicLight,
-        setDefaultMaterial,
-        InfoBox,
-        onWindowResize,
-        createGroundPlaneXZ} from "../libs/util/util.js";
+        onWindowResize} from "../libs/util/util.js";
 
-let scene, renderer, camera, light, orbit; // Initial variables
+let scene, renderer, camera, light; // Initial variables
 scene = new THREE.Scene();    // Create main scene
 renderer = initRenderer();    // Init a basic renderer
 light = initDefaultBasicLight(scene); // Create a basic light to illuminate the scene
@@ -24,24 +21,6 @@ const geometry = new THREE.TorusKnotGeometry( 5, 1.5, 200, 50 );
 const material = new THREE.MeshPhongMaterial( {color: "red", specular: "rgb(255,255,255)", shininess: 256} );
 const object = new THREE.Mesh( geometry, material );
 scene.add( object );
-
-// Painel textual sobre o render
-// const panel = document.createElement('pre');
-// Object.assign(panel.style, {
-//     position: 'absolute',
-//     top: '10px',
-//     left: '10px',
-//     margin: '0',
-//     padding: '12px',
-//     color: '#b8ffb8',
-//     background: 'rgba(0,0,0,0.85)',
-//     font: '14px monospace',
-//     whiteSpace: 'pre-wrap',
-//     pointerEvents: 'none',
-//     zIndex: '10',
-//     maxWidth: 'min(700px, 200vw)'
-// });
-// document.body.appendChild(panel);
 
 // Contêiner com rolagem
 const panelContainer = document.createElement('div');
@@ -76,9 +55,37 @@ Object.assign(panel.style, {
 
 panelContainer.appendChild(panel);
 
+//-------------------------------------------------
+// Área para o link de pesquisa da GPU
+const gpuLink = document.createElement("a");
+
+gpuLink.textContent = "Pesquisar especificações da GPU";
+gpuLink.href = "#";
+gpuLink.target = "_blank";
+gpuLink.rel = "noopener noreferrer";
+
+gpuLink.style.display = "block";
+gpuLink.style.marginTop = "8px";
+gpuLink.style.color = "#66b3ff";
+gpuLink.style.textDecoration = "underline";
+gpuLink.style.cursor = "pointer";
+
+panelContainer.appendChild(gpuLink);
+//-------------------------------------------------
+
 // Informações da GPU
 const gl = renderer.getContext();
 const debug = gl.getExtension('WEBGL_debug_renderer_info');
+
+//-------------------------------------------------
+
+let rendererName = "Não identificado";
+
+if (debug) {
+    rendererName = gl.getParameter(
+        debug.UNMASKED_RENDERER_WEBGL
+    );
+}
 
 function getParameter(parameter) {
     try {
@@ -98,6 +105,7 @@ const gpuRenderer = debug
 
 const info = renderer.info;
 const caps = renderer.capabilities;
+
 
 function updatePanel(fps) {
     panel.textContent =
@@ -132,12 +140,13 @@ Triângulos:           ${info.render.triangles}
 Geometrias ativas:    ${info.memory.geometries}
 Texturas ativas:      ${info.memory.textures}
 
-LIMITAÇÕES DESTE VISUALIZADOR
-========================================
-VRAM: não exposta diretamente
-Núcleos da GPU: não expostos
-Frequência da GPU: não exposta`;
+Informações da GPU não expostas no Javascript/three.js no link abaixo 
+(estimativa - não há garantia que as informações estejam corretas).`;
 }
+
+// Configura o link de pesquisa da GPU
+const searchQuery = encodeURIComponent(rendererName + " specifications");
+gpuLink.href = "https://www.google.com/search?q=" + searchQuery;
 
 // Animação e FPS
 let frames = 0;
