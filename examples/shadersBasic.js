@@ -38,7 +38,7 @@ const material = new THREE.ShaderMaterial({
    side: THREE.DoubleSide,
    glslVersion: GLSL3,   
 });
-
+/*
 const geometry = new THREE.BufferGeometry();
 geometry.setAttribute(
     'position',
@@ -47,10 +47,12 @@ geometry.setAttribute(
         -1.0, -1.0, 0.0,
          1.0, -1.0, 0.0
     ], 3)
-);
+);*/
 
-const triangle = new THREE.Mesh(geometry, material);
-scene.add(triangle);
+var geometry = new THREE.SphereGeometry(0.5, 20, 20);
+
+const mesh = new THREE.Mesh(geometry, material);
+scene.add(mesh);
 //------------------------------------------------------------------------------------------
 
 render();

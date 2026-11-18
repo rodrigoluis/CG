@@ -69,6 +69,7 @@ var list = {
 				"Mountain": "html/shadersMountainInfo",	            
             "Fire": "html/shadersFireInfo",	
             "Water": "html/shadersWaterInfo",						            
+            "Wavy Object": "html/shadersObjetoOnduladoInfo",	            
 			},		          
 			"Realism":  {
             "Ray Tracing  (GLSL)": "html/rayTracingGLSLExampleInfo",
